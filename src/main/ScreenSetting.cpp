@@ -2,26 +2,16 @@
 
 ScreenSetting::ScreenSetting()
 {
-    mResolution.width = 1024;
-    mResolution.height = 768;
+    mFullScreen = false;
 }
 
-unsigned ScreenSetting::getResolutionWidth() const
+
+bool ScreenSetting::getFullScreen() const
 {
-    return mResolution.width;
+    return mFullScreen;
 }
 
-unsigned ScreenSetting::getResolutionHeight() const
+void ScreenSetting::setFullScreen(bool is_full_Scrren)
 {
-    return mResolution.height;
-}
-
-void ScreenSetting::setResolutionWidth(unsigned width)
-{
-    mResolution.width = width;
-}
-
-void ScreenSetting::setResolutionHeight(unsigned height)
-{
-    mResolution.height = height;
+    mFullScreen = is_full_Scrren;
 }
