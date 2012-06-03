@@ -8,21 +8,12 @@ class ScreenSetting
 public:
     ScreenSetting();
 
-    void setResolutionWidth(unsigned width);
+    void setFullScreen(bool is_full_screen);
 
-    void setResolutionHeight(unsigned height);
-
-    unsigned getResolutionWidth() const;
-
-    unsigned getResolutionHeight() const;
+    bool getFullScreen() const;
 
 private:
-    struct Pair 
-    {
-        unsigned height;
-        unsigned width;
-    } mResolution;
-
+      bool mFullScreen;
 };
 
 #endif

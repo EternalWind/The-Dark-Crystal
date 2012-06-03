@@ -137,20 +137,18 @@ void ConfigurationManager::setControlSetting(ControlSetting control_setting)
 
 void ConfigurationManager::__loadSreenSetting(const QDomElement& element)
 {
-    auto resolution_node = element.firstChildElement(RESOLUTION);
-    unsigned width_value = resolution_node.attribute(WIDTH).toUInt();
-    unsigned height_value = resolution_node.attribute(HEIGHT).toUInt();
-    mScreenSetting.setResolutionWidth(width_value);
-    mScreenSetting.setResolutionHeight(height_value);
+
+    auto full_screen_node = element.firstChildElement(FULLSCREEN);
+    bool full_screen_value = full_screen_node.attribute(VALUE).toInt();
+    mScreenSetting.setFullScreen(full_screen_value);
 }
 
 QDomElement ConfigurationManager::__saveScreenSetting(QDomDocument& doc) const
 {
     auto screen_setting = doc.createElement(SCREEN_SETTING);
-    auto resolution = doc.createElement(RESOLUTION);
-    resolution.setAttribute(WIDTH, mScreenSetting.getResolutionWidth());
-    resolution.setAttribute(HEIGHT, mScreenSetting.getResolutionHeight());
-    screen_setting.appendChild(resolution);
+    auto full_screen_setting = doc.createElement(FULLSCREEN);
+    full_screen_setting.setAttribute(VALUE, mScreenSetting.getFullScreen());
+    screen_setting.appendChild(full_screen_setting);
     return screen_setting;
 }
 
