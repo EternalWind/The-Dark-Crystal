@@ -7,9 +7,7 @@
 #define CONFIG_ROOT "Configuration"
 // Screen Setting
 #define SCREEN_SETTING "Screen_Setting"
-#define RESOLUTION "Resolution"
-#define HEIGHT "height"
-#define WIDTH "width"
+#define FULLSCREEN "FullScreen"
 // Sound Setting
 #define SOUND_SETTING "Sound_Setting"
 #define MUSIC "Music"
