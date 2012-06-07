@@ -5,9 +5,6 @@ void NewStateManager::push(StateName stateName)
     dt::State * res = NULL;
     switch ( stateName )
     {
-    case TEST:
-        res = new TestState();
-        break;
     case FIRST_STATE:
         res = new FirstTestState();
         break;
