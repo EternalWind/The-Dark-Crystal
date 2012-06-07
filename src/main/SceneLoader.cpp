@@ -15,7 +15,7 @@
 
 #include <QtXml/QtXml>
 #include <OgreProcedural.h>
-#include <OGRE/OgreSubEntity.h>
+#include <OgreSubEntity.h>
 
 #include <cstdint>
 

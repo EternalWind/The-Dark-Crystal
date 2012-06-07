@@ -13,7 +13,6 @@
 #include <Scene/StateManager.hpp>
 #include <Core/Root.hpp>
 
-#include "testState.h"
 #include "StateChangeTest.h"
 
 enum StateName {
