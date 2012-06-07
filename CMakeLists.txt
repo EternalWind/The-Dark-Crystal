@@ -88,19 +88,6 @@ target_link_libraries(The-Dark-Crystal ${LIBS_LIST})
 
 
 
-MESSAGE(STATUS "This is TEST")
-aux_source_directory(src/test TEST_CPP)
-file(GLOB_RECURSE TEST_HPP src/test/*.hpp)
-file(GLOB_RECURSE TEST_H src/test/*.h)
-
-qt4_wrap_cpp(TEST_HEADERS_MOC ${TEST_HPP} ${TEST_H})
-
-MESSAGE(STATUS "This is MOC${TEST_HEADERS_MOC}")
-ADD_EXECUTABLE(TEST ${TEST_CPP} ${TEST_HEADERS_MOC} ${main_CPP} ${main_HEADERS_MOC})
-
-target_link_libraries(TEST ${LIBS_LIST})
-
-
 
 
 
