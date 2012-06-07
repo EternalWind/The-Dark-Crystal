@@ -3,6 +3,10 @@
 
 #include <Scene/State.hpp>
 
+/**
+  * 
+  *
+  */
 class BattleState : public dt::State {
     Q_OBJECT
 public:
