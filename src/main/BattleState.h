@@ -86,17 +86,17 @@ public slots:
 
 
 private:
-	std::vector<dt::GuiImageBox*> mHealthHUD;		//!< 生命值
+	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值
 	std::vector<dt::GuiImageBox*> mAmmoHUD;		//!< 弹药量 
-	std::vector<std::shared_ptr<dt::GuiImageBox> > mFrontSight; //!< 准星
-	std::vector<std::shared_ptr<int> > mClipNumHUD; //!< 弹夹数
-	std::vector<std::shared_ptr<dt::GuiButton> > mAnswerButtons; //!< 答案选项
-	std::shared_ptr<dt::GuiLabel> mQuestionLabel;	//!< 问题显示窗口
-	std::shared_ptr<dt::GuiLabel> mDialogLabel;	//!< 对话显示窗口
-	uint16_t mTotalEnemyNum;	//!< 地图中怪兽数量
-	uint16_t mRemainEnemyNum;	//!< 地图中剩余怪兽数量
-	uint16_t mTotalCrystalNum;	//!< 地图中水晶总数
-	uint16_t mObtainedCrystalNum;	//!< 玩家已获得水晶总数
+	std::vector<dt::GuiImageBox*> mFrontSight;	//!< 准星
+	std::vector<dt::GuiImageBox*> mClipNumHUD;	//!< 弹夹数
+	std::vector<dt::GuiButton> mAnswerButtons;	//!< 答案选项
+	dt::GuiLabel* mQuestionLabel;				//!< 问题显示窗口
+	dt::GuiLabel* mDialogLabel;					//!< 对话显示窗口
+	uint16_t mTotalEnemyNum;					//!< 地图中怪兽数量
+	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量
+	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
+	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
 	
 
 };
