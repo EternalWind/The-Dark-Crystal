@@ -7,13 +7,13 @@
 #include <Physics\PhysicsBodyComponent.hpp>
 #include <Audio\SoundComponent.hpp>
 
-/*
- * 武器类
- */
+/**
+  * 武器类
+  */
 class Weapon : public Prop {
 	Q_OBJECT
 public:
-	
+
 	enum WeaponType {
 		PRIMARY,
 		SECONDARY,
@@ -25,7 +25,7 @@ public:
 	//当不是投掷型武器时忽略参数hitting_range
 	Weapon( const QString &name, 
 			WeaponType type, 
-	        uint16_t power, 
+			uint16_t power, 
 			uint16_t CurClip, 
 			uint16_t max_clip, 
 			uint16_t weight, 
@@ -64,7 +64,7 @@ public:
 	void setWeight(uint16_t weight);
 
 	uint16_t getWeight();
-	
+
 	void setAmmoPerClip(uint16_t ammo_per_clip);
 
 	uint16_t getAmmoPerClip();
@@ -81,43 +81,40 @@ public:
 
 	float getHittingRange();
 
-	/*
-	 * 射击
-	 * @param
-	 * @return
-	 */	
+	/**
+	  * 射击
+	  */	
 	void attack();
 
-	/*
-	 * 装弹
-	 * @param
-	 * @return
-	 */	
+	/**
+	  * 装弹
+	  */	
 	void reload();
 
 private:
-	 
-	WeaponType mWeaponType;   //!< 武器类型
-	uint16_t mPower;        //!< 武器攻击力
-	uint16_t mCurClip;    //!< 当前弹夹数
-	uint16_t mMaxClip;    //!< 最大弹夹数
-	uint16_t mWeight;     //!< 武器的重量
-	uint16_t mAmmoPerClip;//!< 每个弹夹的子弹数
-	uint16_t mCurAmmo;    //!< 当前弹夹内的子弹数
-	bool mIsOneShot;          //!< 是否可连击
-	float mHittingRange;      //!< 炸弹投掷距离
-	
-	float mReloadTime;        //!< 子弹射击间隔
-	QString mMaterialHandle;
-    QString mFiringSoundHandle;
-    QString mReloadingBeginSoundHandle;
-    QString mReloadingDoneSoundHandle;
-	QString mMeshHandle;
-	dt::InteractionComponent* mInteractor;
-	dt::SoundComponent* mFiringSound;
-    dt::SoundComponent* mReloadingBeginSound;
-    dt::SoundComponent* mReloadingDoneSound;
-	dt::PhysicsBodyComponent* mPhysicsBody;
+
+	WeaponType mWeaponType;					     //!< 武器类型
+	uint16_t mPower;						     //!< 武器攻击力
+	uint16_t mCurClip;						     //!< 当前弹夹数
+	uint16_t mMaxClip;						     //!< 最大弹夹数
+	uint16_t mWeight;						     //!< 武器的重量
+	uint16_t mAmmoPerClip;						 //!< 每个弹夹的子弹数
+	uint16_t mCurAmmo;						     //!< 当前弹夹内的子弹数
+	bool mIsOneShot;							 //!< 是否可连击
+	float mHittingRange;				         //!< 炸弹投掷距离
+
+	float mInterval;					         //!< 子弹射击间隔
+	float mReloadTime;				             //!< 补充子弹时间
+	QString mMaterialHandle;					 //!< 材质文件名
+	QString mFiringSoundHandle;					 //!< 枪声文件名
+	QString mReloadingBeginSoundHandle;		     //!< 重装弹药开始声音文件名
+	QString mReloadingDoneSoundHandle;		     //!<
+	QString mMeshHandle;					     //!<
+	dt::InteractionComponent* mInteractor;       //!<
+	dt::SoundComponent* mFiringSound;		     //!<
+	dt::SoundComponent* mReloadingBeginSound;    //!<
+	dt::SoundComponent* mReloadingDoneSound;     //!<
+	dt::PhysicsBodyComponent* mPhysicsBody;      //!<
 };
 
 #endif
