@@ -5,11 +5,12 @@
 #include <Scene/Node.hpp>
 #include <QString>
 #include <cstdint>
+
 /**
   * 道具类，武器，弹药，补给，水晶的基类
   */
 class Prop : public dt::Node {
-    Q_OBJECT
+	Q_OBJECT
 public:
 
 	Prop();
@@ -32,7 +33,7 @@ public:
 	/**
 	  * 返回道具类型
 	  * @param
-      * @returns 枚举类型ProType
+	  * @returns 枚举类型ProType
 	  */
 	ProType getPropType(); 
 
