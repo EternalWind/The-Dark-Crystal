@@ -7,9 +7,9 @@
 #include <Physics\PhysicsBodyComponent.hpp>
 #include <Audio\SoundComponent.hpp>
 
-/*
- * 武器类
- */
+/**
+  * 武器类
+  */
 class Weapon : public Prop {
 	Q_OBJECT
 public:
@@ -81,43 +81,40 @@ public:
 
 	float getHittingRange();
 
-	/*
-	 * 射击
-	 * @param
-	 * @return
-	 */	
+	/**
+	  * 射击
+	  */	
 	void attack();
 
-	/*
-	 * 装弹
-	 * @param
-	 * @return
-	 */	
+	/**
+	  * 装弹
+	  */	
 	void reload();
 
 private:
 	 
-	WeaponType mWeaponType;   //!< 武器类型
-	uint16_t mPower;        //!< 武器攻击力
-	uint16_t mCurClip;    //!< 当前弹夹数
-	uint16_t mMaxClip;    //!< 最大弹夹数
-	uint16_t mWeight;     //!< 武器的重量
-	uint16_t mAmmoPerClip;//!< 每个弹夹的子弹数
-	uint16_t mCurAmmo;    //!< 当前弹夹内的子弹数
-	bool mIsOneShot;          //!< 是否可连击
-	float mHittingRange;      //!< 炸弹投掷距离
+	WeaponType mWeaponType;					     //!< 武器类型
+	uint16_t mPower;						     //!< 武器攻击力
+	uint16_t mCurClip;						     //!< 当前弹夹数
+	uint16_t mMaxClip;						     //!< 最大弹夹数
+	uint16_t mWeight;						     //!< 武器的重量
+	uint16_t mAmmoPerClip;						 //!< 每个弹夹的子弹数
+	uint16_t mCurAmmo;						     //!< 当前弹夹内的子弹数
+	bool mIsOneShot;							 //!< 是否可连击
+	float mHittingRange;				         //!< 炸弹投掷距离
 	
-	float mReloadTime;        //!< 子弹射击间隔
-	QString mMaterialHandle;
-    QString mFiringSoundHandle;
-    QString mReloadingBeginSoundHandle;
-    QString mReloadingDoneSoundHandle;
-	QString mMeshHandle;
-	dt::InteractionComponent* mInteractor;
-	dt::SoundComponent* mFiringSound;
-    dt::SoundComponent* mReloadingBeginSound;
-    dt::SoundComponent* mReloadingDoneSound;
-	dt::PhysicsBodyComponent* mPhysicsBody;
+	float mInterval;					         //!< 子弹射击间隔
+	float mReloadTime;				             //!< 补充子弹时间
+	QString mMaterialHandle;					 //!< 材质文件名
+    QString mFiringSoundHandle;					 //!< 枪声文件名
+    QString mReloadingBeginSoundHandle;		     //!<
+    QString mReloadingDoneSoundHandle;		     //!<
+	QString mMeshHandle;					     //!<
+	dt::InteractionComponent* mInteractor;       //!<
+	dt::SoundComponent* mFiringSound;		     //!<
+    dt::SoundComponent* mReloadingBeginSound;    //!<
+    dt::SoundComponent* mReloadingDoneSound;     //!<
+	dt::PhysicsBodyComponent* mPhysicsBody;      //!<
 };
 
 #endif
