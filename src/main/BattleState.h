@@ -5,6 +5,7 @@
 #include <Gui/GuiButton.hpp>
 #include <Gui/GuiLabel.hpp>
 #include <Gui/GuiImageBox.hpp>
+#include <cstdint>
 #include <QString>
 #include <vector>
 
@@ -19,6 +20,13 @@ public:
     void onInitialize();
 	
     void updateStateFrame(double simulation_frame_time);
+
+	/**
+	  * 初始化
+	  * @params tot_enemy_num 地图上所有的怪兽数量
+	  * @params tot_crystal_num 地图上所有的水晶数量
+	  */
+	BattleState(uint16_t tot_enemy_num = 0, uint16_t tot_crystal_num = 0);
 
 	/**
 	  * 判断玩家当前是否已经取得胜利
@@ -47,7 +55,8 @@ public:
 	  * 设置对话窗口
 	  * @params 设置对话窗口
 	  */
-	void setDialogDabel();
+	void setDialogDabel(dt::GuiLabel* dialog_label);
+
 
 public slots:
 	/**
