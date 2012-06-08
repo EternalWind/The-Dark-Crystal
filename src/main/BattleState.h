@@ -43,7 +43,7 @@ public:
 	  * 返回当前BattleState的名字
 	  * @returns 当前BattleState的名字
 	  */
-	QString getBattleStateName();
+	QString getBattleStateName() const;
 
 	/**
 	  * 返回对话窗口
@@ -55,46 +55,73 @@ public:
 	  * 设置对话窗口
 	  * @params 设置对话窗口
 	  */
-	void setDialogDabel(dt::GuiLabel* dialog_label);
-
-
-public slots:
-	/**
-	  * 触发对话事件对应的槽
-	  * @params text_id 对话文本所对应的ID
-	  */
-	void onTriggerText(uint16_t text_id);
+	void setDialogLabel(dt::GuiLabel* dialog_label);
 
 	/**
-	  * 玩家生命值改变对应的槽
+	  * 返回总敌人数量
+	  * @returns 总敌人数量
 	  */
-	void onHealthChanged();
+	uint16_t getTotalEnemyNum() const;
 
 	/**
-	  * 弹药量改变对应的槽
+	  * 设置总敌人数量
+	  * @params total_enemy_num
 	  */
-	void onAmmoChanged();
+	void setTotalEnemyNum(uint16_t total_enemy_num);
 
 	/**
-	  * 弹夹数改变对应的槽
+	  * 返回剩下的敌人数量
+	  * @returns 剩下的敌人数量
 	  */
-	void onClipNumChanged();
+	uint16_t getRemainEnemyNum() const;
+
+	/*
+	 * 设置剩下敌人数量
+	 * @params remain_enemy_num 剩余敌人数量
+	 */
+	void setRemainEnemyNum(uint16_t remain_enemy_num);
 
 	/**
-	  * 玩家获得水晶事件对应的槽
+	  * 返回水晶总数
+	  * @returns 水晶总数
 	  */
-	void onGetCrystal(); 
+	uint16_t getTotalCrystalNum() const;
 
 	/**
-	  * 玩家触发问答系统事件对应的槽
+	  * 设置总水晶数量
+	  * @params total_crystal_num 水晶总数量
 	  */
-	void onTriggerQA();
+	void setTotalCrystalNum(uint16_t total_crystal_num);
+
+	/** 
+	  * 返回已获得水晶数量
+	  * @returns 已获得水晶数量
+	  */
+	uint16_t getObtainedCrystalNum() const;
 
 	/**
-	  * 问答模式下，玩家按下回答问题按键对应的槽
-	  * @params sender 按键
+	  * 设置已获得水晶数量
+	  * @params obtained_crystal_num 已获得水晶数量
 	  */
-	void onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender);
+	void setObtainedCrystalNum(uint16_t obtained_crystal_num);
+
+	void onclick(MyGUI::Widget* _sender);
+
+protected slots:
+
+	void __onTriggerText(uint16_t text_id);
+
+	void __onHealthChanged(uint16_t pre_health, uint16_t cur_health);
+
+	void __onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo);
+
+	void __onClipNumChanged(uint16_t pre_num, uint16_t cur_num);
+
+	void __onGetCrystal(); 
+
+	void __onTriggerQA();
+
+	void __onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender);
 
 
 private:

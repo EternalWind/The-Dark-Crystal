@@ -11,6 +11,8 @@
 
 #include <cstdint>
 
+#include "Weapon.h"
+
 /**
   * 游戏场景中能进行移动、攻击等动作的实体类基类。
   */
