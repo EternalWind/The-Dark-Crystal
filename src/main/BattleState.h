@@ -41,10 +41,13 @@ public:
 	  * 返回对话窗口
 	  * @returns 对话窗口
 	  */
+	dt::GuiLabel* getDialogLabel();
 
 	/**
 	  * 设置对话窗口
+	  * @params 设置对话窗口
 	  */
+	void setDialogDabel();
 
 public slots:
 	/**
