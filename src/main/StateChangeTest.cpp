@@ -67,9 +67,3 @@ void FirstTestState::updateStateFrame(double simulation_frame_time)
 //{
 //}
 //
-//int main(int argc, char **argv)
-//{
-//    dt::Game game;
-//    game.run(new FirstTestState(), argc, argv);
-//    system("pause");
-//}
