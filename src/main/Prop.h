@@ -19,11 +19,13 @@ public:
 
 	~Prop();
 
-	enum ProType {  //道具类型
-		VEHICLE,  //载具
-		WEAPON,   //武器
-		AMMO,     //弹药
-		CRYSTAL   //水晶
+    // 道具类型
+	enum ProType {  
+		VEHICLE,       //载具
+		WEAPON,        //武器
+		AMMO,          //弹药
+        FIRST_AID_KIT, //急救包
+		CRYSTAL        //水晶
 	};
 
 	QString getName();

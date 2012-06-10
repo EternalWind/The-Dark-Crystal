@@ -91,6 +91,21 @@ public:
 	  */	
 	void reload();
 
+signals:
+    /**
+      * 一个当该实体的弹药量被改变时会发送的signal。
+      * @param pre_ammo 改变前的弹药量
+      * @param cur_ammo 改变后的弹药量
+      */
+    void sAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo);
+
+    /**
+      * 一个当该实体的弹夹数量被改变时会发送的signal。
+      * @param pre_ammo 改变前的弹夹数量
+      * @param cur_ammo 改变后的弹夹数量
+      */
+    void sClipNumChanged(uint16_t pre_num, uint16_t cur_num);
+
 private:
 
 	WeaponType mWeaponType;					     //!< 武器类型
