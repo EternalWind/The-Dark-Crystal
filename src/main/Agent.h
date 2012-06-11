@@ -8,32 +8,27 @@
 #include <OgreVector3.h>
 #include <QObject>
 
-//#include "Entity.h"
-//#include "Weapon.h"
+#include "Entity.h"
+#include "Weapon.h"
 
 /**
-  *  注释
+  *  游戏中的代理类，继承改类的代理可以发送各种动作的signal控制游戏中的实体。
   */
 class Agent : public dt::Node {
 Q_OBJECT
 
 signals:
-/**
-  * 注释
-  * @param 参数
-  * @returns 返回值
-  */	
-	//void sMove(Entity::MoveType type); 
+	void sMove(Entity::MoveType type, bool is_pressed); 
 	void sAttack(bool is_pressed);
 	void sJump(bool is_pressed);
 	void sSpeedUp(bool is_pressed);
 	void sGetOffVehicle();
 	void sAddEquipment(); 
-	//void sChangeWeapon(Weapon::WeaponType type); 
+	void sChangeWeapon(Weapon::WeaponType type); 
 	void sRemoveWeapon(); 
-	//void sRemoveWeapon(Weapon::WeaponType type);
-	//void sLookAround(dt::Quaterion quaterion);
+	void sRemoveWeapon(Weapon::WeaponType type);
+	void sLookAround(Ogre::Quaternion quaternion);
 	void sReload(); 	
-}
+};
 
 #endif
