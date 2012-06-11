@@ -31,5 +31,5 @@ private:
 	uint16_t mThreatCoolNum;  //<! 当受到威胁开始每次update，威胁系数不断冷却。
 	uint16_t mCurArea;  //<! 当前所在区域ID
 	uint16_t mNxtArea;  //<! 若有在路上这个状态，则代表目标地所在ID。
-}
+};
 #endif

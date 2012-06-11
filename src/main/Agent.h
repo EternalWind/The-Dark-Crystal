@@ -34,6 +34,6 @@ signals:
 	//void sRemoveWeapon(Weapon::WeaponType type);
 	//void sLookAround(dt::Quaterion quaterion);
 	void sReload(); 	
-}
+};
 
 #endif
