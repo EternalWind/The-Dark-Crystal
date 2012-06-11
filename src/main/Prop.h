@@ -13,18 +13,19 @@ class Prop : public dt::Node {
 	Q_OBJECT
 public:
 
-	Prop();
-
-	Prop(const QString &name);
-
-	~Prop();
-
-	enum ProType {          //道具类型
+	enum PropType {         //道具类型
 		VEHICLE,        //载具
 		WEAPON,         //武器
 		AMMO,           //弹药
-		CRYSTAL         //水晶
+		CRYSTAL,        //水晶
+		FIRST_AID_KIT   //补给
 	};
+
+	Prop();
+
+	Prop(const QString &name, PropType prop_type);
+
+	~Prop();
 
 	QString getName();
 
@@ -35,11 +36,11 @@ public:
 	  * @param
 	  * @returns 枚举类型ProType
 	  */
-	ProType getPropType(); 
+	PropType getPropType(); 
 
 private:
-	QString mName;         //!< 道具名称 
-	ProType mPropType;     //!< 道具类型
+	QString mName;          //!< 道具名称 
+	PropType mPropType;     //!< 道具类型
 };
 
 #endif
