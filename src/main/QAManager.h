@@ -22,8 +22,34 @@ public:
     QAManager* get();
     
     /** 
-      *从文件获取问题内容
+      *从文件获取问题
+      *@param 文件路径
+      */
+    bool loadQuestions(QString path);
 
+    /** 
+      *随机抽取一个问题
+      *@param 抽取到的问题的指针
+      */
+    Question* getRandomQuestion();
+
+    /** 
+      *继承自Manager类的初始化函数
+      */
+    void initialize();
+
+    /** 
+      *继承自Manager类的deinitialize函数
+      */
+    void deinitialize();
+
+    /** 
+      *继承自Manager类的析构函数
+      */
+    ~QAManager();
+private:
+    std::map<uint16_t, Question*> mQuestions;       //!< 存放问题的数组
+    static std::shared_ptr<QAManager> mInstance;     //!< QAManager 的静态实例 
 };
 
 #endif

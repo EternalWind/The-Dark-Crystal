@@ -9,7 +9,7 @@
 
 
 /**
-  *触发QA的类
+  * 触发QA的类
   */
 class QATrigger: public dt::Node, public Serializable {
     Q_OBJECT
@@ -17,7 +17,7 @@ public:
   /**
     * 对变量序列化,继承自Serializable
     * @param doc  记录信息的XML文件
-    * @returns XML文件节点
+    * @return XML文件节点
     */
     QDomElement serializeToXML(QDomDocument& doc) const;
 
