@@ -30,6 +30,9 @@ bool QAManager::loadQuestions(QString path) {
 
     if (doc.setContent(&config_file)) {
         QDomElement root = doc.documentElement();
+        for (QDomElement QA_node = root.firstChildElement(); !QA_node.isNull(); QA_node = QA_node.nextSiblingElement()) {
+
+        }
     }
     
 

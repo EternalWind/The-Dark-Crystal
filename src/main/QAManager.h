@@ -10,46 +10,46 @@
 #include <map>
 
 /** 
- *问答系统问题管理类
- */
+  * 问答系统问题管理类
+  */
 
 class QAManager: public dt ::Manager {
 public:
     /** 
-      *获取QAManager
-      *@return QAManager 指针
+      * 获取QAManager
+      * @return QAManager 指针
       */
     QAManager* get();
     
     /** 
-      *从文件获取问题
-      *@param 文件路径
+      * 从文件获取问题
+      * @param 文件路径
       */
     bool loadQuestions(QString path);
 
     /** 
-      *随机抽取一个问题
-      *@param 抽取到的问题的指针
+      * 随机抽取一个问题
+      * @param 抽取到的问题的指针
       */
     Question* getRandomQuestion();
 
     /** 
-      *继承自Manager类的初始化函数
+      * 继承自Manager类的初始化函数
       */
     void initialize();
 
     /** 
-      *继承自Manager类的deinitialize函数
+      * 继承自Manager类的deinitialize函数
       */
     void deinitialize();
 
     /** 
-      *继承自Manager类的析构函数
+      * 继承自Manager类的析构函数
       */
     ~QAManager();
 private:
     std::map<uint16_t, Question*> mQuestions;       //!< 存放问题的数组
-    static std::shared_ptr<QAManager> mInstance;     //!< QAManager 的静态实例 
+    static std::shared_ptr<QAManager> mInstance;    //!< QAManager 的静态实例 
 };
 
 #endif
