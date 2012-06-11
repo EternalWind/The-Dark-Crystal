@@ -337,9 +337,9 @@ void Alien::__onLookAround(Ogre::Quaternion quaternion) {
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     
     // 暂时禁用PhysicsBody以便手动设置旋转。
-    this->disable();
+    physics_body->disable();
     this->setRotation(rotation, dt::Node::SCENE);
-    this->enable();
+    physics_body->enable();
 }
 
 void Alien::__onReload() {

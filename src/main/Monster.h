@@ -49,6 +49,7 @@ public:
 	  * @param run_sound_handle ¹ÖÊŞÅÜ²½µÄÒôĞ§¾ä±ú
 	  * @param attck_sound_handle ¹ÖÊŞ¹¥»÷µÄÒôĞ§¾ä±ú
 	  * @param attack_value ¹ÖÊŞ¹¥»÷Á¦
+	  * @param attack_range ¹ÖÊŞ¹¥»÷·¶Î§
 	  */
 	Monster(const QString node_name,
 			const QString mesh_handle,
@@ -93,18 +94,18 @@ protected slots:
 
 
 protected:
-	uint16_t mAttackValue;				//!< ½ĞÊŞ¹¥»÷Á¦
-	float	mAttackRange;				//!< ½ĞÊŞ¹¥»÷·¶Î§
-	QString mWalkSoundHandle;			//!< ¹ÖÊŞ×ßÂ·ÉùÒô¾ä±ú
-	QString mJumpSoundHandle;			//!< ¹ÖÎïÌøÔ¾ÉùÒô¾ä±ú
-	QString mRunSoundHandle;			//!< ¹ÖÊŞÅÜ²½ÒôĞ§¾ä±ú
-	QString mAttackSoundHandle;			//!< ¹ÖÎï¹¥»÷ÉùÒô¾ä±ú
+	uint16_t mAttackValue;      //!< ½ĞÊŞ¹¥»÷Á¦
+	float	mAttackRange;       //!< ½ĞÊŞ¹¥»÷·¶Î§
+	QString mWalkSoundHandle;   //!< ¹ÖÊŞ×ßÂ·ÉùÒô¾ä±ú
+	QString mJumpSoundHandle;   //!< ¹ÖÎïÌøÔ¾ÉùÒô¾ä±ú
+	QString mRunSoundHandle;    //!< ¹ÖÊŞÅÜ²½ÒôĞ§¾ä±ú
+	QString mAttackSoundHandle; //!< ¹ÖÎï¹¥»÷ÉùÒô¾ä±ú
 
-	const static QString WALK_SOUND_COMPONENT;      //!< ²¥·Å¹ÖÊŞĞĞ×ßÒôĞ§µÄSoundComponentµÄÃû×Ö
-	const static QString JUMP_SOUND_COMPONENT;      //!< ²¥·Å¹ÖÊŞÌøÔ¾ÒôĞ§µÄSoundComponentµÄÃû×Ö
-	const static QString RUN_SOUND_COMPONENT;       //!< ²¥·Å¹ÖÊŞÅÜ¶¯ÒôĞ§µÄSoundComponentµÄÃû×Ö
-	const static QString ATTACK_SOUND_COMPONENT;	//!< ²¥·Å¹ÖÊŞ¹¥»÷ÒôĞ§µÄSoundComponentµÄÃû×Ö
-	const static QString INTERACTOR_COMPONENT;		//!< ¹ÖÊŞ¹¥»÷½»»¥µÄComponentÃû×Ö
+	const static QString WALK_SOUND_COMPONENT;   //!< ²¥·Å¹ÖÊŞĞĞ×ßÒôĞ§µÄSoundComponentµÄÃû×Ö
+	const static QString JUMP_SOUND_COMPONENT;   //!< ²¥·Å¹ÖÊŞÌøÔ¾ÒôĞ§µÄSoundComponentµÄÃû×Ö
+	const static QString RUN_SOUND_COMPONENT;    //!< ²¥·Å¹ÖÊŞÅÜ¶¯ÒôĞ§µÄSoundComponentµÄÃû×Ö
+	const static QString ATTACK_SOUND_COMPONENT; //!< ²¥·Å¹ÖÊŞ¹¥»÷ÒôĞ§µÄSoundComponentµÄÃû×Ö
+	const static QString INTERACTOR_COMPONENT;   //!< ¹ÖÊŞ¹¥»÷½»»¥µÄComponentÃû×Ö
 
 };
 
