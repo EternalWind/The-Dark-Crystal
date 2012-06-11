@@ -15,7 +15,7 @@ public:
 
 	~FirstAidKit();
 	
-	uint16_t getRecoveryVal()const;
+	uint16_t getRecoveryVal() const;
 	
 	void setRecoveryVal(uint16_t recovery_val);	
 

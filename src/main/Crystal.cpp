@@ -11,7 +11,7 @@ Crystal::Crystal(const QString &name, uint16_t unlock_time)
 Crystal::~Crystal() {
 }
 
-uint16_t Crystal::getUnlockTime()const {
+uint16_t Crystal::getUnlockTime() const {
 	return mUnlockTime;
 }
 

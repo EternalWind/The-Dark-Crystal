@@ -62,7 +62,7 @@ void Weapon::setPower(uint16_t power) {
 	mPower = power;
 }
 
-uint16_t Weapon::getPower()const {
+uint16_t Weapon::getPower() const {
 	return mPower;
 }
 
@@ -75,7 +75,7 @@ void Weapon::setCurClip(uint16_t cur_clip) {
 	emit sClipNumChanged(mCurClip);
 }
 
-uint16_t Weapon::getCurClip()const { 
+uint16_t Weapon::getCurClip() const { 
 	return mCurClip;
 }
 
@@ -86,7 +86,7 @@ void Weapon::setMaxClip(uint16_t max_clip) {
 		this->setCurClip(mMaxClip);
 }
 
-uint16_t Weapon::getMaxClip()const { 
+uint16_t Weapon::getMaxClip() const { 
 	return mMaxClip;
 }
 
@@ -94,7 +94,7 @@ void Weapon::setWeight(uint16_t weight){
 	mWeight = weight;
 }
 
-uint16_t Weapon::getWeight()const {
+uint16_t Weapon::getWeight() const {
 	return mWeight;
 }
 
@@ -104,7 +104,7 @@ void Weapon::setAmmoPerClip(uint16_t ammo_per_clip){
 		this->setCurAmmo(mAmmoPerClip);
 }
 
-uint16_t Weapon::getAmmoPerClip()const {
+uint16_t Weapon::getAmmoPerClip() const {
 	return mAmmoPerClip;
 }
 
@@ -116,7 +116,7 @@ void Weapon::setCurAmmo(uint16_t cur_ammo) {
 	emit sAmmoChanged(mCurAmmo);
 }
 
-uint16_t Weapon::getCurAmmo()const {
+uint16_t Weapon::getCurAmmo() const {
 	return mCurAmmo;
 }
 
@@ -124,7 +124,7 @@ void Weapon::setIsOneShot(bool is_one_shot) {
 	mIsOneShot = is_one_shot; 
 }
 
-bool Weapon::getIsOneShot()const { 
+bool Weapon::getIsOneShot() const { 
 	return mIsOneShot;
 }
 
@@ -132,7 +132,7 @@ void Weapon::setHittingRange(float hitting_range) {
 	mHittingRange = hitting_range;
 }
 
-float Weapon::getHittingRange()const {
+float Weapon::getHittingRange() const {
 	return mHittingRange;
 }
 
