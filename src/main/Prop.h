@@ -1,4 +1,4 @@
-#ifndef THE_DARK_CRYSTAL_PROP
+ï»¿#ifndef THE_DARK_CRYSTAL_PROP
 #define THE_DARK_CRYSTAL_PROP
 
 
@@ -7,18 +7,18 @@
 #include <cstdint>
 
 /**
-  * µÀ¾ßÀà£¬ÎäÆ÷¡¢µ¯Ò©¡¢²¹¸øºÍË®¾§µÄ»ùÀà
+  * é“å…·ç±»ï¼Œæ­¦å™¨ã€å¼¹è¯ã€è¡¥ç»™å’Œæ°´æ™¶çš„åŸºç±»
   */
 class Prop : public dt::Node {
 	Q_OBJECT
 public:
 
-	enum PropType {         //µÀ¾ßÀàÐÍ
-		VEHICLE,        //ÔØ¾ß
-		WEAPON,         //ÎäÆ÷
-		AMMO,           //µ¯Ò©
-		CRYSTAL,        //Ë®¾§
-		FIRST_AID_KIT   //²¹¸ø
+	enum PropType {         //é“å…·ç±»åž‹
+		VEHICLE,        //è½½å…·
+		WEAPON,         //æ­¦å™¨
+		AMMO,           //å¼¹è¯
+		CRYSTAL,        //æ°´æ™¶
+		FIRST_AID_KIT   //è¡¥ç»™
 	};
 
 	Prop();
@@ -36,8 +36,8 @@ public:
 	PropType getPropType() const;  
 
 private:
-	QString mName;          //!< µÀ¾ßÃû³Æ 
-	PropType mPropType;     //!< µÀ¾ßÀàÐÍ 
+	QString mName;          //!< é“å…·åç§°
+	PropType mPropType;     //!< é“å…·ç±»åž‹
 };
 
 #endif
