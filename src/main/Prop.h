@@ -1,5 +1,5 @@
-#ifndef THE_DARK_CRYSTAL_PROP_STATE
-#define THE_DARK_CRYSTAL_PROP_STATE
+#ifndef THE_DARK_CRYSTAL_PROP
+#define THE_DARK_CRYSTAL_PROP
 
 
 #include <Scene/Node.hpp>
@@ -7,7 +7,7 @@
 #include <cstdint>
 
 /**
-  * 道具类，武器，弹药，补给，水晶的基类
+  * 道具类，武器、弹药、补给和水晶的基类
   */
 class Prop : public dt::Node {
 	Q_OBJECT
@@ -19,13 +19,11 @@ public:
 
 	~Prop();
 
-    // 道具类型
-	enum ProType {  
-		VEHICLE,       //载具
-		WEAPON,        //武器
-		AMMO,          //弹药
-        FIRST_AID_KIT, //急救包
-		CRYSTAL        //水晶
+	enum ProType {          //道具类型
+		VEHICLE,        //载具
+		WEAPON,         //武器
+		AMMO,           //弹药
+		CRYSTAL         //水晶
 	};
 
 	QString getName();
