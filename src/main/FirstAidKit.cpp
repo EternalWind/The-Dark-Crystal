@@ -5,7 +5,7 @@ FirstAidKit::FirstAidKit() {
 
 FirstAidKit::FirstAidKit(const QString &name, uint16_t recovery_val) 
 					: mRecoveryVal(recovery_val) {
-	Prop(name, FIRSTAIDKIT);
+	Prop(name, FIRST_AID_KIT);
 }
 
 FirstAidKit::~FirstAidKit() {
