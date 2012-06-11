@@ -1,5 +1,8 @@
 #include "Alien.h"
 #include "ConfigurationManager.h"
+#include "Ammo.h"
+#include "FirstAidKit.h"
+#include "Crystal.h"
 
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
@@ -267,22 +270,52 @@ void Alien::__onAddEquipment(bool is_pressed) {
 void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
     if (object != nullptr) {
         Prop* prop = dynamic_cast<Prop*>(object->getNode());
+        Weapon* weapon = nullptr;
 
         if (prop != nullptr) {
             switch (prop->getPropType()) {
             case Prop::WEAPON:
-                addWeapon(dynamic_cast<Weapon*>(prop));
+                weapon = dynamic_cast<Weapon*>(prop);
+                addWeapon(weapon);
 
                 break;
 
             case Prop::AMMO:
+                Ammo* ammo;
+
+                ammo = dynamic_cast<Ammo*>(prop);
+                weapon = mWeapons[ammo->getWeaponType()];
+
+                if (weapon != nullptr && weapon->getMaxClip() != weapon->getCurClip()) {
+                    weapon->setCurClip(weapon->getCurClip() + ammo->getClipNum());
+                    ammo->kill();
+                }
                 
                 break;
 
-            case Prop::CRYSTAL:
-                this->getScene()->removeChildNode(prop->getName());
+            case Prop::FIRST_AID_KIT:
+                FirstAidKit* first_aid_kit;
 
-                emit sGetCrystal();
+                first_aid_kit = dynamic_cast<FirstAidKit*>(prop);
+
+                if (this->getCurHealth() < this->getMaxHealth()) {
+                    this->setCurHealth(this->getCurHealth() + first_aid_kit->getRecoveryVal());
+                    first_aid_kit->kill();
+                }
+
+                break;
+
+            case Prop::CRYSTAL:
+                Crystal* crystal;
+
+                crystal = dynamic_cast<Crystal*>(prop);
+
+                if (crystal->isUnlocked()) {
+                    emit sGetCrystal(this);
+                    crystal->kill();
+                } else {
+                    crystal->beginUnlock();
+                }
 
                 break;
 
