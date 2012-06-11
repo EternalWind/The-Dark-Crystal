@@ -125,7 +125,7 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
     bool is_stopped = false;
 
     switch (type) {
-    case MoveType::FORWARD:
+    case FORWARD:
         if (is_pressed)
             mMoveVector.z += 1.0f;
         else
@@ -133,7 +133,7 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
 
         break;
 
-    case MoveType::BACKWARD:
+    case BACKWARD:
         if (is_pressed)
             mMoveVector.z -= 1.0f;
         else
@@ -141,7 +141,7 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
 
         break;
 
-    case MoveType::LEFTWARD:
+    case LEFTWARD:
         if (is_pressed)
             mMoveVector.x -= 1.0f;
         else
@@ -149,7 +149,7 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
 
         break;
 
-    case MoveType::RIGHTWARD:
+    case RIGHTWARD:
         if (is_pressed)
             mMoveVector.x += 1.0f;
         else
@@ -157,7 +157,7 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
 
         break;
 
-    case MoveType::STOP:
+    case STOP:
         is_stopped = true;
 
         break;
