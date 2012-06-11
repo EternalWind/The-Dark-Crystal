@@ -4,18 +4,33 @@ const QString Entity::MESH_COMPONENT = "mesh";
 
 const QString Entity::PHYSICS_BODY_COMPONENT = "physics_body";
 
-Entity::Entity(const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass) 
-    : mMeshHandle(mesh_handle),
+Entity::Entity(const QString name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass) 
+    : dt::Node(name),
+      mCurHealth(0),
+      mMaxHealth(0),
+      mCurSpeed(0),
+      mOrigSpeed(0),
+      mEyePosition(0.0f, 0.0f, 0.0f),
+      mID(""),
+      mMeshHandle(mesh_handle),
       mCollisionShapeType(collision_shape_type),
-      mMass(mass) {}
+      mMass(mass),
+      mMoveVector(0.0f, 0.0f, 0.0f),
+      mIsAddingEquipment(false),
+      mIsMoving(false),
+      mHasSpeededUp(false) {}
 
 uint16_t Entity::getCurHealth() const {
     return mCurHealth;
 }
 
 void Entity::setCurHealth(const uint16_t current_health) {
-    if(mCurHealth != current_health)
+    if (mCurHealth != current_health) {
+        uint16_t pre_health = mCurHealth;
         mCurHealth = current_health;
+
+        emit sHealthChanged(pre_health, mCurHealth);
+    }
 }
 
 uint16_t Entity::getMaxHealth() const {
@@ -23,7 +38,7 @@ uint16_t Entity::getMaxHealth() const {
 }
 
 void Entity::setMaxHealth(const uint16_t max_health) {
-    if(mMaxHealth != max_health)
+    if (mMaxHealth != max_health)
         mMaxHealth = max_health;
 }
 
@@ -32,7 +47,7 @@ QString Entity::getID() const {
 }
 
 void Entity::setID(const QString id) {
-    if(mID != id)
+    if (mID != id)
         mID = id;
 }
 
@@ -41,17 +56,21 @@ uint16_t Entity::getCurSpeed() const {
 }
 
 void Entity::setCurSpeed(const uint16_t cur_speed) {
-    if(mCurSpeed != cur_speed)
+    if (mCurSpeed != cur_speed) {
+        uint16_t pre_speed = mCurSpeed;
         mCurSpeed = cur_speed;
+
+        emit sSpeedChanged(pre_speed, mCurSpeed);
+    }
 }
 
-uint16_t Entity::getMaxSpeed() const {
-    return mMaxSpeed;
+uint16_t Entity::getOrigSpeed() const {
+    return mOrigSpeed;
 }
 
-void Entity::setMaxSpeed(const uint16_t max_speed) {
-    if(mMaxSpeed != max_speed)
-        mMaxSpeed = max_speed;
+void Entity::setOrigSpeed(const uint16_t original_speed) {
+    if (mOrigSpeed != original_speed)
+        mOrigSpeed = original_speed;
 }
 
 Ogre::Vector3 Entity::getEyePosition() const {
@@ -59,8 +78,13 @@ Ogre::Vector3 Entity::getEyePosition() const {
 }
 
 void Entity::setEyePosition(const Ogre::Vector3 eye_position) {
-    if(mEyePosition != eye_position)
+    if (mEyePosition != eye_position)
         mEyePosition = eye_position;
+}
+
+bool Entity::isOnGround() {
+    return this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->
+        getLinearVelocity().getY() == 0.0f;
 }
 
 void Entity::onInitialize() {

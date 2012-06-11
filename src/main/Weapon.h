@@ -1,5 +1,5 @@
-#ifndef THE_DARK_CRYSTAL_WEAPON_STATE
-#define THE_DARK_CRYSTAL_WEAPON_STATE
+#ifndef THE_DARK_CRYSTAL_WEAPON
+#define THE_DARK_CRYSTAL_WEAPON
 
 #include "Prop.h"
 #include <Logic\InteractionComponent.hpp>
@@ -99,12 +99,19 @@ public:
 	  */	
 	void reload();
 
-	void onEnable();
 
 signals:
+	/**
+	  * 一个该武器当前弹夹的弹药数被改变时发出的signal
+	  * @param cur_ammo 改变后的弹药数
+	  */
 	void sAmmoChanged(uint16_t cur_ammo);
 
-	void sClipChanged(uint16_t cur_clip);
+	/**
+	  * 一个该武器的弹夹数被改变时发出的signal
+	  * @param cur_clip 改变后的弹夹数
+	  */
+	void sClipNumChanged(uint16_t cur_clip);
 
 private slots:
 	void _onHit(dt::PhysicsBodyComponent *hit);

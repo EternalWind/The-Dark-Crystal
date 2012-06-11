@@ -1,5 +1,5 @@
-#ifndef THE_DARK_CRYSTAL_PROP_STATE
-#define THE_DARK_CRYSTAL_PROP_STATE
+#ifndef THE_DARK_CRYSTAL_PROP
+#define THE_DARK_CRYSTAL_PROP
 
 
 #include <Scene/Node.hpp>
