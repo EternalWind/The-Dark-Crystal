@@ -14,7 +14,7 @@ public:
 	
 	~Crystal();
 
-	uint16_t getUnlockTime()const;
+	uint16_t getUnlockTime() const;
 
 	void setUnlockTime(uint16_t unlock_time);
 

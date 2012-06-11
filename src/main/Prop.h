@@ -27,19 +27,16 @@ public:
 
 	~Prop();
 
-	QString getName();
+	QString getName() const;
 
 	void setName(QString name);
 
-	/**
-	  * 返回道具类型
-	  * @param
-	  * @returns 枚举类型ProType
-	  */
-	PropType getPropType(); 
+	void setPropType(PropType prop_type);
+	
+	PropType getPropType() const;  
 
 private:
-	QString mName;          //!< 道具名称 
+	QString mName;          //!< 道具名称
 	PropType mPropType;     //!< 道具类型
 };
 
