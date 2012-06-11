@@ -1,10 +1,10 @@
-ï»¿#ifndef THE_DARK_CRYSTAL_FIRSTAIDKIT
+#ifndef THE_DARK_CRYSTAL_FIRSTAIDKIT
 #define THE_DARK_CRYSTAL_FIRSTAIDKIT
 
 #include "Prop.h"
 
 /**
-  * è¡¥ç»™ç±»ï¼Œå›å¤è¡€é‡
+  * ²¹¸øÀà£¬»Ø¸´ÑªÁ¿
   */
 class FirstAidKit: public Prop {
 	Q_OBJECT
@@ -20,7 +20,7 @@ public:
 	void setRecoveryVal(uint16_t recovery_val);	
 
 private:
-	uint16_t mRecoveryVal;  //!< å¯æ¢å¤è¡€é‡
+	uint16_t mRecoveryVal;  //!< ¿É»Ö¸´ÑªÁ¿
 
 };
 
