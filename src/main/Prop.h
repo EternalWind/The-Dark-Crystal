@@ -1,4 +1,4 @@
-ï»¿#ifndef THE_DARK_CRYSTAL_PROP
+#ifndef THE_DARK_CRYSTAL_PROP
 #define THE_DARK_CRYSTAL_PROP
 
 
@@ -7,18 +7,18 @@
 #include <cstdint>
 
 /**
-  * é“å…·ç±»ï¼Œæ­¦å™¨ã€å¼¹è¯ã€è¡¥ç»™å’Œæ°´æ™¶çš„åŸºç±»
+  * µÀ¾ßÀà£¬ÎäÆ÷¡¢µ¯Ò©¡¢²¹¸øºÍË®¾§µÄ»ùÀà
   */
 class Prop : public dt::Node {
 	Q_OBJECT
 public:
 
-	enum PropType {         //é“å…·ç±»å‹
-		VEHICLE,        //è½½å…·
-		WEAPON,         //æ­¦å™¨
-		AMMO,           //å¼¹è¯
-		CRYSTAL,        //æ°´æ™¶
-		FIRSTAIDKIT     //è¡¥ç»™
+	enum PropType {         //µÀ¾ßÀàĞÍ
+		VEHICLE,        //ÔØ¾ß
+		WEAPON,         //ÎäÆ÷
+		AMMO,           //µ¯Ò©
+		CRYSTAL,        //Ë®¾§
+		FIRST_AID_KIT   //²¹¸ø
 	};
 
 	Prop();
@@ -32,15 +32,15 @@ public:
 	void setName(QString name);
 
 	/**
-	  * è¿”å›é“å…·ç±»å‹
+	  * ·µ»ØµÀ¾ßÀàĞÍ
 	  * @param
-	  * @returns æšä¸¾ç±»å‹ProType
+	  * @returns Ã¶¾ÙÀàĞÍProType
 	  */
 	PropType getPropType(); 
 
 private:
-	QString mName;          //!< é“å…·åç§° 
-	PropType mPropType;     //!< é“å…·ç±»å‹
+	QString mName;          //!< µÀ¾ßÃû³Æ 
+	PropType mPropType;     //!< µÀ¾ßÀàĞÍ
 };
 
 #endif
