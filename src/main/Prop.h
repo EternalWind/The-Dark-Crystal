@@ -36,8 +36,8 @@ public:
 	PropType getPropType() const;  
 
 private:
-	QString mName;          //!< 道具名称
-	PropType mPropType;     //!< 道具类型
+	QString mName;          //!< 道具名称 
+	PropType mPropType;     //!< 道具类型 
 };
 
 #endif
