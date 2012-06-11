@@ -44,7 +44,7 @@ Weapon::Weapon( const QString &name,
 				mPhysicsBody(nullptr),    
 				mHittingRange(hitting_range),
 				mMaterialHandle(material_handle) { 
-	Prop::Prop(name);
+	Prop(name, WEAPON);
 }
 
 Weapon::~Weapon(){

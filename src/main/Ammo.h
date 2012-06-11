@@ -11,7 +11,7 @@ class Ammo : public Prop {
 public:
 	Ammo();
 
-	Ammo(uint16_t clip_num, Weapon::WeaponType weapon_type);
+	Ammo(const QString &name, uint16_t clip_num, Weapon::WeaponType weapon_type);
 
 	~Ammo();
 

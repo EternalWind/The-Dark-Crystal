@@ -3,8 +3,9 @@
 Crystal::Crystal() {
 }
 	
-Crystal::Crystal(uint16_t unlock_time) 
+Crystal::Crystal(const QString &name, uint16_t unlock_time) 
 			: mUnlockTime(unlock_time) {
+	Prop(name, CRYSTAL);
 }
 	
 Crystal::~Crystal() {
