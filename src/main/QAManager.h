@@ -49,7 +49,7 @@ public:
     ~QAManager();
 private:
     std::map<uint16_t, Question*> mQuestions;       //!< 存放问题的数组
-    static std::shared_ptr<QAManager> mInstance;    //!< QAManager 的静态实例 
+    static std::shared_ptr<QAManager> mInstance;     //!< QAManager 的静态实例 
 };
 
 #endif

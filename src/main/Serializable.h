@@ -4,7 +4,7 @@
 #include <QtXml/QtXml>
 
 /**
-  *对变量进行序列化的接口
+  * 对变量进行序列化的接口
   *
   */
 class Serializable {

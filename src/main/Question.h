@@ -54,8 +54,8 @@ public:
     bool evaluate(const uint16_t index);
 
 private:
-    QString mQustion;               //!< 问题内容
-    uint16_t mCorrectAnswser;        //!< 正确答案序号
+    QString mQustion;                //!< 问题内容
+    uint16_t mCorrectAnswser;         //!< 正确答案序号
     std::vector<QString> mAnswers;    //!< 答案选项
 
 };
