@@ -2,6 +2,9 @@
 #define THE_DARK_CRYSTAL_CRYSTAL
 #include "Prop.h"
 
+/**
+  * Ë®¾§Àà
+  */
 class Crystal: public Prop {
 	Q_OBJECT
 public:

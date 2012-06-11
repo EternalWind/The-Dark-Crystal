@@ -3,6 +3,9 @@
 
 #include "Prop.h"
 
+/**
+  * 补给类，回复血量
+  */
 class FirstAidKit: public Prop {
 	Q_OBJECT
 public:
