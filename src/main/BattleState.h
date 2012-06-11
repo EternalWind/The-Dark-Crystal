@@ -23,8 +23,8 @@ public:
 
 	/**
 	  * 初始化
-	  * @params tot_enemy_num 地图上所有的怪兽数量
-	  * @params tot_crystal_num 地图上所有的水晶数量
+	  * @param tot_enemy_num 地图上所有的怪兽数量
+	  * @param tot_crystal_num 地图上所有的水晶数量
 	  */
 	BattleState(uint16_t tot_enemy_num = 0, uint16_t tot_crystal_num = 0);
 
@@ -53,7 +53,7 @@ public:
 
 	/**
 	  * 设置对话窗口
-	  * @params 设置对话窗口
+	  * @param 设置对话窗口
 	  */
 	void setDialogLabel(dt::GuiLabel* dialog_label);
 
@@ -65,7 +65,7 @@ public:
 
 	/**
 	  * 设置总敌人数量
-	  * @params total_enemy_num
+	  * @param total_enemy_num
 	  */
 	void setTotalEnemyNum(uint16_t total_enemy_num);
 
@@ -77,7 +77,7 @@ public:
 
 	/*
 	 * 设置剩下敌人数量
-	 * @params remain_enemy_num 剩余敌人数量
+	 * @param remain_enemy_num 剩余敌人数量
 	 */
 	void setRemainEnemyNum(uint16_t remain_enemy_num);
 
@@ -89,7 +89,7 @@ public:
 
 	/**
 	  * 设置总水晶数量
-	  * @params total_crystal_num 水晶总数量
+	  * @param total_crystal_num 水晶总数量
 	  */
 	void setTotalCrystalNum(uint16_t total_crystal_num);
 
@@ -101,11 +101,22 @@ public:
 
 	/**
 	  * 设置已获得水晶数量
-	  * @params obtained_crystal_num 已获得水晶数量
+	  * @param obtained_crystal_num 已获得水晶数量
 	  */
 	void setObtainedCrystalNum(uint16_t obtained_crystal_num);
 
-	void onclick(MyGUI::Widget* _sender);
+	/**
+	  * 返回问答窗口
+	  * @returns 问答窗口
+	  */
+	dt::GuiLabel* getQuestionLabel();
+
+	/**
+	  * 设置问答窗口
+	  * @param label 问答窗口
+	  */
+	void setQuestionLabel(dt::GuiLabel* label);
+
 
 protected slots:
 
@@ -124,7 +135,7 @@ protected slots:
 	void __onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender);
 
 
-private:
+protected:
 	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值
 	std::vector<dt::GuiImageBox*> mAmmoHUD;		//!< 弹药量 
 	std::vector<dt::GuiImageBox*> mFrontSight;	//!< 准星
