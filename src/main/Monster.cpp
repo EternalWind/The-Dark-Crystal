@@ -37,9 +37,9 @@ Monster::Monster(const QString node_name,
 	const QString jump_sound_handle, 
 	const QString run_sound_handle,
 	const QString attack_sound_handle,
-	uint16_t attack_value,
-	float attack_range,
-	float attack_interval)
+	const uint16_t attack_value,
+	const float attack_range, 
+	const float attack_interval)
 	: Entity(node_name, mesh_handle, collision_shape_type, mass),
 	mWalkSoundHandle(walk_sound_handle),
 	mJumpSoundHandle(jump_sound_handle),
@@ -51,6 +51,8 @@ Monster::Monster(const QString node_name,
 }
 	
 void Monster::onInitialize() {
+	Entity::onInitialize();
+
     auto conf_mgr = ConfigurationManager::getInstance() ;
     SoundSetting sound_setting = conf_mgr->getSoundSetting();
 
@@ -170,7 +172,6 @@ void Monster::__onAttack(bool is_pressed) {
 		auto interator = this->findComponent<dt::RaycastComponent>(INTERACTOR_COMPONENT);
 		auto attack_sound = this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT);
 		if (interator->isReady()) {
-			//attack_sound->stopSound();
 			attack_sound->playSound();
 			interator->check();
 		}

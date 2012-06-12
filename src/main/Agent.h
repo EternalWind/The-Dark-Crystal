@@ -51,7 +51,9 @@ signals:
 
 protected:
     QString mName;
-    const static QString AGENT;
+
+public:
+    const static QString AGENT;    //!< AgentÃû×Ö
 };
 
 #endif
