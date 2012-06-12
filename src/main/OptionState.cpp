@@ -134,7 +134,7 @@ void OptionState::onClick(MyGUI::Widget* sender) {
 	} else if(sender->getName() == "Gui.credit_button") {
         //
 	} else if(sender->getName() == "Gui.forward_button") {
-        mActionToChange = 
+        //mActionToChange = 
     }
 }
 
@@ -151,5 +151,5 @@ void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t positi
 void OptionState::onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& event) {
 }
 
-void updateStateFrame(double simulation_frame_time) {
+void OptionState::updateStateFrame(double simulation_frame_time) {
 }

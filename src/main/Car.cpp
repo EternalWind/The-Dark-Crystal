@@ -95,6 +95,6 @@ void Car::__onSpeedUp(bool is_pressed) {
 	mHasSpeededUp = is_pressed;
 }
 
-void __onLookAround(Ogre::Quaternion quaternion) {
+void Car::__onLookAround(Ogre::Quaternion quaternion) {
 	/* 这是车啊，不是坦克啊！！！头不会转啊有木有啊！！！ */
 }
