@@ -3,29 +3,30 @@
 #include "Agent.h"
 #include "Alien.h"
 #include <Logic/TriggerAreaComponent.hpp>
+#include <QString>
 
 class PlayerAIAgent : public Agent {
 Q_OBJECT
 public: 
-        PlayerAIAgent(); 
-	bool isOnWay(); 
-	void setOnWay(bool type); 	
-	Alien* getBody(); 
-	void setBody(Alien* body); 
-       /**
-        * 若是mOnWay这个状态为true，则行走。
-        */	
-	void walk(double time_diff); 
-       /**
-        * 若mThreat状态为true，则在原地警戒，击杀怪物。        
-        */	
-	void guard(double time_diff); 
-       /**
-        * 当没有任何状态为true的时候，要做出决策选择移动还是原地警戒。     
-        */	
-	void decision(double time_diff); 
-	void onUpdate(double time_diff);
-	void initialize();
+    PlayerAIAgent(QString name); 
+    bool isOnWay(); 
+    void setOnWay(bool type); 	
+    Alien* getBody(); 
+    void setBody(Alien* body); 
+    /**
+      * 若是mOnWay这个状态为true，则行走。
+      */	
+    void walk(double time_diff); 
+    /**
+      * 若mThreat状态为true，则在原地警戒，击杀怪物。        
+      */	
+    void guard(double time_diff); 
+    /**
+      * 当没有任何状态为true的时候，要做出决策选择移动还是原地警戒。     
+      */	
+    void decision(double time_diff); 
+    void onUpdate(double time_diff);
+    void initialize();
 private slots:
     void __onFire(dt::PhysicsBodyComponent* pbc); 
     void __onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c);

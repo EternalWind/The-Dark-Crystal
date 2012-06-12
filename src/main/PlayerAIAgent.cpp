@@ -13,7 +13,7 @@ const double  PlayerAIAgent::PI = acos(-1.0);
 const double  PlayerAIAgent::ROTATE_FLOAT = PI / 24; 
 const double  PlayerAIAgent::ENTER_SCOPE = 1.0;
 
-PlayerAIAgent::PlayerAIAgent() {
+PlayerAIAgent::PlayerAIAgent(QString name): Agent(name) {    
     //初始化无任何状态
     mFollow = mThreat = mOnWay = false; 
 }
