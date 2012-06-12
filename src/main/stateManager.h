@@ -6,8 +6,8 @@
 ****/
 
 
-#ifndef STATE_MANAGER_H
-#define STATE_MANAGER_H
+#ifndef THE_DARK_CRYSTAL_STATE_MANAGER
+#define THE_DARK_CRYSTAL_STATE_MANAGER
 
 #include <Scene/State.hpp>
 #include <Scene/StateManager.hpp>
