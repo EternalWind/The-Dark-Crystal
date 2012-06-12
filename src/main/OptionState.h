@@ -7,7 +7,7 @@
 #include <Gui/GuiLabel.hpp>
 #include <Gui/GuiButton.hpp>
 #include <Gui/GuiImageBox.hpp>
-//#include <Gui/GuiCheckBox.hpp>
+#include <Gui/GuiCheckBox.hpp>
 #include <Gui/GuiScrollBar.hpp>
 
 /**
