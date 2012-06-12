@@ -54,6 +54,6 @@ private:
 	dt::GuiLabel* mMusicVolumeLabel;            //!< 显示背景音乐大小
 	dt::GuiLabel* mMessageLabel;                //!< 显示消息
 	ControlSetting::KeyFunction mActionToChange;//!< 记录当前要设置的功能
-}
+};
 
 #endif

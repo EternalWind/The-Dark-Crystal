@@ -43,11 +43,9 @@ public:
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
 
-    void __onAttack(bool is_pressed);
-
     void __onSpeedUp(bool is_pressed);
 
-    void __onLookAround(Ogre::Quaternion quaternion);
+	void __onLookAround(Ogre::Quaternion quaternion);
 
 
 protected:
