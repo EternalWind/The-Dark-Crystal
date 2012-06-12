@@ -14,12 +14,13 @@ ControlSetting::ControlSetting()
     mKeyMap[ARM3] = pair<QString, InputManager::InputCode>("Arm3", InputManager::KC_3);
     mKeyMap[ATTACK] = pair<QString, InputManager::InputCode>("Attack", InputManager::MC_LEFT);
     mKeyMap[RELOAD] = pair<QString, InputManager::InputCode>("Reload", InputManager::KC_P);
+    mKeyMap[THROW] = pair<QString, InputManager::InputCode>("Throw", InputManager::KC_L);
     mKeyMap[GET_OFF] = pair<QString, InputManager::InputCode>("GetOff", InputManager::KC_R);
     mKeyMap[ACTIVATE] = pair<QString, InputManager::InputCode>("Activate", InputManager::KC_E);
 
     mYInverted = true;
 
-    mSentivity = 10;
+    mSentivity = 10.0f;
 
 }
 
@@ -59,12 +60,12 @@ void ControlSetting::setYInverted(bool y_inverted)
 }
 
 
-unsigned ControlSetting::getSensitivity() const
+float ControlSetting::getSensitivity() const
 {
-    return mSentivity;
+    return mSensitivity;
 }
 
-void ControlSetting::setSentivity(unsigned sensitivity)
+void ControlSetting::setSensitivity(float sensitivity)
 {
-    mSentivity = sensitivity;
+    mSensitivity = sensitivity;
 }
