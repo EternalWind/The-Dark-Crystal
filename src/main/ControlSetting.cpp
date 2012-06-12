@@ -19,7 +19,7 @@ ControlSetting::ControlSetting()
 
     mYInverted = true;
 
-    mSentivity = 10;
+    mSentivity = 10.0f;
 
 }
 
@@ -59,12 +59,12 @@ void ControlSetting::setYInverted(bool y_inverted)
 }
 
 
-unsigned ControlSetting::getSensitivity() const
+float ControlSetting::getSensitivity() const
 {
-    return mSentivity;
+    return mSensitivity;
 }
 
-void ControlSetting::setSentivity(unsigned sensitivity)
+void ControlSetting::setSensitivity(float sensitivity)
 {
-    mSentivity = sensitivity;
+    mSensitivity = sensitivity;
 }
