@@ -63,6 +63,8 @@ void Monster::onUpdate(double time_diff) {
 		mTimeAfterAttack = 0.0f;
 		mDuringAttack = false;
 	}
+
+    Node::onUpdate(time_diff);
 }
 	
 void Monster::onInitialize() {
