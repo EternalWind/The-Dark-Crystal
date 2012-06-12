@@ -27,6 +27,7 @@ public:
         ARM3,
         ATTACK,
         RELOAD,
+        THROW,
         GET_OFF,
         ACTIVATE
     };
