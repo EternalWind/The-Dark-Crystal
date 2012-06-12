@@ -50,7 +50,7 @@ public:
     //SensitivitySetting
     float getSensitivity() const;
 
-    void setmSensitivity(float sensitivity);
+    void setSensitivity(float sensitivity);
 
 
 private:
