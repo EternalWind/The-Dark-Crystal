@@ -72,7 +72,7 @@ void MenuState::onClick(MyGUI::Widget* sender) {
     } else if(sender->getName() == "Gui.multi_player_button") {
 	} else if(sender->getName() == "Gui.settings_button") {
 		dt::StateManager::get()->pop();
-		dt::StateManager::get()->setNewState(new FirstState());
+		//dt::StateManager::get()->setNewState(new FirstState());
 	} else if(sender->getName() == "Gui.new_game_button") {
 	} else if(sender->getName() == "Gui.load_record_button") {
 	} else if(sender->getName() == "Gui.exit_button") {
