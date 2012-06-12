@@ -45,6 +45,7 @@ public:
 	  * @param attack_value 载具攻击力
 	  * @param attack_range 载具攻击范围
 	  * @param attack_interval 载具攻击时间间隔
+	  * @param attack_sound_handle 载具攻击声音句柄
 	  */
 	Vehicle(const QString node_name, 
 			const QString mesh_handle, 
@@ -52,17 +53,28 @@ public:
 			const btScalar mass,
 			const uint16_t attack_value,
 			const float attack_range,
-			const float attack_interval);
+			const float attack_interval,
+			const QString attack_sound_handle);
 
 	virtual void onInitialize();
 
     virtual void onDeinitialize();
 
+protected slots:
+
+	void __onAttack(bool is_pressed);
+
+	void __onGetOffVehicle();
+
+	void __onHit(dt::PhysicsBodyComponent* hit);
 
 protected:
-	uint16_t mAttackValue;        //!< 攻击力
-	float mAttackRange;           //!< 攻击范围
-	float mAttackInterval;        //!< 攻击间隔时间
+	uint16_t mAttackValue;                       //!< 攻击力
+	float mAttackRange;                          //!< 攻击范围
+	float mAttackInterval;                       //!< 攻击间隔时间
+	QString mAttackSoundHandle;                  //!< 载具攻击声音句柄
+	static const QString ATTACK_SOUND_COMPONENT; //!< 载具攻击声音Component的名字
+	static const QString INTERATOR_COMPONENT;    //!< 载具攻击交互Component的名字
 };
 
 #endif
