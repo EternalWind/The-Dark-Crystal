@@ -1,10 +1,10 @@
-#ifndef THE_DARK_CRYSTAL_VEHICLE
+ï»¿#ifndef THE_DARK_CRYSTAL_VEHICLE
 #define THE_DARK_CRYSTAL_VEHICLE
 
 #include "Entity.h"
 
 /**
-  * ÔØ¾ßÀà, ÓÎÏ·ÖĞ³öÏÖµÄÔØ¾ß
+  * è½½å…·ç±», æ¸¸æˆä¸­å‡ºç°çš„è½½å…·
   */
 class Vehicle : public Entity {
 
@@ -13,33 +13,33 @@ class Vehicle : public Entity {
 public:
 	
 	/**
-	  * ·µ»ØÔØ¾ß¹¥»÷Á¦
-	  * @returns ÔØ¾ß¹¥»÷Á¦
+	  * è¿”å›è½½å…·æ”»å‡»åŠ›
+	  * @returns è½½å…·æ”»å‡»åŠ›
 	  */
 	uint16_t getAttackValue();
 
 	/**
-	  * ÉèÖÃÔØ¾ß¹¥»÷Á¦
-	  * @param attack_value ÔØ¾ß¹¥»÷Á¦
+	  * è®¾ç½®è½½å…·æ”»å‡»åŠ›
+	  * @param attack_value è½½å…·æ”»å‡»åŠ›
 	  */
 	void setAttackValue(uint16_t attack_value);
 
 	/** 
-	  * ·µ»ØÔØ¾ß¹¥»÷·¶Î§
-	  * @returns ÔØ¾ß¹¥»÷·¶Î§
+	  * è¿”å›è½½å…·æ”»å‡»èŒƒå›´
+	  * @returns è½½å…·æ”»å‡»èŒƒå›´
 	  */
 	float getAttackRange();
 
 	/**
-	  * ÉèÖÃÔØ¾ß¹¥»÷·¶Î§
-	  * @param attack_range ÔØ¾ß¹¥»÷·¶Î§
+	  * è®¾ç½®è½½å…·æ”»å‡»èŒƒå›´
+	  * @param attack_range è½½å…·æ”»å‡»èŒƒå›´
 	  */
 	void setAttackRange(float attack_range);
 
 
 protected:
-	uint16_t mAttackValue;        //!< ¹¥»÷Á¦
-	float mAttackRange;           //!< ¹¥»÷·¶Î§
+	uint16_t mAttackValue;        //!< æ”»å‡»åŠ›
+	float mAttackRange;           //!< æ”»å‡»èŒƒå›´
 
 };
 
