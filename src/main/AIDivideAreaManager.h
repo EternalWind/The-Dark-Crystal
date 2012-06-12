@@ -24,11 +24,11 @@ public:
 	 /**
 	   *AIDivideAreaManager单例化。
 	   */
-	 AIDivideAreaManager* get(); 
+	 static AIDivideAreaManager* get(); 
 	 void addArea(uint16_t pre, Ogre::Vector3 position);	 
 	 Ogre::Vector3 getPositionById(uint16_t id);
 private:
-	Ogre::Vector3 mPosition[1000];                         //<!每个area的中心点
+	Ogre::Vector3 mPosition[1000];                   //<!每个area的中心点
 	uint16_t mAreaNum;                               //<!区域数量   
 	double mEdge[1000][1000];                        //<!区域之间的最短距离 一个地图最多只有1000个区域	
     
