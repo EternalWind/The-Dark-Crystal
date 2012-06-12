@@ -46,7 +46,7 @@ public:
       */
     ~TextManager();
 private:
-    std::map<uint16_t, QString> mTexts;        //!< 存放文本的数组
+    std::map<uint16_t, QString> mTexts;                //!< 存放文本的数组
     static std::shared_ptr<TextManager> mInstance;     //!< TextManager 的静态实例 
 };
 
