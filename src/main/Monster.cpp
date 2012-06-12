@@ -47,22 +47,7 @@ Monster::Monster(const QString node_name,
 	mAttackSoundHandle(attack_sound_handle),
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
-	mAttackInterval(attack_interval),
-	mTimeAfterAttack(0.0f),
-	mDuringAttack(false) {
-}
-
-void Monster::onUpdate(double time_diff) {
-	Node::onUpdate(time_diff);
-	
-	if (mDuringAttack) {
-		mTimeAfterAttack += time_diff;
-	}
-
-	if (mTimeAfterAttack > mAttackInterval) {
-		mTimeAfterAttack = 0.0f;
-		mDuringAttack = false;
-	}
+	mAttackInterval(attack_interval) {
 }
 	
 void Monster::onInitialize() {
@@ -86,6 +71,7 @@ void Monster::onInitialize() {
 
 	auto interator = this->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
 	interator->setRange(this->getAttackRange());
+	interator->setIntervalTime(mAttackInterval);
 
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
 		this, SLOT(__onHit(dt::PhysicsBodyComponent*)));
@@ -180,8 +166,7 @@ void Monster::__onJump(bool is_pressed) {
 }
 
 void Monster::__onAttack(bool is_pressed) {
-	if (is_pressed && !mDuringAttack) {
-		mDuringAttack = true;
+	if (is_pressed) {
 		auto interator = this->findComponent<dt::RaycastComponent>(INTERACTOR_COMPONENT);
 		auto attack_sound = this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT);
 		if (interator->isReady()) {

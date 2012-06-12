@@ -22,13 +22,12 @@ public:
         RIGHTWARD,
         JUMP,
         SPRINT,
-        SWITCH,
         ARM1,
         ARM2,
         ARM3,
-        ARM4,
         ATTACK,
-        DEFENSE,
+        RELOAD,
+        GET_OFF,
         ACTIVATE
     };
 
