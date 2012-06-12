@@ -17,7 +17,7 @@ class QAManager: public dt ::Manager {
 public:
     /** 
       * 获取QAManager
-      * @return QAManager 指针
+      * @returns QAManager 指针
       */
     static QAManager* getInstance();
     
@@ -49,7 +49,7 @@ public:
     ~QAManager();
 private:
     std::map<uint16_t, std::shared_ptr<Question> > mQuestions;        //!< 存放问题的数组
-    static std::shared_ptr<QAManager> mInstance;     //!< QAManager 的静态实例 
+    static std::shared_ptr<QAManager> mInstance;                   //!< QAManager 的静态实例 
 };
 
 #endif

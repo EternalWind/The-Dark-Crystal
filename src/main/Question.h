@@ -12,19 +12,19 @@ class Question {
 public:
     /**
       * 获取问题内容
-      * @return 问题的内容
+      * @returns 问题的内容
       */
     QString getQuestion() const;
 
     /** 
       * 获取问题选项
-      * @return 选项内容数组
+      * @returns 选项内容数组
       */
     std::vector<QString> getAnswers() const;
 
     /** 
       * 获取问题的正确答案
-      * @return 正确答案
+      * @returns 正确答案
       */
     uint16_t getCorrectAnswer() const;
 
@@ -49,7 +49,7 @@ public:
     /** 
       * 判断回答是否正确
       * @param 选择的答案序号
-      * @return 回答是否正确
+      * @returns 回答是否正确
       */
     bool evaluate(const uint16_t index);
 
