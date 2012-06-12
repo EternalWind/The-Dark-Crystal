@@ -236,7 +236,7 @@ void ConfigurationManager::__loadControlSetting(const QDomElement& element)
 
     auto sensitivity_setting = element.firstChildElement(SENSITIVITY);
     unsigned sensitivity_value = sensitivity_setting.attribute(VALUE).toUInt();
-    mControlSetting.setSentivity(sensitivity_value);
+    mControlSetting.setSensitivity(sensitivity_value);
 
 }
 
