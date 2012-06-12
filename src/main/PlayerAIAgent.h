@@ -26,6 +26,7 @@ public:
 	void onUpdate(double time_diff);
 	void initialize();
 private:
+    bool mFollow;
 	Alien* mBody;                           //<! 外星人身体，为agent的父节点，agent充当着控制外星人的大脑。
 	bool mOnWay;                            //<! 是否在路上。若做出了移动决策，在没有到达目的地之前，这个状态都为true。
 	bool mThreat;                           //<! 由thickComponent触发，当受到威胁的时候，进入guard状态
