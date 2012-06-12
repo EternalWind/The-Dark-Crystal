@@ -91,6 +91,8 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
 }
 
 void Alien::onInitialize() {
+    Entity::onInitialize();
+
     auto conf_mgr = ConfigurationManager::getInstance() ;
     SoundSetting sound_setting = conf_mgr->getSoundSetting();
 
@@ -115,13 +117,17 @@ void Alien::onInitialize() {
     this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 }
 
-void Alien::onDeInitialize() {}
+void Alien::onDeInitialize() {
+    Entity::onDeinitialize();
+}
 
 void Alien::onUpdate(double time_diff) {
     if (mIsAddingEquipment) {
         mIsAddingEquipment = false;
         this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
+
+    Node::onUpdate(time_diff);
 }
 
 void Alien::__onMove(MoveType type, bool is_pressed) {
@@ -172,6 +178,9 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
     if (is_stopped) {
         this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
         this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+
+        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+            ->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
     } else {
         if (!mMoveVector.isZeroLength())
             mMoveVector.normalise();
