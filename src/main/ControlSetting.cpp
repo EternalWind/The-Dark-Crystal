@@ -20,7 +20,7 @@ ControlSetting::ControlSetting()
 
     mYInverted = true;
 
-    mSentivity = 10.0f;
+    mSensitivity = 10.0f;
 
 }
 
