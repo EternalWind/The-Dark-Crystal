@@ -8,7 +8,7 @@ std::vector<QString> Question::getAnswers() const {
     return mAnswers;
 }
 
-QString  Question::getCorrectAnswer() const {
+uint16_t  Question::getCorrectAnswer() const {
     return mCorrectAnswser;
 }
 
