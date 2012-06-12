@@ -6,7 +6,6 @@ QDomElement QATrigger::serializeToXML(QDomDocument& doc) {
     auto isEnabled_node = doc.createElement("IsEnable");
     isEnabled_node.setAttribute("value", QATrigger::isEnabled());
     QA_node.appendChild(isEnabled_node);
-
     return QA_node;
 }
 
