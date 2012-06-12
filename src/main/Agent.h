@@ -53,7 +53,7 @@ protected:
     QString mName;
 
 public:
-    const static QString AGENT;    //!< AgentÃû×Ö
+    const static QString AGENT;    //!< Agent_Name
 };
 
 #endif
