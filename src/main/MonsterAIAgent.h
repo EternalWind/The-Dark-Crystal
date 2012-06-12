@@ -10,17 +10,17 @@
 class MonsterAIAgent : public Agent {
 Q_OBJECT
 public:
-	/**
-      * 注释
-      * @param 参数
-      * @returns 返回值
-      */	
-	bool isThreat();
-	void setThreat(bool type); 
-	/** 
-      *当在威胁状态下的时候，寻找一个威胁方位并向它扑过去，在攻击范围的时候就攻击
-      */
-	void findAndAttack();  
+     /**
+       * 注释
+       * @param 参数
+       * @returns 返回值
+       */	
+     bool isThreat();
+     void setThreat(bool type); 
+     /** 
+       *当在威胁状态下的时候，寻找一个威胁方位并向它扑过去，在攻击范围的时候就攻击
+       */
+     void findAndAttack();  
 private:
 
 	Monster * mBody;        //!< 怪物身体
