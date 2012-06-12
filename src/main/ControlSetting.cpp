@@ -14,7 +14,7 @@ ControlSetting::ControlSetting()
     mKeyMap[ARM3] = pair<QString, InputManager::InputCode>("Arm3", InputManager::KC_3);
     mKeyMap[ATTACK] = pair<QString, InputManager::InputCode>("Attack", InputManager::MC_LEFT);
     mKeyMap[RELOAD] = pair<QString, InputManager::InputCode>("Reload", InputManager::KC_P);
-    mKeyMap[GETOFF] = pair<QString, InputManager::InputCode>("GetOff", InputManager::KC_R);
+    mKeyMap[GET_OFF] = pair<QString, InputManager::InputCode>("GetOff", InputManager::KC_R);
     mKeyMap[ACTIVATE] = pair<QString, InputManager::InputCode>("Activate", InputManager::KC_E);
 
     mYInverted = true;
