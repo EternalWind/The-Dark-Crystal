@@ -17,9 +17,9 @@ class QAManager: public dt ::Manager {
 public:
     /** 
       * 获取QAManager
-      * @return QAManager 指针
+      * @returns QAManager 指针
       */
-    QAManager* get();
+    static QAManager* getInstance();
     
     /** 
       * 从文件获取问题
@@ -31,7 +31,7 @@ public:
       * 随机抽取一个问题
       * @param 抽取到的问题的指针
       */
-    Question* getRandomQuestion();
+    std::shared_ptr<Question> getRandomQuestion();
 
     /** 
       * 继承自Manager类的初始化函数
@@ -48,8 +48,8 @@ public:
       */
     ~QAManager();
 private:
-    std::map<uint16_t, Question*> mQuestions;        //!< 存放问题的数组
-    static std::shared_ptr<QAManager> mInstance;     //!< QAManager 的静态实例 
+    std::map<uint16_t, std::shared_ptr<Question> > mQuestions;    //!< 存放问题的数组
+    static std::shared_ptr<QAManager> mInstance;                  //!< QAManager 的静态实例 
 };
 
 #endif

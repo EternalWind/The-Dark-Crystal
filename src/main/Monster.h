@@ -50,6 +50,7 @@ public:
 	  * @param attck_sound_handle ¹ÖÊŞ¹¥»÷µÄÒôĞ§¾ä±ú
 	  * @param attack_value ¹ÖÊŞ¹¥»÷Á¦
 	  * @param attack_range ¹ÖÊŞ¹¥»÷·¶Î§
+	  * @param attack_interval ¹ÖÊŞ¹¥»÷¼ä¸ôÊ±¼ä
 	  */
 	Monster(const QString node_name,
 			const QString mesh_handle,
@@ -59,8 +60,9 @@ public:
 			const QString jump_sound_handle, 
 			const QString run_sound_handle,
 			const QString attack_sound_handle,
-			uint16_t attack_value,
-			float attack_range
+			const uint16_t attack_value,
+			const float attack_range, 
+			const float attack_interval
 		);
 
 
@@ -90,12 +92,13 @@ protected slots:
 
     //void __onReload();
 
-	void __onHit(dt::PhysicsBodyComponent* component);
+	void __onHit(dt::PhysicsBodyComponent* hit);
 
 
 protected:
 	uint16_t mAttackValue;      //!< ½ĞÊŞ¹¥»÷Á¦
-	float	mAttackRange;       //!< ½ĞÊŞ¹¥»÷·¶Î§
+	float mAttackRange;         //!< ½ĞÊŞ¹¥»÷·¶Î§
+	float mAttackInterval;      //!< ½ĞÊŞ¹¥»÷¼ä¸ôÊ±¼ä
 	QString mWalkSoundHandle;   //!< ¹ÖÊŞ×ßÂ·ÉùÒô¾ä±ú
 	QString mJumpSoundHandle;   //!< ¹ÖÎïÌøÔ¾ÉùÒô¾ä±ú
 	QString mRunSoundHandle;    //!< ¹ÖÊŞÅÜ²½ÒôĞ§¾ä±ú
