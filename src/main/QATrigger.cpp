@@ -1,7 +1,7 @@
 #include "QATrigger.h"
 
 QDomElement QATrigger::serializeToXML(QDomDocument& doc) const {
-
+	return QDomElement();
 }
 
 void QATrigger::deserializeFromXML(const QDomElement& doc) {

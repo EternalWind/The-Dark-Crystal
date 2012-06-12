@@ -61,11 +61,10 @@ public:
 			const QString run_sound_handle,
 			const QString attack_sound_handle,
 			uint16_t attack_value,
-			float attack_range,
+			float attack_range, 
 			float attack_interval
 		);
 
-	void onUpdate(double time_diff);
 
 protected slots:	   
 
@@ -100,8 +99,6 @@ protected:
 	uint16_t mAttackValue;      //!< ½ÐÊÞ¹¥»÷Á¦
 	float mAttackRange;         //!< ½ÐÊÞ¹¥»÷·¶Î§
 	float mAttackInterval;      //!< ½ÐÊÞ¹¥»÷¼ä¸ôÊ±¼ä
-	float mTimeAfterAttack;     //!< ½ÐÊÞ¹¥»÷ºó¾­¹ýµÄÊ±¼ä
-	bool mDuringAttack;         //!< ¹ÖÊÞÊÇ·ñÕýÔÚ¹¥»÷
 	QString mWalkSoundHandle;   //!< ¹ÖÊÞ×ßÂ·ÉùÒô¾ä±ú
 	QString mJumpSoundHandle;   //!< ¹ÖÎïÌøÔ¾ÉùÒô¾ä±ú
 	QString mRunSoundHandle;    //!< ¹ÖÊÞÅÜ²½ÒôÐ§¾ä±ú
