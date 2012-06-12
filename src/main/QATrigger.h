@@ -19,7 +19,7 @@ public:
     * @param doc  记录信息的XML文件
     * @return XML文件节点
     */
-    QDomElement serializeToXML(QDomDocument& doc) const;
+    QDomElement serializeToXML(QDomDocument& doc) ;
 
   /**
     * 对Element反序列化, 继承自Serializable

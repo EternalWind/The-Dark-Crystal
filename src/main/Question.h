@@ -26,7 +26,7 @@ public:
       * 获取问题的正确答案
       * @return 正确答案
       */
-    QString getCorrectAnswer() const;
+    uint16_t getCorrectAnswer() const;
 
     /** 
       * 设置问题内容
