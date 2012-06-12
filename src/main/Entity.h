@@ -162,7 +162,7 @@ signals:
     /**
       * 一个在成功获取到一个水晶后会发送的signal。
       */
-    void sGetCrystal();
+    void sGetCrystal(Entity* entity);
 
 protected slots:
     virtual void __onMove(MoveType type, bool is_pressed) = 0;

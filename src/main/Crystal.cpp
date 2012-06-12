@@ -3,18 +3,67 @@
 Crystal::Crystal() {
 }
 	
-Crystal::Crystal(const QString &name, uint16_t unlock_time) 
-			: mUnlockTime(unlock_time) {
-	Prop(name, CRYSTAL);
-}
+Crystal::Crystal(const QString &name, double unlock_time) 
+			: Prop(name, CRYSTAL),
+              mUnlockTime(unlock_time),
+              mUnlockProgress(0.0),
+              mIsUnlocking(false) {}
 	
 Crystal::~Crystal() {
 }
 
-uint16_t Crystal::getUnlockTime() const {
+double Crystal::getUnlockTime() const {
 	return mUnlockTime;
 }
 
-void Crystal::setUnlockTime(uint16_t unlock_time) {	
+void Crystal::setUnlockTime(double unlock_time) {	
 	mUnlockTime = unlock_time;
+}
+
+double Crystal::getUnlockProgress() const {
+    return mUnlockProgress;
+}
+
+void Crystal::setUnlockProgress(const double unlock_progress) {
+    if (mUnlockProgress != unlock_progress && mUnlockProgress < mUnlockTime) {
+        double pre_progress = mUnlockProgress / mUnlockTime;
+
+        if (unlock_progress <= mUnlockTime) {
+            mUnlockProgress = unlock_progress;
+        } else {
+            mUnlockProgress = mUnlockTime;
+        }
+
+        emit sUnlockProgressChanged(this, pre_progress, mUnlockProgress / mUnlockTime);
+    }
+}
+
+double Crystal::getUnlockProgressPercentage() const {
+    return (float)mUnlockProgress / mUnlockTime;
+}
+
+void Crystal::setUnlockProgressPercentage(const double unlock_progress) {
+    setUnlockProgress(unlock_progress * mUnlockTime);
+}
+
+bool Crystal::isUnlocked() const {
+    return getUnlockProgress() == getUnlockTime();
+}
+
+void Crystal::beginUnlock() {
+    mIsUnlocking = true;
+}
+
+void Crystal::onUpdate(double time_diff) {
+    if (mIsUnlocking) {
+        mIsUnlocking = false;
+        
+        if (mUnlockProgress != mUnlockTime) {
+            setUnlockProgress(mUnlockProgress + time_diff);
+        }
+    } else {
+        if (mUnlockProgress != 0.0) {
+            setUnlockProgress(mUnlockProgress - time_diff);
+        }
+    }
 }

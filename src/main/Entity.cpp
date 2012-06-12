@@ -27,7 +27,12 @@ uint16_t Entity::getCurHealth() const {
 void Entity::setCurHealth(const uint16_t current_health) {
     if (mCurHealth != current_health) {
         uint16_t pre_health = mCurHealth;
-        mCurHealth = current_health;
+
+        if (current_health <= mMaxHealth) {
+            mCurHealth = current_health;
+        } else {
+            mCurHealth = mMaxHealth;
+        }
 
         emit sHealthChanged(pre_health, mCurHealth);
     }
