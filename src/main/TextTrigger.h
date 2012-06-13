@@ -5,7 +5,7 @@
 #include "Serializable.h"
 
 #include <Scene/Component.hpp>
-//#include <Logic/TriggerAreaComponent.hpp>
+#include <Logic/TriggerAreaComponent.hpp>
 #include <Scene/Node.hpp>
 
 
@@ -32,8 +32,8 @@ public:
 
     void setTextId (const uint16_t text_id);
 
-//public slots:
-//    void onTrigger(dt::TriggerAreaComponent* trigger_area, dt::Component* compoment);
+public slots:
+    void onTrigger(dt::TriggerAreaComponent* trigger_area, dt::Component* compoment);
 
 signals:
     void sTriggerText(uint16_t text_id);

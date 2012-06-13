@@ -20,10 +20,10 @@ void TextTrigger::deserializeFromXML(const QDomElement& element) {
     }
 }
 
-//void TextTrigger::onTrigger(dt::TriggerAreaComponent* trigger_area, dt::Component* compoment) {
-//    uint16_t text_id = getTextId();
-//    emit sTriggerText(text_id);
-//}
+void TextTrigger::onTrigger(dt::TriggerAreaComponent* trigger_area, dt::Component* compoment) {
+    uint16_t text_id = getTextId();
+    emit sTriggerText(text_id);
+}
 
 uint16_t TextTrigger::getTextId() const {
     return mTextId;
