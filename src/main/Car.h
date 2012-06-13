@@ -37,8 +37,8 @@ public:
 		const QString rush_sound_handle,
 		const float width,
 		const float length,
-	    const float max_speed,
-	  	const float straight_acce,
+		const float max_speed,
+		const float straight_acce,
 		const float angular_acce);
 
 	void onInitialize();
