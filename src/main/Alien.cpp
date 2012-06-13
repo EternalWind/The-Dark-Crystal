@@ -221,7 +221,7 @@ void Alien::__onAttack(bool is_pressed) {
     Weapon* weapon = this->getCurWeapon();
 
     if (weapon != nullptr)
-        weapon->attack();
+        weapon->attack(is_pressed);
 }
 
 void Alien::__onSpeedUp(bool is_pressed) {
