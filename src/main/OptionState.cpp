@@ -228,37 +228,38 @@ void OptionState::onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& eve
     if (mActionButton == nullptr)   return;
 
     if (mActionButton->getName() == "Gui.forward_button") {
-        mActionToChange = ControlSetting::KeyFunction.FORWARD;
+        mActionToChange = ControlSetting::KeyFunction::FORWARD;
     } else if (mActionButton->getName() == "Gui.backward_button") {
-        mActionToChange = ControlSetting::KeyFunction.BACKWARD;
+        mActionToChange = ControlSetting::KeyFunction::BACKWARD;
     } else if (mActionButton->getName() == "Gui.leftward_button") {
-        mActionToChange = ControlSetting::KeyFunction.LEFTWARD;
+        mActionToChange = ControlSetting::KeyFunction::LEFTWARD;
     } else if (mActionButton->getName() == "Gui.rightward_button") {
-        mActionToChange = ControlSetting::KeyFunction.RIGHTWARD;
+        mActionToChange = ControlSetting::KeyFunction::RIGHTWARD;
     } else if (mActionButton->getName() == "Gui.jump_button") {
-        mActionToChange = ControlSetting::KeyFunction.JUMP;
+        mActionToChange = ControlSetting::KeyFunction::JUMP;
     } else if (mActionButton->getName() == "Gui.sprint_button") {
-        mActionToChange = ControlSetting::KeyFunction.SPRINT;
+        mActionToChange = ControlSetting::KeyFunction::SPRINT;
     } else if (mActionButton->getName() == "Gui.arm1_button") {
-        mActionToChange = ControlSetting::KeyFunction.ARM1;
+        mActionToChange = ControlSetting::KeyFunction::ARM1;
     } else if (mActionButton->getName() == "Gui.arm2_button") {
-        mActionToChange = ControlSetting::KeyFunction.ARM2;
+        mActionToChange = ControlSetting::KeyFunction::ARM2;
     } else if (mActionButton->getName() == "Gui.arm3_button") {
-        mActionToChange = ControlSetting::KeyFunction.ARM3;
+        mActionToChange = ControlSetting::KeyFunction::ARM3;
     } else if (mActionButton->getName() == "Gui.attack_button") {
-        mActionToChange = ControlSetting::KeyFunction.ATTACK;
+        mActionToChange = ControlSetting::KeyFunction::ATTACK;
     } else if (mActionButton->getName() == "Gui.reload_button") {
-        mActionToChange = ControlSetting::KeyFunction.RELOAD;
+        mActionToChange = ControlSetting::KeyFunction::RELOAD;
     } else if (mActionButton->getName() == "Gui.getoff_button") {
-        mActionToChange = ControlSetting::KeyFunction.GET_OFF;
+        mActionToChange = ControlSetting::KeyFunction::GET_OFF;
     } else if (mActionButton->getName() == "Gui.activate_button") {
-        mActionToChange = ControlSetting::KeyFunction.ACTIVATE;
+        mActionToChange = ControlSetting::KeyFunction::ACTIVATE;
     }
 
-    ConfigurationManager.getInstance()->getControlSetting().setKey(mActionToChange,code);
+	// >>>>>>>>>> AeronZhou 注释： 没有setKey这个函数
+    //ConfigurationManager.getInstance()->getControlSetting().setKey(mActionToChange,code);
     bool state_value = dynamic_cast<MyGUI::Button*>(mActionButton)->getStateSelected();
     dynamic_cast<MyGUI::Button*>(mActionButton)->setStateSelected(!state_value);
-    mMessageLabel->setCaption(QString::fromStdWString(L"设置成功：") + ConfigurationManager.getInstance()->getControlSetting().getKeyName());
+    //mMessageLabel->setCaption(QString::fromStdWString(L"设置成功：") + ConfigurationManager.getInstance()->getControlSetting().getKeyName());
 }
 
 void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t position) {
