@@ -46,6 +46,7 @@ include_directories(${PROJECT_SOURCE_DIR}/libs/boost
 					)
 
 include_directories(${PROJECT_SOURCE_DIR}/libs/ducttape/include)
+include_directories(${PROJECT_SOURCE_DIR}/src/main)
 
 # Qt4 stuff
 set(QT_USE_QTSCRIPT TRUE)
@@ -73,17 +74,6 @@ endif()
 #add_subdirectory(simplepong)
 
 
-MESSAGE(STATUS "This is TEST")
-aux_source_directory(src/test TEST_CPP)
-file(GLOB_RECURSE TEST_HPP src/test/*.hpp)
-file(GLOB_RECURSE TEST_H src/test/*.h)
-
-qt4_wrap_cpp(TEST_HEADERS_MOC ${TEST_HPP} ${TEST_H})
-
-MESSAGE(STATUS "This is MOC${TEST_HEADERS_MOC}")
-ADD_EXECUTABLE(TEST ${TEST_CPP} ${TEST_HEADERS_MOC})
-
-target_link_libraries(TEST ${LIBS_LIST})
 
 MESSAGE(STATUS "This is The-Dark-Crystal")
 aux_source_directory(src/main main_CPP)
@@ -95,6 +85,7 @@ MESSAGE(STATUS "This is MOC${main_HEADERS_MOC}")
 ADD_EXECUTABLE(The-Dark-Crystal ${main_CPP} ${main_HEADERS_MOC})
 
 target_link_libraries(The-Dark-Crystal ${LIBS_LIST})
+
 
 
 

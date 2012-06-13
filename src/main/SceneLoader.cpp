@@ -11,11 +11,10 @@
 #include "Logic/CollisionComponent.hpp"
 #include "Logic/TriggerAreaComponent.hpp"
 #include "Core/ResourceManager.hpp"
-#include "ControllerComponent.h"
 
 #include <QtXml/QtXml>
 #include <OgreProcedural.h>
-#include <OGRE/OgreSubEntity.h>
+#include <OgreSubEntity.h>
 
 #include <cstdint>
 
@@ -604,7 +603,7 @@ Node::NodeSP SceneLoader::__loadController(const QDomElement& og_component, Node
 {
     Node::NodeSP node = dt_node;
 
-    if ( !og_component.isNull() )
+    /*if ( !og_component.isNull() )
     {
         QString name = og_component.attribute(SL_NAME);
 
@@ -630,7 +629,7 @@ Node::NodeSP SceneLoader::__loadController(const QDomElement& og_component, Node
         {
             controller->disable();
         }
-    }
+    }*/
 
     return node;
 }
