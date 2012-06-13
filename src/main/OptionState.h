@@ -29,9 +29,9 @@ public:
 	void onClick(MyGUI::Widget* sender);
 
     /**
-	  * 控制按钮事件响应函数
-	  * @param sender 触发点击事件的按钮
-	  */
+      * 控制按钮事件响应函数
+      * @param sender 触发点击事件的按钮
+      */
 	void onSettingsButtonClick(MyGUI::Widget* sender);
 
 	/**
@@ -52,14 +52,14 @@ public slots:
     void onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& event);
 
 private:
-	dt::GuiCheckBox* mQASettingCheckBox;        //!< 问答系统开关
+    dt::GuiCheckBox* mQASettingCheckBox;        //!< 问答系统开关
     dt::GuiCheckBox* mDisplaySettingsCheckBox;  //!< 分辨率设置滚动条
-	dt::GuiScrollBar* mSoundVolumeScrollBar;    //!< 音效大小滚动条
-	dt::GuiScrollBar* mMusicVolumeScrollBar;    //!< 背景音乐大小滚动条
-	dt::GuiLabel* mDisplaySettingsLabel;        //!< 显示分辨率大小
-	dt::GuiLabel* mSoundVolumeLabel;            //!< 显示音效大小
-	dt::GuiLabel* mMusicVolumeLabel;            //!< 显示背景音乐大小
-	dt::GuiLabel* mMessageLabel;                //!< 显示消息j
+    dt::GuiScrollBar* mSoundVolumeScrollBar;    //!< 音效大小滚动条
+    dt::GuiScrollBar* mMusicVolumeScrollBar;    //!< 背景音乐大小滚动条
+    dt::GuiLabel* mDisplaySettingsLabel;        //!< 显示分辨率大小
+    dt::GuiLabel* mSoundVolumeLabel;            //!< 显示音效大小
+    dt::GuiLabel* mMusicVolumeLabel;            //!< 显示背景音乐大小
+    dt::GuiLabel* mMessageLabel;                //!< 显示消息j
     MyGUI::Widget* mActionButton;               //!< 记录功能设置按键
     ControlSetting::KeyFunction mActionToChange;//!< 记录当前要设置的功能
     
