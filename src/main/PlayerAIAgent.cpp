@@ -23,7 +23,7 @@ void PlayerAIAgent::walk() {
     Ogre::Vector3 dv = nxt_area_position - cur_position; 
     dv.y = 0; 
     
-    cur_rotation.getPitch
+//    cur_rotation.getPitch
 	
 }
 void PlayerAIAgent::guard() {

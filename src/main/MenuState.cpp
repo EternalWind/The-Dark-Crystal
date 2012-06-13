@@ -61,6 +61,12 @@ void MenuState::onInitialize() {
     load_record_button->setSize(100, 30);
 	load_record_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
+    auto credit_button = win.addChildWidget(new dt::GuiButton("credit_button"));
+    credit_button->setCaption("credit");
+    credit_button->setPosition(380, 10);
+    credit_button->setSize(100, 30);
+	credit_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+
 	auto exit_button = win.addChildWidget(new dt::GuiButton("exit_button"));
     exit_button->setCaption("Exit");
     exit_button->setPosition(10, 130);
@@ -69,18 +75,22 @@ void MenuState::onInitialize() {
 }
 
 void MenuState::onClick(MyGUI::Widget* sender) {
-	if(sender->getName() == "Gui.single_player_button") {
+	if (sender->getName() == "Gui.single_player_button") {
         //
-    } else if(sender->getName() == "Gui.multi_player_button") {
+    } else if (sender->getName() == "Gui.multi_player_button") {
         //
-	} else if(sender->getName() == "Gui.settings_button") {
+	} else if (sender->getName() == "Gui.settings_button") {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new OptionState());
-	} else if(sender->getName() == "Gui.new_game_button") {
+	} else if (sender->getName() == "Gui.new_game_button") {
+         dt::StateManager::get()->pop();
+//        dt::StateManager::get()->setNewState(new MenuState());
+	} else if (sender->getName() == "Gui.load_record_button") {
         //
-	} else if(sender->getName() == "Gui.load_record_button") {
-        //
-	} else if(sender->getName() == "Gui.exit_button") {
+	} else if (sender->getName() == "Gui.credit_button") {
+        dt::StateManager::get()->pop();
+//        dt::StateManager::get()->setNewState(new MenuState());
+	} else if (sender->getName() == "Gui.exit_button") {
         dt::StateManager::get()->pop();
 	}
 }
