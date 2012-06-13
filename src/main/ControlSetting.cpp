@@ -9,18 +9,18 @@ ControlSetting::ControlSetting()
     mKeyMap[RIGHTWARD] = pair<QString, InputManager::InputCode>("Rightward", InputManager::KC_D);
     mKeyMap[JUMP] = pair<QString, InputManager::InputCode>("Jump", InputManager::KC_SPACE);
     mKeyMap[SPRINT] = pair<QString, InputManager::InputCode>("Sprint", InputManager::KC_LSHIFT);
-    mKeyMap[SWITCH] = pair<QString, InputManager::InputCode>("Switch", InputManager::KC_Q);
     mKeyMap[ARM1] = pair<QString, InputManager::InputCode>("Arm1", InputManager::KC_1);
     mKeyMap[ARM2] = pair<QString, InputManager::InputCode>("Arm2", InputManager::KC_2);
     mKeyMap[ARM3] = pair<QString, InputManager::InputCode>("Arm3", InputManager::KC_3);
-    mKeyMap[ARM4] = pair<QString, InputManager::InputCode>("Arm4", InputManager::KC_4);
     mKeyMap[ATTACK] = pair<QString, InputManager::InputCode>("Attack", InputManager::MC_LEFT);
-    mKeyMap[DEFENSE] = pair<QString, InputManager::InputCode>("Defence", InputManager::MC_RIGHT);
+    mKeyMap[RELOAD] = pair<QString, InputManager::InputCode>("Reload", InputManager::KC_P);
+    mKeyMap[THROW] = pair<QString, InputManager::InputCode>("Throw", InputManager::KC_L);
+    mKeyMap[GET_OFF] = pair<QString, InputManager::InputCode>("GetOff", InputManager::KC_R);
     mKeyMap[ACTIVATE] = pair<QString, InputManager::InputCode>("Activate", InputManager::KC_E);
 
-    mYInverted = false;
+    mYInverted = true;
 
-    mSentivity = 10;
+    mSensitivity = 10.0f;
 
 }
 
@@ -60,12 +60,12 @@ void ControlSetting::setYInverted(bool y_inverted)
 }
 
 
-unsigned ControlSetting::getSensitivity() const
+float ControlSetting::getSensitivity() const
 {
-    return mSentivity;
+    return mSensitivity;
 }
 
-void ControlSetting::setSentivity(unsigned sensitivity)
+void ControlSetting::setSensitivity(float sensitivity)
 {
-    mSentivity = sensitivity;
+    mSensitivity = sensitivity;
 }

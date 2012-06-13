@@ -62,6 +62,10 @@ bool ConfigurationManager::loadConfig()
             {
                 __loadControlSetting(config_node);
             }
+            else if (tag_name == QA_SETTING)
+            {
+                __loadQASetting(config_node);
+            }
         }
     }
     else
@@ -95,6 +99,7 @@ bool ConfigurationManager::saveConfig() const
     root.appendChild(__saveScreenSetting(doc));
     root.appendChild(__saveSoundSetting(doc));
     root.appendChild(__saveControlSetting(doc));
+    root.appendChild(__saveQASetting(doc));
     // Save it to the file.
     QTextStream out(&config_file);
     out << doc.toString();
@@ -133,6 +138,34 @@ ControlSetting ConfigurationManager::getControlSetting() const
 void ConfigurationManager::setControlSetting(ControlSetting control_setting)
 {
     mControlSetting = control_setting;
+}
+
+
+QASetting ConfigurationManager::getQASetting() const
+{
+    return mQASetting;
+}
+
+void ConfigurationManager::setQASetting(QASetting qa_setting)
+{
+    mQASetting = qa_setting;
+}
+
+void ConfigurationManager::__loadQASetting(const QDomElement& element)
+{
+    auto is_enable_node = element.firstChildElement(IS_ENABLE);
+    bool is_enable_value = is_enable_node.attribute(VALUE).toUInt();
+    mQASetting.setIsQAEnable(is_enable_value);
+}
+
+QDomElement ConfigurationManager::__saveQASetting(QDomDocument& doc) const
+{
+     auto QA_setting = doc.createElement(QA_SETTING);
+     auto is_enable = doc.createElement(IS_ENABLE);
+     is_enable.setAttribute(VALUE, mQASetting.getIsQAEnable());
+     QA_setting.appendChild(is_enable);
+
+     return QA_setting;
 }
 
 void ConfigurationManager::__loadSreenSetting(const QDomElement& element)
@@ -203,7 +236,7 @@ void ConfigurationManager::__loadControlSetting(const QDomElement& element)
 
     auto sensitivity_setting = element.firstChildElement(SENSITIVITY);
     unsigned sensitivity_value = sensitivity_setting.attribute(VALUE).toUInt();
-    mControlSetting.setSentivity(sensitivity_value);
+    mControlSetting.setSensitivity(sensitivity_value);
 
 }
 

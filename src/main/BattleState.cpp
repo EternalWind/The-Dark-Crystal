@@ -8,33 +8,51 @@
 #include <Core/ResourceManager.hpp>
 #include <OgreProcedural.h>
 #include <Scene/Game.hpp>
+#include <Gui/GuiRootWindow.hpp>
+#include <Gui/GuiManager.hpp>
+#include <Scene/StateManager.hpp>
+
 
 void BattleState::onInitialize() {
+	//dt::ResourceManager::get()->addDataPath(QDir("data"));
+	//dt::ResourceManager::get()->addResourceLocation("./models/evilfire.zip", "Zip", true);
 	dt::ResourceManager::get()->addDataPath(QDir("data"));
-	dt::ResourceManager::get()->addResourceLocation("./models/evilfire.zip", "Zip", true);
-	//dt::ResourceManager::get()->addResourceLocation("
+	dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+	dt::ResourceManager::get()->addResourceLocation("./models/sinbad.zip", "Zip", true);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-	dt::Scene::SceneSP scene = addScene(new dt::Scene("battle_state_scene"));
+	auto scene = addScene(new dt::Scene("battle_state_scene"));
 	OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
 
 	auto light_node = scene->addChildNode(new dt::Node("light_node"));
     light_node->setPosition(Ogre::Vector3(-2000, 2000, 1000));
     light_node->addComponent(new dt::LightComponent("light"));
 
-	//auto camera_node = scene->addChildNode(new dt::Node("camera_node"));
-	//camera_node->setPosition(Ogre::Vector3(0, 1.75, 5));
-	//camera_node->addComponent(new dt::CameraComponent("camera"))->lookAt(Ogre::Vector3(
+	auto camnode = scene->addChildNode(new dt::Node("camnode"));
+    camnode->setPosition(Ogre::Vector3(0, 5, 10));
+    camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));;
 
 	auto test_object = scene->addChildNode(new dt::Node("test_object"));
-	test_object->setPosition(Ogre::Vector3(0, 1, -5));
-	test_object->addComponent(new dt::MeshComponent("evilfire.mesh", "", "test_mesh"))->setCastShadows(true);
-	test_object->addComponent(new dt::PhysicsBodyComponent("test_mesh", "ball_body",
-							  dt::PhysicsBodyComponent::BOX))->setMass(1.0f);
+	test_object->setPosition(Ogre::Vector3(0, 0, -5));
+	test_object->addComponent(new dt::MeshComponent("Sinbad.mesh", "", "test_mesh"))->setCastShadows(true);
+
+	dt::GuiRootWindow& window = dt::GuiManager::get()->getRootWindow();
+
+	auto button1 = window.addChildWidget(new dt::GuiButton("b1"));
+    button1->setCaption("Health");
+    button1->setPosition(10, 600);
+    button1->setSize(200, 30);
+    //button1->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::onclick);
+
+
 }
 
 void BattleState::updateStateFrame(double simulation_frame_time) {
-
+	static double runTime = 0;
+	runTime += simulation_frame_time;
+	if (runTime > 4) {
+		dt::StateManager::get()->pop(1);
+	}
 }
 
 BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
@@ -54,7 +72,7 @@ void BattleState::win() {
 
 }
 
-QString BattleState::getBattleStateName() {
+QString BattleState::getBattleStateName() const {
 	return QString("BattleState");
 }
 
@@ -62,37 +80,81 @@ dt::GuiLabel* BattleState::getDialogLabel() {
 	return mDialogLabel;
 }
 
-void BattleState::setDialogDabel(dt::GuiLabel* dialog_label) {
+void BattleState::setDialogLabel(dt::GuiLabel* dialog_label) {
+	if (dialog_label) {
+		mDialogLabel = dialog_label;
+	}
+}
 
+uint16_t BattleState::getTotalEnemyNum() const {
+	return mTotalEnemyNum;
+}
+
+void BattleState::setTotalEnemyNum(uint16_t total_enemy_num) {
+	mTotalEnemyNum = total_enemy_num;
+}
+
+uint16_t BattleState::getRemainEnemyNum() const {
+	return mRemainEnemyNum;
+}
+
+void BattleState::setRemainEnemyNum(uint16_t remain_enemy_num) {
+	mRemainEnemyNum = remain_enemy_num;
+}
+
+uint16_t BattleState::getTotalCrystalNum() const {
+	return mTotalCrystalNum;
+}
+
+void BattleState::setTotalCrystalNum(uint16_t total_crystal_num) {
+	mTotalCrystalNum = total_crystal_num;
+}
+
+uint16_t BattleState::getObtainedCrystalNum() const {
+	return mObtainedCrystalNum;
+}
+
+void BattleState::setObtainedCrystalNum(uint16_t obtained_crystal_num) {
+	mObtainedCrystalNum = obtained_crystal_num;
+}
+
+dt::GuiLabel* BattleState::getQuestionLabel() {
+	return mQuestionLabel;
+}
+
+void BattleState::setQuestionLabel(dt::GuiLabel* label) {
+	if (label) {
+		mQuestionLabel = label;
+	}
 }
 
 // Slots
 
-void BattleState::onTriggerText(uint16_t text_id) {
+void BattleState::__onTriggerText(uint16_t text_id) {
+	mQuestionLabel->show();
+}
+
+void BattleState::__onHealthChanged(uint16_t pre_health, uint16_t cur_health) {
 
 }
 
-void BattleState::onHealthChanged() {
+void BattleState::__onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo) {
 
 }
 
-void BattleState::onAmmoChanged() {
+void BattleState::__onClipNumChanged(uint16_t pre_num, uint16_t cur_num) {
 
 }
 
-void BattleState::onClipNumChanged() {
+void BattleState::__onGetCrystal() {
 
 }
 
-void BattleState::onGetCrystal() {
-
+void BattleState::__onTriggerQA() {
+	getQuestionLabel()->show();
 }
 
-void BattleState::onTriggerQA() {
-
-}
-
-void BattleState::onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
+void BattleState::__onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
 
 }
 

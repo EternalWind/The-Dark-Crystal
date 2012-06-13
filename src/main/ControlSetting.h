@@ -22,13 +22,13 @@ public:
         RIGHTWARD,
         JUMP,
         SPRINT,
-        SWITCH,
         ARM1,
         ARM2,
         ARM3,
-        ARM4,
         ATTACK,
-        DEFENSE,
+        RELOAD,
+        THROW,
+        GET_OFF,
         ACTIVATE
     };
 
@@ -48,15 +48,15 @@ public:
     void setYInverted(bool y_inverted);
 
     //SensitivitySetting
-    unsigned getSensitivity() const;
+    float getSensitivity() const;
 
-    void setSentivity(unsigned sensitivity);
+    void setSensitivity(float sensitivity);
 
 
 private:
     map<KeyFunction, pair<QString, InputManager::InputCode>> mKeyMap;
     bool mYInverted;
-    unsigned mSentivity;
+    float mSensitivity;
 };
 
 #endif
