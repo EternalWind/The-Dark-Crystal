@@ -38,23 +38,23 @@ void HumanAgent::__onKeyDown(dt::InputManager::InputCode code, const OIS::EventA
     if (code == control_setting.getKey(ControlSetting::ACTIVATE)) {
         emit sAddEquipment(true);
     } else if (code == control_setting.getKey(ControlSetting::ARM1)) {
-        emit sChangeWeapon(Weapon::WeaponType::PRIMARY);
+        emit sChangeWeapon(Weapon::PRIMARY);
     } else if (code == control_setting.getKey(ControlSetting::ARM2)) {
-        emit sChangeWeapon(Weapon::WeaponType::SECONDARY);
+        emit sChangeWeapon(Weapon::SECONDARY);
     } else if (code == control_setting.getKey(ControlSetting::ARM3)) {
-        emit sChangeWeapon(Weapon::WeaponType::THROWABLE);
+        emit sChangeWeapon(Weapon::THROWABLE);
     } else if (code == control_setting.getKey(ControlSetting::ATTACK)) {
         emit sAttack(true);
     } else if (code == control_setting.getKey(ControlSetting::BACKWARD)) {
-        emit sMove(Entity::MoveType::BACKWARD, true);
+        emit sMove(Entity::BACKWARD, true);
     } else if (code == control_setting.getKey(ControlSetting::FORWARD)) {
-        emit sMove(Entity::MoveType::FORWARD, true);
+        emit sMove(Entity::FORWARD, true);
     } else if (code == control_setting.getKey(ControlSetting::JUMP)) {
         emit sJump(true);
     } else if (code == control_setting.getKey(ControlSetting::LEFTWARD)) {
-        emit sMove(Entity::MoveType::LEFTWARD, true);
+        emit sMove(Entity::LEFTWARD, true);
     } else if (code == control_setting.getKey(ControlSetting::RIGHTWARD)) {
-        emit sMove(Entity::MoveType::RIGHTWARD, true);
+        emit sMove(Entity::RIGHTWARD, true);
     } else if (code == control_setting.getKey(ControlSetting::SPRINT)) {
         emit sSpeedUp(true);
     } else if (code == control_setting.getKey(ControlSetting::GET_OFF)) {
@@ -77,28 +77,28 @@ void HumanAgent::__onKeyUp(dt::InputManager::InputCode code, const OIS::EventArg
     } else if (code == control_setting.getKey(ControlSetting::BACKWARD)) {
         isMoveRelated = true;
 
-        emit sMove(Entity::MoveType::BACKWARD, false);
+        emit sMove(Entity::BACKWARD, false);
     } else if (code == control_setting.getKey(ControlSetting::FORWARD)) {
         isMoveRelated = true;
 
-        emit sMove(Entity::MoveType::FORWARD, false);
+        emit sMove(Entity::FORWARD, false);
     } else if (code == control_setting.getKey(ControlSetting::JUMP)) {
         emit sJump(false);
     } else if (code == control_setting.getKey(ControlSetting::LEFTWARD)) {
         isMoveRelated = true;
 
-        emit sMove(Entity::MoveType::LEFTWARD, false);
+        emit sMove(Entity::LEFTWARD, false);
     } else if (code == control_setting.getKey(ControlSetting::RIGHTWARD)) {
         isMoveRelated = true;
 
-        emit sMove(Entity::MoveType::RIGHTWARD, false);
+        emit sMove(Entity::RIGHTWARD, false);
     } else if (code == control_setting.getKey(ControlSetting::SPRINT)) {
         emit sSpeedUp(false);
     }
 
     if (isMoveRelated) {
         if (input_mgr->isPressed(code)) {
-            emit sMove(Entity::MoveType::STOP, true);
+            emit sMove(Entity::STOP, true);
         }
     }
 }
