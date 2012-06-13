@@ -24,6 +24,6 @@ public:
 
     void updateStateFrame(double simulation_frame_time);
 	
-}
+};
 
 #endif

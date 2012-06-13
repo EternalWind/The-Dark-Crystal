@@ -63,6 +63,6 @@ private:
     MyGUI::Widget* mActionButton;               //!< 记录功能设置按键
     ControlSetting::KeyFunction mActionToChange;//!< 记录当前要设置的功能
     
-}
+};
 
 #endif

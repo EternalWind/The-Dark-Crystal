@@ -62,7 +62,7 @@ void OptionState::onInitialize() {
     mQASettingCheckBox->setCaption("openQASystem");
     mQASettingCheckBox->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onClick);
 
-    mDisplaySettingsCheckBox = win.addChildWidget(new dt::GuiCheckBox("DisplaySettingsScrollBar")).get();
+    mDisplaySettingsCheckBox = win.addChildWidget(new dt::GuiCheckBox("DisplaySettingsCheckBox")).get();
     mDisplaySettingsCheckBox->setPosition(410,70);
 	mDisplaySettingsCheckBox->setSize(30,30);
     mDisplaySettingsCheckBox->setCaption("Full Scream");
@@ -206,7 +206,7 @@ void OptionState::onClick(MyGUI::Widget* sender) {
     } else if (sender->getName() == "Gui.cancel_button") {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new MenuState());
-	} else if (sender->getName() == "Gui.QASettingCheckBox" || sender->getName() == "Gui.DisplaySettingsScrollBar") {
+	} else if (sender->getName() == "Gui.QASettingCheckBox" || sender->getName() == "Gui.DisplaySettingsCheckBox") {
         bool state_value = dynamic_cast<MyGUI::Button*>(sender)->getStateSelected();
         dynamic_cast<MyGUI::Button*>(sender)->setStateSelected(!state_value);
 	}
@@ -221,7 +221,7 @@ void OptionState::onSettingsButtonClick(MyGUI::Widget* sender) {
         mMessageLabel->setCaption(QString::fromStdWString(L"请按下要设置的按键"));
     } else {
         mActionButton = nullptr;
-    }
+	} 
 }
 
 void OptionState::onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& event) {
@@ -271,5 +271,5 @@ void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t positi
 	}
 }
 
-void updateStateFrame(double simulation_frame_time) {
+void OptionState::updateStateFrame(double simulation_frame_time) {
 }
