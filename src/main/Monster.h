@@ -60,9 +60,9 @@ public:
 			const QString jump_sound_handle, 
 			const QString run_sound_handle,
 			const QString attack_sound_handle,
-			uint16_t attack_value,
-			float attack_range, 
-			float attack_interval
+			const uint16_t attack_value,
+			const float attack_range, 
+			const float attack_interval
 		);
 
 

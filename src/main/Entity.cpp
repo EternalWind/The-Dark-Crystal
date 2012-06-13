@@ -56,11 +56,11 @@ void Entity::setID(const QString id) {
         mID = id;
 }
 
-uint16_t Entity::getCurSpeed() const {
+float Entity::getCurSpeed() const {
     return mCurSpeed;
 }
 
-void Entity::setCurSpeed(const uint16_t cur_speed) {
+void Entity::setCurSpeed(const float cur_speed) {
     if (mCurSpeed != cur_speed) {
         uint16_t pre_speed = mCurSpeed;
         mCurSpeed = cur_speed;
@@ -69,11 +69,11 @@ void Entity::setCurSpeed(const uint16_t cur_speed) {
     }
 }
 
-uint16_t Entity::getOrigSpeed() const {
+float Entity::getOrigSpeed() const {
     return mOrigSpeed;
 }
 
-void Entity::setOrigSpeed(const uint16_t original_speed) {
+void Entity::setOrigSpeed(const float original_speed) {
     if (mOrigSpeed != original_speed)
         mOrigSpeed = original_speed;
 }

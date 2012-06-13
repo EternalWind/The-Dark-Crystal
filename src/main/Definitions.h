@@ -25,6 +25,9 @@
 #define Y_INVERTED "Y_Inverted"
 #define SENSITIVITY "Sensitivity"
 #define VALUE "value"
+// QA Setting
+#define QA_SETTING "QA_Setting"
+#define IS_ENABLE "Is_Enable"
 //***************************************************************************************//
 
 #endif

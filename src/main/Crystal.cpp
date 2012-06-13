@@ -66,4 +66,6 @@ void Crystal::onUpdate(double time_diff) {
             setUnlockProgress(mUnlockProgress - time_diff);
         }
     }
+
+    Node::onUpdate(time_diff);
 }

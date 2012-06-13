@@ -1,4 +1,5 @@
 #include "OptionState.h"
+#include "MenuState.h"
 
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
@@ -114,16 +115,27 @@ void OptionState::onInitialize() {
     credit_button->setPosition(380, 10);
     credit_button->setSize(100, 30);
 	credit_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onClick);
+
+    //Control button
+    auto forward_button = win.addChildWidget(new dt::GuiButton("forward_button"));
+    forward_button->setCaption("FORWARD");
+    forward_button->setPosition(380, 10);
+    forward_button->setSize(50, 30);
+	forward_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onClick);
+
 }
 
 void OptionState::onClick(MyGUI::Widget* sender) {
     if(sender->getName() == "Gui.confirm_button") {
         //
     } else if(sender->getName() == "Gui.cancel_button") {
-        //
+        dt::StateManager::get()->pop();
+        dt::StateManager::get()->setNewState(new MenuState());
 	} else if(sender->getName() == "Gui.credit_button") {
         //
-	}
+	} else if(sender->getName() == "Gui.forward_button") {
+        //mActionToChange = 
+    }
 }
 
 void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t position) {
@@ -137,4 +149,7 @@ void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t positi
 }
 
 void OptionState::onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& event) {
+}
+
+void OptionState::updateStateFrame(double simulation_frame_time) {
 }

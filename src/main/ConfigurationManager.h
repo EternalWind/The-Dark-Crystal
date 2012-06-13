@@ -4,6 +4,7 @@
 #include "ScreenSetting.h"
 #include "SoundSetting.h"
 #include "ControlSetting.h"
+#include "QASetting.h"
 #include "Definitions.h"
 
 #include <boost/noncopyable.hpp>
@@ -34,6 +35,10 @@ public:
 
     void setControlSetting(ControlSetting control_setting);
 
+    QASetting getQASetting() const;
+
+    void setQASetting(QASetting qa_setting);
+
 private:
     void __loadSreenSetting(const QDomElement& element);
 
@@ -47,6 +52,10 @@ private:
 
     QDomElement __saveControlSetting(QDomDocument& doc) const;
 
+    void __loadQASetting(const QDomElement& element);
+
+    QDomElement __saveQASetting(QDomDocument& doc) const;
+
     ConfigurationManager();
 
     static std::shared_ptr<ConfigurationManager> mInstance;
@@ -56,6 +65,8 @@ private:
     SoundSetting mSoundSetting;
 
     ControlSetting mControlSetting;
+
+    QASetting mQASetting;
 };
 
 #endif

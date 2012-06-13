@@ -71,25 +71,25 @@ public:
       * 获取当前速度值。
       * @returns 该实体的当前速度值
       */
-    uint16_t getCurSpeed() const;
+    float getCurSpeed() const;
 
     /**
       * 设置当前速度值。
       * @param cur_speed 要设置的当前速度值
       */
-    void setCurSpeed(const uint16_t cur_speed);
+    void setCurSpeed(const float cur_speed);
 
     /**
       * 获取原有速度值。
       * @returns 该实体的原有速度值
       */
-    uint16_t getOrigSpeed() const;
+    float getOrigSpeed() const;
 
     /**
       * 设置原有速度值。
-      * @param max_speed 要设置的原有速度值
+      * @param original_speed 要设置的原有速度值
       */
-    void setOrigSpeed(const uint16_t original_speed);
+    void setOrigSpeed(const float original_speed);
 
     /**
       * 获取该实体的ID。
@@ -138,7 +138,7 @@ signals:
       * @param pre_speed 改变前的速度值
       * @param cur_speed 改变后的速度值
       */
-    void sSpeedChanged(uint16_t pre_speed, uint16_t cur_speed);
+    void sSpeedChanged(float pre_speed, float cur_speed);
 
     /**
       * 一个当当前武器改变时发出的signal。
@@ -192,8 +192,8 @@ protected slots:
 protected:
     uint16_t mCurHealth;                                              //!< 该实体的当前生命值。
     uint16_t mMaxHealth;                                              //!< 该实体的最大生命值。
-    uint16_t mCurSpeed;                                               //!< 该实体的当前速度值。
-    uint16_t mOrigSpeed;                                              //!< 该实体的原有速度值。
+    float mCurSpeed;                                                  //!< 该实体的当前速度值。
+    float mOrigSpeed;                                                 //!< 该实体的原有速度值。
     Ogre::Vector3 mEyePosition;                                       //!< 该实体的眼睛位置。
     QString mID;                                                      //!< 该实体的ID。
     QString mMeshHandle;                                              //!< 该实体的模型句柄。
