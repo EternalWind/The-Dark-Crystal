@@ -47,6 +47,8 @@ public:
 
 	void onDeinitialize();
 
+	void onUpdate(double time_diff);
+
 	void setWeaponType(WeaponType type);
 
 	WeaponType getWeaponType() const;
@@ -79,6 +81,10 @@ public:
 
 	bool getIsOneShot() const;
 
+	void setIsPressed(bool is_pressed);
+
+	bool getIsPressed() const;
+
 	void setHittingRange(float hitting_range);
 
 	float getHittingRange() const;
@@ -90,16 +96,19 @@ public:
 	const dt::InteractionComponent* getInterator() const;
 
 	/**
-	  * 射击
+	  * 开始射击
 	  */	
-	void attack();
+	void attack(bool isPress);
 
 	/**
 	  * 装弹
 	  */	
 	void reload();
 
-
+	/**
+	  * 单次发射
+	  */
+	void fire();
 signals:
 	/**
 	  * 一个该武器当前弹夹的弹药数被改变时发出的signal
@@ -128,6 +137,7 @@ private:
 	uint16_t mAmmoPerClip;                          //!< 每个弹夹的子弹数
 	uint16_t mCurAmmo;                              //!< 当前弹夹内的子弹数
 	bool mIsOneShot;                                //!< 是否可连击
+	bool mIsPressed;                                //!< 是否开始攻击
 	float mHittingRange;                            //!< 炸弹投掷距离
 
 	bool mIsPhysicsBodyEnabled;                     //!< 是否物理实体
