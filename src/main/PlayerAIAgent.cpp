@@ -108,20 +108,26 @@ void PlayerAIAgent::onUpdate(double time_diff) {
     } else decision(time_diff);  // 否则，决策之。
 }
 
-void PlayerAIAgent::initialize() {
+void PlayerAIAgent::onInitialize() {
 
     setBody(dynamic_cast<Alien *>(this->getParent()));
 
-    auto iteractor = this->addComponent<dt::InteractionComponent>(
-        new dt::RaycastComponent(INTERACTOR_COMPONENT));
+    mIteractor = this->addComponent<dt::InteractionComponent>(
+        new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();
     //只要没有障碍物，就可以攻击。
-    iteractor->setRange(3000.0f);    
-    connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)),
+    mIteractor->setRange(3000.0f);    
+    connect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
 
-    auto trigger = this->addComponent<dt::TriggerAreaComponent>(new dt::TriggerAreaComponent(
-        new btBoxShape(btVector3(5.0f, 5.0f, 5.0f)), TRIGGER_AREA_COMPONENT));
-    connect(trigger.get(), SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
+    mTrigger = this->addComponent<dt::TriggerAreaComponent>(new dt::TriggerAreaComponent(
+        new btBoxShape(btVector3(5.0f, 5.0f, 5.0f)), TRIGGER_AREA_COMPONENT)).get();
+    connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
+            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
+}
+void PlayerAIAgent::onDeinitialize() {
+     disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
+            this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
+     disconnect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
             this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
 }
 
