@@ -2,7 +2,7 @@
 #define THE_DARK_CRYSTAL_OPTION_STATE
 
 #include "ControlSetting.h"
-
+#include <QString>
 #include <Scene/State.hpp>
 #include <Gui/GuiLabel.hpp>
 #include <Gui/GuiButton.hpp>

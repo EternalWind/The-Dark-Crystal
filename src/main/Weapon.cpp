@@ -225,16 +225,16 @@ void Weapon::fire() {
 	}
 }
 
-void Weapon::attack(bool is_press) {
-	mIsPressed = is_press;
-	if (!mIsOneShot) {
-		if (mIsPressed)
-		{
+void Weapon::attack(bool is_pressed) {
+	mIsPressed = is_pressed;
+}
+
+void Weapon::onUpdate(double time_diff) {
+	if (mIsPressed) {
+		if (mIsOneShot) {
 			fire();
 			mIsPressed = 0;
-		}
-	} else {
-		if (mIsPressed) {
+		} else {
 			fire();
 		}
 	}

@@ -43,7 +43,7 @@ public:
 	void stop();
 	
 private:
-	QString mAnimationHandle;   //!< 动画文件名
+	QString mAnimationHandle;                  //!< 动画文件名
 	OgreUtils::DirectShowControl *mDshowPtr;   //!< 动画播放控制指针
 };
 #endif
