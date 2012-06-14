@@ -48,7 +48,7 @@ void SaveLoadState::onInitialize() {
     return_button->setSize(200, 30);
     return_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &SaveLoadState::onClick);
 
-    mRecordList = win.addChildWidget(new dt::GuiListBox("listBox1")).get();
+    mRecordList = win.addChildWidget(new dt::GuiListBox("record_list")).get();
     mRecordList->setPosition(10, 320);
     mRecordList->setSize(200, 100);
     mRecordList->addItem(QString::fromStdWString(L"�浵һ"));
@@ -62,6 +62,12 @@ void SaveLoadState::onClick(MyGUI::Widget* sender) {
     } else if (sender->getName() == "Gui.return_button") {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new MenuState());
+    }
+}
+
+void SaveLoadState::onListClick(MyGUI::ListBox* sender, size_t index) {
+    if(sender->getName() == "Gui.record_list") {
+        //
     }
 }
 

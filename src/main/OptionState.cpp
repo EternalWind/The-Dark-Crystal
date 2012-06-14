@@ -262,11 +262,11 @@ void OptionState::onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& eve
     } else if (mActionButton->getName() == "Gui.activate_button") {
         mActionToChange = ControlSetting::ACTIVATE;
     }
-    
-    ConfigurationManager.getInstance()->getControlSetting().setKey(mActionToChange,code);
+
+    ConfigurationManager::getInstance()->getControlSetting().setKey(mActionToChange,code);
     bool state_value = dynamic_cast<MyGUI::Button*>(mActionButton)->getStateSelected();
     dynamic_cast<MyGUI::Button*>(mActionButton)->setStateSelected(!state_value);
-    mMessageLabel->setCaption(QString::fromStdWString(L"设置成功：") + ConfigurationManager.getInstance()->getControlSetting().getKeyName(mActionToChange));
+    mMessageLabel->setCaption(QString::fromStdWString(L"设置成功：") + ConfigurationManager::getInstance()->getControlSetting().getKeyName(mActionToChange));
 
 }
 
