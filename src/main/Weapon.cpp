@@ -128,6 +128,14 @@ bool Weapon::getIsOneShot() const {
 	return mIsOneShot;
 }
 
+void Weapon::setIsPressed(bool is_pressed) {
+	mIsPressed = is_pressed;
+}
+
+bool Weapon::getIsPressed() const {
+	return mIsPressed;
+}
+
 void Weapon::setHittingRange(float hitting_range) {
 	mHittingRange = hitting_range;
 }
@@ -201,7 +209,7 @@ void Weapon::onDeinitialize() {
 		delete mPhysicsBody;
 }
 
-void Weapon::attack() {
+void Weapon::fire() {
 	if (mCurAmmo > 0) {
 		if (mInteractor->isReady()) {
 			if(mFiringSound != nullptr) {
@@ -214,6 +222,21 @@ void Weapon::attack() {
 		}
 	} else {
 		this->reload();
+	}
+}
+
+void Weapon::attack(bool is_pressed) {
+	mIsPressed = is_pressed;
+}
+
+void Weapon::onUpdate(double time_diff) {
+	if (mIsPressed) {
+		if (mIsOneShot) {
+			fire();
+			mIsPressed = 0;
+		} else {
+			fire();
+		}
 	}
 }
 
