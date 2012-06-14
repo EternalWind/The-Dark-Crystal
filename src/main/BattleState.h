@@ -147,7 +147,6 @@ protected:
 	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量
 	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
 	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
-	
 
 };
 
