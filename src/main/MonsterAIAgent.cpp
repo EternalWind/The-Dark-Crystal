@@ -5,7 +5,7 @@
 #include <Logic/RaycastComponent.hpp>
 #include "Alien.h"
 
-const QString MonsterAIAgent::ENTER_SCOPE = 1.0;
+const double MonsterAIAgent::ENTER_SCOPE = 1.0;
 const QString MonsterAIAgent::INTERACTOR_COMPONENT = "Monster_INTERACTOR_COMPONENT";
 const QString MonsterAIAgent::TRIGGER_AREA_COMPONENT = "Monster_TRIGGER_AREA_COMPONENT";
 const double  MonsterAIAgent::eps = 1e-4;
