@@ -267,6 +267,7 @@ void OptionState::onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& eve
     bool state_value = dynamic_cast<MyGUI::Button*>(mActionButton)->getStateSelected();
     dynamic_cast<MyGUI::Button*>(mActionButton)->setStateSelected(!state_value);
     mMessageLabel->setCaption(QString::fromStdWString(L"ÉèÖÃ³É¹¦£º") + ConfigurationManager.getInstance()->getControlSetting().getKeyName(mActionToChange));
+
 }
 
 void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t position) {
