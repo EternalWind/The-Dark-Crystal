@@ -84,12 +84,12 @@ void MenuState::onClick(MyGUI::Widget* sender) {
         dt::StateManager::get()->setNewState(new OptionState());
     } else if (sender->getName() == "Gui.new_game_button") {
         dt::StateManager::get()->pop();
-        //        dt::StateManager::get()->setNewState(new MenuState());
+        //dt::StateManager::get()->setNewState(new MenuState());
     } else if (sender->getName() == "Gui.load_record_button") {
         //
     } else if (sender->getName() == "Gui.credit_button") {
         dt::StateManager::get()->pop();
-        //        dt::StateManager::get()->setNewState(new MenuState());
+        //dt::StateManager::get()->setNewState(new MenuState());
     } else if (sender->getName() == "Gui.exit_button") {
         dt::StateManager::get()->pop();
     }
