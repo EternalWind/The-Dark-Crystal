@@ -43,6 +43,8 @@ include_directories(${PROJECT_SOURCE_DIR}/libs/boost
 					${PROJECT_SOURCE_DIR}/libs/mygui/Platforms/Ogre/OgrePlatform/include
 					${PROJECT_SOURCE_DIR}/libs/mygui/Platforms/DirectX/DirectXPlatform/include
 					${PROJECT_SOURCE_DIR}/libs/mygui/Platforms/OpenGL/OpenGLPlatform/include
+                                        ${PROJECT_SOURCE_DIR}/src/thirdparty
+                                        ${PROJECT_SOURCE_DIR}/libs/directshow/Include
 					)
 
 include_directories(${PROJECT_SOURCE_DIR}/libs/ducttape/include)
@@ -69,20 +71,18 @@ else() # GCC/Mingw
 endif()
 
 
-#add app
-
-#add_subdirectory(simplepong)
 
 
 
 MESSAGE(STATUS "This is The-Dark-Crystal")
 aux_source_directory(src/main main_CPP)
+aux_source_directory(src/thirdparty thirdparty_CPP)
 file(GLOB_RECURSE main_HPP src/main/*.hpp)
 file(GLOB_RECURSE main_H src/main/*.h)
 qt4_wrap_cpp(main_HEADERS_MOC ${main_HPP} ${main_H})
 
 MESSAGE(STATUS "This is MOC${main_HEADERS_MOC}")
-ADD_EXECUTABLE(The-Dark-Crystal ${main_CPP} ${main_HEADERS_MOC})
+ADD_EXECUTABLE(The-Dark-Crystal ${main_CPP} ${main_HEADERS_MOC} ${thirdparty_CPP})
 
 target_link_libraries(The-Dark-Crystal ${LIBS_LIST})
 
