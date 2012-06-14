@@ -2,7 +2,7 @@
 #define THE_DARK_CRYSTAL_OPTION_STATE
 
 #include "ControlSetting.h"
-
+#include <QString>
 #include <Scene/State.hpp>
 #include <Gui/GuiLabel.hpp>
 #include <Gui/GuiButton.hpp>
@@ -55,10 +55,10 @@ public slots:
 
 private:
     dt::GuiCheckBox* mQASettingCheckBox;        //!< 问答系统开关
-    dt::GuiCheckBox* mDisplaySettingsCheckBox;  //!< 分辨率设置滚动条
+    dt::GuiCheckBox* mDisplaySettingsCheckBox;  //!< 分辨率设置
     dt::GuiScrollBar* mSoundVolumeScrollBar;    //!< 音效大小滚动条
     dt::GuiScrollBar* mMusicVolumeScrollBar;    //!< 背景音乐大小滚动条
-    dt::GuiLabel* mDisplaySettingsLabel;        //!< 显示分辨率大小
+    dt::GuiLabel* mDisplaySettingsLabel;        //!< 显示是否开启全屏
     dt::GuiLabel* mSoundVolumeLabel;            //!< 显示音效大小
     dt::GuiLabel* mMusicVolumeLabel;            //!< 显示背景音乐大小
     dt::GuiLabel* mMessageLabel;                //!< 显示消息j

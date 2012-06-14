@@ -16,7 +16,7 @@ void Agent::attachTo(Entity* entity) {
 
         this->setParent(entity);
 
-        QObject::connect(this, SIGNAL(sMove(Entity::MoveType, bool)), entity, SLOT(__onMove(MoveType, bool)));
+        QObject::connect(this, SIGNAL(sMove(Entity::MoveType, bool)), entity, SLOT(__onMove(Entity::MoveType, bool)));
         QObject::connect(this, SIGNAL(sAttack(bool)), entity, SLOT(__onAttack(bool)));
         QObject::connect(this, SIGNAL(sJump(bool)), entity, SLOT(__onJump(bool)));
         QObject::connect(this, SIGNAL(sSpeedUp(bool)), entity, SLOT(__onSpeedUp(bool)));
@@ -27,6 +27,8 @@ void Agent::attachTo(Entity* entity) {
         QObject::connect(this, SIGNAL(sRemoveWeapon(Weapon::WeaponType)), entity, SLOT(__onRemoveWeapon(Weapon::WeaponType)));
         QObject::connect(this, SIGNAL(sLookAround(Ogre::Quaternion)), entity, SLOT(__onLookAround(Ogre::Quaternion)));
         QObject::connect(this, SIGNAL(sReload()), entity, SLOT(__onReload()));
+
+		this->setPosition(entity->getEyePosition());
     }
 }
 

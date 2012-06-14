@@ -130,7 +130,7 @@ void Alien::onUpdate(double time_diff) {
     Node::onUpdate(time_diff);
 }
 
-void Alien::__onMove(MoveType type, bool is_pressed) {
+void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
     bool is_stopped = false;
 
     switch (type) {
@@ -221,7 +221,7 @@ void Alien::__onAttack(bool is_pressed) {
     Weapon* weapon = this->getCurWeapon();
 
     if (weapon != nullptr)
-        weapon->attack();
+        weapon->attack(is_pressed);
 }
 
 void Alien::__onSpeedUp(bool is_pressed) {

@@ -18,9 +18,9 @@ ControlSetting::ControlSetting()
     mKeyMap[GET_OFF] = pair<QString, InputManager::InputCode>("GetOff", InputManager::KC_R);
     mKeyMap[ACTIVATE] = pair<QString, InputManager::InputCode>("Activate", InputManager::KC_E);
 
-    mYInverted = true;
+    mYInverted = false;
 
-    mSensitivity = 10.0f;
+    mSensitivity = 1.0f;
 
 }
 

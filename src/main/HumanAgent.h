@@ -9,7 +9,7 @@
 /**
   * 玩家代理。用来将玩家的输入翻译成虚拟指令，发送给Entity类。
   */
-class HumanAgent : Agent {
+class HumanAgent : public Agent {
 
     Q_OBJECT
 

@@ -1,4 +1,6 @@
 #include "BattleState.h"
+#include "Alien.h"
+#include "HumanAgent.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -12,11 +14,12 @@
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 
+#include <OgreProcedural.h>
 
 void BattleState::onInitialize() {
-	//dt::ResourceManager::get()->addDataPath(QDir("data"));
-	//dt::ResourceManager::get()->addResourceLocation("./models/evilfire.zip", "Zip", true);
+
 	dt::ResourceManager::get()->addDataPath(QDir("data"));
+	dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
 	dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
 	dt::ResourceManager::get()->addResourceLocation("./models/sinbad.zip", "Zip", true);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -24,17 +27,24 @@ void BattleState::onInitialize() {
 	auto scene = addScene(new dt::Scene("battle_state_scene"));
 	OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
 
-	auto light_node = scene->addChildNode(new dt::Node("light_node"));
-    light_node->setPosition(Ogre::Vector3(-2000, 2000, 1000));
-    light_node->addComponent(new dt::LightComponent("light"));
+	OgreProcedural::PlaneGenerator().setSizeX(100.0f).setSizeY(100.0f).setUTile(10.0).setVTile(10.0).realizeMesh("Plane");
+	auto plane_node = scene->addChildNode(new dt::Node("planenode"));
+	plane_node->addComponent(new dt::MeshComponent("Plane", "PrimitivesTest/Pebbles", "plane-mesh"));
+	plane_node->addComponent(new dt::PhysicsBodyComponent("plane-mesh", "plane-body",
+        dt::PhysicsBodyComponent::CONVEX, 0.0f));
 
+
+    auto lightnode = scene->addChildNode(new dt::Node("lightnode"));
+    lightnode->setPosition(Ogre::Vector3(-20, 20, 10));
+    lightnode->addComponent(new dt::LightComponent("light"));
+	
 	auto camnode = scene->addChildNode(new dt::Node("camnode"));
-    camnode->setPosition(Ogre::Vector3(0, 5, 10));
+    camnode->setPosition(Ogre::Vector3(0, 0, 15));
     camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));;
 
-	auto test_object = scene->addChildNode(new dt::Node("test_object"));
-	test_object->setPosition(Ogre::Vector3(0, 0, -5));
-	test_object->addComponent(new dt::MeshComponent("Sinbad.mesh", "", "test_mesh"))->setCastShadows(true);
+	//auto test_object = scene->addChildNode(new dt::Node("test_object"));
+	//test_object->setPosition(Ogre::Vector3(0, 5, -5));
+	//test_object->addComponent(new dt::MeshComponent("Sinbad.mesh", "", "test_mesh"))->setCastShadows(true);
 
 	dt::GuiRootWindow& window = dt::GuiManager::get()->getRootWindow();
 
@@ -42,15 +52,35 @@ void BattleState::onInitialize() {
     button1->setCaption("Health");
     button1->setPosition(10, 600);
     button1->setSize(200, 30);
-    //button1->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::onclick);
 
+
+	auto alien = new Alien("alien_node",
+								"Sinbad.mesh",
+								dt::PhysicsBodyComponent::CONVEX,
+								0.0f,
+								"walk.wav",
+								"walk.wav",
+								"walk.wav");
+	alien->setPosition(Ogre::Vector3(0, 5, -5));
+	alien->setEyePosition(Ogre::Vector3(0, 6, -5));
+	scene->addChildNode(alien);
+
+	auto agent = new HumanAgent("human");
+	scene->addChildNode(agent);
+
+	agent->attachTo(alien);
+
+	//camnode = scene->addChildNode(new dt::Node("camnode2"));
+	//camnode->setPosition(Ogre::Vector3(0, 5, 15));
+	//camnode->addComponent(new dt::CameraComponent("cam2"))->lookAt(Ogre::Vector3(0, 0, 0));;
 
 }
 
 void BattleState::updateStateFrame(double simulation_frame_time) {
 	static double runTime = 0;
 	runTime += simulation_frame_time;
-	if (runTime > 4) {
+
+	if (runTime > 40) {
 		dt::StateManager::get()->pop(1);
 	}
 }
@@ -156,11 +186,4 @@ void BattleState::__onTriggerQA() {
 
 void BattleState::__onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
 
-}
-
-int main(int argc, char** argv) {
-	//std::cout << "hello" << std::endl;
-	//system("pause");
-	dt::Game game;
-	game.run(new BattleState(), argc, argv);
 }

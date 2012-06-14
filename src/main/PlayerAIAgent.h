@@ -4,6 +4,7 @@
 #include "Alien.h"
 #include <Logic/TriggerAreaComponent.hpp>
 #include <QString>
+#include <Logic/InteractionComponent.hpp>
 
 class PlayerAIAgent : public Agent {
 Q_OBJECT
@@ -26,7 +27,8 @@ public:
       */	
     void decision(double time_diff); 
     void onUpdate(double time_diff);
-    void initialize();
+    void onInitialize();
+    void onDeinitialize();
 private slots:
     void __onFire(dt::PhysicsBodyComponent* pbc); 
     void __onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c);
@@ -39,7 +41,8 @@ private:
     bool mHasEnemy;                                          //<! 警戒状态下当前方向是否有敌人。
     uint16_t mCurArea;                                       //<! 当前所在区域ID。
     uint16_t mNxtArea;                                       //<! 若有在路上这个状态，则代表目标地所在ID。   
-
+    dt::InteractionComponent * mIteractor;                   //<! 检验前方是否有怪物的component。
+    dt::TriggerAreaComponent * mTrigger;                     //<! 检验是否触发trigger的component。
     const static QString TRIGGER_AREA_COMPONENT;             //!< TRIGGER_AREA_COMPONENT的名字。
     const static QString INTERACTOR_COMPONENT;               //!< 检测前方是否有攻击物体的InteractorComponent的名字。
     const static double THREAT_COOL_TIME;                    //!< 威胁解除时间。
