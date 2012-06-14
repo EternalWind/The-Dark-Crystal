@@ -14,6 +14,7 @@
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 
+#include <OgreProcedural.h>
 
 void BattleState::onInitialize() {
 
@@ -61,12 +62,17 @@ void BattleState::onInitialize() {
 								"walk.wav",
 								"walk.wav");
 	alien->setPosition(Ogre::Vector3(0, 5, -5));
+	alien->setEyePosition(Ogre::Vector3(0, 6, -5));
 	scene->addChildNode(alien);
 
 	auto agent = new HumanAgent("human");
 	scene->addChildNode(agent);
 
 	agent->attachTo(alien);
+
+	//camnode = scene->addChildNode(new dt::Node("camnode2"));
+	//camnode->setPosition(Ogre::Vector3(0, 5, 15));
+	//camnode->addComponent(new dt::CameraComponent("cam2"))->lookAt(Ogre::Vector3(0, 0, 0));;
 
 }
 

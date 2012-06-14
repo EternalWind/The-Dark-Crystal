@@ -76,6 +76,8 @@ void Car::onUpdate(double time_diff) {
 	setCurTheta(theta);
 
 	this->__moveAround();
+
+	dt::Node::onUpdate(time_diff);
 }
 
 float Car::getLength() const {
