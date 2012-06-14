@@ -57,7 +57,7 @@ public:
     void onUpdate(double time_diff);
 
 protected slots:
-    void __onMove(MoveType type, bool is_pressed);
+    void __onMove(Entity::MoveType type, bool is_pressed);
 
     void __onJump(bool is_pressed);
 
