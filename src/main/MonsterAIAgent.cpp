@@ -5,6 +5,7 @@
 #include <Logic/RaycastComponent.hpp>
 #include "Alien.h"
 
+const double MonsterAIAgent::ENTER_SCOPE = 1.0;
 const QString MonsterAIAgent::INTERACTOR_COMPONENT = "Monster_INTERACTOR_COMPONENT";
 const QString MonsterAIAgent::TRIGGER_AREA_COMPONENT = "Monster_TRIGGER_AREA_COMPONENT";
 const double  MonsterAIAgent::eps = 1e-4;
@@ -15,6 +16,7 @@ const double  MonsterAIAgent::ROTATE_FLOAT = PI / 24;
 const double  MonsterAIAgent::ENTER_SCOPE = 10.0f; //>>>>>> ÔÝÊ±¶¨Òå
 
 MonsterAIAgent::MonsterAIAgent(QString name, MonsterAIAgent::MonsterType type, uint16_t cur_area) : mType(type), Agent(name), mCurArea(cur_area){
+    this->mHasEnemy = this->mThreat = this->mOnWay = this->mHasEnemy = false; 
 }
 
 bool MonsterAIAgent::isThreat() {
