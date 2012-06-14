@@ -27,6 +27,8 @@ void Agent::attachTo(Entity* entity) {
         QObject::connect(this, SIGNAL(sRemoveWeapon(Weapon::WeaponType)), entity, SLOT(__onRemoveWeapon(Weapon::WeaponType)));
         QObject::connect(this, SIGNAL(sLookAround(Ogre::Quaternion)), entity, SLOT(__onLookAround(Ogre::Quaternion)));
         QObject::connect(this, SIGNAL(sReload()), entity, SLOT(__onReload()));
+
+		this->setPosition(entity->getEyePosition());
     }
 }
 
