@@ -16,7 +16,7 @@ void Agent::attachTo(Entity* entity) {
 
         this->setParent(entity);
 
-        QObject::connect(this, SIGNAL(sMove(Entity::MoveType, bool)), entity, SLOT(__onMove(MoveType, bool)));
+        QObject::connect(this, SIGNAL(sMove(Entity::MoveType, bool)), entity, SLOT(__onMove(Entity::MoveType, bool)));
         QObject::connect(this, SIGNAL(sAttack(bool)), entity, SLOT(__onAttack(bool)));
         QObject::connect(this, SIGNAL(sJump(bool)), entity, SLOT(__onJump(bool)));
         QObject::connect(this, SIGNAL(sSpeedUp(bool)), entity, SLOT(__onSpeedUp(bool)));
