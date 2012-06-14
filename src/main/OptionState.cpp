@@ -181,6 +181,12 @@ void OptionState::onInitialize() {
     reload_button->setSize(50, 30);
     reload_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onSettingsButtonClick);
 
+    auto throw_button = win.addChildWidget(new dt::GuiButton("throw_button"));
+    throw_button->setCaption("THROW");
+    throw_button->setPosition(380, 10);
+    throw_button->setSize(50, 30);
+    throw_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onSettingsButtonClick);
+
     auto getoff_button = win.addChildWidget(new dt::GuiButton("getoff_button"));
     getoff_button->setCaption("GET_OFF");
     getoff_button->setPosition(380, 10);
@@ -228,37 +234,39 @@ void OptionState::onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& eve
     if (mActionButton == nullptr)   return;
 
     if (mActionButton->getName() == "Gui.forward_button") {
-        mActionToChange = ControlSetting::KeyFunction.FORWARD;
+        mActionToChange = ControlSetting::FORWARD;
     } else if (mActionButton->getName() == "Gui.backward_button") {
-        mActionToChange = ControlSetting::KeyFunction.BACKWARD;
+        mActionToChange = ControlSetting::BACKWARD;
     } else if (mActionButton->getName() == "Gui.leftward_button") {
-        mActionToChange = ControlSetting::KeyFunction.LEFTWARD;
+        mActionToChange = ControlSetting::LEFTWARD;
     } else if (mActionButton->getName() == "Gui.rightward_button") {
-        mActionToChange = ControlSetting::KeyFunction.RIGHTWARD;
+        mActionToChange = ControlSetting::RIGHTWARD;
     } else if (mActionButton->getName() == "Gui.jump_button") {
-        mActionToChange = ControlSetting::KeyFunction.JUMP;
+        mActionToChange = ControlSetting::JUMP;
     } else if (mActionButton->getName() == "Gui.sprint_button") {
-        mActionToChange = ControlSetting::KeyFunction.SPRINT;
+        mActionToChange = ControlSetting::SPRINT;
     } else if (mActionButton->getName() == "Gui.arm1_button") {
-        mActionToChange = ControlSetting::KeyFunction.ARM1;
+        mActionToChange = ControlSetting::ARM1;
     } else if (mActionButton->getName() == "Gui.arm2_button") {
-        mActionToChange = ControlSetting::KeyFunction.ARM2;
+        mActionToChange = ControlSetting::ARM2;
     } else if (mActionButton->getName() == "Gui.arm3_button") {
-        mActionToChange = ControlSetting::KeyFunction.ARM3;
+        mActionToChange = ControlSetting::ARM3;
     } else if (mActionButton->getName() == "Gui.attack_button") {
-        mActionToChange = ControlSetting::KeyFunction.ATTACK;
+        mActionToChange = ControlSetting::ATTACK;
     } else if (mActionButton->getName() == "Gui.reload_button") {
-        mActionToChange = ControlSetting::KeyFunction.RELOAD;
+        mActionToChange = ControlSetting::RELOAD;
+    }else if (mActionButton->getName() == "Gui.throw_button") {
+        mActionToChange = ControlSetting::THROW;
     } else if (mActionButton->getName() == "Gui.getoff_button") {
-        mActionToChange = ControlSetting::KeyFunction.GET_OFF;
+        mActionToChange = ControlSetting::GET_OFF;
     } else if (mActionButton->getName() == "Gui.activate_button") {
-        mActionToChange = ControlSetting::KeyFunction.ACTIVATE;
+        mActionToChange = ControlSetting::ACTIVATE;
     }
-
+    
     ConfigurationManager.getInstance()->getControlSetting().setKey(mActionToChange,code);
     bool state_value = dynamic_cast<MyGUI::Button*>(mActionButton)->getStateSelected();
     dynamic_cast<MyGUI::Button*>(mActionButton)->setStateSelected(!state_value);
-    mMessageLabel->setCaption(QString::fromStdWString(L"设置成功：") + ConfigurationManager.getInstance()->getControlSetting().getKeyName());
+    mMessageLabel->setCaption(QString::fromStdWString(L"设置成功：") + ConfigurationManager.getInstance()->getControlSetting().getKeyName(mActionToChange));
 }
 
 void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t position) {
