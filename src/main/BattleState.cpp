@@ -12,15 +12,9 @@
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 
+int BattleState::mStageIndex = 0;
 
 void BattleState::onInitialize() {
-	//dt::ResourceManager::get()->addDataPath(QDir("data"));
-	//dt::ResourceManager::get()->addResourceLocation("./models/evilfire.zip", "Zip", true);
-	dt::ResourceManager::get()->addDataPath(QDir("data"));
-	dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
-	dt::ResourceManager::get()->addResourceLocation("./models/sinbad.zip", "Zip", true);
-	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-
 	auto scene = addScene(new dt::Scene("battle_state_scene"));
 	OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
 
@@ -156,6 +150,14 @@ void BattleState::__onTriggerQA() {
 
 void BattleState::__onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
 
+}
+
+int BattleState::getStageIndex() const {
+    return mStageIndex;
+}
+
+void BattleState::setStageIndex(const int stage_index) {
+    mStageIndex = stage_index;
 }
 
 int main(int argc, char** argv) {
