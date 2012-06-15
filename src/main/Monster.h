@@ -65,6 +65,8 @@ public:
 			const float attack_interval
 		);
 
+	void onUpdate(double time_diff);
+
 
 protected slots:	   
 

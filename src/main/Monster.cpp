@@ -86,6 +86,14 @@ void Monster::onInitialize() {
 void Monster::onDeinitialize() {
 }
 
+void Monster::onUpdate(double time_diff) {
+	if (mIsMoving) {
+		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+		dt::Node::onUpdate(time_diff);
+	}
+}
+
 // --------------- slots -------------------//
 
 void Monster::__onMove(MoveType type, bool is_pressed) {
@@ -145,11 +153,8 @@ void Monster::__onMove(MoveType type, bool is_pressed) {
 		//Ogre::Vector3 move_vector = mMoveVector;
 		////move_vector.normalise();
 
-        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-            ->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * mCurSpeed));
-        
-		//btVector3 vec = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity();
-		//std::cout << vec.x() << " " << vec.y() << " " << vec.z() << std::endl;
+   //     this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+			//->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
         std::shared_ptr<dt::SoundComponent> move_sound;
 
