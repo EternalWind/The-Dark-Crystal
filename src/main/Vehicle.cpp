@@ -97,3 +97,24 @@ void Vehicle::__onHit(dt::PhysicsBodyComponent* hit) {
 		obj->setCurHealth(getAttackValue() > cur_health ? 0 : cur_health - getAttackValue());
 	}
 }
+
+void Vehicle::__onJump(bool is_pressed) {
+}
+
+void Vehicle::__onChangeWeapon(Weapon::WeaponType type) {
+}
+
+void Vehicle::__onRemoveWeapon() {
+}
+
+void Vehicle::__onRemoveWeapon(Weapon::WeaponType type) {
+}
+
+void Vehicle::__onAddEquipment(bool is_pressed) {
+}
+
+void Vehicle::__onEquiped(dt::PhysicsBodyComponent* object) {
+}
+
+void Vehicle::__onReload() {
+}
