@@ -1,6 +1,7 @@
 #include "BattleState.h"
 #include "Alien.h"
 #include "HumanAgent.h"
+#include "Car.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -56,14 +57,34 @@ void BattleState::onInitialize() {
 
 	auto alien = new Alien("alien_node",
 								"Sinbad.mesh",
-								dt::PhysicsBodyComponent::CONVEX,
-								0.0f,
+								dt::PhysicsBodyComponent::CYLINDER,
+								2.0f,
 								"walk.wav",
 								"walk.wav",
 								"walk.wav");
 	alien->setPosition(Ogre::Vector3(0, 5, -5));
 	alien->setEyePosition(Ogre::Vector3(0, 6, -5));
 	scene->addChildNode(alien);
+/*
+	Entity* car = new Car("car",
+						"Sinbad.mesh",
+						dt::PhysicsBodyComponent::BOX,
+						20.0f,
+						10,
+						20.f,
+						1.0f,
+						"move.wav",
+						"move.wav",
+						"move.wav",
+						5.0f,
+						4.0f,
+						10.0f,
+						1.0f,
+						1.0f);
+	
+	car->setPosition(Ogre::Vector3(0, 5, 0));
+	car->setEyePosition(car->getPosition() + Ogre::Vector3(0, 2, 0));
+	scene->addChildNode(car);			*/				
 
 	auto agent = new HumanAgent("human");
 	scene->addChildNode(agent);
@@ -73,7 +94,7 @@ void BattleState::onInitialize() {
 	//camnode = scene->addChildNode(new dt::Node("camnode2"));
 	//camnode->setPosition(Ogre::Vector3(0, 5, 15));
 	//camnode->addComponent(new dt::CameraComponent("cam2"))->lookAt(Ogre::Vector3(0, 0, 0));;
-
+	int a;
 }
 
 void BattleState::updateStateFrame(double simulation_frame_time) {
