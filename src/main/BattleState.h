@@ -117,6 +117,30 @@ public:
 	  */
 	void setQuestionLabel(dt::GuiLabel* label);
 
+public slots:
+    /**
+      * 设置当前关卡。
+      * @param stage 要设置的关卡
+      */
+    void setStage(const QString stage);
+
+    /**
+      * 获取当前关卡。
+      * @returns 当前关卡
+      */
+    QString getStage() const;
+
+    /**
+      * 获取当前关卡序号。
+      * @returns 当前关卡序号
+      */
+    int getStageIndex() const;
+
+    /**
+      * 设置当前关卡序号。
+      * @param stage_index 要设置的关卡序号
+      */
+    void setStageIndex(const int stage_index);
 
 protected slots:
 
@@ -147,6 +171,8 @@ protected:
 	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量
 	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
 	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
+    QString mStage;                             //!< 当前关卡
+    static int mStageIndex;                     //!< 当前关卡的序号
 
 };
 
