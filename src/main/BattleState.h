@@ -17,6 +17,8 @@
 class BattleState : public dt::State {
     Q_OBJECT
 public:
+    BattleState(const QString stage_name);
+
     void onInitialize();
 	
     void updateStateFrame(double simulation_frame_time);
@@ -27,17 +29,6 @@ public:
 	  * @param tot_crystal_num 地图上所有的水晶数量
 	  */
 	BattleState(uint16_t tot_enemy_num = 0, uint16_t tot_crystal_num = 0);
-
-	/**
-	  * 判断玩家当前是否已经取得胜利
-	  * @returns 胜利与否
-	  */
-	bool isVictory();
-
-	/**
-	  * 玩家取胜的情况下，下一步动作
-	  */
-	void win();
 
 	/**
 	  * 返回当前BattleState的名字
@@ -119,6 +110,17 @@ public:
 
 public slots:
     /**
+	  * 判断玩家当前是否已经取得胜利
+	  * @returns 胜利与否
+	  */
+	//bool isVictory();
+
+	/**
+	  * 玩家取胜的情况下，下一步动作
+	  */
+	void win();
+
+    /**
       * 设置当前关卡。
       * @param stage 要设置的关卡
       */
@@ -131,16 +133,16 @@ public slots:
     QString getStage() const;
 
     /**
-      * 获取当前关卡序号。
-      * @returns 当前关卡序号
+      * 获取下一关卡。
+      * @returns 下一关卡
       */
-    int getStageIndex() const;
+    QString getNextStage() const;
 
     /**
-      * 设置当前关卡序号。
-      * @param stage_index 要设置的关卡序号
+      * 设置下一关卡。
+      * @param next_stage 要设置的下一关卡
       */
-    void setStageIndex(const int stage_index);
+    void setNextStage(const QString next_stage);
 
 protected slots:
 
@@ -172,7 +174,7 @@ protected:
 	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
 	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
     QString mStage;                             //!< 当前关卡
-    static int mStageIndex;                     //!< 当前关卡的序号
+    QString mNextStage;                         //!< 下一关卡
 
 };
 
