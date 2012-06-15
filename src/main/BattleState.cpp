@@ -2,6 +2,8 @@
 #include "Alien.h"
 #include "HumanAgent.h"
 #include "Car.h"
+#include "MenuState.h"
+#include "SceneLoader.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -14,14 +16,23 @@
 #include <Gui/GuiRootWindow.hpp>
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
+#include <Logic/ScriptComponent.hpp>
 
 #include <OgreProcedural.h>
 
-int BattleState::mStageIndex = 0;
+BattleState::BattleState(const QString stage_name) 
+    : mQuestionLabel(nullptr),
+      mDialogLabel(nullptr),
+      mTotalEnemyNum(0),
+      mRemainEnemyNum(0),
+      mTotalCrystalNum(0),
+      mObtainedCrystalNum(0),
+      mStage(stage_name),
+      mNextStage("") {}
 
 void BattleState::onInitialize() {
-
-	auto scene = addScene(new dt::Scene("battle_state_scene"));
+    auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
+    scene->addComponent<dt::ScriptComponent>(new dt::ScriptComponent(mStage + ".js", mStage, true));
 	OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
 
 	OgreProcedural::PlaneGenerator().setSizeX(100.0f).setSizeY(100.0f).setUTile(10.0).setVTile(10.0).realizeMesh("Plane");
@@ -93,14 +104,7 @@ void BattleState::onInitialize() {
 	int a;
 }
 
-void BattleState::updateStateFrame(double simulation_frame_time) {
-	static double runTime = 0;
-	runTime += simulation_frame_time;
-
-	if (runTime > 40) {
-		dt::StateManager::get()->pop(1);
-	}
-}
+void BattleState::updateStateFrame(double simulation_frame_time) {}
 
 BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mQuestionLabel(nullptr),
@@ -111,12 +115,19 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mObtainedCrystalNum(0) {
 }
 
-bool BattleState::isVictory() {
-	return false;
-}
+//bool BattleState::isVictory() {
+//	return false;
+//}
 
 void BattleState::win() {
+    auto state_mgr = dt::StateManager::get();
+    state_mgr->pop(1);
 
+    if (mNextStage != "") {
+        state_mgr->setNewState(new BattleState(mNextStage));
+    } else {
+        state_mgr->setNewState(new MenuState());
+    }
 }
 
 QString BattleState::getBattleStateName() const {
@@ -205,12 +216,12 @@ void BattleState::__onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
 
 }
 
-int BattleState::getStageIndex() const {
-    return mStageIndex;
+QString BattleState::getNextStage() const {
+    return mNextStage;
 }
 
-void BattleState::setStageIndex(const int stage_index) {
-    mStageIndex = stage_index;
+void BattleState::setNextStage(const QString next_stage) {
+    mNextStage = next_stage;
 }
 
 int main(int argc, char** argv) {
