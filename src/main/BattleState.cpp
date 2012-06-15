@@ -61,8 +61,8 @@ void BattleState::onInitialize() {
 								"walk.wav",
 								"walk.wav",
 								"walk.wav");
-	alien->setPosition(Ogre::Vector3(0, 5, -5));
-	alien->setEyePosition(Ogre::Vector3(0, 6, -5));
+	alien->setPosition(Ogre::Vector3(0, 5, 5));
+	alien->setEyePosition(Ogre::Vector3(0, 6, 5));
 	scene->addChildNode(alien);
 
 	auto agent = new HumanAgent("human");

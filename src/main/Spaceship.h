@@ -36,12 +36,18 @@ public:
 		  const QString attack_sound_handle,
 		  const QString flying_sound_handle,
 		  const QString rise_sound_handle,
-		  const QString fall_sound_handle
+		  const QString fall_sound_handle,
+          const float max_speed,
+          const float min_speed,
+          const float acceleration
 		  );
 
 	void onInitialize();
 
 	void onDeinitialize();
+
+    void onUpdate(double time_diff);
+
 
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
@@ -54,7 +60,17 @@ protected slots:
     void __onLookAround(Ogre::Quaternion quaternion);
 
 
+private:
+
+    void __moveAround();
+
+
 protected:
+    Ogre::Quaternion mLookAroundQuaternion; //!< 飞机转动方向
+    Ogre::Vector3 mCurDirection;            //!<  机头方向
+    float mMaxSpeed;                        //!< 飞船最大速度
+    float mMinSpeed;                        //!< 战车最低速度/向后最大速度
+    float mAcceleration;                    //!< 飞船的加速度
 	QString mFlyingSoundHandle;             //!< 飞机飞行声音句柄
 	QString mRiseSoundHandle;               //!< 飞机上升声音句柄
 	QString mFallSoundHandle;               //!< 飞机下降声音句柄
