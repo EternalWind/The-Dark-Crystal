@@ -110,7 +110,7 @@ void BattleState::onInitialize() {
 	//camnode = scene->addChildNode(new dt::Node("camnode2"));
 	//camnode->setPosition(Ogre::Vector3(0, 5, 15));
 	//camnode->addComponent(new dt::CameraComponent("cam2"))->lookAt(Ogre::Vector3(0, 0, 0));;
-	int a;
+	
 }
 
 void BattleState::updateStateFrame(double simulation_frame_time) {
