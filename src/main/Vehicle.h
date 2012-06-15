@@ -68,6 +68,20 @@ protected slots:
 
 	void __onHit(dt::PhysicsBodyComponent* hit);
 
+	void __onJump(bool is_pressed);
+
+    void __onChangeWeapon(Weapon::WeaponType type);
+
+    void __onRemoveWeapon();
+
+    void __onRemoveWeapon(Weapon::WeaponType type);
+
+    void __onAddEquipment(bool is_pressed);
+
+    void __onEquiped(dt::PhysicsBodyComponent* object);
+
+    void __onReload();
+
 protected:
 	uint16_t mAttackValue;                       //!< 攻击力
 	float mAttackRange;                          //!< 攻击范围
