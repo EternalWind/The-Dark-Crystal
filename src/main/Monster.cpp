@@ -79,6 +79,8 @@ void Monster::onInitialize() {
 		this, SLOT(__onHit(dt::PhysicsBodyComponent*)));
 
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
+
+	this->setCurSpeed(5.0f);
 }
 
 void Monster::onDeinitialize() {
@@ -89,57 +91,66 @@ void Monster::onDeinitialize() {
 void Monster::__onMove(MoveType type, bool is_pressed) {
     bool is_stopped = false;
 
-    switch (type) {
-    case FORWARD:
-        if (is_pressed) {
-            mMoveVector.z += 1.0f;
-		} else {
-            mMoveVector.z -= 1.0f;
-		}
-        break;
+	switch (type) {
+	case FORWARD:
+		if (is_pressed)
+			mMoveVector.z -= 1.0f; // Bullet的Z轴和Ogre方向相反
+		else
+			mMoveVector.z += 1.0f;
 
-    case BACKWARD:
-        if (is_pressed) {
-            mMoveVector.z -= 1.0f;
-		} else {
-            mMoveVector.z += 1.0f;
-		}
-        break;
+		break;
 
-    case LEFTWARD:
-        if (is_pressed) {
-            mMoveVector.x -= 1.0f;
-		} else {
-            mMoveVector.x += 1.0f;
-		}
-        break;
+	case BACKWARD:
+		if (is_pressed)
+			mMoveVector.z += 1.0f;
+		else
+			mMoveVector.z -= 1.0f;
 
-    case RIGHTWARD:
-        if (is_pressed) {
-            mMoveVector.x += 1.0f;
-		} else {
-            mMoveVector.x -= 1.0f;
-		}
-        break;
+		break;
 
-    case STOP:
-        is_stopped = true;
-        break;
-	    
+	case LEFTWARD:
+		if (is_pressed)
+			mMoveVector.x -= 1.0f;
+		else
+			mMoveVector.x += 1.0f;
+
+		break;
+
+	case RIGHTWARD:
+		if (is_pressed)
+			mMoveVector.x += 1.0f;
+		else
+			mMoveVector.x -= 1.0f;
+
+		break;
+
+	case STOP:
+		is_stopped = true;
+
+		break;
+
 	default:
-        dt::Logger::get().debug("Not processed MoveType!");
-    }
-	    
-	if (is_stopped) {
+		dt::Logger::get().debug("Not processed MoveType!");
+	}
+
+    if (is_stopped) {
         this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
         this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+
+        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+            ->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
     } else {
-        if (!mMoveVector.isZeroLength())
-            mMoveVector.normalise();
+        /*if (!mMoveVector.isZeroLength())
+            mMoveVector.normalise();*/
+		//Ogre::Vector3 move_vector = mMoveVector;
+		////move_vector.normalise();
 
         this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
             ->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * mCurSpeed));
         
+		//btVector3 vec = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity();
+		//std::cout << vec.x() << " " << vec.y() << " " << vec.z() << std::endl;
+
         std::shared_ptr<dt::SoundComponent> move_sound;
 
         if (mHasSpeededUp) {
@@ -150,6 +161,8 @@ void Monster::__onMove(MoveType type, bool is_pressed) {
 
         move_sound->playSound();
     }
+
+    mIsMoving = !is_stopped;
 }
 
 void Monster::__onJump(bool is_pressed) {
@@ -157,7 +170,7 @@ void Monster::__onJump(bool is_pressed) {
 
     if (is_pressed && this->isOnGround()) {
         // 调整该处的脉冲值使跳跃更自然。
-        physics_body->applyCentralImpulse(0.0f, 10.0f, 0.0f);
+        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
 
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
     }
@@ -217,4 +230,25 @@ void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
 		uint16_t cur_health = obj->getCurHealth();
 		obj->setCurHealth(getAttackValue() > cur_health ? 0 : cur_health - getAttackValue());
 	}
+}
+
+void Monster::__onChangeWeapon(Weapon::WeaponType type) {
+}
+
+void Monster::__onRemoveWeapon() {
+}
+
+void Monster::__onRemoveWeapon(Weapon::WeaponType type) {
+}
+
+void Monster::__onAddEquipment(bool is_pressed) {
+}
+
+void Monster::__onEquiped(dt::PhysicsBodyComponent* object) {
+}
+
+void Monster::__onGetOffVehicle() {
+}
+
+void Monster::__onReload() {
 }

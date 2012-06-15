@@ -2,6 +2,7 @@
 #include "Alien.h"
 #include "HumanAgent.h"
 #include "Car.h"
+#include "Monster.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -55,18 +56,18 @@ void BattleState::onInitialize() {
     button1->setSize(200, 30);
 
 
-	auto alien = new Alien("alien_node",
-								"Sinbad.mesh",
-								dt::PhysicsBodyComponent::CYLINDER,
-								2.0f,
-								"walk.wav",
-								"walk.wav",
-								"walk.wav");
-	alien->setPosition(Ogre::Vector3(0, 5, -5));
-	alien->setEyePosition(Ogre::Vector3(0, 6, -5));
-	scene->addChildNode(alien);
-/*
-	Entity* car = new Car("car",
+	//auto alien = new Alien("alien_node",
+	//							"Sinbad.mesh",
+	//							dt::PhysicsBodyComponent::CYLINDER,
+	//							2.0f,
+	//							"walk.wav",
+	//							"walk.wav",
+	//							"walk.wav");
+	//alien->setPosition(Ogre::Vector3(0, 5, -5));
+	//alien->setEyePosition(Ogre::Vector3(0, 6, -5));
+	//scene->addChildNode(alien);
+
+/*	Entity* car = new Car("car",
 						"Sinbad.mesh",
 						dt::PhysicsBodyComponent::BOX,
 						20.0f,
@@ -84,12 +85,27 @@ void BattleState::onInitialize() {
 	
 	car->setPosition(Ogre::Vector3(0, 5, 0));
 	car->setEyePosition(car->getPosition() + Ogre::Vector3(0, 2, 0));
-	scene->addChildNode(car);			*/				
+	scene->addChildNode(car);	*/		
+
+	Entity* monster = new Monster("car",
+						"Sinbad.mesh",
+						dt::PhysicsBodyComponent::CYLINDER,
+						2.0f,
+						"move.wav",
+						"move.wav",
+						"move.wav",
+						"move.wav",
+						5,
+						5,
+						5);
+	monster->setPosition(Ogre::Vector3(0, 5, 0));
+	monster->setEyePosition(monster->getPosition() + Ogre::Vector3(0, 2, 0));
+	scene->addChildNode(monster);
 
 	auto agent = new HumanAgent("human");
 	scene->addChildNode(agent);
 
-	agent->attachTo(alien);
+	agent->attachTo(monster);
 
 	//camnode = scene->addChildNode(new dt::Node("camnode2"));
 	//camnode->setPosition(Ogre::Vector3(0, 5, 15));
@@ -101,7 +117,7 @@ void BattleState::updateStateFrame(double simulation_frame_time) {
 	static double runTime = 0;
 	runTime += simulation_frame_time;
 
-	if (runTime > 40) {
+	if (runTime > 100) {
 		dt::StateManager::get()->pop(1);
 	}
 }
