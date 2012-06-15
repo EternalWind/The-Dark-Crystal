@@ -57,7 +57,7 @@ public:
     void onUpdate(double time_diff);
 
 protected slots:
-    void __onMove(MoveType type, bool is_pressed);
+    void __onMove(Entity::MoveType type, bool is_pressed);
 
     void __onJump(bool is_pressed);
 
@@ -91,6 +91,7 @@ protected:
     const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
     const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。
     const static QString INTERACTOR_COMPONENT;      //!< 所有外星人类与场景进行交互的InteractorComponent的名字。
+
 };
 
 #endif

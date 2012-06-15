@@ -165,7 +165,7 @@ signals:
     void sGetCrystal(Entity* entity);
 
 protected slots:
-    virtual void __onMove(MoveType type, bool is_pressed) = 0;
+    virtual void __onMove(Entity::MoveType type, bool is_pressed) = 0;
 
     virtual void __onJump(bool is_pressed) = 0;
 

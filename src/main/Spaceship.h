@@ -3,6 +3,9 @@
 
 #include "Vehicle.h"
 
+/**
+  * 游戏载具之一：宇宙飞船类
+  */
 class Spaceship : public Vehicle {
 
 	Q_OBJECT

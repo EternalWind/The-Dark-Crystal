@@ -89,7 +89,7 @@ void Entity::setEyePosition(const Ogre::Vector3 eye_position) {
 
 bool Entity::isOnGround() {
     return this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->
-        getLinearVelocity().getY() == 0.0f;
+        getLinearVelocity().getY() <= 0.05f;
 }
 
 void Entity::onInitialize() {

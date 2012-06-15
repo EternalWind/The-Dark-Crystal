@@ -113,6 +113,9 @@ void Alien::onInitialize() {
     
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
+	this->setOrigSpeed(10.0f);
+	this->setCurSpeed(10.0f);
+
     // 外星人的行走不需要考虑摩擦力。
     this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 }
@@ -130,7 +133,7 @@ void Alien::onUpdate(double time_diff) {
     Node::onUpdate(time_diff);
 }
 
-void Alien::__onMove(MoveType type, bool is_pressed) {
+void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
     bool is_stopped = false;
 
     switch (type) {
@@ -182,12 +185,15 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
         this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
             ->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
     } else {
-        if (!mMoveVector.isZeroLength())
-            mMoveVector.normalise();
+        /*if (!mMoveVector.isZeroLength())
+            mMoveVector.normalise();*/
 
         this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
             ->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * mCurSpeed));
         
+		//btVector3 vec = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity();
+		//std::cout << vec.x() << " " << vec.y() << " " << vec.z() << std::endl;
+
         std::shared_ptr<dt::SoundComponent> move_sound;
 
         if (mHasSpeededUp) {
@@ -205,10 +211,12 @@ void Alien::__onMove(MoveType type, bool is_pressed) {
 void Alien::__onJump(bool is_pressed) {
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
+	std::cout << physics_body->getRigidBody()->getLinearVelocity().y() << std::endl;
+
     if (is_pressed && this->isOnGround()) {
         // 调整该处的脉冲值使跳跃更自然。
-        physics_body->applyCentralImpulse(0.0f, 10.0f, 0.0f);
-
+        physics_body->applyCentralImpulse(0.0f, 100.0f, 0.0f);
+		
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
     }
 
@@ -221,7 +229,7 @@ void Alien::__onAttack(bool is_pressed) {
     Weapon* weapon = this->getCurWeapon();
 
     if (weapon != nullptr)
-        weapon->attack();
+        weapon->attack(is_pressed);
 }
 
 void Alien::__onSpeedUp(bool is_pressed) {

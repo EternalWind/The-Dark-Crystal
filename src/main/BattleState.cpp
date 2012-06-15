@@ -1,4 +1,7 @@
 #include "BattleState.h"
+#include "Alien.h"
+#include "HumanAgent.h"
+#include "Car.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -12,23 +15,33 @@
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 
+#include <OgreProcedural.h>
+
 int BattleState::mStageIndex = 0;
 
 void BattleState::onInitialize() {
+
 	auto scene = addScene(new dt::Scene("battle_state_scene"));
 	OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
 
-	auto light_node = scene->addChildNode(new dt::Node("light_node"));
-    light_node->setPosition(Ogre::Vector3(-2000, 2000, 1000));
-    light_node->addComponent(new dt::LightComponent("light"));
+	OgreProcedural::PlaneGenerator().setSizeX(100.0f).setSizeY(100.0f).setUTile(10.0).setVTile(10.0).realizeMesh("Plane");
+	auto plane_node = scene->addChildNode(new dt::Node("planenode"));
+	plane_node->addComponent(new dt::MeshComponent("Plane", "PrimitivesTest/Pebbles", "plane-mesh"));
+	plane_node->addComponent(new dt::PhysicsBodyComponent("plane-mesh", "plane-body",
+        dt::PhysicsBodyComponent::CONVEX, 0.0f));
 
+
+    auto lightnode = scene->addChildNode(new dt::Node("lightnode"));
+    lightnode->setPosition(Ogre::Vector3(-20, 20, 10));
+    lightnode->addComponent(new dt::LightComponent("light"));
+	
 	auto camnode = scene->addChildNode(new dt::Node("camnode"));
-    camnode->setPosition(Ogre::Vector3(0, 5, 10));
+    camnode->setPosition(Ogre::Vector3(0, 0, 15));
     camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));;
 
-	auto test_object = scene->addChildNode(new dt::Node("test_object"));
-	test_object->setPosition(Ogre::Vector3(0, 0, -5));
-	test_object->addComponent(new dt::MeshComponent("Sinbad.mesh", "", "test_mesh"))->setCastShadows(true);
+	//auto test_object = scene->addChildNode(new dt::Node("test_object"));
+	//test_object->setPosition(Ogre::Vector3(0, 5, -5));
+	//test_object->addComponent(new dt::MeshComponent("Sinbad.mesh", "", "test_mesh"))->setCastShadows(true);
 
 	dt::GuiRootWindow& window = dt::GuiManager::get()->getRootWindow();
 
@@ -36,15 +49,55 @@ void BattleState::onInitialize() {
     button1->setCaption("Health");
     button1->setPosition(10, 600);
     button1->setSize(200, 30);
-    //button1->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::onclick);
 
 
+	auto alien = new Alien("alien_node",
+								"Sinbad.mesh",
+								dt::PhysicsBodyComponent::CYLINDER,
+								2.0f,
+								"walk.wav",
+								"walk.wav",
+								"walk.wav");
+	alien->setPosition(Ogre::Vector3(0, 5, -5));
+	alien->setEyePosition(Ogre::Vector3(0, 6, -5));
+	scene->addChildNode(alien);
+/*
+	Entity* car = new Car("car",
+						"Sinbad.mesh",
+						dt::PhysicsBodyComponent::BOX,
+						20.0f,
+						10,
+						20.f,
+						1.0f,
+						"move.wav",
+						"move.wav",
+						"move.wav",
+						5.0f,
+						4.0f,
+						10.0f,
+						1.0f,
+						1.0f);
+	
+	car->setPosition(Ogre::Vector3(0, 5, 0));
+	car->setEyePosition(car->getPosition() + Ogre::Vector3(0, 2, 0));
+	scene->addChildNode(car);			*/				
+
+	auto agent = new HumanAgent("human");
+	scene->addChildNode(agent);
+
+	agent->attachTo(alien);
+
+	//camnode = scene->addChildNode(new dt::Node("camnode2"));
+	//camnode->setPosition(Ogre::Vector3(0, 5, 15));
+	//camnode->addComponent(new dt::CameraComponent("cam2"))->lookAt(Ogre::Vector3(0, 0, 0));;
+	int a;
 }
 
 void BattleState::updateStateFrame(double simulation_frame_time) {
 	static double runTime = 0;
 	runTime += simulation_frame_time;
-	if (runTime > 4) {
+
+	if (runTime > 40) {
 		dt::StateManager::get()->pop(1);
 	}
 }
