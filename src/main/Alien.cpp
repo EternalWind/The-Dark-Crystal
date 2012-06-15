@@ -136,47 +136,47 @@ void Alien::onUpdate(double time_diff) {
 void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
     bool is_stopped = false;
 
-    switch (type) {
-    case FORWARD:
-        if (is_pressed)
-            mMoveVector.z += 1.0f;
-        else
-            mMoveVector.z -= 1.0f;
+	switch (type) {
+	case FORWARD:
+		if (is_pressed)
+			mMoveVector.z -= 1.0f; // Bullet的Z轴和Ogre方向相反
+		else
+			mMoveVector.z += 1.0f;
 
-        break;
+		break;
 
-    case BACKWARD:
-        if (is_pressed)
-            mMoveVector.z -= 1.0f;
-        else
-            mMoveVector.z += 1.0f;
+	case BACKWARD:
+		if (is_pressed)
+			mMoveVector.z += 1.0f;
+		else
+			mMoveVector.z -= 1.0f;
 
-        break;
+		break;
 
-    case LEFTWARD:
-        if (is_pressed)
-            mMoveVector.x -= 1.0f;
-        else
-            mMoveVector.x += 1.0f;
+	case LEFTWARD:
+		if (is_pressed)
+			mMoveVector.x -= 1.0f;
+		else
+			mMoveVector.x += 1.0f;
 
-        break;
+		break;
 
-    case RIGHTWARD:
-        if (is_pressed)
-            mMoveVector.x += 1.0f;
-        else
-            mMoveVector.x -= 1.0f;
+	case RIGHTWARD:
+		if (is_pressed)
+			mMoveVector.x += 1.0f;
+		else
+			mMoveVector.x -= 1.0f;
 
-        break;
+		break;
 
-    case STOP:
-        is_stopped = true;
+	case STOP:
+		is_stopped = true;
 
-        break;
+		break;
 
-    default:
-        dt::Logger::get().debug("Not processed MoveType!");
-    }
+	default:
+		dt::Logger::get().debug("Not processed MoveType!");
+	}
 
     if (is_stopped) {
         this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
@@ -187,6 +187,8 @@ void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
     } else {
         /*if (!mMoveVector.isZeroLength())
             mMoveVector.normalise();*/
+		//Ogre::Vector3 move_vector = mMoveVector;
+		////move_vector.normalise();
 
         this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
             ->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * mCurSpeed));
@@ -211,11 +213,9 @@ void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
 void Alien::__onJump(bool is_pressed) {
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	std::cout << physics_body->getRigidBody()->getLinearVelocity().y() << std::endl;
-
     if (is_pressed && this->isOnGround()) {
         // 调整该处的脉冲值使跳跃更自然。
-        physics_body->applyCentralImpulse(0.0f, 100.0f, 0.0f);
+        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
 		
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
     }
