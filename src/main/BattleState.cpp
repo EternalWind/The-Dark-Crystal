@@ -1,6 +1,9 @@
 #include "BattleState.h"
 #include "Alien.h"
 #include "HumanAgent.h"
+#include "Car.h"
+#include "MenuState.h"
+#include "SceneLoader.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -13,77 +16,28 @@
 #include <Gui/GuiRootWindow.hpp>
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
+#include <Logic/ScriptComponent.hpp>
 
 #include <OgreProcedural.h>
 
+BattleState::BattleState(const QString stage_name) 
+    : mQuestionLabel(nullptr),
+      mDialogLabel(nullptr),
+      mTotalEnemyNum(0),
+      mRemainEnemyNum(0),
+      mTotalCrystalNum(0),
+      mObtainedCrystalNum(0),
+      mStage(stage_name),
+      mNextStage("") {}
+
 void BattleState::onInitialize() {
+    auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
+    scene->addComponent<dt::ScriptComponent>(new dt::ScriptComponent(mStage + ".js", mStage, true));
 
-	dt::ResourceManager::get()->addDataPath(QDir("data"));
-	dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
-	dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
-	dt::ResourceManager::get()->addResourceLocation("./models/sinbad.zip", "Zip", true);
-	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-
-	auto scene = addScene(new dt::Scene("battle_state_scene"));
-	OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
-
-	OgreProcedural::PlaneGenerator().setSizeX(100.0f).setSizeY(100.0f).setUTile(10.0).setVTile(10.0).realizeMesh("Plane");
-	auto plane_node = scene->addChildNode(new dt::Node("planenode"));
-	plane_node->addComponent(new dt::MeshComponent("Plane", "PrimitivesTest/Pebbles", "plane-mesh"));
-	plane_node->addComponent(new dt::PhysicsBodyComponent("plane-mesh", "plane-body",
-        dt::PhysicsBodyComponent::CONVEX, 0.0f));
-
-
-    auto lightnode = scene->addChildNode(new dt::Node("lightnode"));
-    lightnode->setPosition(Ogre::Vector3(-20, 20, 10));
-    lightnode->addComponent(new dt::LightComponent("light"));
-	
-	auto camnode = scene->addChildNode(new dt::Node("camnode"));
-    camnode->setPosition(Ogre::Vector3(0, 0, 15));
-    camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));;
-
-	//auto test_object = scene->addChildNode(new dt::Node("test_object"));
-	//test_object->setPosition(Ogre::Vector3(0, 5, -5));
-	//test_object->addComponent(new dt::MeshComponent("Sinbad.mesh", "", "test_mesh"))->setCastShadows(true);
-
-	dt::GuiRootWindow& window = dt::GuiManager::get()->getRootWindow();
-
-	auto button1 = window.addChildWidget(new dt::GuiButton("b1"));
-    button1->setCaption("Health");
-    button1->setPosition(10, 600);
-    button1->setSize(200, 30);
-
-
-	auto alien = new Alien("alien_node",
-								"Sinbad.mesh",
-								dt::PhysicsBodyComponent::CONVEX,
-								0.0f,
-								"walk.wav",
-								"walk.wav",
-								"walk.wav");
-	alien->setPosition(Ogre::Vector3(0, 5, -5));
-	alien->setEyePosition(Ogre::Vector3(0, 6, -5));
-	scene->addChildNode(alien);
-
-	auto agent = new HumanAgent("human");
-	scene->addChildNode(agent);
-
-	agent->attachTo(alien);
-
-	//camnode = scene->addChildNode(new dt::Node("camnode2"));
-	//camnode->setPosition(Ogre::Vector3(0, 5, 15));
-	//camnode->addComponent(new dt::CameraComponent("cam2"))->lookAt(Ogre::Vector3(0, 0, 0));;
-
+    auto root_win = dt::GuiManager()
 }
 
-void BattleState::updateStateFrame(double simulation_frame_time) {
-	static double runTime = 0;
-	runTime += simulation_frame_time;
-
-	if (runTime > 40) {
-		dt::StateManager::get()->pop(1);
-	}
-}
+void BattleState::updateStateFrame(double simulation_frame_time) {}
 
 BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mQuestionLabel(nullptr),
@@ -94,12 +48,19 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mObtainedCrystalNum(0) {
 }
 
-bool BattleState::isVictory() {
-	return false;
-}
+//bool BattleState::isVictory() {
+//	return false;
+//}
 
 void BattleState::win() {
+    auto state_mgr = dt::StateManager::get();
+    state_mgr->pop(1);
 
+    if (mNextStage != "") {
+        state_mgr->setNewState(new BattleState(mNextStage));
+    } else {
+        state_mgr->setNewState(new MenuState());
+    }
 }
 
 QString BattleState::getBattleStateName() const {
@@ -186,4 +147,19 @@ void BattleState::__onTriggerQA() {
 
 void BattleState::__onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
 
+}
+
+QString BattleState::getNextStage() const {
+    return mNextStage;
+}
+
+void BattleState::setNextStage(const QString next_stage) {
+    mNextStage = next_stage;
+}
+
+int main(int argc, char** argv) {
+	//std::cout << "hello" << std::endl;
+	//system("pause");
+	dt::Game game;
+	game.run(new BattleState(), argc, argv);
 }

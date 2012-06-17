@@ -100,7 +100,7 @@ protected slots:
 
 private:
 
-	void __moveAround();	       
+	//void __moveAround();	       
 
 	    
 	/**
@@ -108,7 +108,7 @@ private:
 	  * @param degree 角度
 	  * @returns 弧度
 	  */
-	float __getRadian(const float& degree);
+	//float __getRadian(const float& degree);
 
 	/**
 	  * 获取相对位移，相对转角
@@ -116,7 +116,7 @@ private:
 	  * @param dy 相对位移y(引用)
 	  * @param alpha 相对转角(引用)
 	  */
-	void __getDelta(float &dx, float &dy, float &alpha);
+	//void __getDelta(float &dx, float &dy, float &alpha);
 	
 
 protected:
