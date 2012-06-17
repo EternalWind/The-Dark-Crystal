@@ -53,22 +53,12 @@ void Spaceship::onDeinitialize() {
 }
 
 void Spaceship::onUpdate(double time_diff) {	
-   // mIsUpdatingAfterChange = (time_diff == 0);
+	mIsUpdatingAfterChange = (time_diff == 0);
 
-	//this->setPosition(Ogre::Vector3(0, 0, 0), dt::Node::SCENE);
-
-	//std::cout << "a" << std::endl;
-	auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	//p->disable();
-	p->setCentralForce(0, 5, 0);
-	
-	//p->enable();
-
-	//std::cout << "a" << std::endl;
-
+	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->setCentralForce(0, 5, 0);
 	dt::Node::onUpdate(time_diff);
 
-//	mIsUpdatingAfterChange = false;
+	mIsUpdatingAfterChange = false;
 }
 
 // slots
