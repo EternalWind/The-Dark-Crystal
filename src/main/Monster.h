@@ -65,6 +65,8 @@ public:
 			const float attack_interval
 		);
 
+	void onUpdate(double time_diff);
+
 
 protected slots:	   
 
@@ -76,21 +78,21 @@ protected slots:
 
     void __onSpeedUp(bool is_pressed);
 
-    //void __onChangeWeapon(Weapon::WeaponType type);
+    void __onChangeWeapon(Weapon::WeaponType type);
 
-    //void __onRemoveWeapon();
+    void __onRemoveWeapon();
 
-    //void __onRemoveWeapon(Weapon::WeaponType type);
+    void __onRemoveWeapon(Weapon::WeaponType type);
 
-    //void __onAddEquipment(bool is_pressed);
+    void __onAddEquipment(bool is_pressed);
 
-    //void __onEquiped(dt::PhysicsBodyComponent* object);
+    void __onEquiped(dt::PhysicsBodyComponent* object);
 
-    //void __onGetOffVehicle();
+    void __onGetOffVehicle();
 
     void __onLookAround(Ogre::Quaternion quaternion);
 
-    //void __onReload();
+    void __onReload();
 
 	void __onHit(dt::PhysicsBodyComponent* hit);
 
