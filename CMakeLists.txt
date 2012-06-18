@@ -49,6 +49,7 @@ include_directories(${PROJECT_SOURCE_DIR}/libs/boost
 
 include_directories(${PROJECT_SOURCE_DIR}/libs/ducttape/include)
 include_directories(${PROJECT_SOURCE_DIR}/src/main)
+include_directories(${PROJECT_SOURCE_DIR}/src/test)
 
 # Qt4 stuff
 set(QT_USE_QTSCRIPT TRUE)
@@ -77,12 +78,16 @@ endif()
 MESSAGE(STATUS "This is The-Dark-Crystal")
 aux_source_directory(src/main main_CPP)
 aux_source_directory(src/thirdparty thirdparty_CPP)
+aux_source_directory(src/test test_CPP)
 file(GLOB_RECURSE main_HPP src/main/*.hpp)
 file(GLOB_RECURSE main_H src/main/*.h)
+file(GLOB_RECURSE test_HPP src/test/*.hpp)
+file(GLOB_RECURSE test_H src/test/*.h)
 qt4_wrap_cpp(main_HEADERS_MOC ${main_HPP} ${main_H})
+qt4_wrap_cpp(test_HEADERS_MOC ${test_HPP} ${test_H})
 
 MESSAGE(STATUS "This is MOC${main_HEADERS_MOC}")
-ADD_EXECUTABLE(The-Dark-Crystal ${main_CPP} ${main_HEADERS_MOC} ${thirdparty_CPP})
+ADD_EXECUTABLE(The-Dark-Crystal ${main_CPP} ${main_HEADERS_MOC} ${thirdparty_CPP} ${test_CPP} ${test_HEADERS_MOC})
 
 target_link_libraries(The-Dark-Crystal ${LIBS_LIST})
 
