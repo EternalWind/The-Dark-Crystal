@@ -121,18 +121,6 @@ public slots:
 	void win();
 
     /**
-      * 设置当前关卡。
-      * @param stage 要设置的关卡
-      */
-    void setStage(const QString stage);
-
-    /**
-      * 获取当前关卡。
-      * @returns 当前关卡
-      */
-    QString getStage() const;
-
-    /**
       * 获取下一关卡。
       * @returns 下一关卡
       */

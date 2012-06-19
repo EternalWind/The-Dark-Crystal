@@ -4,6 +4,7 @@
 
 #include <Logic/RaycastComponent.hpp>
 
+const QString Spaceship::ATTACK_SOUND_COMPONENT = "attack_sound";
 const QString Spaceship::FLYING_SOUND_COMPONENT = "flying_sound";
 const QString Spaceship::RISE_SOUND_COMPONENT = "rise_sound";
 const QString Spaceship::FALL_SOUND_COMPONENT = "fall_sound";
@@ -38,6 +39,7 @@ void Spaceship::onInitialize() {
 	auto conf_mgr = ConfigurationManager::getInstance();
 	SoundSetting& sound_setting = conf_mgr->getSoundSetting();
 
+    auto attack_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mAttackSoundHandle, ATTACK_SOUND_COMPONENT));
 	auto flying_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mFlyingSoundHandle, FLYING_SOUND_COMPONENT));
 	auto rise_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mRiseSoundHandle, RISE_SOUND_COMPONENT));
 	auto fall_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mFallSoundHandle, FALL_SOUND_COMPONENT));
@@ -58,6 +60,8 @@ void Spaceship::onDeinitialize() {
 }
 
 void Spaceship::onUpdate(double time_diff) {
+    
+
     static const float EPS = 1e-9;
     dt::Node::onUpdate(time_diff);
 
@@ -72,9 +76,11 @@ void Spaceship::onUpdate(double time_diff) {
 	setCurSpeed(z_speed);
 
 //    this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity().length();
-    this->setRotation(this->mLookAroundQuaternion);
-    this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->
-        setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * getCurSpeed()));
+    //this->setRotation(this->mLookAroundQuaternion);
+    //this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->
+    //    setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * getCurSpeed()));
+
+
 }
 
 // slots
@@ -96,6 +102,10 @@ void Spaceship::__onMove(MoveType type, bool is_pressed) {
 	default:
 		dt::Logger::get().debug("Not processed MoveType!");
 	}
+
+    this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->
+        setCentralForce(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector));
+
 
 }
 
