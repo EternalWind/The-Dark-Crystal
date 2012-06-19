@@ -53,64 +53,129 @@ void Spaceship::onInitialize() {
     fall_sound->getSound().setLoop(false);
 
     // 太空没有空气，不需要考虑摩擦力！
-    this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
+    auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	p->getRigidBody()->setFriction(0.0);
+	p->setCentralForce(0.0f, mMass, 0.0f);
+
+	this->setCurSpeed(6.0f);
 }
 
 void Spaceship::onDeinitialize() {
 }
 
-void Spaceship::onUpdate(double time_diff) {
-    
+void Spaceship::onUpdate(double time_diff) {	
+	mIsUpdatingAfterChange = (time_diff == 0);
 
-    static const float EPS = 1e-9;
-    dt::Node::onUpdate(time_diff);
+	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->setCentralForce(0, 5, 0);
+	dt::Node::onUpdate(time_diff);
 
-    // v = v0 + at
-	float z_speed = getCurSpeed() + mMoveVector.z * mAcceleration * time_diff;
-	if (z_speed > mMaxSpeed + EPS) {
-		z_speed = mMaxSpeed;
-	}
-	if (z_speed + EPS < mMinSpeed) {
-		z_speed = mMinSpeed;
-	}
-	setCurSpeed(z_speed);
-
-//    this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity().length();
-    //this->setRotation(this->mLookAroundQuaternion);
-    //this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->
-    //    setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * getCurSpeed()));
-
-
+	mIsUpdatingAfterChange = false;
 }
 
 // slots
 
 void Spaceship::__onMove(MoveType type, bool is_pressed) {
-    switch (type) {
+    bool is_stopped = false;
 
-    case FORWARD:
-		mMoveVector.z += (is_pressed ? 1.0f : -1.0f);
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+
+	switch (type) {
+	case FORWARD:
+		if (is_pressed)
+			mMoveVector.z -= 1.0f; // Bullet的Z轴和Ogre方向相反
+		else
+			mMoveVector.z += 1.0f;
+
 		break;
 
-    case BACKWARD:
-		mMoveVector.z += (is_pressed ? -1.0f : 1.0f);
+	case BACKWARD:
+		if (is_pressed)
+			mMoveVector.z += 1.0f;
+		else
+			mMoveVector.z -= 1.0f;
+
+		break;
+
+	case LEFTWARD:
+		if (is_pressed) {
+			mMoveVector.x -= 1.0f;
+
+			physics_body->disable();
+			this->setRotation(this->getRotation() * Ogre::Quaternion(Ogre::Radian(1.0f / 6), Ogre::Vector3(0.0f, 0.0f, 1.0f)));
+			physics_body->enable();
+
+		} else {
+			mMoveVector.x += 1.0f;
+
+			physics_body->disable();
+			this->setRotation(this->getRotation() * Ogre::Quaternion(Ogre::Radian(-1.0f / 6), Ogre::Vector3(0.0f, 0.0f, 1.0f)));
+			physics_body->enable();
+		}
+
+		break;
+
+	case RIGHTWARD:
+		if (is_pressed) {
+			mMoveVector.x += 1.0f;
+
+			physics_body->disable();
+			this->setRotation(this->getRotation() * Ogre::Quaternion(Ogre::Radian(-1.0f / 6), Ogre::Vector3(0.0f, 0.0f, 1.0f)));
+			physics_body->enable();
+
+		} else {
+			mMoveVector.x -= 1.0f;
+			physics_body->disable();
+			this->setRotation(this->getRotation() * Ogre::Quaternion(Ogre::Radian(1.0f / 6), Ogre::Vector3(0.0f, 0.0f, 1.0f)));
+			physics_body->enable();
+
+		}
+
 		break;
 
 	case STOP:
+		is_stopped = true;
+
 		break;
 
 	default:
 		dt::Logger::get().debug("Not processed MoveType!");
 	}
 
-    this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->
-        setCentralForce(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector));
+    if (is_stopped) {
 
+        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+            ->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
+    } else {
 
+        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+
+    }
+
+    mIsMoving = !is_stopped;
 }
 
+/* 飞机下降 -_- 话说这加速肿么变成下降了，这什么神设定啊 =.= */
 void Spaceship::__onSpeedUp(bool is_pressed) {
+    float increasing_rate = 1.5f;
 
+    if (is_pressed) {
+        this->setCurSpeed(this->getCurSpeed() * increasing_rate);
+
+        //if (mIsMoving) {
+        //    this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
+        //    this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
+        //}
+    } else {
+        this->setCurSpeed(this->getCurSpeed() / increasing_rate);
+
+        //if (mIsMoving) {
+        //    this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+        //    this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
+        //}
+    }
+
+    mHasSpeededUp = is_pressed;
 }
 
 void Spaceship::__onLookAround(Ogre::Quaternion quaternion) {
@@ -118,5 +183,31 @@ void Spaceship::__onLookAround(Ogre::Quaternion quaternion) {
 }
 
 void Spaceship::__moveAround() {
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
+    physics_body->disable();
+    this->setRotation(quaternion, dt::Node::SCENE);
+
+	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+
+    physics_body->enable();
+}
+
+void Spaceship::__onJump(bool is_pressed) {
+	if (is_pressed) {
+		mMoveVector.y += 1.0f;
+		
+		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->stopSound();
+		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->playSound();
+	} else {
+		mMoveVector.y -= 1.0f;
+
+		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->stopSound();
+		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->playSound();
+	}
+
+	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+
+	mIsJumping = is_pressed;
 }

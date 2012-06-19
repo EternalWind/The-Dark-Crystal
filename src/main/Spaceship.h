@@ -59,6 +59,8 @@ protected slots:
 
     void __onLookAround(Ogre::Quaternion quaternion);
 
+	void __onJump(bool is_pressed);
+
 
 private:
 
