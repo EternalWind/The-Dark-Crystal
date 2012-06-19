@@ -1,10 +1,10 @@
-#ifndef THE_DARK_CRYSTAL_BATTLE_STATE
-#define THE_DARK_CRYSTAL_BATTLE_STATE
+#ifndef THE_DARK_CRYSTAL_BATTLE_STATE_TEST
+#define THE_DARK_CRYSTAL_BATTLE_STATE_TEST
 
 #include <Scene/State.hpp>
+#include <Gui/GuiEditBox.hpp>
 #include <Gui/GuiButton.hpp>
 #include <Gui/GuiLabel.hpp>
-#include <Gui/GuiEditBox.hpp>
 #include <Gui/GuiImageBox.hpp>
 #include <cstdint>
 #include <QString>
@@ -15,10 +15,10 @@
   * 默认第一人称视角
   * 显示血量，武器，弹夹数
   */
-class BattleState : public dt::State {
+class BattleStateTest : public dt::State {
     Q_OBJECT
 public:
-    BattleState(const QString stage_name);
+    BattleStateTest(const QString stage_name);
 
     void onInitialize();
 	
@@ -29,7 +29,7 @@ public:
 	  * @param tot_enemy_num 地图上所有的怪兽数量
 	  * @param tot_crystal_num 地图上所有的水晶数量
 	  */
-	BattleState(uint16_t tot_enemy_num = 0, uint16_t tot_crystal_num = 0);
+	BattleStateTest(uint16_t tot_enemy_num = 0, uint16_t tot_crystal_num = 0);
 
 	/**
 	  * 返回当前BattleState的名字
@@ -107,7 +107,7 @@ public:
 	  * 设置问答窗口
 	  * @param label 问答窗口
 	  */
-	void setQuestionLabel(dt::GuiEditBox* edit_box);
+	void setQuestionLabel(dt::GuiEditBox* question);
 
 public slots:
     /**

@@ -43,6 +43,8 @@ public:
 
 	void onDeinitialize();
 
+	void onUpdate(double time_diff);
+
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
 
@@ -52,6 +54,8 @@ protected slots:
     void __onSpeedUp(bool is_pressed);
 
     void __onLookAround(Ogre::Quaternion quaternion);
+
+	void __onJump(bool is_pressed);
 
 
 protected:

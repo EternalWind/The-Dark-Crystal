@@ -6,12 +6,13 @@
 // http://www.gnu.org/licenses/lgpl.html
 // ----------------------------------------------------------------------------
 
-#include "BattleState.h"
+#include "BattleStateTest.h"
+#include "AlienTest.h"
 
 #include <Scene/Game.hpp>
 
 int main(int argc, char** argv) {
     dt::Game game;
-    game.run(new BattleState(), argc, argv);
+    game.run(new BattleStateTest(), argc, argv);
     return 0;
 }
