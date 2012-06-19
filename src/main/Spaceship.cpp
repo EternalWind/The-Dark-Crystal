@@ -195,5 +195,5 @@ void Spaceship::__onJump(bool is_pressed) {
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
 		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
-	mIsJumping = is_pressed;
+	//mIsJumping = is_pressed;
 }

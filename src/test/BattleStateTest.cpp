@@ -273,7 +273,7 @@ void BattleStateTest::__resetGui() {
     int size_v_small = (float)coordination.height / 40.0f;
 
     mFrontSight->getMyGUIWidget()->setAlign(MyGUI::Align::Center);
-    mFrontSight->setSize(size_h_medium, size_h_medium);
+    mFrontSight->setSize((int)(gap_h_medium * 1.5f), (int)(gap_h_medium * 1.5f));
     mFrontSight->getMyGUIWidget()->setPosition(coordination.width / 2 - mFrontSight->getMyGUIWidget()->getSize().width / 2,
         coordination.height / 2 - mFrontSight->getMyGUIWidget()->getSize().height /2);
 
