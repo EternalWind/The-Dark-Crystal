@@ -202,6 +202,7 @@ protected:
     Ogre::Vector3 mMoveVector;                                        //!< 一个用来辅助记录移动（速度或力）的方向的向量,采用以该实体为原点的坐标系（具体用法请参见Alien::__onMove）。
     bool mIsAddingEquipment;                                          //!< 标记是否正在进行场景交互（如解锁水晶等）。
     bool mIsMoving;                                                   //!< 标记该实体是否正在移动。
+	bool mIsJumping;                                                  //!< 标记该实体是否正在跳跃中
     bool mHasSpeededUp;                                               //!< 标记该实体是否处于提升了速度的状态。
     const static QString MESH_COMPONENT;                              //!< 所有实体类的MeshComponent的名字。
     const static QString PHYSICS_BODY_COMPONENT;                      //!< 所有实体类的PhysicsBodyComponent的名字。
