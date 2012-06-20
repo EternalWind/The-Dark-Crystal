@@ -87,11 +87,8 @@ void Monster::onDeinitialize() {
 }
 
 void Monster::onUpdate(double time_diff) {
-	if (mIsMoving) {
-		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
-		dt::Node::onUpdate(time_diff);
-	}
+
+	dt::Node::onUpdate(time_diff);
 }
 
 // --------------- slots -------------------//
@@ -153,8 +150,8 @@ void Monster::__onMove(MoveType type, bool is_pressed) {
 		//Ogre::Vector3 move_vector = mMoveVector;
 		////move_vector.normalise();
 
-   //     this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-			//->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
         std::shared_ptr<dt::SoundComponent> move_sound;
 
@@ -219,12 +216,13 @@ void Monster::__onSpeedUp(bool is_pressed) {
 }
 
 void Monster::__onLookAround(Ogre::Quaternion quaternion) {
-    Ogre::Quaternion rotation(quaternion.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    
-    // 暂时禁用PhysicsBody以便手动设置旋转。
+
     physics_body->disable();
-    this->setRotation(rotation, dt::Node::SCENE);
+    this->setRotation(quaternion, dt::Node::SCENE);
+
+	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+
     physics_body->enable();
 }
 

@@ -18,6 +18,7 @@ Entity::Entity(const QString name, const QString mesh_handle, const dt::PhysicsB
       mMoveVector(0.0f, 0.0f, 0.0f),
       mIsAddingEquipment(false),
       mIsMoving(false),
+	  mIsJumping(false),
       mHasSpeededUp(false) {}
 
 uint16_t Entity::getCurHealth() const {
@@ -88,8 +89,8 @@ void Entity::setEyePosition(const Ogre::Vector3 eye_position) {
 }
 
 bool Entity::isOnGround() {
-    return this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->
-        getLinearVelocity().getY() <= 0.10f;
+	return this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getTotalForce()
+		.getY() <= 0.10f;
 }
 
 void Entity::onInitialize() {

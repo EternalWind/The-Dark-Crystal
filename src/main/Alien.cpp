@@ -131,11 +131,6 @@ void Alien::onUpdate(double time_diff) {
         mIsAddingEquipment = false;
         this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
-		
-	if (mIsMoving) {
-		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
-	}
 
     Node::onUpdate(time_diff);
 }
@@ -359,7 +354,9 @@ void Alien::__onGetOffVehicle() { /* =_= 很明显，外星人不是一种载具。*/ }
 void Alien::__onLookAround(Ogre::Quaternion quaternion) {
     Ogre::Quaternion rotation(quaternion.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    
+   
+	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+
     // 暂时禁用PhysicsBody以便手动设置旋转。
     physics_body->disable();
     this->setRotation(rotation, dt::Node::SCENE);
