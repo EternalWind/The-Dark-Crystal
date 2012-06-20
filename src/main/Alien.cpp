@@ -132,6 +132,14 @@ void Alien::onUpdate(double time_diff) {
         this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
+
+    if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
+        physics_body->activate();
+        physics_body->getRigidBody()->setLinearVelocity(velocity);
+    }
+
     Node::onUpdate(time_diff);
 }
 
@@ -140,39 +148,41 @@ void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
 
 	switch (type) {
 	case FORWARD:
-		if (is_pressed)
-			mMoveVector.z -= 1.0f; // Bullet的Z轴和Ogre方向相反
-		else
+        if (is_pressed/* && mMoveVector.z > -1.0f*/)
+			mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
+        else if (!is_pressed && mMoveVector.z < 1.0f)
 			mMoveVector.z += 1.0f;
 
 		break;
 
 	case BACKWARD:
-		if (is_pressed)
+		if (is_pressed && mMoveVector.z < 1.0f)
 			mMoveVector.z += 1.0f;
-		else
+        else if (!is_pressed && mMoveVector.z > -1.0f)
 			mMoveVector.z -= 1.0f;
 
 		break;
 
 	case LEFTWARD:
-		if (is_pressed)
+        if (is_pressed && mMoveVector.x > -1.0f)
 			mMoveVector.x -= 1.0f;
-		else
+        else if (!is_pressed && mMoveVector.x < 1.0f)
 			mMoveVector.x += 1.0f;
 
 		break;
 
 	case RIGHTWARD:
-		if (is_pressed)
+		if (is_pressed && mMoveVector.x < 1.0f)
 			mMoveVector.x += 1.0f;
-		else
+        else if (!is_pressed && mMoveVector.x > -1.0f)
 			mMoveVector.x -= 1.0f;
 
 		break;
 
 	case STOP:
-		is_stopped = true;
+        mMoveVector.x = 0.0f;
+        mMoveVector.z = 0.0f;
+        is_stopped = true;
 
 		break;
 
@@ -183,21 +193,7 @@ void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
     if (is_stopped) {
         this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
         this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-
-        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-            ->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
     } else {
-        /*if (!mMoveVector.isZeroLength())
-            mMoveVector.normalise();*/
-		//Ogre::Vector3 move_vector = mMoveVector;
-		////move_vector.normalise();
-
-        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-            ->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation() * mMoveVector * mCurSpeed));
-        
-		//btVector3 vec = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity();
-		//std::cout << vec.x() << " " << vec.y() << " " << vec.z() << std::endl;
-
         std::shared_ptr<dt::SoundComponent> move_sound;
 
         if (mHasSpeededUp) {
@@ -354,13 +350,15 @@ void Alien::__onGetOffVehicle() { /* =_= 很明显，外星人不是一种载具。*/ }
 void Alien::__onLookAround(Ogre::Quaternion quaternion) {
     Ogre::Quaternion rotation(quaternion.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-   
-	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+    btTransform trans;
+    //auto motion = physics_body->getRigidBody()->getMotionState();
 
-    // 暂时禁用PhysicsBody以便手动设置旋转。
-    physics_body->disable();
-    this->setRotation(rotation, dt::Node::SCENE);
-    physics_body->enable();
+    //motion->getWorldTransform(trans);
+    //trans.setRotation(BtOgre::Convert::toBullet(rotation));
+    //motion->setWorldTransform(trans);
+    trans = physics_body->getRigidBody()->getWorldTransform();
+    trans.setRotation(BtOgre::Convert::toBullet(rotation));
+    physics_body->getRigidBody()->setWorldTransform(trans);
 }
 
 void Alien::__onReload() {
