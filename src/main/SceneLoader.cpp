@@ -18,6 +18,7 @@
 #include "FirstAidKit.h"
 #include "Vehicle.h"
 #include "Crystal.h"
+#include "Spaceship.h"
 #include <QtXml/QtXml>
 #include <OgreProcedural.h>
 #include <OgreSubEntity.h>
@@ -900,6 +901,45 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
 							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+							scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
+}
+
+Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString Spaceship_name = og_node.attribute(SL_SPACESHIP_NAME);
+		QString attack_val = og_node.attribute(SL_SPACESHIP_ATTACKVAL);
+		QString range = og_node.attribute(SL_SPACESHIP_RANGE);
+		QString interval = og_node.attribute(SL_SPACESHIP_INTERVAL);
+		QString mass = og_node.attribute(SL_SPACESHIP_MASS);
+		Spaceship *pMonster = new Spaceship(Spaceship_name, 
+                                            Spaceship_name,
+                                            dt::PhysicsBodyComponent::BOX,
+                                            mass.toInt(),
+                                            attack_val.toInt(),
+                                            range.toFloat(),
+                                            interval.toFloat(),
+											Spaceship_name + "_attack",
+                                            Spaceship_name + "_flying",
+                                            Spaceship_name + "_rise",
+                                            Spaceship_name + "_fall");
+		if (dt_parent)
+			node = dt_parent->addChildNode(pMonster);
+		else  
+			node = mScene->addChildNode(pMonster);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+							pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
 							scale.attribute(SL_Z).toFloat()));		
 	}
 	return node;

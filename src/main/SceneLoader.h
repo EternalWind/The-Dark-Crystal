@@ -149,6 +149,12 @@ using namespace dt;
 #define SL_WEAPON_ISONESHOOT "IsOneShoot"
 #define SL_WEAPON_HITTINGRANGE "HittingRange"
 #define SL_WEAPON_INTERVAL "interval"
+
+#define SL_SPACESHIP_NAME "SpaceshipName"
+#define SL_SPACESHIP_ATTACKVAL "AttackValue"
+#define SL_SPACESHIP_RANGE "Range"
+#define SL_SPACESHIP_INTERVAL "Interval"
+#define SL_SPACESHIP_MASS "Mass"
 //#define SL_BEGIN "terrain"
 
 class SceneLoader 
@@ -199,6 +205,8 @@ protected:
 	static Node::NodeSP __loadVehicle(const QDomElement& og_node, Node::NodeSP dt_parent);
 
 	static Node::NodeSP __loadWeapon(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadSpaceship(const QDomElement& og_node, Node::NodeSP dt_parent);
 
     static Scene* mScene;
 };
