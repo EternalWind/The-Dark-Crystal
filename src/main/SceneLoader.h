@@ -122,6 +122,33 @@ using namespace dt;
 #define SL_TRIGGER_SCALE_Y "y"
 #define SL_TRIGGER_SCALE_Z "z"
 
+#define SL_ALIEN_NAME "AlienName"
+#define SL_AGENT_TYPE "AgentType"
+
+#define SL_AMMO_NAME "AmmoName"
+#define SL_AMMO_TYPE "AmmoType"
+#define SL_AMMO_NUM_CLIP "NumClip"
+
+#define SL_CRYSTAL_NAME "CrystalName"
+#define SL_CRYSTAL_UNLOCKTIME "UnlockTime"
+
+#define SL_FIRSTAIDKIT_NAME "FirstAidKitName"
+#define SL_RECOVERYVAL "RecoveryVal"
+
+#define SL_MONSTER_NAME "MonsterName"
+#define SL_MONSTER_ATTACKVAL "AttackValue"
+#define SL_MONSTER_RANGE "Range"
+#define SL_MONSTER_INTERVAL "Interval"
+
+#define SL_WEAPON_NAME "WeaponName"
+#define SL_WEAPON_TYPE "WeaponType"
+#define SL_WEAPON_POWER "Power"
+#define SL_WEAPON_MAXCLIP "MaxClip"
+#define SL_WEAPON_AMMOPERCLIP "AmmoPerClip"
+#define SL_WEAPON_WEIGHT "Weight"
+#define SL_WEAPON_ISONESHOOT "IsOneShoot"
+#define SL_WEAPON_HITTINGRANGE "HittingRange"
+#define SL_WEAPON_INTERVAL "interval"
 //#define SL_BEGIN "terrain"
 
 class SceneLoader 
@@ -158,6 +185,20 @@ protected:
     static Node::NodeSP __loadController(const QDomElement& og_component, Node::NodeSP dt_node);
 
     static Node::NodeSP __loadTriggerArea(const QDomElement& og_component, Node::NodeSP dt_node);
+
+	static Node::NodeSP __loadAlien(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadAmmo(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadCrystal(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadFirstAidKit(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadMonster(const QDomElement& og_node, Node::NodeSP dt_parent);
+	
+	static Node::NodeSP __loadVehicle(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadWeapon(const QDomElement& og_node, Node::NodeSP dt_parent);
 
     static Scene* mScene;
 };
