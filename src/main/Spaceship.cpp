@@ -45,8 +45,8 @@ void Spaceship::onInitialize() {
 	p->getRigidBody()->setFriction(0.0);
 	p->setCentralForce(0.0f, mMass, 0.0f);
 
-	this->setCurSpeed(6.0f);
-
+	this->setCurSpeed(7.0f);
+	mIsJumping = true;
 }
 
 void Spaceship::onDeinitialize() {
@@ -55,10 +55,14 @@ void Spaceship::onDeinitialize() {
 void Spaceship::onUpdate(double time_diff) {	
 	mIsUpdatingAfterChange = (time_diff == 0);
 
-	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->setCentralForce(0, 5, 0);
-	dt::Node::onUpdate(time_diff);
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	mIsUpdatingAfterChange = false;
+	//在空中的话给飞船一个力让其保持平衡
+	if (mIsJumping) {
+		physics_body->setCentralForce(0, mMass * 3.25, 0);
+	}
+
+	dt::Node::onUpdate(time_diff);
 }
 
 // slots
@@ -147,23 +151,22 @@ void Spaceship::__onMove(MoveType type, bool is_pressed) {
 
 /* 飞机下降 -_- 话说这加速肿么变成下降了，这什么神设定啊 =.= */
 void Spaceship::__onSpeedUp(bool is_pressed) {
-    float increasing_rate = 1.5f;
+   
+	if (is_pressed) {
+		mMoveVector.y -= 1.0f;
 
-    if (is_pressed) {
-        this->setCurSpeed(this->getCurSpeed() * increasing_rate);
+		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->stopSound();
+		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->playSound();
 
-        //if (mIsMoving) {
-        //    this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-        //    this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
-        //}
     } else {
-        this->setCurSpeed(this->getCurSpeed() / increasing_rate);
-
-        //if (mIsMoving) {
-        //    this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-        //    this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
-        //}
+		mMoveVector.y += 1.0f;
+		
+		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->stopSound();
+		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->playSound();
     }
+
+	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
     mHasSpeededUp = is_pressed;
 }
@@ -195,5 +198,5 @@ void Spaceship::__onJump(bool is_pressed) {
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
 		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
-	//mIsJumping = is_pressed;
+	mIsJumping = isOnGround();
 }

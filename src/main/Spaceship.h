@@ -59,9 +59,9 @@ protected slots:
 
 
 protected:
-	QString mFlyingSoundHandle;             //!< ·É»ú·ÉÐÐÉùÒô¾ä±ú
-	QString mRiseSoundHandle;               //!< ·É»úÉÏÉýÉùÒô¾ä±ú
-	QString mFallSoundHandle;               //!< ·É»úÏÂ½µÉùÒô¾ä±ú
+	QString mFlyingSoundHandle;                    //!< ·É»ú·ÉÐÐÉùÒô¾ä±ú
+	QString mRiseSoundHandle;                      //!< ·É»úÉÏÉýÉùÒô¾ä±ú
+	QString mFallSoundHandle;                      //!< ·É»úÏÂ½µÉùÒô¾ä±ú
 
 	const static QString FLYING_SOUND_COMPONENT;   //!< ·É»ú·ÉÐÐÉùÒôComponentµÄÃû×Ö
 	const static QString RISE_SOUND_COMPONENT;     //!< ·É»úÉÏÉýÉùÒôComponentµÄÃû×Ö
