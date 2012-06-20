@@ -66,6 +66,11 @@ protected:
 	const static QString FLYING_SOUND_COMPONENT;   //!< 飞机飞行声音Component的名字
 	const static QString RISE_SOUND_COMPONENT;     //!< 飞机上升声音Component的名字
 	const static QString FALL_SOUND_COMPONENT;     //!< 飞机下降声音Component的名字
+	const static float MAX_LEAN_ANGLE;             //!< 飞机平移时最大的倾斜角
+	const static float ANGLE_PER_MOVE;             //!< 飞机每一帧转动的角度
+
+private:
+	float mCurAngle;                               //!< 飞机当前倾斜角度
 };
 
 #endif
