@@ -220,14 +220,6 @@ void BattleState::setNextStage(const QString next_stage) {
     mNextStage = next_stage;
 }
 
-QString BattleState::getStage() const {
-    return mStage;
-}
-
-void BattleState::setStage(const QString stage) {
-    mStage = stage;
-}
-
 void BattleState::__resetGui() {
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
     auto coordination = root_win.getMyGUIWidget()->getAbsoluteCoord();

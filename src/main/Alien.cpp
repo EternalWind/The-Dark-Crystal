@@ -125,10 +125,17 @@ void Alien::onDeInitialize() {
 }
 
 void Alien::onUpdate(double time_diff) {
+    this->mIsUpdatingAfterChange = (time_diff == 0);
+
     if (mIsAddingEquipment) {
         mIsAddingEquipment = false;
         this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
+		
+	if (mIsMoving) {
+		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+	}
 
     Node::onUpdate(time_diff);
 }

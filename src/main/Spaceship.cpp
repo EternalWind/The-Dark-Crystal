@@ -186,7 +186,7 @@ void Spaceship::__moveAround() {
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
     physics_body->disable();
-    this->setRotation(quaternion, dt::Node::SCENE);
+//    this->setRotation(quaternion, dt::Node::SCENE);
 
 	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
@@ -209,5 +209,5 @@ void Spaceship::__onJump(bool is_pressed) {
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
 		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
-	mIsJumping = is_pressed;
+//	mIsJumping = is_pressed;
 }
