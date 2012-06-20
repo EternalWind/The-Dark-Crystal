@@ -97,8 +97,10 @@ void HumanAgent::__onKeyUp(dt::InputManager::InputCode code, const OIS::EventArg
     }
 
     if (isMoveRelated) {
-        if (input_mgr->isPressed(code)) {
-            emit sMove(Entity::STOP, true);
+        if (!input_mgr->isPressed(control_setting.getKey(ControlSetting::BACKWARD)) && !input_mgr->isPressed(control_setting.getKey(
+            ControlSetting::BACKWARD)) && !input_mgr->isPressed(control_setting.getKey(ControlSetting::BACKWARD)) && !input_mgr->
+            isPressed(control_setting.getKey(ControlSetting::BACKWARD))) {
+                emit sMove(Entity::STOP, true);
         }
     }
 }

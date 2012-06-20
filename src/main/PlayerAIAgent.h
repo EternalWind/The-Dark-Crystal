@@ -9,7 +9,7 @@
 class PlayerAIAgent : public Agent {
 Q_OBJECT
 public: 
-    PlayerAIAgent(QString name); 
+    PlayerAIAgent(QString name, uint16_t cur_area); 
     bool isOnWay(); 
     void setOnWay(bool type); 	
     Alien* getBody(); 
@@ -33,6 +33,7 @@ private slots:
     void __onFire(dt::PhysicsBodyComponent* pbc); 
     void __onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c);
 private:
+    double pre_degree;
     bool mFollow;                                            //<! 若为true，则快速行走到玩家身边
     Alien* mBody;                                            //<! 外星人身体，为agent的父节点，agent充当着控制外星人的大脑。
     bool mOnWay;                                             //<! 是否在路上。若做出了移动决策，在没有到达目的地之前，这个状态都为true。
