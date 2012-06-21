@@ -98,8 +98,8 @@ void HumanAgent::__onKeyUp(dt::InputManager::InputCode code, const OIS::EventArg
 
     if (isMoveRelated) {
         if (!input_mgr->isPressed(control_setting.getKey(ControlSetting::BACKWARD)) && !input_mgr->isPressed(control_setting.getKey(
-            ControlSetting::BACKWARD)) && !input_mgr->isPressed(control_setting.getKey(ControlSetting::BACKWARD)) && !input_mgr->
-            isPressed(control_setting.getKey(ControlSetting::BACKWARD))) {
+            ControlSetting::FORWARD)) && !input_mgr->isPressed(control_setting.getKey(ControlSetting::RIGHTWARD)) && !input_mgr->
+            isPressed(control_setting.getKey(ControlSetting::LEFTWARD))) {
                 emit sMove(Entity::STOP, true);
         }
     }
@@ -137,10 +137,10 @@ void HumanAgent::__onMouseMove(const OIS::MouseEvent& event) {
 
         Ogre::Quaternion rot;
         rot.FromRotationMatrix(orientMatrix);
-        setRotation(rot);
+        //setRotation(rot);
 
 		yaw += Ogre::Radian(dx);
 
-		emit sLookAround(this->getParent()->getRotation(dt::Node::SCENE) * Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)));
+		emit sLookAround(rot, this->getParent()->getRotation(dt::Node::SCENE) * Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)));
     }
 }

@@ -57,8 +57,6 @@ void Spaceship::onUpdate(double time_diff) {
 
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->setCentralForce(0, 5, 0);
 	dt::Node::onUpdate(time_diff);
-
-	mIsUpdatingAfterChange = false;
 }
 
 // slots

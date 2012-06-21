@@ -3,6 +3,7 @@
 #include "Ammo.h"
 #include "FirstAidKit.h"
 #include "Crystal.h"
+#include "Agent.h"
 
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
@@ -134,6 +135,7 @@ void Alien::onUpdate(double time_diff) {
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
+    velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
 
     if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
         physics_body->activate();
@@ -213,6 +215,7 @@ void Alien::__onJump(bool is_pressed) {
 
     if (is_pressed && this->isOnGround()) {
         // 调整该处的脉冲值使跳跃更自然。
+        physics_body->activate();
         physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
 		
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
@@ -347,8 +350,10 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 
 void Alien::__onGetOffVehicle() { /* =_= 很明显，外星人不是一种载具。*/ }
 
-void Alien::__onLookAround(Ogre::Quaternion quaternion) {
-    Ogre::Quaternion rotation(quaternion.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
+void Alien::__onLookAround(Ogre::Quaternion agent_rot, Ogre::Quaternion body_rot) {
+    Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
+    //rotation.FromRotationMatrix(orientMatrix);
+
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     btTransform trans;
     //auto motion = physics_body->getRigidBody()->getMotionState();
@@ -356,6 +361,8 @@ void Alien::__onLookAround(Ogre::Quaternion quaternion) {
     //motion->getWorldTransform(trans);
     //trans.setRotation(BtOgre::Convert::toBullet(rotation));
     //motion->setWorldTransform(trans);
+    this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
+
     trans = physics_body->getRigidBody()->getWorldTransform();
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
     physics_body->getRigidBody()->setWorldTransform(trans);
