@@ -184,16 +184,3 @@ protected:
 };
 
 #endif
-	std::vector<dt::GuiButton*> mAnswerButtons;	//!< 答案选项
-	dt::GuiEditBox* mQuestionLabel;				//!< 问题显示窗口
-	dt::GuiLabel* mDialogLabel;					//!< 对话显示窗口
-	uint16_t mTotalEnemyNum;					//!< 地图中怪兽数量
-	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量
-	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
-	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
-    QString mStage;                             //!< 当前关卡
-    QString mNextStage;                         //!< 下一关卡
-
-};
-
-#endif
