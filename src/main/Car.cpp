@@ -89,7 +89,7 @@ void Car::onUpdate(double time_diff) {
 	if (theta < -getMaxTheta()) {
 		theta = -getMaxTheta();
 	}
-	
+
 	setCurTheta(theta);
 
 	dt::Node::onUpdate(time_diff);
@@ -128,11 +128,11 @@ float Car::getMinSpeed() const {
 void Car::__onMove(MoveType type, bool is_pressed) {
 	switch (type) {
 
-    case FORWARD:
+	case FORWARD:
 		mMoveVector.z += (is_pressed ? 1.0f : -1.0f);
 		break;
 
-    case BACKWARD:
+	case BACKWARD:
 		mMoveVector.z += (is_pressed ? -1.0f : 1.0f);
 		break;
 
@@ -156,14 +156,18 @@ void Car::__onSpeedUp(bool is_pressed) {
 	/* 加速键对车来说无法起作用 */
 }
 
-void Car::__onLookAround(Ogre::Quaternion quaternion) {
-    //Ogre::Quaternion rotation(quaternion.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    
-    // 暂时禁用PhysicsBody以便手动设置旋转。
-    physics_body->disable();
-    this->setRotation(quaternion, dt::Node::SCENE);
-    physics_body->enable();
+void Car::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+
+	physics_body->disable();
+	this->setRotation(body_rot);
+
+	auto agent = this->findChildNode(Agent::AGENT);
+	agent->setRotation(agent_rot);
+
+	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+
+	physics_body->enable();
 }
 
 //void Car::__turnAround(bool is_left, bool is_forward) {

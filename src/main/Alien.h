@@ -77,7 +77,7 @@ protected slots:
 
     void __onGetOffVehicle();
 
-    void __onLookAround(Ogre::Quaternion agent_rot, Ogre::Quaternion body_rot);
+    void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
 
     void __onReload();
 

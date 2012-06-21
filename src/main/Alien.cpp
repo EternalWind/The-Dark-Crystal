@@ -1,4 +1,5 @@
 #include "Alien.h"
+#include "Agent.h"
 #include "ConfigurationManager.h"
 #include "Ammo.h"
 #include "FirstAidKit.h"
@@ -18,14 +19,14 @@ const QString Alien::INTERACTOR_COMPONENT = "interactor";
 Alien::Alien(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass,
     const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle)
     : Entity(node_name, mesh_handle, collision_shape_type, mass),
-      mWalkSoundHandle(walk_sound_handle),
-      mJumpSoundHandle(jump_sound_handle),
-      mRunSoundHandle(run_sound_handle),
-      mCurWeapon(nullptr) {
-          // 准备好3种武器的位置。
-          mWeapons[Weapon::PRIMARY] = nullptr;
-          mWeapons[Weapon::SECONDARY] = nullptr;
-          mWeapons[Weapon::THROWABLE] = nullptr;
+    mWalkSoundHandle(walk_sound_handle),
+    mJumpSoundHandle(jump_sound_handle),
+    mRunSoundHandle(run_sound_handle),
+    mCurWeapon(nullptr) {
+        // 准备好3种武器的位置。
+        mWeapons[Weapon::PRIMARY] = nullptr;
+        mWeapons[Weapon::SECONDARY] = nullptr;
+        mWeapons[Weapon::THROWABLE] = nullptr;
 }
 
 Weapon* Alien::getCurWeapon() const {
@@ -111,11 +112,11 @@ void Alien::onInitialize() {
 
     auto iteractor = this->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
     iteractor->setRange(3.0f);
-    
+
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
-	this->setOrigSpeed(10.0f);
-	this->setCurSpeed(10.0f);
+    this->setOrigSpeed(10.0f);
+    this->setCurSpeed(10.0f);
 
     // 外星人的行走不需要考虑摩擦力。
     this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
@@ -148,49 +149,49 @@ void Alien::onUpdate(double time_diff) {
 void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
     bool is_stopped = false;
 
-	switch (type) {
-	case FORWARD:
+    switch (type) {
+    case FORWARD:
         if (is_pressed/* && mMoveVector.z > -1.0f*/)
-			mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
+            mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
         else if (!is_pressed && mMoveVector.z < 1.0f)
-			mMoveVector.z += 1.0f;
+            mMoveVector.z += 1.0f;
 
-		break;
+        break;
 
-	case BACKWARD:
-		if (is_pressed && mMoveVector.z < 1.0f)
-			mMoveVector.z += 1.0f;
+    case BACKWARD:
+        if (is_pressed && mMoveVector.z < 1.0f)
+            mMoveVector.z += 1.0f;
         else if (!is_pressed && mMoveVector.z > -1.0f)
-			mMoveVector.z -= 1.0f;
+            mMoveVector.z -= 1.0f;
 
-		break;
+        break;
 
-	case LEFTWARD:
+    case LEFTWARD:
         if (is_pressed && mMoveVector.x > -1.0f)
-			mMoveVector.x -= 1.0f;
+            mMoveVector.x -= 1.0f;
         else if (!is_pressed && mMoveVector.x < 1.0f)
-			mMoveVector.x += 1.0f;
+            mMoveVector.x += 1.0f;
 
-		break;
+        break;
 
-	case RIGHTWARD:
-		if (is_pressed && mMoveVector.x < 1.0f)
-			mMoveVector.x += 1.0f;
+    case RIGHTWARD:
+        if (is_pressed && mMoveVector.x < 1.0f)
+            mMoveVector.x += 1.0f;
         else if (!is_pressed && mMoveVector.x > -1.0f)
-			mMoveVector.x -= 1.0f;
+            mMoveVector.x -= 1.0f;
 
-		break;
+        break;
 
-	case STOP:
+    case STOP:
         mMoveVector.x = 0.0f;
         mMoveVector.z = 0.0f;
         is_stopped = true;
 
-		break;
+        break;
 
-	default:
-		dt::Logger::get().debug("Not processed MoveType!");
-	}
+    default:
+        dt::Logger::get().debug("Not processed MoveType!");
+    }
 
     if (is_stopped) {
         this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
@@ -217,7 +218,7 @@ void Alien::__onJump(bool is_pressed) {
         // 调整该处的脉冲值使跳跃更自然。
         physics_body->activate();
         physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
-		
+
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
     }
 
@@ -308,7 +309,7 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
                     weapon->setCurClip(weapon->getCurClip() + ammo->getClipNum());
                     ammo->kill();
                 }
-                
+
                 break;
 
             case Prop::FIRST_AID_KIT:
@@ -350,7 +351,7 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 
 void Alien::__onGetOffVehicle() { /* =_= 很明显，外星人不是一种载具。*/ }
 
-void Alien::__onLookAround(Ogre::Quaternion agent_rot, Ogre::Quaternion body_rot) {
+void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
     Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
     //rotation.FromRotationMatrix(orientMatrix);
 

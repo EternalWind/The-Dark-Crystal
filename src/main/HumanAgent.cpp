@@ -119,12 +119,16 @@ void HumanAgent::__onMouseMove(const OIS::MouseEvent& event) {
         // watch out for da gimbal lock !!
 
         Ogre::Matrix3 orientMatrix;
-        getRotation().ToRotationMatrix(orientMatrix);
-
+        //getRotation().ToRotationMatrix(orientMatrix);
+		
         Ogre::Radian yaw, pitch, roll;
-        orientMatrix.ToEulerAnglesYXZ(yaw, pitch, roll);
+        //orientMatrix.ToEulerAnglesYXZ(yaw, pitch, roll);
 
-        pitch += Ogre::Radian(dy);
+  //      pitch += Ogre::Radian(dy);
+		//yaw += Ogre::Radian(dx);
+
+		yaw = this->getParent()->getRotation().getYaw() + Ogre::Radian(dx);
+		pitch = this->getRotation().getPitch() + Ogre::Radian(dy);
 
         // do not let it look completely vertical, or the yaw will break
         if (pitch > Ogre::Degree(89.9))
@@ -141,6 +145,6 @@ void HumanAgent::__onMouseMove(const OIS::MouseEvent& event) {
 
 		yaw += Ogre::Radian(dx);
 
-		emit sLookAround(rot, this->getParent()->getRotation(dt::Node::SCENE) * Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)));
+		emit sLookAround(this->getParent()->getRotation(dt::Node::SCENE) * Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)), rot);
     }
 }

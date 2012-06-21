@@ -53,19 +53,24 @@ protected slots:
 	  */
     void __onSpeedUp(bool is_pressed);
 
-    void __onLookAround(Ogre::Quaternion quaternion);
+    void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
 
 	void __onJump(bool is_pressed);
 
 
 protected:
-	QString mFlyingSoundHandle;             //!< ·É»ú·ÉÐÐÉùÒô¾ä±ú
-	QString mRiseSoundHandle;               //!< ·É»úÉÏÉýÉùÒô¾ä±ú
-	QString mFallSoundHandle;               //!< ·É»úÏÂ½µÉùÒô¾ä±ú
+	QString mFlyingSoundHandle;                    //!< ·É»ú·ÉÐÐÉùÒô¾ä±ú
+	QString mRiseSoundHandle;                      //!< ·É»úÉÏÉýÉùÒô¾ä±ú
+	QString mFallSoundHandle;                      //!< ·É»úÏÂ½µÉùÒô¾ä±ú
 
 	const static QString FLYING_SOUND_COMPONENT;   //!< ·É»ú·ÉÐÐÉùÒôComponentµÄÃû×Ö
 	const static QString RISE_SOUND_COMPONENT;     //!< ·É»úÉÏÉýÉùÒôComponentµÄÃû×Ö
 	const static QString FALL_SOUND_COMPONENT;     //!< ·É»úÏÂ½µÉùÒôComponentµÄÃû×Ö
+	const static float MAX_LEAN_ANGLE;             //!< ·É»úÆ½ÒÆÊ±×î´óµÄÇãÐ±½Ç
+	const static float ANGLE_PER_MOVE;             //!< ·É»úÃ¿Ò»Ö¡×ª¶¯µÄ½Ç¶È
+
+private:
+	float mCurAngle;                               //!< ·É»úµ±Ç°ÇãÐ±½Ç¶È
 };
 
 #endif

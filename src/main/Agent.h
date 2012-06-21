@@ -46,7 +46,7 @@ signals:
 	void sChangeWeapon(Weapon::WeaponType type); 
 	void sRemoveWeapon(); 
 	void sRemoveWeapon(Weapon::WeaponType type);
-	void sLookAround(Ogre::Quaternion agent_rot, Ogre::Quaternion body_rot = Ogre::Quaternion(0, 0, 0, 0));
+	void sLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot = Ogre::Quaternion::IDENTITY);
 	void sReload();
 
 protected:
