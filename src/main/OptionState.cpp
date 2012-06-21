@@ -54,15 +54,15 @@ void OptionState::onInitialize() {
     int size_v_small = (float)coordination.height / 30.0f;
 
     int position_h_func = (float)coordination.width * 0.1f;  //功能设置position
-    int position_v_func = (float)coordination.height *0.2f;
+    int position_v_func = (float)coordination.height *0.3f;
     int position_h_key = (float)coordination.width * 0.1f;  //key position
     int position_v_key = (float)coordination.height *0.6f;
 
-    //图片=======================================================================
-    auto option_settings_image_box = win.addChildWidget(new dt::GuiImageBox("option_settings_image_box"));
-    option_settings_image_box->setPosition(410,70);
-    option_settings_image_box->setSize(200,200);
-    option_settings_image_box->setImageTexture("logo.png");
+    //图片========================================================================
+    auto logo = win.addChildWidget(new dt::GuiImageBox("option_settings_image_box"));
+    logo->setPosition(coordination.width / 15, coordination.height / 15);
+    logo->setSize(0.5f, 0.2f);
+    logo->setImageTexture("logo.png");
 
     //功能设置============================================================================
     mQASettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("QASettingCheckBox")).get();
