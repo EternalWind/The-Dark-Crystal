@@ -203,6 +203,7 @@ protected:
     bool mIsAddingEquipment;                                          //!< 标记是否正在进行场景交互（如解锁水晶等）。
     bool mIsMoving;                                                   //!< 标记该实体是否正在移动。
     bool mHasSpeededUp;                                               //!< 标记该实体是否处于提升了速度的状态。
+    bool mIsTurnning;                                                 //!< 标记该实体是否处于旋转中的状态。
     const static QString MESH_COMPONENT;                              //!< 所有实体类的MeshComponent的名字。
     const static QString PHYSICS_BODY_COMPONENT;                      //!< 所有实体类的PhysicsBodyComponent的名字。
 };

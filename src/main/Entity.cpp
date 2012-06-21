@@ -18,7 +18,8 @@ Entity::Entity(const QString name, const QString mesh_handle, const dt::PhysicsB
       mMoveVector(0.0f, 0.0f, 0.0f),
       mIsAddingEquipment(false),
       mIsMoving(false),
-      mHasSpeededUp(false) {}
+      mHasSpeededUp(false),
+      mIsTurnning(false) {}
 
 uint16_t Entity::getCurHealth() const {
     return mCurHealth;
