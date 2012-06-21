@@ -1,4 +1,5 @@
 #include "Monster.h"
+#include "Agent.h"
 
 #include "ConfigurationManager.h"
 
@@ -49,12 +50,12 @@ Monster::Monster(const QString node_name,
 	mAttackRange(attack_range),
 	mAttackInterval(attack_interval) {
 }
-	
+
 void Monster::onInitialize() {
 	Entity::onInitialize();
 
-    auto conf_mgr = ConfigurationManager::getInstance() ;
-    SoundSetting sound_setting = conf_mgr->getSoundSetting();
+	auto conf_mgr = ConfigurationManager::getInstance() ;
+	SoundSetting sound_setting = conf_mgr->getSoundSetting();
 
 	auto walk_sound = this->addComponent<dt::SoundComponent>(new SoundComponent(mWalkSoundHandle, WALK_SOUND_COMPONENT));
 	auto jump_sound = this->addComponent<dt::SoundComponent>(new SoundComponent(mJumpSoundHandle, JUMP_SOUND_COMPONENT));
@@ -94,7 +95,7 @@ void Monster::onUpdate(double time_diff) {
 // --------------- slots -------------------//
 
 void Monster::__onMove(MoveType type, bool is_pressed) {
-    bool is_stopped = false;
+	bool is_stopped = false;
 
 	switch (type) {
 	case FORWARD:
@@ -138,48 +139,48 @@ void Monster::__onMove(MoveType type, bool is_pressed) {
 		dt::Logger::get().debug("Not processed MoveType!");
 	}
 
-    if (is_stopped) {
-        this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-        this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+	if (is_stopped) {
+		this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
+		this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
 
-        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-            ->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
-    } else {
-        /*if (!mMoveVector.isZeroLength())
-            mMoveVector.normalise();*/
+		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+			->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
+	} else {
+		/*if (!mMoveVector.isZeroLength())
+		mMoveVector.normalise();*/
 		//Ogre::Vector3 move_vector = mMoveVector;
 		////move_vector.normalise();
 
-        this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
+		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
 			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
-        std::shared_ptr<dt::SoundComponent> move_sound;
+		std::shared_ptr<dt::SoundComponent> move_sound;
 
-        if (mHasSpeededUp) {
-            move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
-        } else {
-            move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
-        }
+		if (mHasSpeededUp) {
+			move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
+		} else {
+			move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
+		}
 
-        move_sound->playSound();
-    }
+		move_sound->playSound();
+	}
 
-    mIsMoving = !is_stopped;
+	mIsMoving = !is_stopped;
 }
 
 void Monster::__onJump(bool is_pressed) {
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-    if (is_pressed && this->isOnGround()) {
-        // 调整该处的脉冲值使跳跃更自然。
-        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
+	if (is_pressed && this->isOnGround()) {
+		// 调整该处的脉冲值使跳跃更自然。
+		physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
 
-        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
-    }
+		this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
+	}
 
-    if (!is_pressed) {
-        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->stopSound();
-    }
+	if (!is_pressed) {
+		this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->stopSound();
+	}
 }
 
 void Monster::__onAttack(bool is_pressed) {
@@ -194,41 +195,44 @@ void Monster::__onAttack(bool is_pressed) {
 }
 
 void Monster::__onSpeedUp(bool is_pressed) {
-    float increasing_rate = 1.5f;
+	float increasing_rate = 1.5f;
 
-    if (is_pressed) {
-        this->setCurSpeed(this->getCurSpeed() * increasing_rate);
+	if (is_pressed) {
+		this->setCurSpeed(this->getCurSpeed() * increasing_rate);
 
-        if (mIsMoving) {
-            this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-            this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
-        }
-    } else {
-        this->setCurSpeed(this->getCurSpeed() / increasing_rate);
+		if (mIsMoving) {
+			this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
+			this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
+		}
+	} else {
+		this->setCurSpeed(this->getCurSpeed() / increasing_rate);
 
-        if (mIsMoving) {
-            this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-            this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
-        }
-    }
+		if (mIsMoving) {
+			this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+			this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
+		}
+	}
 
-    mHasSpeededUp = is_pressed;
+	mHasSpeededUp = is_pressed;
 }
 
-void Monster::__onLookAround(Ogre::Quaternion quaternion) {
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-    physics_body->disable();
-    this->setRotation(quaternion, dt::Node::SCENE);
+	physics_body->disable();
+	this->setRotation(body_rot);
+
+	auto agent = this->findChildNode(Agent::AGENT);
+	agent->setRotation(agent_rot);
 
 	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
-    physics_body->enable();
+	physics_body->enable();
 }
 
 void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
 	Entity* obj = dynamic_cast<Entity*>(hit->getNode());
-	
+
 	if (obj != nullptr) {
 		uint16_t cur_health = obj->getCurHealth();
 		obj->setCurHealth(getAttackValue() > cur_health ? 0 : cur_health - getAttackValue());
