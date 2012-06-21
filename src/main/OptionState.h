@@ -49,7 +49,7 @@ public slots:
 	  * @param code 键盘的按键
 	  * @param event 触发事件
 	  */
-    void onKeyDown(dt::InputManager::InputCode code, OIS::EventArg& event);
+    void onKeyDown(dt::InputManager::InputCode code, const OIS::EventArg& event);
 
 private:
     dt::GuiCheckBox* mQASettingCheckBox;        //!< 问答系统开关
