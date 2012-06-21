@@ -363,6 +363,8 @@ void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot
     trans = physics_body->getRigidBody()->getWorldTransform();
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
     physics_body->getRigidBody()->setWorldTransform(trans);
+
+	physics_body->getRigidBody()->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 }
 
 void Alien::__onReload() {

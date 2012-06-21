@@ -52,6 +52,7 @@ void Spaceship::onInitialize() {
 	this->setCurSpeed(20.0f);
 	mIsJumping = true;
 
+	this->setRotation(Ogre::Quaternion(Ogre::Radian(0.1), Ogre::Vector3(0, 1, 0)));
 }
 
 void Spaceship::onDeinitialize() {
@@ -64,7 +65,7 @@ void Spaceship::onUpdate(double time_diff) {
 
 	//在空中的话给飞船一个力让其保持平衡
 	if (mIsJumping) {
-		p->setCentralForce(0, mMass * 3.25, 0);
+		p->setCentralForce(0, mMass * 5.7, 0);		
 	}
 
 	//处理旋转
@@ -181,14 +182,15 @@ void Spaceship::__onSpeedUp(bool is_pressed) {
 }
 
 void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	physics_body->disable();
+	p->activate();
+	
+	btTransform trans = p->getRigidBody()->getWorldTransform();
+	trans.setRotation(BtOgre::Convert::toBullet(body_rot * agent_rot));
+	p->getRigidBody()->setWorldTransform(trans);
 
-	this->setRotation(body_rot);
-	this->setRotation(this->getRotation() * agent_rot);
-
-	physics_body->enable();
+	p->getRigidBody()->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 }
 
 void Spaceship::__onJump(bool is_pressed) {
