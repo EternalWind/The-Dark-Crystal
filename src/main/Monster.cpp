@@ -88,6 +88,14 @@ void Monster::onDeinitialize() {
 }
 
 void Monster::onUpdate(double time_diff) {
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
+	velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
+
+	if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
+		physics_body->activate();
+		physics_body->getRigidBody()->setLinearVelocity(velocity);
+	}
 
 	dt::Node::onUpdate(time_diff);
 }
@@ -228,8 +236,6 @@ void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_r
     trans = physics_body->getRigidBody()->getWorldTransform();
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
     physics_body->getRigidBody()->setWorldTransform(trans);
-
-	physics_body->getRigidBody()->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 }
 
 void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
