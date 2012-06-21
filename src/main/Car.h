@@ -95,7 +95,7 @@ protected slots:
 
     void __onSpeedUp(bool is_pressed);
 
-	void __onLookAround(Ogre::Quaternion quaternion);
+	void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
 
 
 private:
