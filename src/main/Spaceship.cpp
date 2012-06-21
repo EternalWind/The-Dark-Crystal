@@ -182,12 +182,11 @@ void Spaceship::__onSpeedUp(bool is_pressed) {
 
 void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
 	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	Ogre::Quaternion rot(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
 
 	physics_body->disable();
 
-	this->setRotation(rot, dt::Node::SCENE);
-	this->setRotation(this->getRotation(dt::Node::SCENE) * agent_rot, dt::Node::SCENE);
+	this->setRotation(body_rot);
+	this->setRotation(this->getRotation() * agent_rot);
 
 	physics_body->enable();
 }
