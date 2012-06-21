@@ -34,7 +34,7 @@ void CreaditState::onInitialize() {
     auto logo = win.addChildWidget(new dt::GuiImageBox("logo")).get();
     logo->setImageTexture("logo.png");
     logo->setPosition(coordination.width / 15, coordination.height / 15);
-    logo->setSize(0.5f, 0.2f);
+    logo->setSize(0.5f, 0.2f); 
 
     auto cancel_button = win.addChildWidget(new dt::GuiButton("cancel_button"));
     cancel_button->setCaption(QString::fromLocal8Bit("·µ»ØÖ÷²Ëµ¥"));

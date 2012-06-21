@@ -84,7 +84,7 @@ void MenuState::__resetGui() {
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
     auto coordination = root_win.getMyGUIWidget()->getAbsoluteCoord();
 
-    int gap_h = (float)coordination.width / 15.0f;       //按钮间隔
+    int gap_h = (float)coordination.width / 15.0f;       //按钮间隔 
     int gap_v = (float)coordination.height / 15.0f;
     int size_h = (float)coordination.width / 7.0f;       //按钮size
     int size_v = (float)coordination.height / 20.0f;

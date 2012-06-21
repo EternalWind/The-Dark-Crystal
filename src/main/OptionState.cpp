@@ -58,7 +58,7 @@ void OptionState::onInitialize() {
     int position_h_key = (float)coordination.width * 0.1f;  //key position
     int position_v_key = (float)coordination.height *0.6f;
 
-    //ͼƬ=======================================================================
+    //ͼƬ========================================================================
     auto logo = win.addChildWidget(new dt::GuiImageBox("option_settings_image_box"));
     logo->setPosition(coordination.width / 15, coordination.height / 15);
     logo->setSize(0.5f, 0.2f);
