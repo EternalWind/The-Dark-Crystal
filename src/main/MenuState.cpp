@@ -84,15 +84,15 @@ void MenuState::__resetGui() {
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
     auto coordination = root_win.getMyGUIWidget()->getAbsoluteCoord();
 
-    int gap_h = (float)coordination.width / 15.0f;       //按钮间隔
+    int gap_h = (float)coordination.width / 15.0f;       //按钮间隔 
     int gap_v = (float)coordination.height / 15.0f;
     int size_h = (float)coordination.width / 7.0f;       //按钮size
     int size_v = (float)coordination.height / 20.0f;
     int position_h = (float)coordination.width * 0.7f;  //按钮position
     int position_v = (float)coordination.height *0.6f;
 
-    mLogo->setPosition(50,50);
-    mLogo->setSize(500, 100);
+    mLogo->setPosition(coordination.width / 15, coordination.height / 15);
+    mLogo->setSize(0.5f, 0.2f);
 
     mNewGameButton->setPosition(position_h, position_v);
     mLoadRecordButton->setPosition(position_h, position_v + gap_v);
