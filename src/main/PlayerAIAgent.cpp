@@ -92,9 +92,9 @@ void PlayerAIAgent::walk(double time_diff) {
        // std::cout << pre_degree << std::endl; 
         if (d_degree > 0) 
               emit(sLookAround(Ogre::Quaternion(Ogre::Degree(pre_degree + MOVE_ROTATE_SPEED * time_diff),
-                                                Ogre::Vector3(0,1,0)))), pre_degree +=MOVE_ROTATE_SPEED * time_diff;
+                                                Ogre::Vector3(0,1,0)), Ogre::Quaternion())), pre_degree +=MOVE_ROTATE_SPEED * time_diff;
         else  emit(sLookAround(Ogre::Quaternion(Ogre::Degree(pre_degree - MOVE_ROTATE_SPEED * time_diff),
-                                                Ogre::Vector3(0,1,0)))), pre_degree -= MOVE_ROTATE_SPEED * time_diff;
+                                                Ogre::Vector3(0,1,0)), Ogre::Quaternion())), pre_degree -= MOVE_ROTATE_SPEED * time_diff;
       
     }
     
@@ -111,7 +111,7 @@ void PlayerAIAgent::guard(double time_diff) {
         mBody->getRotation().ToAngleAxis(td, tmp);
         double cur_degree = td.valueDegrees() * tmp.y;
         emit(sLookAround(Ogre::Quaternion(Ogre::Degree(cur_degree + time_diff * GUARD_ROTATE_SPEED),
-                                          Ogre::Vector3(0,1,0))));
+                                          Ogre::Vector3(0,1,0)), Ogre::Quaternion()));
 
     }
     mHasEnemy = false; 
