@@ -1,4 +1,5 @@
 #include "Spaceship.h"
+#include "Agent.h"
 
 #include "ConfigurationManager.h"
 
@@ -179,15 +180,25 @@ void Spaceship::__onSpeedUp(bool is_pressed) {
 	mHasSpeededUp = is_pressed;
 }
 
-void Spaceship::__onLookAround(Ogre::Quaternion quaternion) {
+void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
 	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	physics_body->disable();
-	this->setRotation(quaternion, dt::Node::SCENE);
+	//physics_body->disable();
+	//this->setRotation(body_rot * agent_rot);
+	//btTransform trans = physics_body->getRigidBody()->getWorldTransform();
+	//trans.setRotation(BtOgre::Convert::toBullet(this->getParent()->getRotation(dt::Node::SCENE) * body_rot));
+	//trans.setRotation(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * agent_rot));
+	//physics_body->getRigidBody()->setWorldTransform(trans);
+	Ogre::Matrix3 orientMatrix;
+	orientMatrix.FromEulerAnglesYXZ(body_rot.getYaw(), agent_rot.getPitch(), Ogre::Radian());
+
+
+	//auto agent = this->findChildNode(Agent::AGENT);
+	//agent->setRotation(agent_rot);
 
 	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
-	physics_body->enable();
+	//physics_body->enable();
 }
 
 void Spaceship::__onJump(bool is_pressed) {

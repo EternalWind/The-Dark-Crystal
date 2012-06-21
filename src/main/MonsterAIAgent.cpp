@@ -32,8 +32,7 @@ void MonsterAIAgent::findAndAttack(double time_diff) {
         Ogre::Degree td; 
         mBody->getRotation().ToAngleAxis(td, tmp);
         double cur_degree = td.valueDegrees();
-        emit(sLookAround(Ogre::Quaternion(Ogre::Degree(cur_degree + time_diff * GUARD_ROTATE_SPEED),
-                                          Ogre::Vector3(0,1,0))));
+        emit(sLookAround(Ogre::Quaternion(Ogre::Degree(cur_degree + time_diff * GUARD_ROTATE_SPEED), Ogre::Vector3(0,1,0)), Ogre::Quaternion()));
     }
 
     mHasEnemy = false; 
@@ -101,9 +100,9 @@ void MonsterAIAgent::walk(double time_diff) {
         emit(sMove(Entity::STOP, true));
         if (d_degree > 0) 
               emit(sLookAround(Ogre::Quaternion(Ogre::Degree(pre_degree + MOVE_ROTATE_SPEED * time_diff),
-                                                Ogre::Vector3(0,1,0))));
+                                                Ogre::Vector3(0,1,0)), Ogre::Quaternion()));
         else  emit(sLookAround(Ogre::Quaternion(Ogre::Degree(pre_degree - MOVE_ROTATE_SPEED * time_diff),
-                                                Ogre::Vector3(0,1,0))));
+                                                Ogre::Vector3(0,1,0)), Ogre::Quaternion()));
     }
     
 }
