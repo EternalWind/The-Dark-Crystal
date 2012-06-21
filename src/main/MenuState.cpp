@@ -1,5 +1,6 @@
 #include "MenuState.h"
 #include "OptionState.h"
+#include "CreaditState.h"
 
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
@@ -28,7 +29,7 @@ void MenuState::onInitialize() {
     background_imagebox->setImageTexture("Space.png");
 
     mLogo = win.addChildWidget(new dt::GuiImageBox("logo")).get();
-    mLogo->setImageTexture("MyGUI_BlueWhiteSkins.png");
+    mLogo->setImageTexture("logo.png");
 
     mNewGameButton = win.addChildWidget(new dt::GuiButton("new_game_button")).get();
     mNewGameButton->setCaption(QString::fromLocal8Bit("¿ªÆôÐÂÂÃ³Ì"));
@@ -70,7 +71,7 @@ void MenuState::onClick(MyGUI::Widget* sender) {
         //
     } else if (sender->getName() == "Gui.credit_button") {
         dt::StateManager::get()->pop();
-        //dt::StateManager::get()->setNewState(new MenuState());
+        dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
         dt::StateManager::get()->pop();
     }
@@ -91,7 +92,7 @@ void MenuState::__resetGui() {
     int position_v = (float)coordination.height *0.6f;
 
     mLogo->setPosition(50,50);
-//    mLogo->setSize()
+    mLogo->setSize(500, 100);
 
     mNewGameButton->setPosition(position_h, position_v);
     mLoadRecordButton->setPosition(position_h, position_v + gap_v);
