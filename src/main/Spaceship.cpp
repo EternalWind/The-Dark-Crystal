@@ -68,26 +68,34 @@ void Spaceship::onUpdate(double time_diff) {
 		p->setCentralForce(0, mMass * 5.7, 0);		
 	}
 
+	float moving = 0.0f;
 	//´¦ÀíÐý×ª
 	if (mMoveVector.x > 0) {
 		if (mCurAngle < MAX_LEAN_ANGLE) {
 			mCurAngle += ANGLE_PER_MOVE;
+			moving += ANGLE_PER_MOVE;
 		}
 	} else if (mMoveVector.x < 0) {
 		if (mCurAngle > -MAX_LEAN_ANGLE) {
 			mCurAngle -= ANGLE_PER_MOVE;
+			moving -= ANGLE_PER_MOVE;
 		}
 	} else {
 		if (mCurAngle > 0) {
 			mCurAngle -= ANGLE_PER_MOVE;
+			moving -= ANGLE_PER_MOVE;
 		} else if (mCurAngle < 0) {
 			mCurAngle += ANGLE_PER_MOVE;
+			moving += ANGLE_PER_MOVE;
 		}
 	}
 
 	if (mCurAngle != 0) {
 		btTransform trans = p->getRigidBody()->getWorldTransform();
-		trans.setRotation(BtOgre::Convert::toBullet(Ogre::Quaternion(Ogre::Radian(Ogre::Degree(-mCurAngle)), Ogre::Vector3(0, 0, 1))));
+		p->activate();
+
+		Ogre::Quaternion rot = this->getRotation(dt::Node::SCENE) *	Ogre::Quaternion(Ogre::Radian(-moving), Ogre::Vector3(0, 0, 1));
+		trans.setRotation(BtOgre::Convert::toBullet(rot));
 		p->getRigidBody()->setWorldTransform(trans);
 	}
 
