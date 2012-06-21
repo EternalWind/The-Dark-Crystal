@@ -2,7 +2,6 @@
 #include "Alien.h"
 #include "HumanAgent.h"
 #include "Car.h"
-#include "Spaceship.h"
 #include "MenuState.h"
 #include "SceneLoader.h"
 #include <iostream>
@@ -218,6 +217,14 @@ QString BattleState::getNextStage() const {
 
 void BattleState::setNextStage(const QString next_stage) {
     mNextStage = next_stage;
+}
+
+QString BattleState::getStage() const {
+    return mStage;
+}
+
+void BattleState::setStage(const QString stage) {
+    mStage = stage;
 }
 
 void BattleState::__resetGui() {

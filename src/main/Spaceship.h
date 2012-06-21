@@ -36,18 +36,14 @@ public:
 		  const QString attack_sound_handle,
 		  const QString flying_sound_handle,
 		  const QString rise_sound_handle,
-		  const QString fall_sound_handle,
-          const float max_speed,
-          const float min_speed,
-          const float acceleration
+		  const QString fall_sound_handle
 		  );
 
 	void onInitialize();
 
 	void onDeinitialize();
 
-    void onUpdate(double time_diff);
-
+	void onUpdate(double time_diff);
 
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
@@ -62,17 +58,11 @@ protected slots:
 	void __onJump(bool is_pressed);
 
 
-private:
-
-    void __moveAround();
-
-
 protected:
 	QString mFlyingSoundHandle;                    //!< ·É»ú·ÉÐÐÉùÒô¾ä±ú
 	QString mRiseSoundHandle;                      //!< ·É»úÉÏÉýÉùÒô¾ä±ú
 	QString mFallSoundHandle;                      //!< ·É»úÏÂ½µÉùÒô¾ä±ú
 
-    const static QString ATTACK_SOUND_COMPONENT;   //!< ·É»ú·ÉÐÐÉùÒôComponentµÄÃû×Ö
 	const static QString FLYING_SOUND_COMPONENT;   //!< ·É»ú·ÉÐÐÉùÒôComponentµÄÃû×Ö
 	const static QString RISE_SOUND_COMPONENT;     //!< ·É»úÉÏÉýÉùÒôComponentµÄÃû×Ö
 	const static QString FALL_SOUND_COMPONENT;     //!< ·É»úÏÂ½µÉùÒôComponentµÄÃû×Ö
