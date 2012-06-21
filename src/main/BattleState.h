@@ -4,6 +4,7 @@
 #include <Scene/State.hpp>
 #include <Gui/GuiButton.hpp>
 #include <Gui/GuiLabel.hpp>
+#include <Gui/GuiEditBox.hpp>
 #include <Gui/GuiImageBox.hpp>
 #include <cstdint>
 #include <QString>
@@ -100,13 +101,13 @@ public:
 	  * 返回问答窗口
 	  * @returns 问答窗口
 	  */
-	dt::GuiLabel* getQuestionLabel();
+	dt::GuiEditBox* getQuestionLabel();
 
 	/**
 	  * 设置问答窗口
 	  * @param label 问答窗口
 	  */
-	void setQuestionLabel(dt::GuiLabel* label);
+	void setQuestionLabel(dt::GuiEditBox* edit_box);
 
 public slots:
     /**
@@ -121,18 +122,6 @@ public slots:
 	void win();
 
     /**
-      * 设置当前关卡。
-      * @param stage 要设置的关卡
-      */
-    void setStage(const QString stage);
-
-    /**
-      * 获取当前关卡。
-      * @returns 当前关卡
-      */
-    QString getStage() const;
-
-    /**
       * 获取下一关卡。
       * @returns 下一关卡
       */
@@ -143,6 +132,9 @@ public slots:
       * @param next_stage 要设置的下一关卡
       */
     void setNextStage(const QString next_stage);
+
+private:
+    void __resetGui();
 
 protected slots:
 
@@ -160,14 +152,15 @@ protected slots:
 
 	void __onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender);
 
+    void __changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number);
 
 protected:
 	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值
 	std::vector<dt::GuiImageBox*> mAmmoHUD;		//!< 弹药量 
-	std::vector<dt::GuiImageBox*> mFrontSight;	//!< 准星
+    dt::GuiImageBox* mFrontSight;	            //!< 准星
 	std::vector<dt::GuiImageBox*> mClipNumHUD;	//!< 弹夹数
-	std::vector<dt::GuiButton> mAnswerButtons;	//!< 答案选项
-	dt::GuiLabel* mQuestionLabel;				//!< 问题显示窗口
+	std::vector<dt::GuiButton*> mAnswerButtons;	//!< 答案选项
+	dt::GuiEditBox* mQuestionLabel;				//!< 问题显示窗口
 	dt::GuiLabel* mDialogLabel;					//!< 对话显示窗口
 	uint16_t mTotalEnemyNum;					//!< 地图中怪兽数量
 	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量

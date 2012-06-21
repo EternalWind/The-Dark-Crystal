@@ -23,8 +23,21 @@ public:
 	void onClick(MyGUI::Widget* sender);
 
     void updateStateFrame(double simulation_frame_time);
+
+
+private:
+    void __resetGui();
+
+private:
+    dt::GuiImageBox* mLogo;
+    dt::GuiButton* mNewGameButton;
+    dt::GuiButton* mLoadRecordButton;
+    dt::GuiButton* mMultiPlayerButton;
+    dt::GuiButton* mSettingButton;
+    dt::GuiButton* mCreditButton;
+    dt::GuiButton* mExitButton;
+
 	
 };
-
 
 #endif

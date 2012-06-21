@@ -6,12 +6,13 @@
 // http://www.gnu.org/licenses/lgpl.html
 // ----------------------------------------------------------------------------
 
-#include "BattleState.h"
+#include "MenuState.h"
+#include "OptionState.h"
 
 #include <Scene/Game.hpp>
 
 int main(int argc, char** argv) {
     dt::Game game;
-    game.run(new BattleState(), argc, argv);
+    game.run(new MenuState(), argc, argv);
     return 0;
 }

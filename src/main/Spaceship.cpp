@@ -4,6 +4,7 @@
 
 #include <Logic/RaycastComponent.hpp>
 
+const QString Spaceship::ATTACK_SOUND_COMPONENT = "attack_sound";
 const QString Spaceship::FLYING_SOUND_COMPONENT = "flying_sound";
 const QString Spaceship::RISE_SOUND_COMPONENT = "rise_sound";
 const QString Spaceship::FALL_SOUND_COMPONENT = "fall_sound";
@@ -18,12 +19,18 @@ Spaceship::Spaceship(const QString node_name,
 	const QString attack_sound_handle,
 	const QString flying_sound_handle,
 	const QString rise_sound_handle,
-	const QString fall_sound_handle)
+	const QString fall_sound_handle,
+    const float max_speed,
+    const float min_speed,
+    const float acceleration)
 	: Vehicle(node_name, mesh_handle, collision_shape_type, mass, 
 	attack_value, attack_range, attack_interval, attack_sound_handle),
 	mFlyingSoundHandle(flying_sound_handle),
 	mRiseSoundHandle(rise_sound_handle),
-	mFallSoundHandle(fall_sound_handle) {
+	mFallSoundHandle(fall_sound_handle),
+    mMaxSpeed(max_speed), 
+    mMinSpeed(min_speed),
+    mAcceleration(acceleration) {
 }
 
 void Spaceship::onInitialize() {
@@ -32,6 +39,7 @@ void Spaceship::onInitialize() {
 	auto conf_mgr = ConfigurationManager::getInstance();
 	SoundSetting& sound_setting = conf_mgr->getSoundSetting();
 
+    auto attack_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mAttackSoundHandle, ATTACK_SOUND_COMPONENT));
 	auto flying_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mFlyingSoundHandle, FLYING_SOUND_COMPONENT));
 	auto rise_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mRiseSoundHandle, RISE_SOUND_COMPONENT));
 	auto fall_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mFallSoundHandle, FALL_SOUND_COMPONENT));
@@ -40,13 +48,16 @@ void Spaceship::onInitialize() {
 	rise_sound->setVolume((float)sound_setting.getSoundEffect());
 	fall_sound->setVolume((float)sound_setting.getSoundEffect());
 
+    flying_sound->getSound().setLoop(true);
+    rise_sound->getSound().setLoop(true);
+    fall_sound->getSound().setLoop(false);
 
-	auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    // 太空没有空气，不需要考虑摩擦力！
+    auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 	p->getRigidBody()->setFriction(0.0);
 	p->setCentralForce(0.0f, mMass, 0.0f);
 
 	this->setCurSpeed(6.0f);
-
 }
 
 void Spaceship::onDeinitialize() {
@@ -113,7 +124,6 @@ void Spaceship::__onMove(MoveType type, bool is_pressed) {
 
 		} else {
 			mMoveVector.x -= 1.0f;
-
 			physics_body->disable();
 			this->setRotation(this->getRotation() * Ogre::Quaternion(Ogre::Radian(1.0f / 6), Ogre::Vector3(0.0f, 0.0f, 1.0f)));
 			physics_body->enable();
@@ -169,10 +179,14 @@ void Spaceship::__onSpeedUp(bool is_pressed) {
 }
 
 void Spaceship::__onLookAround(Ogre::Quaternion quaternion) {
+    this->mLookAroundQuaternion = quaternion;
+}
+
+void Spaceship::__moveAround() {
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
     physics_body->disable();
-    this->setRotation(quaternion, dt::Node::SCENE);
+//    this->setRotation(quaternion, dt::Node::SCENE);
 
 	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
@@ -195,5 +209,5 @@ void Spaceship::__onJump(bool is_pressed) {
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
 		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 
-	mIsJumping = is_pressed;
+//	mIsJumping = is_pressed;
 }
