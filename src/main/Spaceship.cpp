@@ -1,217 +1,295 @@
-#include "Spaceship.h"
+#include "BattleState.h"
+#include "Alien.h"
+#include "HumanAgent.h"
+#include "Car.h"
+#include "MenuState.h"
+#include "SceneLoader.h"
+#include <iostream>
 
-#include "ConfigurationManager.h"
+#include <Graphics/CameraComponent.hpp>
+#include <Graphics/LightComponent.hpp>
+#include <Graphics/MeshComponent.hpp>
+#include <Physics/PhysicsBodyComponent.hpp>
+#include <Core/ResourceManager.hpp>
+#include <OgreProcedural.h>
+#include <Scene/Game.hpp>
+#include <Gui/GuiRootWindow.hpp>
+#include <Gui/GuiManager.hpp>
+#include <Scene/StateManager.hpp>
+#include <Logic/ScriptComponent.hpp>
 
-#include <Logic/RaycastComponent.hpp>
+#include <OgreProcedural.h>
 
-const QString Spaceship::ATTACK_SOUND_COMPONENT = "attack_sound";
-const QString Spaceship::FLYING_SOUND_COMPONENT = "flying_sound";
-const QString Spaceship::RISE_SOUND_COMPONENT = "rise_sound";
-const QString Spaceship::FALL_SOUND_COMPONENT = "fall_sound";
-const float Spaceship::MAX_LEAN_ANGLE = 16.0f;
-const float Spaceship::ANGLE_PER_MOVE = Spaceship::MAX_LEAN_ANGLE / 1024;
+BattleState::BattleState(const QString stage_name) 
+    : mQuestionLabel(nullptr),
+      mDialogLabel(nullptr),
+      mTotalEnemyNum(0),
+      mRemainEnemyNum(0),
+      mTotalCrystalNum(0),
+      mObtainedCrystalNum(0),
+      mStage(stage_name),
+      mNextStage("") {}
 
-Spaceship::Spaceship(const QString node_name, 
-	const QString mesh_handle, 
-	const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
-	const btScalar mass,
-	const uint16_t attack_value,
-	const float attack_range,
-	const float attack_interval,
-	const QString attack_sound_handle,
-	const QString flying_sound_handle,
-	const QString rise_sound_handle,
-	const QString fall_sound_handle,
-    const float max_speed,
-    const float min_speed,
-    const float acceleration)
-	: Vehicle(node_name, mesh_handle, collision_shape_type, mass, 
-	attack_value, attack_range, attack_interval, attack_sound_handle),
-	mFlyingSoundHandle(flying_sound_handle),
-	mRiseSoundHandle(rise_sound_handle),
-	mFallSoundHandle(fall_sound_handle),
-	mCurAngle(0) {
+void BattleState::onInitialize() {
+    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+
+    auto scene = addScene(new dt::Scene("BattleStateTest"));
+
+    dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
+
+    auto health_img1 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("health_one"));
+    auto health_img2 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("health_ten"));
+    auto health_img3 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("health_hundred"));
+    auto ammo_img1 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("ammo_one"));
+    auto ammo_img2 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("ammo_ten"));
+    auto ammo_img3 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("ammo_hundred"));
+    auto clip_img1 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("clip_one"));
+    auto clip_img2 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("clip_ten"));
+    auto clip_img3 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("clip_hundred"));
+    auto front_sight = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("front_sight"));
+    auto answer1 = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("answer1"));
+    auto answer2 = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("answer2"));
+    auto answer3 = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("answer3"));
+    auto answer4 = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("answer4"));
+    auto question = root_win.addChildWidget<dt::GuiEditBox>(new dt::GuiEditBox("question"));
+    auto dialog = root_win.addChildWidget<dt::GuiLabel>(new dt::GuiLabel("dialog"));
+
+    mHealthHUD.push_back(health_img3.get());
+    mHealthHUD.push_back(health_img2.get());
+    mHealthHUD.push_back(health_img1.get());
+    mAmmoHUD.push_back(ammo_img3.get());
+    mAmmoHUD.push_back(ammo_img2.get());
+    mAmmoHUD.push_back(ammo_img1.get());
+    mFrontSight = front_sight.get();
+    mClipNumHUD.push_back(clip_img3.get());
+    mClipNumHUD.push_back(clip_img2.get());
+    mClipNumHUD.push_back(clip_img1.get());
+    mAnswerButtons.push_back(answer1.get());
+    mAnswerButtons.push_back(answer2.get());
+    mAnswerButtons.push_back(answer3.get());
+    mAnswerButtons.push_back(answer4.get());
+    mQuestionLabel = question.get();
+    mDialogLabel = dialog.get();
+
+    for (uint8_t i = 0 ; i < 4 ; ++i) {
+        mAnswerButtons[i]->setVisible(false);
+    }
+
+    mQuestionLabel->setVisible(false);
+
+    mFrontSight->setImageTexture("FrontSight.png");
+
+    mDialogLabel->getMyGUIWidget()->setAlign(MyGUI::Align::Left);
+
+    MyGUI::EditBox* edit_box = dynamic_cast<MyGUI::EditBox*>(mQuestionLabel->getMyGUIWidget());
+
+    edit_box->setEditMultiLine(true);
+    edit_box->setEditWordWrap(true);
+    edit_box->setEditStatic(true);
+
+    MyGUI::TextBox* text_box = dynamic_cast<MyGUI::TextBox*>(mDialogLabel->getMyGUIWidget());
+    text_box->setTextAlign(MyGUI::Align::Left);
+
+    __onHealthChanged(0,100);
+    __onAmmoChanged(0, 60);
+    __onClipNumChanged(0, 5);
+
+    __resetGui();
+
+    dt::GuiManager::get()->setMouseCursorVisible(false);
 }
 
-void Spaceship::onInitialize() {
-	Vehicle::onInitialize();
+void BattleState::updateStateFrame(double simulation_frame_time) {}
 
-	auto conf_mgr = ConfigurationManager::getInstance();
-	SoundSetting& sound_setting = conf_mgr->getSoundSetting();
+BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
+		mQuestionLabel(nullptr),
+		mDialogLabel(nullptr),
+		mTotalEnemyNum(tot_enemy_num),
+		mRemainEnemyNum(tot_enemy_num),
+		mTotalCrystalNum(tot_crystal_num),
+		mObtainedCrystalNum(0) {
+}
 
-    auto attack_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mAttackSoundHandle, ATTACK_SOUND_COMPONENT));
-	auto flying_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mFlyingSoundHandle, FLYING_SOUND_COMPONENT));
-	auto rise_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mRiseSoundHandle, RISE_SOUND_COMPONENT));
-	auto fall_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mFallSoundHandle, FALL_SOUND_COMPONENT));
+//bool BattleState::isVictory() {
+//	return false;
+//}
 
-	flying_sound->setVolume((float)sound_setting.getSoundEffect());
-	rise_sound->setVolume((float)sound_setting.getSoundEffect());
-	fall_sound->setVolume((float)sound_setting.getSoundEffect());
+void BattleState::win() {
+    auto state_mgr = dt::StateManager::get();
+    state_mgr->pop(1);
 
-    flying_sound->getSound().setLoop(true);
-    rise_sound->getSound().setLoop(true);
-    fall_sound->getSound().setLoop(false);
+    if (mNextStage != "") {
+        state_mgr->setNewState(new BattleState(mNextStage));
+    } else {
+        state_mgr->setNewState(new MenuState());
+    }
+}
 
-    // 太空没有空气，不需要考虑摩擦力！
-    auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	p->getRigidBody()->setFriction(0.0);
-	p->setCentralForce(0.0f, mMass, 0.0f);
-	this->setCurSpeed(20.0f);
-	mIsJumping = true;
+QString BattleState::getBattleStateName() const {
+	return QString("BattleState");
+}
+
+dt::GuiLabel* BattleState::getDialogLabel() {
+	return mDialogLabel;
+}
+
+void BattleState::setDialogLabel(dt::GuiLabel* dialog_label) {
+	if (dialog_label) {
+		mDialogLabel = dialog_label;
+	}
+}
+
+uint16_t BattleState::getTotalEnemyNum() const {
+	return mTotalEnemyNum;
+}
+
+void BattleState::setTotalEnemyNum(uint16_t total_enemy_num) {
+	mTotalEnemyNum = total_enemy_num;
+}
+
+uint16_t BattleState::getRemainEnemyNum() const {
+	return mRemainEnemyNum;
+}
+
+void BattleState::setRemainEnemyNum(uint16_t remain_enemy_num) {
+	mRemainEnemyNum = remain_enemy_num;
+}
+
+uint16_t BattleState::getTotalCrystalNum() const {
+	return mTotalCrystalNum;
+}
+
+void BattleState::setTotalCrystalNum(uint16_t total_crystal_num) {
+	mTotalCrystalNum = total_crystal_num;
+}
+
+uint16_t BattleState::getObtainedCrystalNum() const {
+	return mObtainedCrystalNum;
+}
+
+void BattleState::setObtainedCrystalNum(uint16_t obtained_crystal_num) {
+	mObtainedCrystalNum = obtained_crystal_num;
+}
+
+dt::GuiEditBox* BattleState::getQuestionLabel() {
+	return mQuestionLabel;
+}
+
+void BattleState::setQuestionLabel(dt::GuiEditBox* edit_box) {
+	if (edit_box) {
+		mQuestionLabel = edit_box;
+	}
+}
+
+// Slots
+
+void BattleState::__onTriggerText(uint16_t text_id) {
+	mQuestionLabel->show();
+}
+
+void BattleState::__onHealthChanged(uint16_t pre_health, uint16_t cur_health) {
+    __changeDigits(mHealthHUD, cur_health);
+}
+
+void BattleState::__onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo) {
+    __changeDigits(mAmmoHUD, cur_ammo);
+}
+
+void BattleState::__onClipNumChanged(uint16_t pre_num, uint16_t cur_num) {
+    __changeDigits(mClipNumHUD, cur_num);
+}
+
+void BattleState::__onGetCrystal() {
 
 }
 
-void Spaceship::onDeinitialize() {
+void BattleState::__onTriggerQA() {
+	getQuestionLabel()->show();
 }
 
-void Spaceship::onUpdate(double time_diff) {	
-	mIsUpdatingAfterChange = (time_diff == 0);
+void BattleState::__onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
 
-	auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-
-	//在空中的话给飞船一个力让其保持平衡
-	if (mIsJumping) {
-		p->setCentralForce(0, mMass * 3.25, 0);
-	}
-
-	//处理旋转
-	if (mMoveVector.x > 0) {
-		if (mCurAngle < MAX_LEAN_ANGLE) {
-			mCurAngle += ANGLE_PER_MOVE;
-		}
-	} else if (mMoveVector.x < 0) {
-		if (mCurAngle > -MAX_LEAN_ANGLE) {
-			mCurAngle -= ANGLE_PER_MOVE;
-		}
-	} else {
-		if (mCurAngle > 0) {
-			mCurAngle -= ANGLE_PER_MOVE;
-		} else if (mCurAngle < 0) {
-			mCurAngle += ANGLE_PER_MOVE;
-		}
-	}
-
-	if (mCurAngle != 0) {
-		btTransform trans = p->getRigidBody()->getWorldTransform();
-		trans.setRotation(BtOgre::Convert::toBullet(Ogre::Quaternion(Ogre::Radian(Ogre::Degree(-mCurAngle)), Ogre::Vector3(0, 0, 1))));
-		p->getRigidBody()->setWorldTransform(trans);
-	}
-
-	dt::Node::onUpdate(time_diff);
 }
 
-// slots
-
-void Spaceship::__onMove(MoveType type, bool is_pressed) {
-	bool is_stopped = false;
-
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-
-	switch (type) {
-	case FORWARD:
-		if (is_pressed)
-			mMoveVector.z -= 1.0f; // Bullet的Z轴和Ogre方向相反
-		else
-			mMoveVector.z += 1.0f;
-
-		break;
-
-	case BACKWARD:
-		if (is_pressed)
-			mMoveVector.z += 1.0f;
-		else
-			mMoveVector.z -= 1.0f;
-
-		break;
-
-	case LEFTWARD:
-		if (is_pressed) {
-			mMoveVector.x -= 1.0f;
-		} else {
-			mMoveVector.x += 1.0f;
-		}
-
-		break;
-
-	case RIGHTWARD:
-		if (is_pressed) {
-			mMoveVector.x += 1.0f;
-		} else {
-			mMoveVector.x -= 1.0f;		
-		}
-		break;
-
-	case STOP:
-		is_stopped = true;
-
-		break;
-
-	default:
-		dt::Logger::get().debug("Not processed MoveType!");
-	}
-
-	if (is_stopped) {
-
-		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-			->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
-	} else {
-
-		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
-
-	}
-
-	mIsMoving = !is_stopped;
+QString BattleState::getNextStage() const {
+    return mNextStage;
 }
 
-/* 飞机下降 -_- 话说这加速肿么变成下降了，这什么神设定啊 =.= */
-void Spaceship::__onSpeedUp(bool is_pressed) {
-
-	if (is_pressed) {
-		mMoveVector.y -= 1.0f;
-
-		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->stopSound();
-		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->playSound();
-
-	} else {
-		mMoveVector.y += 1.0f;
-
-		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->stopSound();
-		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->playSound();
-	}
-
-	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
-
-	mHasSpeededUp = is_pressed;
+void BattleState::setNextStage(const QString next_stage) {
+    mNextStage = next_stage;
 }
 
-void Spaceship::__onLookAround(Ogre::Quaternion quaternion) {
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-
-	physics_body->disable();
-	this->setRotation(quaternion, dt::Node::SCENE);
-
-	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
-
-	physics_body->enable();
+QString BattleState::getStage() const {
+    return mStage;
 }
 
-void Spaceship::__onJump(bool is_pressed) {
-	if (is_pressed) {
-		mMoveVector.y += 1.0f;
+void BattleState::setStage(const QString stage) {
+    mStage = stage;
+}
 
-		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->stopSound();
-		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->playSound();
-	} else {
-		mMoveVector.y -= 1.0f;
+void BattleState::__resetGui() {
+    dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
+    auto coordination = root_win.getMyGUIWidget()->getAbsoluteCoord();
 
-		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->stopSound();
-		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->playSound();
-	}
+    mDialogLabel->setCaption("Jym Die Die Die!");
 
-	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-		->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+    int gap_h_large = (float)coordination.width / 15.0f;
+    int gap_v_large = (float)coordination.height / 15.0f;
+    int size_h_large = (float)coordination.width / 10.0f;
+    int size_v_large = (float)coordination.height / 10.0f;
 
-	mIsJumping = isOnGround();
+    int gap_h_medium = (float)coordination.width / 30.0f;
+    int gap_v_medium = (float)coordination.height / 30.0f;
+    int size_h_medium = (float)coordination.width / 13.0f;
+    int size_v_medium = (float)coordination.height / 13.0f;
+
+    int gap_h_small = (float)coordination.width / 100.0f;
+    int gap_v_small = (float)coordination.height / 100.0f;
+    int size_h_small = (float)coordination.width / 40.0f;
+    int size_v_small = (float)coordination.height / 40.0f;
+
+    mFrontSight->getMyGUIWidget()->setAlign(MyGUI::Align::Center);
+    mFrontSight->setSize((int)(gap_h_medium * 1.5f), (int)(gap_h_medium * 1.5f));
+    mFrontSight->getMyGUIWidget()->setPosition(coordination.width / 2 - mFrontSight->getMyGUIWidget()->getSize().width / 2,
+        coordination.height / 2 - mFrontSight->getMyGUIWidget()->getSize().height /2);
+
+    mQuestionLabel->setSize(4.0f / 13.0f + 0.1f, 1.0f / 3.0f);
+    mQuestionLabel->setPosition((int)(coordination.width / 2.0f - mQuestionLabel->getMyGUIWidget()->getAbsoluteRect().width() / 2.0f), 
+        (int)(coordination.height / 2.0f - mQuestionLabel->getMyGUIWidget()->getAbsoluteRect().height() / 2.0f));
+
+    for (uint8_t i = 0 ; i < 4 ; ++i) {
+        mAnswerButtons[i]->setPosition((int)(coordination.right() / 2.0f - (2 * size_h_medium + 1.5 * gap_h_medium) + i * (size_h_medium + gap_h_medium)), 
+            (int)(coordination.height / 2.0f + mQuestionLabel->getMyGUIWidget()->getAbsoluteRect().height() / 2 + gap_v_medium));
+        mAnswerButtons[i]->setSize(1.0f / 13.0f, 1.0f / 13.0f);
+    }
+
+    for (uint8_t i = 0 ; i < 3 ; ++i) {
+        mHealthHUD[i]->setSize(1.0f / 30.0f, 1.0f / 15.0f);
+        mAmmoHUD[i]->setSize(1.0f / 30.0f, 1.0f / 15.0f);
+        mClipNumHUD[i]->setSize(1.0f / 50.0f, 1.0f / 25.0f);
+
+        mClipNumHUD[i]->setPosition(coordination.width - (3 - i) * (mClipNumHUD[0]->getMyGUIWidget()->getSize().width - gap_h_small * 3 / 8) - gap_h_small,
+            coordination.height - 3 * gap_v_medium);
+        mAmmoHUD[i]->setPosition(coordination.width - (3 - i) * (mAmmoHUD[0]->getMyGUIWidget()->getSize().width - gap_h_small / 2) - gap_h_small * 3 / 8
+            - (coordination.width - mClipNumHUD[0]->getMyGUIWidget()->getPosition().left), coordination.height - 3 * gap_v_medium);
+        mHealthHUD[i]->setPosition(i * (mHealthHUD[0]->getMyGUIWidget()->getSize().width - gap_h_small / 2) + gap_h_small / 2, coordination.height - 3 * gap_v_medium);
+    }
+
+    mDialogLabel->setSize(300, size_v_small);
+    mDialogLabel->setPosition(mHealthHUD[0]->getMyGUIWidget()->getPosition().left, mHealthHUD[0]->getMyGUIWidget()->getPosition().top - mHealthHUD[0]->getMyGUIWidget()->
+        getSize().height - gap_v_small / 2);
+}
+
+void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
+    uint16_t digit;
+    uint16_t factor;
+
+    for (uint8_t i = 0 ; i < 3 ; ++i) {
+        factor = pow(10.0, (int)(2 - i));
+
+        digit = number / factor;
+        number %= factor;
+
+        pics[i]->setImageTexture(dt::Utils::toString(digit) + ".png");
+    }
 }
