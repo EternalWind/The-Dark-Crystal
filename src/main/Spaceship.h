@@ -36,18 +36,14 @@ public:
 		  const QString attack_sound_handle,
 		  const QString flying_sound_handle,
 		  const QString rise_sound_handle,
-		  const QString fall_sound_handle,
-          const float max_speed,
-          const float min_speed,
-          const float acceleration
+		  const QString fall_sound_handle
 		  );
 
 	void onInitialize();
 
 	void onDeinitialize();
 
-    void onUpdate(double time_diff);
-
+	void onUpdate(double time_diff);
 
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
@@ -62,26 +58,19 @@ protected slots:
 	void __onJump(bool is_pressed);
 
 
-private:
-
-    void __moveAround();
-
-
 protected:
-    Ogre::Quaternion mLookAroundQuaternion; //!< 飞机转动方向
-    Ogre::Vector3 mCurDirection;            //!<  机头方向
-    float mMaxSpeed;                        //!< 飞船最大速度
-    float mMinSpeed;                        //!< 战车最低速度/向后最大速度
-    float mAcceleration;                    //!< 飞船的加速度
-    QString mAttackSoundHandle;             //!< 飞机攻击声音句柄
-	QString mFlyingSoundHandle;             //!< 飞机飞行声音句柄
-	QString mRiseSoundHandle;               //!< 飞机上升声音句柄
-	QString mFallSoundHandle;               //!< 飞机下降声音句柄
+	QString mFlyingSoundHandle;                    //!< 飞机飞行声音句柄
+	QString mRiseSoundHandle;                      //!< 飞机上升声音句柄
+	QString mFallSoundHandle;                      //!< 飞机下降声音句柄
 
-    const static QString ATTACK_SOUND_COMPONENT;   //!< 飞机飞行声音Component的名字
 	const static QString FLYING_SOUND_COMPONENT;   //!< 飞机飞行声音Component的名字
 	const static QString RISE_SOUND_COMPONENT;     //!< 飞机上升声音Component的名字
 	const static QString FALL_SOUND_COMPONENT;     //!< 飞机下降声音Component的名字
+	const static float MAX_LEAN_ANGLE;             //!< 飞机平移时最大的倾斜角
+	const static float ANGLE_PER_MOVE;             //!< 飞机每一帧转动的角度
+
+private:
+	float mCurAngle;                               //!< 飞机当前倾斜角度
 };
 
 #endif

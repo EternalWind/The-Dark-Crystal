@@ -7,15 +7,17 @@ const QString PlayerAIAgent::INTERACTOR_COMPONENT = "Player_AI_Agent_Interactor"
 const QString PlayerAIAgent::TRIGGER_AREA_COMPONENT = "Player_AI_TRIGGER_AREA_COMPONENT";
 const double  PlayerAIAgent::THREAT_COOL_TIME = 2.0;
 const double  PlayerAIAgent::eps = 1e-4;
-const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 360;
-const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 180;
+const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 9;
+const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 90;
 const double  PlayerAIAgent::PI = acos(-1.0);
-const double  PlayerAIAgent::ROTATE_FLOAT = PI / 24; 
+const double  PlayerAIAgent::ROTATE_FLOAT = 180 / 24.0; 
 const double  PlayerAIAgent::ENTER_SCOPE = 1.0;
 
-PlayerAIAgent::PlayerAIAgent(QString name): Agent(name) {    
+PlayerAIAgent::PlayerAIAgent(QString name, uint16_t cur_area): Agent(name) {    
     //初始化无任何状态
     mFollow = mThreat = mOnWay = false; 
+    mCurArea = cur_area; 
+    pre_degree = 0; 
 }
 
 bool PlayerAIAgent::isOnWay() {
@@ -34,15 +36,18 @@ void PlayerAIAgent::setBody(Alien * body) {
 	mBody = body;
 }
 void PlayerAIAgent::walk(double time_diff) {   
+    static bool flag = 0; 
    //[-180,180]
-    double pre_degree;
+    
     double cur_degree;
     double expect_degree;
     Ogre::Vector3 tmp;
     Ogre::Degree td; 
-    mBody->getRotation().ToAngleAxis(td, tmp);
-    pre_degree =td.valueDegrees() * tmp.y;
-    
+    mBody->getRotation().ToAngleAxis(td, tmp);    
+     
+    while (pre_degree < -180.0) pre_degree += 360.0; 
+    while (pre_degree > 180.0) pre_degree -= 360.0; 
+
     Ogre::Vector3 dy = Ogre::Vector3(0, 0, 1); 
     Ogre::Vector3 nxt_area_position = AIDivideAreaManager::get()->getPositionById(mNxtArea);    
     Ogre::Vector3 pre_position = mBody->getPosition(); 
@@ -50,8 +55,11 @@ void PlayerAIAgent::walk(double time_diff) {
     Ogre::Vector3 dv = nxt_area_position - pre_position; 
     dv.y = 0; 
     
-    expect_degree = asin((double) ( dy.crossProduct(dv).y / (dy.length() * dv.length()) )) * 360 / PI;
+    expect_degree = asin((double) ( dy.crossProduct(dv).y / (dy.length() * dv.length()) )) * 180 / PI;
     
+   /* std::cout << expect_degree << std::endl;
+    std::cout << pre_degree << std::endl; 
+    std::cout << pre_position.x << " " << pre_position.y << " " << pre_position.z << std::endl; */
     double d_degree = expect_degree - pre_degree;
     if (fabs(d_degree) > 180 + eps) {
         if (d_degree < 0) d_degree = 360 + d_degree;
@@ -60,21 +68,37 @@ void PlayerAIAgent::walk(double time_diff) {
 
     //当前帧如果已经在角度幅度内，则开始走动。
     if (fabs(d_degree) < ROTATE_FLOAT) {
-        emit(sMove(Entity::FORWARD, true)); 
-        Ogre::Vector3 cur_position = mBody->getPosition(); 
+      
+      
+
+        mBody->setCurSpeed(5);
+        emit(sMove(Entity::STOP, true));
+        emit(sMove(Entity::BACKWARD, true)); 
+            Ogre::Vector3 cur_position = mBody->getPosition(); 
+         /*   std::cout << cur_position.x << " " << cur_position.y << " " << cur_position.z << std::endl; 
+            std::cout << d_degree << std::endl; 
+            std::cout << expect_degree << std::endl;
+            std::cout << pre_degree << std::endl; */
         //已经到达目标，mOnWay状态取消。
         if (nxt_area_position.distance(cur_position) < ENTER_SCOPE) {
             mOnWay = false;             
+             emit(sMove(Entity::STOP, true));
         }
-    } else {        
-        emit(sMove(Entity::STOP, true));
+      
+
+        
+    } else{        
+         emit(sMove(Entity::STOP, true));
+       // std::cout << pre_degree << std::endl; 
         if (d_degree > 0) 
               emit(sLookAround(Ogre::Quaternion(Ogre::Degree(pre_degree + MOVE_ROTATE_SPEED * time_diff),
-                                                Ogre::Vector3(0,1,0))));
+                                                Ogre::Vector3(0,1,0)))), pre_degree +=MOVE_ROTATE_SPEED * time_diff;
         else  emit(sLookAround(Ogre::Quaternion(Ogre::Degree(pre_degree - MOVE_ROTATE_SPEED * time_diff),
-                                                Ogre::Vector3(0,1,0))));
+                                                Ogre::Vector3(0,1,0)))), pre_degree -= MOVE_ROTATE_SPEED * time_diff;
+      
     }
     
+
 }
 
 void PlayerAIAgent::guard(double time_diff) {
@@ -85,7 +109,7 @@ void PlayerAIAgent::guard(double time_diff) {
         Ogre::Vector3 tmp;
         Ogre::Degree td; 
         mBody->getRotation().ToAngleAxis(td, tmp);
-        double cur_degree = td.valueDegrees();
+        double cur_degree = td.valueDegrees() * tmp.y;
         emit(sLookAround(Ogre::Quaternion(Ogre::Degree(cur_degree + time_diff * GUARD_ROTATE_SPEED),
                                           Ogre::Vector3(0,1,0))));
 
@@ -93,10 +117,15 @@ void PlayerAIAgent::guard(double time_diff) {
     mHasEnemy = false; 
 }
 void PlayerAIAgent::decision(double time_diff) {
-
+    static bool flag = 1; 
+    if (flag) {
+        mNxtArea = 0; 
+        mOnWay = true;
+        flag = 0; 
+    }
 }
 void PlayerAIAgent::onUpdate(double time_diff) {
-    //有威胁，消灭之。
+    
     if (mThreat) {
         mThreatTime -= time_diff; 
         if (mThreatTime <= eps) {
@@ -123,6 +152,8 @@ void PlayerAIAgent::onInitialize() {
         new btBoxShape(btVector3(5.0f, 5.0f, 5.0f)), TRIGGER_AREA_COMPONENT)).get();
     connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
             this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
+
+
 }
 void PlayerAIAgent::onDeinitialize() {
      disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),

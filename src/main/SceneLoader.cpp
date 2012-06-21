@@ -11,7 +11,14 @@
 #include "Logic/CollisionComponent.hpp"
 #include "Logic/TriggerAreaComponent.hpp"
 #include "Core/ResourceManager.hpp"
-
+#include "Alien.h"
+#include "Ammo.h"
+#include "Monster.h"
+#include "Weapon.h"
+#include "FirstAidKit.h"
+#include "Vehicle.h"
+#include "Crystal.h"
+#include "Spaceship.h"
 #include <QtXml/QtXml>
 #include <OgreProcedural.h>
 #include <OgreSubEntity.h>
@@ -690,4 +697,250 @@ Node::NodeSP SceneLoader::__loadTriggerArea(const QDomElement& og_component, Nod
     }
 
     return node;
+}
+
+
+Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString alien_name = og_node.attribute(SL_ALIEN_NAME);
+		
+		Alien *pAlien = new Alien(alien_name, 
+                                  alien_name,
+                                  dt::PhysicsBodyComponent::BOX,
+                                  1, 
+                                  alien_name + "_walk",
+                                  alien_name + "_jump",
+                                  alien_name + "_run");
+		if (dt_parent)
+			node = dt_parent->addChildNode(pAlien);
+		else 
+			node = mScene->addChildNode(pAlien);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+					pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+					rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+					scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
+}
+
+
+Node::NodeSP SceneLoader::__loadAmmo(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString ammo_name = og_node.attribute(SL_AMMO_NAME);
+		QString num_clip = og_node.attribute(SL_AMMO_NUM_CLIP);
+		QString weapon_type = og_node.attribute(SL_AMMO_TYPE);
+
+		Ammo *pAmmo = new Ammo(ammo_name, 
+                               num_clip.toInt(),
+                               Weapon::WeaponType(weapon_type.toInt()));
+							
+		if (dt_parent)
+			node = dt_parent->addChildNode(pAmmo);
+		else 
+			node = mScene->addChildNode(pAmmo);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+		    pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+            rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+        node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+            scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
+}
+
+Node::NodeSP SceneLoader::__loadCrystal(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString crystal_name = og_node.attribute(SL_CRYSTAL_NAME);
+		QString unlock_time = og_node.attribute(SL_CRYSTAL_UNLOCKTIME);
+		Crystal *pCrystal = new Crystal(crystal_name, 
+                                        unlock_time.toDouble());
+		if (dt_parent)
+			node = dt_parent->addChildNode(pCrystal);
+		else  
+			node = mScene->addChildNode(pCrystal);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+							pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+        node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+							scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
+}
+
+Node::NodeSP SceneLoader::__loadFirstAidKit(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString first_aid_kit_name = og_node.attribute(SL_FIRSTAIDKIT_NAME);
+		QString recovery_val_time = og_node.attribute(SL_RECOVERYVAL);
+		FirstAidKit *pFirstAidKit = new FirstAidKit(first_aid_kit_name, 
+                                                    recovery_val_time.toInt());
+		if (dt_parent)
+			node = dt_parent->addChildNode(pFirstAidKit);
+		else  
+			node = mScene->addChildNode(pFirstAidKit);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+		    pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+            rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+        node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+            scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
+}
+
+Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString Monster_name = og_node.attribute(SL_MONSTER_NAME);
+		QString attack_val = og_node.attribute(SL_MONSTER_ATTACKVAL);
+		QString range = og_node.attribute(SL_MONSTER_RANGE);
+		QString interval = og_node.attribute(SL_MONSTER_INTERVAL);
+		Monster *pMonster = new Monster(Monster_name, 
+                                        Monster_name,
+                                        dt::PhysicsBodyComponent::BOX,
+                                        1,
+                                        Monster_name + "_walk",
+                                        Monster_name + "_jump",
+                                        Monster_name + "_run",
+                                        Monster_name + "_attack",
+                                        attack_val.toInt(),
+                                        range.toFloat(),
+                                        interval.toFloat());
+		if (dt_parent)
+			node = dt_parent->addChildNode(pMonster);
+		else  
+			node = mScene->addChildNode(pMonster);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+		    pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+            rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+        node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+            scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
+}
+
+
+Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString weapon_name = og_node.attribute(SL_MONSTER_NAME);
+		QString weapon_type = og_node.attribute(SL_AGENT_TYPE);
+		QString power = og_node.attribute(SL_WEAPON_POWER);
+		QString maxclip = og_node.attribute(SL_WEAPON_MAXCLIP);
+		QString ammoperclip = og_node.attribute(SL_WEAPON_AMMOPERCLIP);
+		QString weight = og_node.attribute(SL_WEAPON_WEIGHT);
+		QString interval = og_node.attribute(SL_WEAPON_INTERVAL);
+		QString isoneshoot = og_node.attribute(SL_WEAPON_ISONESHOOT);
+		QString hitting_range = og_node.attribute(SL_WEAPON_HITTINGRANGE);
+		Weapon *pWeapon = new Weapon(weapon_name, 
+                                     Weapon::WeaponType(weapon_type.toInt()),
+                                     power.toInt(),
+                                     maxclip.toInt(),
+                                     maxclip.toInt(), 
+                                     weight.toInt(),
+                                     ammoperclip.toInt(),
+                                     ammoperclip.toInt(),
+                                     isoneshoot.toInt(),
+                                     interval.toFloat(),
+                                     weapon_name + "_fire",
+                                     weapon_name + "_reload_begin",
+                                     weapon_name + "_reload_done",
+                                     weapon_name,
+                                     hitting_range.toFloat(),
+                                     weapon_name);
+										  								
+		if (dt_parent)
+			node = dt_parent->addChildNode(pWeapon);
+		else  
+			node = mScene->addChildNode(pWeapon);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+							pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+        node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+							scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
+}
+
+Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString Spaceship_name = og_node.attribute(SL_SPACESHIP_NAME);
+		QString attack_val = og_node.attribute(SL_SPACESHIP_ATTACKVAL);
+		QString range = og_node.attribute(SL_SPACESHIP_RANGE);
+		QString interval = og_node.attribute(SL_SPACESHIP_INTERVAL);
+		QString mass = og_node.attribute(SL_SPACESHIP_MASS);
+		Spaceship *pMonster = new Spaceship(Spaceship_name, 
+                                            Spaceship_name,
+                                            dt::PhysicsBodyComponent::BOX,
+                                            mass.toInt(),
+                                            attack_val.toInt(),
+                                            range.toFloat(),
+                                            interval.toFloat(),
+											Spaceship_name + "_attack",
+                                            Spaceship_name + "_flying",
+                                            Spaceship_name + "_rise",
+                                            Spaceship_name + "_fall");
+		if (dt_parent)
+			node = dt_parent->addChildNode(pMonster);
+		else  
+			node = mScene->addChildNode(pMonster);
+
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QDomElement scale = og_node.firstChildElement(SL_SCALE);
+		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
+							pos.attribute(SL_Z).toFloat());
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
+							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
+							scale.attribute(SL_Z).toFloat()));		
+	}
+	return node;
 }
