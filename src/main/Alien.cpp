@@ -364,6 +364,7 @@ void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot
     //motion->setWorldTransform(trans);
     this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
 
+    physics_body->activate();
     trans = physics_body->getRigidBody()->getWorldTransform();
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
     physics_body->getRigidBody()->setWorldTransform(trans);
