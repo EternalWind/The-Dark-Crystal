@@ -1,5 +1,6 @@
 #include "MenuState.h"
 #include "OptionState.h"
+#include "CreaditState.h"
 
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
@@ -11,6 +12,7 @@ void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
 
     dt::ResourceManager::get()->addDataPath(QDir("data"));
+    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("images","FileSystem", true);
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
@@ -22,62 +24,42 @@ void MenuState::onInitialize() {
     dt::GuiRootWindow& win = dt::GuiManager::get()->getRootWindow();
 
     auto background_imagebox = win.addChildWidget(new dt::GuiImageBox("background_imagebox"));
-    background_imagebox->setPosition(410,70);
-    background_imagebox->setSize(200,200);
-    background_imagebox->setImageTexture("MyGUI_BlueWhiteSkins.png");
+    background_imagebox->setPosition(0,0);
+    background_imagebox->setSize(1.0f,1.0f);
+    background_imagebox->setImageTexture("Space.png");
 
-    auto logo = win.addChildWidget(new dt::GuiImageBox("logo"));
-    logo->setPosition(410,70);
-    logo->setSize(200,200);
-    logo->setImageTexture("MyGUI_BlueWhiteSkins.png");
+    mLogo = win.addChildWidget(new dt::GuiImageBox("logo")).get();
+    mLogo->setImageTexture("logo.png");
 
-    auto single_player_button = win.addChildWidget(new dt::GuiButton("single_player_button"));
-    single_player_button->setCaption("SinglePlayer");
-    single_player_button->setPosition(10, 10);
-    single_player_button->setSize(200, 30);
-    single_player_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+    mNewGameButton = win.addChildWidget(new dt::GuiButton("new_game_button")).get();
+    mNewGameButton->setCaption(QString::fromLocal8Bit("开启新旅程"));
+    mNewGameButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
-    auto multi_player_button = win.addChildWidget(new dt::GuiButton("multi_player_button"));
-    multi_player_button->setCaption("MultiPlayer");
-    multi_player_button->setPosition(10, 50);
-    multi_player_button->setSize(200, 30);
-    multi_player_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+    mLoadRecordButton = win.addChildWidget(new dt::GuiButton("load_record_button")).get();
+    mLoadRecordButton->setCaption(QString::fromLocal8Bit("继续征程"));
+    mLoadRecordButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
-    auto settings_button = win.addChildWidget(new dt::GuiButton("settings_button"));
-    settings_button->setCaption("Settings");
-    settings_button->setPosition(10, 90);
-    settings_button->setSize(200, 30);
-    settings_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+    mMultiPlayerButton = win.addChildWidget(new dt::GuiButton("multi_player_button")).get();
+    mMultiPlayerButton->setCaption(QString::fromLocal8Bit("多人游戏"));
+    mMultiPlayerButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
-    auto new_game_button = win.addChildWidget(new dt::GuiButton("new_game_button"));
-    new_game_button->setCaption("NewGame");
-    new_game_button->setPosition(250, 10);
-    new_game_button->setSize(100, 30);
-    new_game_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+    mSettingButton = win.addChildWidget(new dt::GuiButton("settings_button")).get();
+    mSettingButton->setCaption(QString::fromLocal8Bit("设置"));
+    mSettingButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
-    auto load_record_button = win.addChildWidget(new dt::GuiButton("load_record_button"));
-    load_record_button->setCaption("LoadRecord");
-    load_record_button->setPosition(380, 10);
-    load_record_button->setSize(100, 30);
-    load_record_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+    mCreditButton = win.addChildWidget(new dt::GuiButton("credit_button")).get();
+    mCreditButton->setCaption(QString::fromLocal8Bit("制作团队"));
+    mCreditButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
-    auto credit_button = win.addChildWidget(new dt::GuiButton("credit_button"));
-    credit_button->setCaption("credit");
-    credit_button->setPosition(380, 10);
-    credit_button->setSize(100, 30);
-    credit_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+    mExitButton = win.addChildWidget(new dt::GuiButton("exit_button")).get();
+    mExitButton->setCaption(QString::fromLocal8Bit("退出游戏"));
+    mExitButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
-    auto exit_button = win.addChildWidget(new dt::GuiButton("exit_button"));
-    exit_button->setCaption("Exit");
-    exit_button->setPosition(10, 130);
-    exit_button->setSize(200, 30);
-    exit_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
+    __resetGui();
 }
 
 void MenuState::onClick(MyGUI::Widget* sender) {
-    if (sender->getName() == "Gui.single_player_button") {
-        //
-    } else if (sender->getName() == "Gui.multi_player_button") {
+    if (sender->getName() == "Gui.multi_player_button") {
         //
     } else if (sender->getName() == "Gui.settings_button") {
         dt::StateManager::get()->pop();
@@ -89,7 +71,7 @@ void MenuState::onClick(MyGUI::Widget* sender) {
         //
     } else if (sender->getName() == "Gui.credit_button") {
         dt::StateManager::get()->pop();
-        //dt::StateManager::get()->setNewState(new MenuState());
+        dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
         dt::StateManager::get()->pop();
     }
@@ -97,3 +79,33 @@ void MenuState::onClick(MyGUI::Widget* sender) {
 
 void MenuState::updateStateFrame(double simulation_frame_time) {
 }
+
+void MenuState::__resetGui() {
+    dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
+    auto coordination = root_win.getMyGUIWidget()->getAbsoluteCoord();
+
+    int gap_h = (float)coordination.width / 15.0f;       //按钮间隔
+    int gap_v = (float)coordination.height / 15.0f;
+    int size_h = (float)coordination.width / 7.0f;       //按钮size
+    int size_v = (float)coordination.height / 20.0f;
+    int position_h = (float)coordination.width * 0.7f;  //按钮position
+    int position_v = (float)coordination.height *0.6f;
+
+    mLogo->setPosition(50,50);
+    mLogo->setSize(500, 100);
+
+    mNewGameButton->setPosition(position_h, position_v);
+    mLoadRecordButton->setPosition(position_h, position_v + gap_v);
+    mMultiPlayerButton->setPosition(position_h, position_v + gap_v * 2);
+    mSettingButton->setPosition(position_h, position_v + gap_v * 3);
+    mCreditButton->setPosition(position_h, position_v + gap_v * 4);
+    mExitButton->setPosition(position_h, position_v + gap_v * 5);
+
+    mNewGameButton->setSize(size_h, size_v);
+    mLoadRecordButton->setSize(size_h, size_v);
+    mMultiPlayerButton->setSize(size_h, size_v);
+    mSettingButton->setSize(size_h, size_v);
+    mCreditButton->setSize(size_h, size_v);
+    mExitButton->setSize(size_h, size_v);
+
+} 
