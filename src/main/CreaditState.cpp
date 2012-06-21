@@ -27,17 +27,19 @@ void CreaditState::onInitialize() {
     background_imagebox->setSize(1.0f,1.0f);
     background_imagebox->setImageTexture("Space.png");
 
-    auto logo = win.addChildWidget(new dt::GuiImageBox("logo")).get();
-    logo->setImageTexture("logo.png");
-
     auto coordination = win.getMyGUIWidget()->getAbsoluteCoord();       //窗口分辨率
     int size_h = (float)coordination.width / 10.0f;
     int size_v = (float)coordination.height / 10.0f;
 
+    auto logo = win.addChildWidget(new dt::GuiImageBox("logo")).get();
+    logo->setImageTexture("logo.png");
+    logo->setPosition(coordination.width / 15, coordination.height / 15);
+    logo->setSize(0.5f, 0.2f);
+
     auto cancel_button = win.addChildWidget(new dt::GuiButton("cancel_button"));
     cancel_button->setCaption(QString::fromLocal8Bit("返回主菜单"));
     cancel_button->setSize(size_h, size_v * 0.5);
-    cancel_button->setPosition(size_h * 8, size_v * 8);
+    cancel_button->setPosition(size_h * 8, size_v * 9);
     cancel_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &CreaditState::onClick);
 }
 
