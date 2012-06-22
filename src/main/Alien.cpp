@@ -54,21 +54,29 @@ void Alien::changeCurWeapon(const Weapon::WeaponType type) {
 }
 
 void Alien::addWeapon(Weapon* weapon) {
-    if (weapon != nullptr) {
-        bool is_enabled = mWeapons[weapon->getWeaponType()]->isEnabled();
-        removeWeapon(weapon->getWeaponType());
+	if (weapon != nullptr) {
+		if (mWeapons[weapon->getWeaponType()] != nullptr) {
+			bool is_enabled = mWeapons[weapon->getWeaponType()]->isEnabled();
+			removeWeapon(weapon->getWeaponType());
 
-        mWeapons[weapon->getWeaponType()] = weapon;
-        weapon->removeComponent(PHYSICS_BODY_COMPONENT);
-        weapon->setParent(this);
-        weapon->setRotation(Ogre::Quaternion::IDENTITY);
-        weapon->setPosition(0.5f, -0.5f, -1.0f);
+			mWeapons[weapon->getWeaponType()] = weapon;
+			weapon->removeComponent("weapon-body");
+			weapon->setParent(this);
+			weapon->setRotation(Ogre::Quaternion::IDENTITY);
+			weapon->setPosition(0.5f, -0.5f, -1.0f);
 
-        if (!is_enabled)
-            weapon->disable();
-
-        emit sWeaponAdded(weapon);
-    }
+			if (!is_enabled)
+				weapon->disable();
+		}
+		else {
+			mWeapons[weapon->getWeaponType()] = weapon;
+			weapon->removeComponent("weapon-body");
+			weapon->setParent(this);
+			weapon->setRotation(Ogre::Quaternion::IDENTITY);
+			weapon->setPosition(0.5f, -0.5f, -1.0f);
+		}
+		emit sWeaponAdded(weapon);
+	}
 }
 
 void Alien::removeWeapon(const Weapon::WeaponType type) {
@@ -110,8 +118,11 @@ void Alien::onInitialize() {
     run_sound->getSound().setLoop(true);
     jump_sound->getSound().setLoop(false);
 
-    auto iteractor = this->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
-    iteractor->setRange(3.0f);
+    auto node = this->addChildNode(new Node("getWeapon"));
+
+    auto iteractor = node->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
+    iteractor->setRange(10.0f);
+    node->setPosition(this->getEyePosition());
 
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
@@ -131,7 +142,7 @@ void Alien::onUpdate(double time_diff) {
 
     if (mIsAddingEquipment) {
         mIsAddingEquipment = false;
-        this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
+        this->findChildNode("getWeapon")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
@@ -217,7 +228,7 @@ void Alien::__onJump(bool is_pressed) {
     if (is_pressed && this->isOnGround()) {
         // 调整该处的脉冲值使跳跃更自然。
         physics_body->activate();
-        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
+        physics_body->applyCentralImpulse(0.0f, 2000.0f, 0.0f);
 
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
     }
@@ -363,7 +374,7 @@ void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot
     //trans.setRotation(BtOgre::Convert::toBullet(rotation));
     //motion->setWorldTransform(trans);
     this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
-
+    this->findChildNode("getWeapon")->setRotation(agent_rot);
     physics_body->activate();
     trans = physics_body->getRigidBody()->getWorldTransform();
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
