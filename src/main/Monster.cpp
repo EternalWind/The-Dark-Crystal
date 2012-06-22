@@ -81,7 +81,7 @@ void Monster::onInitialize() {
 
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 
-	this->setCurSpeed(5.0f);
+	this->setCurSpeed(15.0f);
 }
 
 void Monster::onDeinitialize() {
@@ -103,77 +103,68 @@ void Monster::onUpdate(double time_diff) {
 // --------------- slots -------------------//
 
 void Monster::__onMove(MoveType type, bool is_pressed) {
-	bool is_stopped = false;
+    bool is_stopped = false;
 
-	switch (type) {
-	case FORWARD:
-		if (is_pressed)
-			mMoveVector.z -= 1.0f; // Bullet的Z轴和Ogre方向相反
-		else
-			mMoveVector.z += 1.0f;
+    switch (type) {
+    case FORWARD:
+        if (is_pressed/* && mMoveVector.z > -1.0f*/)
+            mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
+        else if (!is_pressed && mMoveVector.z < 1.0f)
+            mMoveVector.z += 1.0f;
 
-		break;
+        break;
 
-	case BACKWARD:
-		if (is_pressed)
-			mMoveVector.z += 1.0f;
-		else
-			mMoveVector.z -= 1.0f;
+    case BACKWARD:
+        if (is_pressed && mMoveVector.z < 1.0f)
+            mMoveVector.z += 1.0f;
+        else if (!is_pressed && mMoveVector.z > -1.0f)
+            mMoveVector.z -= 1.0f;
 
-		break;
+        break;
 
-	case LEFTWARD:
-		if (is_pressed)
-			mMoveVector.x -= 1.0f;
-		else
-			mMoveVector.x += 1.0f;
+    case LEFTWARD:
+        if (is_pressed && mMoveVector.x > -1.0f)
+            mMoveVector.x -= 1.0f;
+        else if (!is_pressed && mMoveVector.x < 1.0f)
+            mMoveVector.x += 1.0f;
 
-		break;
+        break;
 
-	case RIGHTWARD:
-		if (is_pressed)
-			mMoveVector.x += 1.0f;
-		else
-			mMoveVector.x -= 1.0f;
+    case RIGHTWARD:
+        if (is_pressed && mMoveVector.x < 1.0f)
+            mMoveVector.x += 1.0f;
+        else if (!is_pressed && mMoveVector.x > -1.0f)
+            mMoveVector.x -= 1.0f;
 
-		break;
+        break;
 
-	case STOP:
-		is_stopped = true;
+    case STOP:
+        mMoveVector.x = 0.0f;
+        mMoveVector.z = 0.0f;
+        is_stopped = true;
 
-		break;
+        break;
 
-	default:
-		dt::Logger::get().debug("Not processed MoveType!");
-	}
+    default:
+        dt::Logger::get().debug("Not processed MoveType!");
+    }
 
-	if (is_stopped) {
-		this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-		this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+    if (is_stopped) {
+        this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
+        this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+    } else {
+        std::shared_ptr<dt::SoundComponent> move_sound;
 
-		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-			->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
-	} else {
-		/*if (!mMoveVector.isZeroLength())
-		mMoveVector.normalise();*/
-		//Ogre::Vector3 move_vector = mMoveVector;
-		////move_vector.normalise();
+        if (mHasSpeededUp) {
+            move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
+        } else {
+            move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
+        }
 
-		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()
-			->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+        move_sound->playSound();
+    }
 
-		std::shared_ptr<dt::SoundComponent> move_sound;
-
-		if (mHasSpeededUp) {
-			move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
-		} else {
-			move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
-		}
-
-		move_sound->playSound();
-	}
-
-	mIsMoving = !is_stopped;
+    mIsMoving = !is_stopped;
 }
 
 void Monster::__onJump(bool is_pressed) {

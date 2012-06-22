@@ -25,6 +25,9 @@ public:
 	  * @param flying_sound_handle 飞船飞行声音句柄
 	  * @param rise_sound_handle 飞船上升声音句柄
 	  * @param fall_sound_handle 飞船下降声音句柄
+	  * @param max_speed 飞船最大的直线速度 (注意用2-Base以避免精度损失)
+	  * @param speed_per_frame 飞机加速时每一帧的速度的增量(加速度)
+	  * @param parallel_move_speed 飞机平移时的速度
 	  */
 	Spaceship(const QString node_name, 
 		  const QString mesh_handle, 
@@ -36,7 +39,10 @@ public:
 		  const QString attack_sound_handle,
 		  const QString flying_sound_handle,
 		  const QString rise_sound_handle,
-		  const QString fall_sound_handle
+		  const QString fall_sound_handle,
+		  const float max_speed,
+		  const float speed_per_frame,
+		  const float parallel_move_speed
 		  );
 
 	void onInitialize();
@@ -68,9 +74,15 @@ protected:
 	const static QString FALL_SOUND_COMPONENT;     //!< 飞机下降声音Component的名字
 	const static float MAX_LEAN_ANGLE;             //!< 飞机平移时最大的倾斜角
 	const static float ANGLE_PER_MOVE;             //!< 飞机每一帧转动的角度
+	//const static float MAX_SPEED;                  //!< 飞机飞行最大速度
+	//const static float SPEED_PER_FLAME;            //!< 飞机加速时每一帧的增量
+	//const static float PARALLEL_MOVE_SPEED;        //!< 飞机平移时的速度
 
 private:
-	float mCurAngle;                               //!< 飞机当前倾斜角度
+	float mCurAngle;                               //!< 飞机当前倾斜角度      
+	float mMaxSpeed;                               //!< 飞机飞行最大速度
+	float mSpeedPerFlame;                          //!< 飞机加速时每一帧的速度的增量(加速度)
+	float mParallelMoveSpeed;                      //!< 飞机平移时的速度
 };
 
 #endif
