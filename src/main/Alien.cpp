@@ -364,15 +364,10 @@ void Alien::__onGetOffVehicle() { /* =_= 很明显，外星人不是一种载具。*/ }
 
 void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
     Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
-    //rotation.FromRotationMatrix(orientMatrix);
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     btTransform trans;
-    //auto motion = physics_body->getRigidBody()->getMotionState();
 
-    //motion->getWorldTransform(trans);
-    //trans.setRotation(BtOgre::Convert::toBullet(rotation));
-    //motion->setWorldTransform(trans);
     this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
     this->findChildNode("getWeapon")->setRotation(agent_rot);
     physics_body->activate();
