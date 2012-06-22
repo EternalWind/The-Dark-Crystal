@@ -7,7 +7,7 @@
 #include <cstdint>
 
 /**
-  * 粒子效果类，用于爆炸效果  
+  * 粒子效果类，用于爆炸效果
   */
 class ParticlesEffect : public dt::Node {
 
