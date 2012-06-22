@@ -121,6 +121,18 @@ public:
       */
     bool isOnGround();
 
+    /**
+      * 设置该实体的朝向。
+      * @param direction 表示朝向的四元组
+      */
+    //void setEntityDirection(const Ogre::Quaternion direction);
+
+    /**
+      * 获取该实体的朝向。
+      * @returns 表示朝向的四元组
+      */
+    //Ogre::Quaternion getEntityDirection() const;
+
     virtual void onInitialize();
 
     virtual void onDeinitialize();
@@ -200,6 +212,7 @@ protected:
     dt::PhysicsBodyComponent::CollisionShapeType mCollisionShapeType; //!< 该实体的物理外形。
     btScalar mMass;                                                   //!< 该实体的质量。
     Ogre::Vector3 mMoveVector;                                        //!< 一个用来辅助记录移动（速度或力）的方向的向量,采用以该实体为原点的坐标系（具体用法请参见Alien::__onMove）。
+    //Ogre::Quaternion mDirection;                                      //!< 一个用来辅助记录该实体朝向的四元组。
     bool mIsAddingEquipment;                                          //!< 标记是否正在进行场景交互（如解锁水晶等）。
     bool mIsMoving;                                                   //!< 标记该实体是否正在移动。
 	bool mIsJumping;                                                  //!< 标记该实体是否正在跳跃中

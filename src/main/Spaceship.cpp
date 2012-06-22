@@ -52,6 +52,7 @@ void Spaceship::onInitialize() {
 	this->setCurSpeed(20.0f);
 	mIsJumping = true;
 
+	this->setRotation(Ogre::Quaternion(Ogre::Radian(0.1), Ogre::Vector3(0, 1, 0)));
 }
 
 void Spaceship::onDeinitialize() {
@@ -64,29 +65,37 @@ void Spaceship::onUpdate(double time_diff) {
 
 	//在空中的话给飞船一个力让其保持平衡
 	if (mIsJumping) {
-		p->setCentralForce(0, mMass * 3.25, 0);
+		p->setCentralForce(0, mMass * 5.7, 0);		
 	}
 
+	float moving = 0.0f;
 	//处理旋转
 	if (mMoveVector.x > 0) {
 		if (mCurAngle < MAX_LEAN_ANGLE) {
 			mCurAngle += ANGLE_PER_MOVE;
+			moving += ANGLE_PER_MOVE;
 		}
 	} else if (mMoveVector.x < 0) {
 		if (mCurAngle > -MAX_LEAN_ANGLE) {
 			mCurAngle -= ANGLE_PER_MOVE;
+			moving -= ANGLE_PER_MOVE;
 		}
 	} else {
 		if (mCurAngle > 0) {
 			mCurAngle -= ANGLE_PER_MOVE;
+			moving -= ANGLE_PER_MOVE;
 		} else if (mCurAngle < 0) {
 			mCurAngle += ANGLE_PER_MOVE;
+			moving += ANGLE_PER_MOVE;
 		}
 	}
 
 	if (mCurAngle != 0) {
 		btTransform trans = p->getRigidBody()->getWorldTransform();
-		trans.setRotation(BtOgre::Convert::toBullet(Ogre::Quaternion(Ogre::Radian(Ogre::Degree(-mCurAngle)), Ogre::Vector3(0, 0, 1))));
+		p->activate();
+
+		Ogre::Quaternion rot = this->getRotation(dt::Node::SCENE) *	Ogre::Quaternion(Ogre::Radian(-moving), Ogre::Vector3(0, 0, 1));
+		trans.setRotation(BtOgre::Convert::toBullet(rot));
 		p->getRigidBody()->setWorldTransform(trans);
 	}
 
@@ -181,24 +190,15 @@ void Spaceship::__onSpeedUp(bool is_pressed) {
 }
 
 void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	//physics_body->disable();
-	//this->setRotation(body_rot * agent_rot);
-	//btTransform trans = physics_body->getRigidBody()->getWorldTransform();
-	//trans.setRotation(BtOgre::Convert::toBullet(this->getParent()->getRotation(dt::Node::SCENE) * body_rot));
-	//trans.setRotation(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * agent_rot));
-	//physics_body->getRigidBody()->setWorldTransform(trans);
-	Ogre::Matrix3 orientMatrix;
-	orientMatrix.FromEulerAnglesYXZ(body_rot.getYaw(), agent_rot.getPitch(), Ogre::Radian());
+	p->activate();
+	
+	btTransform trans = p->getRigidBody()->getWorldTransform();
+	trans.setRotation(BtOgre::Convert::toBullet(body_rot * agent_rot));
+	p->getRigidBody()->setWorldTransform(trans);
 
-
-	//auto agent = this->findChildNode(Agent::AGENT);
-	//agent->setRotation(agent_rot);
-
-	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
-
-	//physics_body->enable();
+	p->getRigidBody()->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 }
 
 void Spaceship::__onJump(bool is_pressed) {

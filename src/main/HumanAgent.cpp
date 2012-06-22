@@ -98,8 +98,8 @@ void HumanAgent::__onKeyUp(dt::InputManager::InputCode code, const OIS::EventArg
 
     if (isMoveRelated) {
         if (!input_mgr->isPressed(control_setting.getKey(ControlSetting::BACKWARD)) && !input_mgr->isPressed(control_setting.getKey(
-            ControlSetting::BACKWARD)) && !input_mgr->isPressed(control_setting.getKey(ControlSetting::BACKWARD)) && !input_mgr->
-            isPressed(control_setting.getKey(ControlSetting::BACKWARD))) {
+            ControlSetting::FORWARD)) && !input_mgr->isPressed(control_setting.getKey(ControlSetting::RIGHTWARD)) && !input_mgr->
+            isPressed(control_setting.getKey(ControlSetting::LEFTWARD))) {
                 emit sMove(Entity::STOP, true);
         }
     }
@@ -116,19 +116,8 @@ void HumanAgent::__onMouseMove(const OIS::MouseEvent& event) {
     float dy = event.state.Y.rel * factor * (control_setting.getYInverted() ? -1 : 1);
 
     if (dx != 0 || dy != 0) {
-        // watch out for da gimbal lock !!
-
-        Ogre::Matrix3 orientMatrix;
-        //getRotation().ToRotationMatrix(orientMatrix);
-		
-        Ogre::Radian yaw, pitch, roll;
-        //orientMatrix.ToEulerAnglesYXZ(yaw, pitch, roll);
-
-  //      pitch += Ogre::Radian(dy);
-		//yaw += Ogre::Radian(dx);
-
-		yaw = this->getParent()->getRotation().getYaw() + Ogre::Radian(dx);
-		pitch = this->getRotation().getPitch() + Ogre::Radian(dy);
+		Ogre::Radian yaw = Ogre::Radian(dx);
+        Ogre::Radian pitch = Ogre::Radian(dy);
 
         // do not let it look completely vertical, or the yaw will break
         if (pitch > Ogre::Degree(89.9))
@@ -136,14 +125,10 @@ void HumanAgent::__onMouseMove(const OIS::MouseEvent& event) {
 
         if (pitch < Ogre::Degree(-89.9))
             pitch = Ogre::Degree(-89.9);
-	
-		orientMatrix.FromEulerAnglesYXZ(yaw, pitch, roll);	
 
-		Ogre::Quaternion body_rot = Ogre::Quaternion(yaw, Ogre::Vector3(0, 1, 0));
-		Ogre::Quaternion agent_rot = Ogre::Quaternion(pitch, Ogre::Vector3(1, 0, 0));
-        //rot.FromRotationMatrix(orientMatrix);
-        //setRotation(rot);		
-		
-		emit sLookAround(body_rot, agent_rot);
+		emit sLookAround(
+			this->getParent()->getRotation() * Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)), 
+			this->getRotation() * Ogre::Quaternion(pitch, Ogre::Vector3(1, 0, 0))
+			);
     }
 }

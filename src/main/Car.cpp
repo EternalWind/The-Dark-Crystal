@@ -157,17 +157,19 @@ void Car::__onSpeedUp(bool is_pressed) {
 }
 
 void Car::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
 
-	physics_body->disable();
-	this->setRotation(body_rot);
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    btTransform trans;
 
-	auto agent = this->findChildNode(Agent::AGENT);
-	agent->setRotation(agent_rot);
+    this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
 
-	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+    physics_body->activate();
+    trans = physics_body->getRigidBody()->getWorldTransform();
+    trans.setRotation(BtOgre::Convert::toBullet(rotation));
+    physics_body->getRigidBody()->setWorldTransform(trans);
 
-	physics_body->enable();
+	physics_body->getRigidBody()->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
 }
 
 //void Car::__turnAround(bool is_left, bool is_forward) {
