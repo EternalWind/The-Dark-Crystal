@@ -19,10 +19,13 @@ const QString Alien::INTERACTOR_COMPONENT = "interactor";
 Alien::Alien(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass,
     const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle)
     : Entity(node_name, mesh_handle, collision_shape_type, mass),
-    mWalkSoundHandle(walk_sound_handle),
-    mJumpSoundHandle(jump_sound_handle),
-    mRunSoundHandle(run_sound_handle),
-    mCurWeapon(nullptr) {
+      mWalkSoundHandle(walk_sound_handle),
+      mJumpSoundHandle(jump_sound_handle),
+      mRunSoundHandle(run_sound_handle),
+      mCurWeapon(nullptr),
+      mVelocity(0.0f, 0.0f, 0.0f),
+      mBtController(nullptr),
+      mBtGhostObject(nullptr) {
         // 准备好3种武器的位置。
         mWeapons[Weapon::PRIMARY] = nullptr;
         mWeapons[Weapon::SECONDARY] = nullptr;
@@ -118,8 +121,37 @@ void Alien::onInitialize() {
     this->setOrigSpeed(10.0f);
     this->setCurSpeed(10.0f);
 
+    this->removeComponent(PHYSICS_BODY_COMPONENT);
+
+    btTransform  start_trans;
+    start_trans.setIdentity();
+    start_trans.setOrigin(btVector3(0, 30, 0));
+    start_trans.setRotation(BtOgre::Convert::toBullet(getRotation(Node::SCENE)));
+
+    Ogre::Vector3 size = findComponent<dt::MeshComponent>(MESH_COMPONENT)->getOgreEntity()->getBoundingBox().getHalfSize();
+    btBoxShape* box = new btBoxShape(BtOgre::Convert::toBullet(size));
+
+    mBtGhostObject = std::shared_ptr<btPairCachingGhostObject>(new btPairCachingGhostObject());
+    mBtGhostObject->setWorldTransform(start_trans);
+    mBtGhostObject->setCollisionShape(box);
+    mBtGhostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //TODO: Make a better way to distinguish between AdvancedPlayerComponent and PhysicsBodyComponent.
+    //For now, it's just a null pointer check to do this.
+    mBtGhostObject->setUserPointer(nullptr);
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    mBtController = std::shared_ptr<btKinematicCharacterController>
+        (new btKinematicCharacterController(mBtGhostObject.get(), box, 1));
+    getScene()->getPhysicsWorld()->getBulletWorld()->addCollisionObject(mBtGhostObject.get());
+    getScene()->getPhysicsWorld()->getBulletWorld()->addAction(mBtController.get());
+
     // 外星人的行走不需要考虑摩擦力。
-    this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
+    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //physics_body->getRigidBody()->setFriction(0.0);
+
+    // 化身Kinematic Body拯救世界！！！
+    //physics_body->getRigidBody()->setCollisionFlags(physics_body->getRigidBody()->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+    //physics_body->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 }
 
 void Alien::onDeInitialize() {
@@ -134,14 +166,25 @@ void Alien::onUpdate(double time_diff) {
         this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //auto gravity = physics_body->getRigidBody()->getGravity();  // 这Gravity是重力加速度…… >_<
     auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
-    velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
 
-    if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
+    btTransform trans = mBtGhostObject->getWorldTransform();
+
+    setPosition(BtOgre::Convert::toOgre(trans.getOrigin()), dt::Node::SCENE);
+    setRotation(BtOgre::Convert::toOgre(trans.getRotation()), dt::Node::SCENE);
+    //mVelocity.setX(velocity.x()
+    //mVelocity += gravity;
+
+    //velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
+
+    /*if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
         physics_body->activate();
         physics_body->getRigidBody()->setLinearVelocity(velocity);
-    }
+    }*/
+
+    mBtController->setVelocityForTimeInterval(velocity, 0.5);
 
     Node::onUpdate(time_diff);
 }
@@ -151,7 +194,7 @@ void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
 
     switch (type) {
     case FORWARD:
-        if (is_pressed/* && mMoveVector.z > -1.0f*/)
+        if (is_pressed && mMoveVector.z > -1.0f)
             mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
         else if (!is_pressed && mMoveVector.z < 1.0f)
             mMoveVector.z += 1.0f;
@@ -212,12 +255,13 @@ void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
 }
 
 void Alien::__onJump(bool is_pressed) {
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
     if (is_pressed && this->isOnGround()) {
         // 调整该处的脉冲值使跳跃更自然。
-        physics_body->activate();
-        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
+        /*physics_body->activate();
+        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);*/
+        mBtController->jump();
 
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
     }
@@ -353,21 +397,15 @@ void Alien::__onGetOffVehicle() { /* =_= 很明显，外星人不是一种载具。*/ }
 
 void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
     Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
-    //rotation.FromRotationMatrix(orientMatrix);
 
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     btTransform trans;
-    //auto motion = physics_body->getRigidBody()->getMotionState();
+    trans = mBtGhostObject->getWorldTransform();
 
-    //motion->getWorldTransform(trans);
-    //trans.setRotation(BtOgre::Convert::toBullet(rotation));
-    //motion->setWorldTransform(trans);
     this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
 
-    physics_body->activate();
-    trans = physics_body->getRigidBody()->getWorldTransform();
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
-    physics_body->getRigidBody()->setWorldTransform(trans);
+    mBtGhostObject->setWorldTransform(trans);
 }
 
 void Alien::__onReload() {

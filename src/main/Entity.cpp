@@ -99,7 +99,7 @@ bool Entity::isOnGround() {
 
     Ogre::Vector3 start(0.0f, 0.0f, 0.0f);
     Ogre::Vector3 end(0.0f, 0.0f, 0.0f);
-    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -half_size.y + 0.02f, half_size.z)
+    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -half_size.y + 0.1f, half_size.z)
                 + getPosition(Node::SCENE);
     end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -half_size.y, half_size.z)
                 + getPosition(Node::SCENE);
@@ -120,7 +120,6 @@ bool Entity::isOnGround() {
 void Entity::onInitialize() {
     this->addComponent<dt::MeshComponent>(new dt::MeshComponent(mMeshHandle, "", MESH_COMPONENT));
     auto physics = this->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(MESH_COMPONENT, PHYSICS_BODY_COMPONENT, mCollisionShapeType, mMass));
-    physics->setGravity(0.0f, -17.0f, 0.0f);
 }
 
 void Entity::onDeinitialize() {

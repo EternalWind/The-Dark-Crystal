@@ -182,14 +182,23 @@ void Spaceship::__onSpeedUp(bool is_pressed) {
 
 void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
 	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	Ogre::Quaternion rot(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
 
-	physics_body->disable();
+	//physics_body->disable();
+	//this->setRotation(body_rot * agent_rot);
+	//btTransform trans = physics_body->getRigidBody()->getWorldTransform();
+	//trans.setRotation(BtOgre::Convert::toBullet(this->getParent()->getRotation(dt::Node::SCENE) * body_rot));
+	//trans.setRotation(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * agent_rot));
+	//physics_body->getRigidBody()->setWorldTransform(trans);
+	Ogre::Matrix3 orientMatrix;
+	orientMatrix.FromEulerAnglesYXZ(body_rot.getYaw(), agent_rot.getPitch(), Ogre::Radian());
 
-	this->setRotation(rot, dt::Node::SCENE);
-	this->setRotation(this->getRotation(dt::Node::SCENE) * agent_rot, dt::Node::SCENE);
 
-	physics_body->enable();
+	//auto agent = this->findChildNode(Agent::AGENT);
+	//agent->setRotation(agent_rot);
+
+	physics_body->getRigidBody()	->setLinearVelocity(BtOgre::Convert::toBullet(this->getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed));
+
+	//physics_body->enable();
 }
 
 void Spaceship::__onJump(bool is_pressed) {
