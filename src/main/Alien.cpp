@@ -57,21 +57,29 @@ void Alien::changeCurWeapon(const Weapon::WeaponType type) {
 }
 
 void Alien::addWeapon(Weapon* weapon) {
-    if (weapon != nullptr) {
-        bool is_enabled = mWeapons[weapon->getWeaponType()]->isEnabled();
-        removeWeapon(weapon->getWeaponType());
+	if (weapon != nullptr) {
+		if (mWeapons[weapon->getWeaponType()] != nullptr) {
+			bool is_enabled = mWeapons[weapon->getWeaponType()]->isEnabled();
+			removeWeapon(weapon->getWeaponType());
 
-        mWeapons[weapon->getWeaponType()] = weapon;
-        weapon->removeComponent(PHYSICS_BODY_COMPONENT);
-        weapon->setParent(this);
-        weapon->setRotation(Ogre::Quaternion::IDENTITY);
-        weapon->setPosition(0.5f, -0.5f, -1.0f);
+			mWeapons[weapon->getWeaponType()] = weapon;
+			weapon->removeComponent("weapon-body");
+			weapon->setParent(this);
+			weapon->setRotation(Ogre::Quaternion::IDENTITY);
+			weapon->setPosition(0.5f, -0.5f, -1.0f);
 
-        if (!is_enabled)
-            weapon->disable();
-
-        emit sWeaponAdded(weapon);
-    }
+			if (!is_enabled)
+				weapon->disable();
+		}
+		else {
+			mWeapons[weapon->getWeaponType()] = weapon;
+			weapon->removeComponent("weapon-body");
+			weapon->setParent(this);
+			weapon->setRotation(Ogre::Quaternion::IDENTITY);
+			weapon->setPosition(0.5f, -0.5f, -1.0f);
+		}
+		emit sWeaponAdded(weapon);
+	}
 }
 
 void Alien::removeWeapon(const Weapon::WeaponType type) {
@@ -113,8 +121,11 @@ void Alien::onInitialize() {
     run_sound->getSound().setLoop(true);
     jump_sound->getSound().setLoop(false);
 
-    auto iteractor = this->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
-    iteractor->setRange(3.0f);
+    auto node = this->addChildNode(new Node("getWeapon"));
+
+    auto iteractor = node->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
+    iteractor->setRange(10.0f);
+    node->setPosition(this->getEyePosition());
 
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
@@ -163,7 +174,7 @@ void Alien::onUpdate(double time_diff) {
 
     if (mIsAddingEquipment) {
         mIsAddingEquipment = false;
-        this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
+        this->findChildNode("getWeapon")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
     //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);

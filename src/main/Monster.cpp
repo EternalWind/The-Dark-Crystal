@@ -81,7 +81,7 @@ void Monster::onInitialize() {
 
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 
-	this->setCurSpeed(5.0f);
+	this->setCurSpeed(15.0f);
 }
 
 void Monster::onDeinitialize() {
@@ -105,7 +105,7 @@ void Monster::onUpdate(double time_diff) {
 // --------------- slots -------------------//
 
 void Monster::__onMove(MoveType type, bool is_pressed) {
-	bool is_stopped = false;
+    bool is_stopped = false;
 
     switch (type) {
     case FORWARD:
@@ -219,7 +219,7 @@ void Monster::__onSpeedUp(bool is_pressed) {
 }
 
 void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-	Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
+    Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     btTransform trans;
@@ -227,7 +227,6 @@ void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_r
     this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
 
     physics_body->activate();
-
     trans = physics_body->getRigidBody()->getWorldTransform();
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
     physics_body->getRigidBody()->setWorldTransform(trans);

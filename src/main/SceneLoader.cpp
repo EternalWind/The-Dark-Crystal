@@ -916,6 +916,7 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 		QString range = og_node.attribute(SL_SPACESHIP_RANGE);
 		QString interval = og_node.attribute(SL_SPACESHIP_INTERVAL);
 		QString mass = og_node.attribute(SL_SPACESHIP_MASS);
+		
 		Spaceship *pMonster = new Spaceship(Spaceship_name, 
                                             Spaceship_name,
                                             dt::PhysicsBodyComponent::BOX,
@@ -926,7 +927,10 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 											Spaceship_name + "_attack",
                                             Spaceship_name + "_flying",
                                             Spaceship_name + "_rise",
-                                            Spaceship_name + "_fall");
+                                            Spaceship_name + "_fall",
+											256.0f,
+											256.0f / 8192,
+											64.0f);
 		if (dt_parent)
 			node = dt_parent->addChildNode(pMonster);
 		else  
