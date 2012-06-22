@@ -33,7 +33,7 @@ public:
      void walk(double time_diff); 
      void decision(double time_diff);
 private slots:
-     void __onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c);
+     void onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Component* component);
      void __onFind(dt::PhysicsBodyComponent* pbc);
 private:
     uint16_t mCurArea;                                       //<! 当前所在区域ID。
@@ -44,8 +44,7 @@ private:
     bool mOnWay;                                             //!< 是否在路上
     bool mHasEnemy;                                          //<! 当前方向是否有敌人。    
     dt::InteractionComponent * mIteractor;                   //<! 检验前方是否有怪物的component。
-    dt::TriggerAreaComponent * mTrigger;                     //<! 检验是否触发trigger的component。
-    
+    dt::TriggerAreaComponent * mTrigger;                     //<! 检验是否触发trigger的component。   
     const static QString INTERACTOR_COMPONENT;               //!< 检测前方是否有攻击物体的InteractorComponent的名字。
     const static QString TRIGGER_AREA_COMPONENT;             //!< TRIGGER_AREA_COMPONENT的名字。
     const static double eps;                                 //!< 精度控制。
