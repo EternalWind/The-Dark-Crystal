@@ -22,7 +22,7 @@ void ParticlesEffect::onInitialize() {
 	auto sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mSoundHandle, "bomb_sound"));
 	sound->setVolume((float)sound_setting.getSoundEffect());
 	sound->getSound().setLoop(false);
-	sound->playSound();
+	sound->playSound();  
 
 	// create the particle system
 	auto p_sys = this->addComponent(new dt::ParticleSystemComponent("p_sys"));
