@@ -5,15 +5,13 @@
 
 #include <Logic/RaycastComponent.hpp>
 #include <Graphics/CameraComponent.hpp>
+#include <Graphics/ParticleSystemComponent.hpp>
 
 const QString Spaceship::FLYING_SOUND_COMPONENT = "flying_sound";
 const QString Spaceship::RISE_SOUND_COMPONENT = "rise_sound";
 const QString Spaceship::FALL_SOUND_COMPONENT = "fall_sound";
 const float Spaceship::MAX_LEAN_ANGLE = 16.0f;
 const float Spaceship::ANGLE_PER_MOVE = Spaceship::MAX_LEAN_ANGLE / 1024;
-//const float Spaceship::MAX_SPEED = 256.0f;
-//const float Spaceship::SPEED_PER_FLAME = Spaceship::MAX_SPEED / 8192;
-//const float Spaceship::PARALLEL_MOVE_SPEED = 64.0f;
 
 Spaceship::Spaceship(const QString node_name, 
 	const QString mesh_handle, 
@@ -36,7 +34,7 @@ Spaceship::Spaceship(const QString node_name,
 	mFallSoundHandle(fall_sound_handle),
 	mCurAngle(0),
 	mMaxSpeed(max_speed),
-	mSpeedPerFlame(speed_per_frame),
+	mSpeedPerFrame(speed_per_frame),
 	mParallelMoveSpeed(parallel_move_speed) {
 }
 
@@ -63,6 +61,22 @@ void Spaceship::onInitialize() {
 
 	//设置摄像头位置
 	this->setEyePosition(this->getPosition() + Ogre::Vector3(0, 10, 34));
+
+	//添加尾焰
+	this->addFlame(
+		"back_left_flame", 
+		"Test/Particle",
+		Ogre::Vector3(-2.5, -0.9, 8.6),
+		Ogre::Vector3(0, 0, 1)
+		);
+
+	this->addFlame(
+		"back_right_flame",
+		"Test/Particle",
+		Ogre::Vector3(2.5, -0.9, 8.6),
+		Ogre::Vector3(0, 0, 1)
+		);
+	
 }
 
 void Spaceship::onDeinitialize() {
@@ -106,7 +120,7 @@ void Spaceship::onUpdate(double time_diff) {
 		p->getRigidBody()->setWorldTransform(trans);
 	}
 
-	mCurSpeed += mMoveVector.z * mSpeedPerFlame;
+	mCurSpeed += mMoveVector.z * mSpeedPerFrame;
 	if (mCurSpeed > mMaxSpeed) {
 		mCurSpeed = mMaxSpeed;
 	}
@@ -130,6 +144,34 @@ void Spaceship::onUpdate(double time_diff) {
 	dt::Node::onUpdate(time_diff);
 }
 
+void Spaceship::addFlame(const QString& name, const QString& flame_name, Ogre::Vector3 position, Ogre::Vector3 direction) {
+	auto node = this->addChildNode(new dt::Node(name));
+	node->setPosition(position);	
+
+	auto flame = node->addComponent(new dt::ParticleSystemComponent(name));
+	flame->setMaterialName(flame_name);
+	flame->setParticleCountLimit(500);
+	flame->getOgreParticleSystem()->setDefaultDimensions(0.03, 0.03);
+
+	auto emitter = flame->addEmitter(name + "emitter", "Point");
+	emitter->setDirection(direction);
+	emitter->setAngle(Ogre::Degree(10.0f)); 
+	emitter->setColour(Ogre::ColourValue(1.00, 0.83, 0.00, 0.2), Ogre::ColourValue(1.00, 0.99, 0.97, 0.4));
+	emitter->setEmissionRate(100);
+	emitter->setParticleVelocity(2.0f, 3.0f);
+	emitter->setTimeToLive(0.2f, 0.5f);	
+	
+	flame->addScalerAffector("scaler", 7.0);
+}
+
+void Spaceship::playFlame(const QString& name) {
+	this->findChildNode(name)->findComponent<dt::ParticleSystemComponent>(name)->enable();
+}
+
+void Spaceship::stopFlame(const QString& name) {
+	this->findChildNode(name)->findComponent<dt::ParticleSystemComponent>(name)->disable();
+}
+
 // slots
 
 void Spaceship::__onMove(MoveType type, bool is_pressed) {
@@ -140,7 +182,7 @@ void Spaceship::__onMove(MoveType type, bool is_pressed) {
 	switch (type) {
 	case FORWARD:
 		if (is_pressed)
-			mMoveVector.z += 1.0f; // Bullet的Z轴和Ogre方向相反
+			mMoveVector.z += 1.0f; 
 		else
 			mMoveVector.z -= 1.0f;
 
@@ -185,7 +227,7 @@ void Spaceship::__onMove(MoveType type, bool is_pressed) {
 	mIsMoving = !is_stopped;
 }
 
-/* 飞机下降 -_- 话说这加速肿么变成下降了，这什么神设定啊 =.= */
+/* 飞机下降 -_- */
 void Spaceship::__onSpeedUp(bool is_pressed) {
 
 	if (is_pressed) {
