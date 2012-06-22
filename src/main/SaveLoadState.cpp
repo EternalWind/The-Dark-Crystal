@@ -37,13 +37,13 @@ void SaveLoadState::onInitialize() {
     screen_shot_imagebox->setImageTexture("MyGUI_BlueWhiteSkins.png");
 
     auto load_button = win.addChildWidget(new dt::GuiButton("load_button"));
-    load_button->setCaption(QString::fromStdWString(L"加载游戏"));
+    load_button->setCaption(QString::fromLocal8Bit("加载游戏"));
     load_button->setPosition(10, 50);
     load_button->setSize(200, 30);
     load_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &SaveLoadState::onClick);
 
     auto return_button = win.addChildWidget(new dt::GuiButton("return_button"));
-    return_button->setCaption(QString::fromStdWString(L"返回"));
+    return_button->setCaption(QString::fromLocal8Bit("返回"));
     return_button->setPosition(10, 50);
     return_button->setSize(200, 30);
     return_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &SaveLoadState::onClick);
@@ -51,8 +51,8 @@ void SaveLoadState::onInitialize() {
     mRecordList = win.addChildWidget(new dt::GuiListBox("record_list")).get();
     mRecordList->setPosition(10, 320);
     mRecordList->setSize(200, 100);
-    mRecordList->addItem(QString::fromStdWString(L"存档一"));
-    mRecordList->addItem(QString::fromStdWString(L"存档二"));
+    mRecordList->addItem(QString::fromLocal8Bit("存档一"));
+    mRecordList->addItem(QString::fromLocal8Bit("存档二"));
     dynamic_cast<MyGUI::ListBox*>(mRecordList->getMyGUIWidget())->eventListChangePosition += MyGUI::newDelegate(this, &SaveLoadState::onListClick);
 }
 
