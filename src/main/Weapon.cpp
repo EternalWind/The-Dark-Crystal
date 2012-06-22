@@ -31,6 +31,7 @@ Weapon::Weapon( const QString &name,
 				mCurAmmo(cur_ammo),
 				mIsOneShot(is_one_shot),
 				mIsPhysicsBodyEnabled(false),
+				mIsPressed(false),
 				mReloadTimer(nullptr),
 				mInterval(interval),
 				mFiringSoundHandle(firing_sound_handle),
@@ -43,8 +44,8 @@ Weapon::Weapon( const QString &name,
 				mReloadingDoneSound(nullptr),  
 				mPhysicsBody(nullptr),    
 				mHittingRange(hitting_range),
-				mMaterialHandle(material_handle) { 
-	Prop(name, WEAPON);
+				mMaterialHandle(material_handle), 
+				Prop(name, WEAPON) { 
 }
 
 Weapon::~Weapon(){
@@ -197,16 +198,6 @@ void Weapon::onInitialize() {
 }
 
 void Weapon::onDeinitialize() {
-	if (mInteractor != nullptr)
-		delete mInteractor;
-	if (mFiringSound != nullptr)
-		delete mFiringSound;
-	if (mReloadingBeginSound != nullptr)
-		delete mReloadingBeginSound;
-	if (mReloadingDoneSound != nullptr)
-		delete mReloadingDoneSound;
-	if (mPhysicsBody != nullptr)
-		delete mPhysicsBody;
 }
 
 void Weapon::fire() {
