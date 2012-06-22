@@ -16,7 +16,7 @@ class ParticlesEffect : public dt::Node {
 public:
 
 	/**
-      * 构造函数。
+      * 构造函数。 
       * @param node_name Node  对象的名字
       * @param material_handle 材质句柄
       */
