@@ -223,17 +223,17 @@ Node::NodeSP SceneLoader::__loadMesh(const QDomElement& og_component, Node::Node
 
             //add mesh component
             auto mesh = node->addComponent<MeshComponent>(
-                new MeshComponent(entity.attribute(SL_MESH_HANDLE), "", entity.attribute(SL_NAME))
+                new MeshComponent(entity.attribute(SL_MESH_HANDLE), entity.firstChildElement().attribute(SL_MESH_ENTITY_MATERIAL_NAME), entity.attribute(SL_NAME))
                 );
 
             //set entity attributes
-            for ( QDomElement mat = entity.firstChildElement(); !mat.isNull(); mat = mat.nextSiblingElement() )
+            /*for ( QDomElement mat = entity.firstChildElement(); !mat.isNull(); mat = mat.nextSiblingElement() )
             {
                 QString material_handle = mat.attribute(SL_MESH_ENTITY_MATERIAL_NAME);
                 uint32_t index = mat.attribute(SL_MESH_ENTITY_INDEX).toUInt();
 
                 mesh->getOgreEntity()->getSubEntity(index)->setMaterialName(material_handle.toStdString());
-            }
+            }*/
 
             QString cast_shadows = entity.attribute(SL_CAST_SHADOWS);
             if ( cast_shadows == SL_TRUE )
@@ -962,7 +962,10 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 											Spaceship_name + "_attack",
                                             Spaceship_name + "_flying",
                                             Spaceship_name + "_rise",
-                                            Spaceship_name + "_fall");
+                                            Spaceship_name + "_fall",
+											256.0f,
+											256.0f / 8192,
+											64.0f);
 		if (dt_parent)
 			node = dt_parent->addChildNode(pSpaceship);
 		else  
