@@ -22,7 +22,7 @@ void AITest::onInitialize() {
     alien->setEyePosition(Ogre::Vector3(0, 10, 10));
     dt::Scene* scene = SceneLoader::loadScene("FirstFloor.scene");
     addScene(scene);
-    //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
+    this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
 
     scene->addChildNode(alien);
     //alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
@@ -31,6 +31,15 @@ void AITest::onInitialize() {
 
     HumanAgent* human_agent = new HumanAgent("Player");
     human_agent->attachTo(alien);
+    
+    auto motion = alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->getRigidBody()->getMotionState();
+    
+    btTransform trans;
+    trans.setIdentity();
+    trans.setOrigin(btVector3(33, 10, -27));
+
+    motion->setWorldTransform(trans);
+
     //auto scene = addScene(new dt::Scene("1"));
 
     /*auto mesh = scene->addChildNode(new dt::Node("me"));
