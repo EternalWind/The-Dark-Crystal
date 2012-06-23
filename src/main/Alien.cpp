@@ -228,7 +228,7 @@ void Alien::__onJump(bool is_pressed) {
     if (is_pressed && this->isOnGround()) {
         // 调整该处的脉冲值使跳跃更自然。
         physics_body->activate();
-        physics_body->applyCentralImpulse(0.0f, 2000.0f, 0.0f);
+        physics_body->applyCentralImpulse(0.0f, 200.0f, 0.0f);
 
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
     }
