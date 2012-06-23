@@ -122,7 +122,6 @@ bool Entity::isOnGround() {
 void Entity::onInitialize() {
     this->addComponent<dt::MeshComponent>(new dt::MeshComponent(mMeshHandle, "", MESH_COMPONENT));
     auto physics = this->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(MESH_COMPONENT, PHYSICS_BODY_COMPONENT, mCollisionShapeType, mMass));
-    physics->setGravity(0.0f, -17.0f, 0.0f);
 }
 
 void Entity::onDeinitialize() {

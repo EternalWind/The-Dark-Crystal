@@ -3,6 +3,10 @@
 #include <Core/ResourceManager.hpp>
 #include <Scene/Scene.hpp>
 
+#include <Scene/Game.hpp>
+#include <Graphics/LightComponent.hpp>
+
+
 #include "Alien.h"
 #include "HumanAgent.h"
 #include "Monster.h"
@@ -11,31 +15,35 @@
 
 void AITest::onInitialize() {
      
-     dt::ResourceManager::get()->addResourceLocation("Material", "FileSystem");
+
+     dt::ResourceManager::get()->addResourceLocation("a", "FileSystem", true);
      dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
-     dt::ResourceManager::get()->addResourceLocation("models/alien.zip", "Zip", true);
-     dt::ResourceManager::get()->addResourceLocation("models/monster.zip", "Zip", true);
+     dt::ResourceManager::get()->addResourceLocation("sinbad.zip", "Zip", true);
      Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-     Alien* alien = new Alien("alien", "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
-    alien->setEyePosition(Ogre::Vector3(0, 300, 300));
-    auto scene = addScene(SceneLoader::loadScene("FirstFloor.scene"));
-    this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
+     Alien* alien = new Alien("alien", "Sinbad.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
+    alien->setEyePosition(Ogre::Vector3(0, 10, 10));
+    dt::Scene* scene = SceneLoader::loadScene("FirstFloor.scene");
+    addScene(scene);
+    //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
 
     scene->addChildNode(alien);
-    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-    alien->setPosition(30, 300, -30);    
-    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-    
-    auto mesh = alien->findComponent<dt::MeshComponent>("mesh");
-    mesh->setAnimation("die");
-    mesh->setLoopAnimation(true);
-    mesh->playAnimation();
-    mesh->setCastShadows(false);
-    
+    //alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+    //alien->setPosition(30, 2, -30);    
+    //alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 
     HumanAgent* human_agent = new HumanAgent("Player");
     human_agent->attachTo(alien);
+    //auto scene = addScene(new dt::Scene("1"));
+
+    /*auto mesh = scene->addChildNode(new dt::Node("me"));
+    mesh->addComponent(new dt::MeshComponent("rock.01.mesh", "Wall-03", "123"));
+    mesh->setPosition(0, 0, -50);
+    auto lightnode = scene->addChildNode(new dt::Node("light"));
+    lightnode->addComponent(new dt::LightComponent());*/
+    /*auto camnode = scene->addChildNode(new dt::Node("cam"));
+    camnode->addComponent(new dt::CameraComponent(""))->lookAt(0, 0, -1);*/
+
      
 }
 void AITest::onDeinitialize() {
