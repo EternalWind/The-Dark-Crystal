@@ -24,7 +24,7 @@
 #include "Crystal.h"
 #include "Spaceship.h"
 #include "Agent.h"
-#include <QtXml/QtXml>
+#include "PlayerAIAgent.h"
 #include <OgreProcedural.h>
 #include <OgreSubEntity.h>
 
@@ -757,6 +757,11 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 		{
 			HumanAgent* human_agent = new HumanAgent("Player");
 			human_agent->attachTo(pAlien);
+		}
+		if (agent.toInt() == 1)
+		{
+			PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer", 20);
+			Ai_agent->attachTo(pAlien);
 		}
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
