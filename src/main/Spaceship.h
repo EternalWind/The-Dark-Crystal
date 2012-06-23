@@ -3,6 +3,8 @@
 
 #include "Vehicle.h"
 
+#include <map>
+
 /**
   * 游戏载具之一：宇宙飞船类
   */
@@ -25,6 +27,9 @@ public:
 	  * @param flying_sound_handle 飞船飞行声音句柄
 	  * @param rise_sound_handle 飞船上升声音句柄
 	  * @param fall_sound_handle 飞船下降声音句柄
+	  * @param max_speed 飞船最大的直线速度 (注意用2-Base以避免精度损失)
+	  * @param speed_per_frame 飞机加速时每一帧的速度的增量(加速度)
+	  * @param parallel_move_speed 飞机平移时的速度
 	  */
 	Spaceship(const QString node_name, 
 		  const QString mesh_handle, 
@@ -36,7 +41,10 @@ public:
 		  const QString attack_sound_handle,
 		  const QString flying_sound_handle,
 		  const QString rise_sound_handle,
-		  const QString fall_sound_handle
+		  const QString fall_sound_handle,
+		  const float max_speed,
+		  const float speed_per_frame,
+		  const float parallel_move_speed
 		  );
 
 	void onInitialize();
@@ -44,6 +52,27 @@ public:
 	void onDeinitialize();
 
 	void onUpdate(double time_diff);
+
+	/**
+	  * 增加火焰效果
+	  * @param name 火焰名字
+	  * @param flame_name 火焰材料的名字
+	  * @param position 火焰位置
+	  * @param rotation 火焰旋转
+	  */
+	void addFlame(const QString& name, const QString& flame_name, Ogre::Vector3 position, Ogre::Vector3 direction);
+
+	/**
+	  * 发射火焰效果
+	  * @param name 火焰的名字
+	  */
+	void playFlame(const QString& name);
+
+	/**
+	  * 停止发射火焰效果
+	  * @param name 火焰的名字
+	  */
+	void stopFlame(const QString& name);
 
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
@@ -70,7 +99,10 @@ protected:
 	const static float ANGLE_PER_MOVE;             //!< 飞机每一帧转动的角度
 
 private:
-	float mCurAngle;                               //!< 飞机当前倾斜角度
+	float mCurAngle;                               //!< 飞机当前倾斜角度      
+	float mMaxSpeed;                               //!< 飞机飞行最大速度
+	float mSpeedPerFrame;                          //!< 飞机加速时每一帧的速度的增量(加速度)
+	float mParallelMoveSpeed;                      //!< 飞机平移时的速度
 };
 
 #endif

@@ -5,7 +5,8 @@
 #include <Scene/Node.hpp>
 #include <QString>
 #include <cstdint>
-
+#include <Graphics\MeshComponent.hpp>
+#include <Physics\PhysicsBodyComponent.hpp>
 /**
   * 道具类，武器、弹药、补给和水晶的基类
   */
@@ -27,6 +28,8 @@ public:
 
 	~Prop();
 
+	void onInitialize();
+
 	QString getName() const;
 
 	void setName(QString name);
@@ -35,9 +38,10 @@ public:
 	
 	PropType getPropType() const;  
 
-private:
-	QString mName;          //!< 道具名称
-	PropType mPropType;     //!< 道具类型
+protected:
+	QString mName;                                  //!< 道具名称
+	PropType mPropType;                             //!< 道具类型
+	dt::PhysicsBodyComponent* mPhysicsBody;         //!< PhysicsBodyComponent指针
 };
 
 #endif

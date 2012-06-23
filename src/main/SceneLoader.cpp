@@ -20,6 +20,7 @@
 #include "PlayerAIAgent.h"
 #include "FirstAidKit.h"
 #include "Vehicle.h"
+#include "Entity.h"
 #include "Crystal.h"
 #include "Spaceship.h"
 #include "Agent.h"
@@ -792,8 +793,10 @@ Node::NodeSP SceneLoader::__loadAmmo(const QDomElement& og_node, Node::NodeSP dt
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
 		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 		    pos.attribute(SL_Z).toFloat());
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
             rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
@@ -819,8 +822,10 @@ Node::NodeSP SceneLoader::__loadCrystal(const QDomElement& og_node, Node::NodeSP
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
 		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 							pos.attribute(SL_Z).toFloat());
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
 							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
@@ -846,8 +851,10 @@ Node::NodeSP SceneLoader::__loadFirstAidKit(const QDomElement& og_node, Node::No
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
 		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 		    pos.attribute(SL_Z).toFloat());
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
             rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
@@ -884,8 +891,10 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
 		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 		    pos.attribute(SL_Z).toFloat());
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
             rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
@@ -932,8 +941,10 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
 		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 							pos.attribute(SL_Z).toFloat());
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
 							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
@@ -974,8 +985,10 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
 		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 							pos.attribute(SL_Z).toFloat());
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
 							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
 		node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),

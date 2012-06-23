@@ -3,6 +3,9 @@
 
 #include "Entity.h"
 
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <BulletDynamics/Character/btKinematicCharacterController.h>
+
 #include <map>
 
 /**
@@ -87,6 +90,9 @@ protected:
     QString mRunSoundHandle;                        //!< 跑步音效句柄。
     std::map<Weapon::WeaponType, Weapon*> mWeapons; //!< 武器列表。
     Weapon* mCurWeapon;                             //!< 当前武器。
+    btVector3 mVelocity;                            //!< 该外星人当前的速度向量。
+    std::shared_ptr<btPairCachingGhostObject> mBtGhostObject;
+    std::shared_ptr<btKinematicCharacterController> mBtController;
     const static QString WALK_SOUND_COMPONENT;      //!< 所有外星人类播放行走音效的SoundComponent的名字。
     const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
     const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。
