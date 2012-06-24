@@ -24,6 +24,7 @@
 #include "Crystal.h"
 #include "Spaceship.h"
 #include "Agent.h"
+#include "AIDivideAreaManager.h"
 #include "PlayerAIAgent.h"
 #include <OgreProcedural.h>
 #include <OgreSubEntity.h>
@@ -747,7 +748,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + "_walk",
                                   alien_name + "_jump",
                                   alien_name + "_run");
-		pAlien->setEyePosition(Ogre::Vector3(0, 5, 5));
+		pAlien->setEyePosition(Ogre::Vector3(0, 3, 0));
 		if (dt_parent)
 			node = dt_parent->addChildNode(pAlien);
 		else 
@@ -873,21 +874,44 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
 	Node::NodeSP node = nullptr;
 	if (!og_node.isNull())
 	{
-		QString Monster_name = og_node.attribute(SL_MONSTER_NAME);
-		QString attack_val = og_node.attribute(SL_MONSTER_ATTACKVAL);
-		QString range = og_node.attribute(SL_MONSTER_RANGE);
-		QString interval = og_node.attribute(SL_MONSTER_INTERVAL);
-		Monster *pMonster = new Monster(Monster_name, 
-                                        Monster_name + ".mesh",
+		QString monster_id = og_node.attribute(SL_MONSTER_ID);
+		
+		QFile file("MonsterAttribute.xml");
+		QDomDocument doc;
+		if ( !file.open(QIODevice::ReadOnly) )
+		{
+			dt::Logger::get().error("Couldn't open file MonsterAttribute.xml");
+			return nullptr;
+		}
+		if (!doc.setContent(&file))
+			return nullptr;
+		
+		QDomElement root = doc.documentElement();
+		QDomElement w_node = root.firstChildElement(monster_id);
+		
+		auto mass = w_node.firstChildElement("mass");
+		uint16_t mass_num = mass.text().toUInt();
+
+		auto power = w_node.firstChildElement("power");
+		uint16_t power_num = power.text().toUInt();
+
+		auto interval = w_node.firstChildElement("interval");
+		float interval_num = interval.text().toFloat();
+
+		auto range = w_node.firstChildElement("range");
+		float range_num = range.text().toFloat();
+		
+		Monster *pMonster = new Monster(monster_id, 
+                                        monster_id + ".mesh",
                                         dt::PhysicsBodyComponent::BOX,
                                         1,
-                                        Monster_name + "_walk",
-                                        Monster_name + "_jump",
-                                        Monster_name + "_run",
-                                        Monster_name + "_attack",
-                                        attack_val.toInt(),
-                                        range.toFloat(),
-                                        interval.toFloat());
+                                        monster_id + "_walk",
+                                        monster_id + "_jump",
+                                        monster_id + "_run",
+                                        monster_id + "_attack",
+                                        power_num,
+                                        range_num,
+                                        interval_num);
 		if (dt_parent)
 			node = dt_parent->addChildNode(pMonster);
 		else  
@@ -914,29 +938,68 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 	Node::NodeSP node = nullptr;
 	if (!og_node.isNull())
 	{
-		QString weapon_name = og_node.attribute(SL_WEAPON_NAME);
-		QString weapon_type = og_node.attribute(SL_WEAPON_TYPE);
-		QString power = og_node.attribute(SL_WEAPON_POWER);
-		QString maxclip = og_node.attribute(SL_WEAPON_MAXCLIP);
-		QString ammoperclip = og_node.attribute(SL_WEAPON_AMMOPERCLIP);
-		QString weight = og_node.attribute(SL_WEAPON_WEIGHT);
-		QString interval = og_node.attribute(SL_WEAPON_INTERVAL);
-		QString isoneshoot = og_node.attribute(SL_WEAPON_ISONESHOOT);
-		QString hitting_range = og_node.attribute(SL_WEAPON_HITTINGRANGE);
-		Weapon *pWeapon = new Weapon(weapon_name, 
-                                     Weapon::WeaponType(weapon_type.toInt()),
-                                     power.toInt(),
-                                     maxclip.toInt(),
-                                     maxclip.toInt(), 
-                                     weight.toInt(),
-                                     ammoperclip.toInt(),
-                                     ammoperclip.toInt(),
-                                     isoneshoot.toInt(),
-                                     interval.toFloat(),
-                                     weapon_name + "_fire",
-                                     weapon_name + "_reload_begin",
-                                     weapon_name + "_reload_done",
-                                     hitting_range.toFloat());
+		QString weapon_id = og_node.attribute(SL_WEAPON_ID);
+		QFile file("WeaponAttribute.xml");
+		QDomDocument doc;
+		if ( !file.open(QIODevice::ReadOnly) )
+        {
+            dt::Logger::get().error("Couldn't open file WeaponAttribute.xml");
+            return nullptr;
+        }
+		if (!doc.setContent(&file))
+			return nullptr;
+		
+		QDomElement root = doc.documentElement();
+		QDomElement w_node = root.firstChildElement(weapon_id);
+		
+		auto type = w_node.firstChildElement("type");
+		uint16_t weapon_type;
+		if (type.text().toStdString() == "Primary")
+			weapon_type = 0;
+		else if (type.text().toStdString() == "Secondery")
+			weapon_type = 1;
+		else
+			weapon_type = 2;
+
+		auto power = w_node.firstChildElement("power");
+		uint16_t power_num = power.text().toUInt();
+		
+		auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
+		uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
+		
+		auto maximum_clip = w_node.firstChildElement("maximum_clip");
+		uint16_t maximum_clip_num = maximum_clip.text().toUInt();
+
+		auto is_one_shot = w_node.firstChildElement("is_one_shot");
+		bool is_one_shot_num;
+		if (is_one_shot.text().toStdString() == "true")
+			is_one_shot_num = 1;
+		else
+			is_one_shot_num = 0;
+
+		auto interval = w_node.firstChildElement("interval");
+		float interval_num = interval.text().toFloat();
+
+		auto range = w_node.firstChildElement("range");
+		float range_num = range.text().toFloat();
+
+		auto mass = w_node.firstChildElement("mass");
+		float mass_num = mass.text().toFloat();
+
+		Weapon *pWeapon = new Weapon(weapon_id, 
+                                     Weapon::WeaponType(weapon_type),
+                                     power_num,
+                                     maximum_clip_num,
+                                     maximum_clip_num, 
+                                     mass_num,
+                                     ammo_per_clip_num,
+                                     ammo_per_clip_num,
+                                     is_one_shot_num,
+                                     interval_num,
+                                     weapon_id + "_fire",
+                                     weapon_id + "_reload_begin",
+                                     weapon_id + "_reload_done",
+                                     range_num);
 										  								
 		if (dt_parent)
 			node = dt_parent->addChildNode(pWeapon);
