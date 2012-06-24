@@ -92,14 +92,14 @@ void Character::onUpdate(double time_diff) {
 
     mVelocity.setX(new_velocity.x());
     mVelocity.setZ(new_velocity.z());
-    
-    mVelocity += gravity * time_diff;
 
     if (this->isOnGround()) {
         if (mVelocity.getY() < 0.0f) {
             // 人物已在地面上，因此将掉落速度清零。
             mVelocity.setY(0.0f);
         }
+    } else {
+        mVelocity += gravity * time_diff;
     }
 
     target_position.setOrigin(target_position.getOrigin() + mVelocity * time_diff);
@@ -109,7 +109,8 @@ void Character::onUpdate(double time_diff) {
         motion->setWorldTransform(target_position);
     } else {
         // 移动不到……
-        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+        mVelocity.setY(1.0f);
+        //std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
     }
 
     this->mIsUpdatingAfterChange = false;

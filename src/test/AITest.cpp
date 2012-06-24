@@ -28,9 +28,9 @@ void AITest::onInitialize() {
     this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
 
     scene->addChildNode(alien);
-    //alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-    //alien->setPosition(30, 2, -30);    
-    //alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
+    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+    alien->setPosition(33, 100, -30);    
+    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 
     HumanAgent* human_agent = new HumanAgent("Player");
     human_agent->attachTo(alien);
