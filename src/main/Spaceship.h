@@ -3,6 +3,8 @@
 
 #include "Vehicle.h"
 
+#include <map>
+
 /**
   * 游戏载具之一：宇宙飞船类
   */
@@ -51,6 +53,27 @@ public:
 
 	void onUpdate(double time_diff);
 
+	/**
+	  * 增加火焰效果
+	  * @param name 火焰名字
+	  * @param flame_name 火焰材料的名字
+	  * @param position 火焰位置
+	  * @param rotation 火焰旋转
+	  */
+	void addFlame(const QString& name, const QString& flame_name, Ogre::Vector3 position, Ogre::Vector3 direction);
+
+	/**
+	  * 发射火焰效果
+	  * @param name 火焰的名字
+	  */
+	void playFlame(const QString& name);
+
+	/**
+	  * 停止发射火焰效果
+	  * @param name 火焰的名字
+	  */
+	void stopFlame(const QString& name);
+
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
 
@@ -74,14 +97,11 @@ protected:
 	const static QString FALL_SOUND_COMPONENT;     //!< 飞机下降声音Component的名字
 	const static float MAX_LEAN_ANGLE;             //!< 飞机平移时最大的倾斜角
 	const static float ANGLE_PER_MOVE;             //!< 飞机每一帧转动的角度
-	//const static float MAX_SPEED;                  //!< 飞机飞行最大速度
-	//const static float SPEED_PER_FLAME;            //!< 飞机加速时每一帧的增量
-	//const static float PARALLEL_MOVE_SPEED;        //!< 飞机平移时的速度
 
 private:
 	float mCurAngle;                               //!< 飞机当前倾斜角度      
 	float mMaxSpeed;                               //!< 飞机飞行最大速度
-	float mSpeedPerFlame;                          //!< 飞机加速时每一帧的速度的增量(加速度)
+	float mSpeedPerFrame;                          //!< 飞机加速时每一帧的速度的增量(加速度)
 	float mParallelMoveSpeed;                      //!< 飞机平移时的速度
 };
 

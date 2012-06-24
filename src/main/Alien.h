@@ -2,13 +2,17 @@
 #define THE_DARK_CRYSTAL_ALIEN
 
 #include "Entity.h"
+#include "Character.h"
+
+//#include <BulletCollision/CollisionDispatch/btGhostObject.h>
+//#include <BulletDynamics/Character/btKinematicCharacterController.h>
 
 #include <map>
 
 /**
   * 外星人的实体类。
   */
-class Alien : public Entity {
+class Alien : public Character {
 
     Q_OBJECT
 
@@ -57,13 +61,13 @@ public:
     void onUpdate(double time_diff);
 
 protected slots:
-    void __onMove(Entity::MoveType type, bool is_pressed);
+    //void __onMove(Entity::MoveType type, bool is_pressed);
 
-    void __onJump(bool is_pressed);
+    //void __onJump(bool is_pressed);
 
     void __onAttack(bool is_pressed);
 
-    void __onSpeedUp(bool is_pressed);
+    //void __onSpeedUp(bool is_pressed);
 
     void __onChangeWeapon(Weapon::WeaponType type);
 
@@ -77,19 +81,22 @@ protected slots:
 
     void __onGetOffVehicle();
 
-    void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
+    //void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
 
     void __onReload();
 
 protected:
-    QString mWalkSoundHandle;                       //!< 行走音效句柄。
-    QString mJumpSoundHandle;                       //!< 跳跃音效句柄。
-    QString mRunSoundHandle;                        //!< 跑步音效句柄。
+    //QString mWalkSoundHandle;                       //!< 行走音效句柄。
+    //QString mJumpSoundHandle;                       //!< 跳跃音效句柄。
+    //QString mRunSoundHandle;                        //!< 跑步音效句柄。
     std::map<Weapon::WeaponType, Weapon*> mWeapons; //!< 武器列表。
     Weapon* mCurWeapon;                             //!< 当前武器。
-    const static QString WALK_SOUND_COMPONENT;      //!< 所有外星人类播放行走音效的SoundComponent的名字。
-    const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
-    const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。
+    //btVector3 mVelocity;                            //!< 该外星人当前的速度向量。
+    //std::shared_ptr<btPairCachingGhostObject> mBtGhostObject;
+    //std::shared_ptr<btKinematicCharacterController> mBtController;
+    //const static QString WALK_SOUND_COMPONENT;      //!< 所有外星人类播放行走音效的SoundComponent的名字。
+    //const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
+    //const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。
     const static QString INTERACTOR_COMPONENT;      //!< 所有外星人类与场景进行交互的InteractorComponent的名字。
 
 };

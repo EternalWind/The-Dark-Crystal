@@ -93,15 +93,20 @@ void Entity::setEyePosition(const Ogre::Vector3 eye_position) {
 
 bool Entity::isOnGround() {
     auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-    float height;
-    
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    float radius;
+    btVector3 center;
+
+    physics_body->getRigidBody()->getCollisionShape()->getBoundingSphere(center, radius);
+
     Ogre::Vector3 half_size = mesh->getOgreEntity()->getBoundingBox().getHalfSize();
 
     Ogre::Vector3 start(0.0f, 0.0f, 0.0f);
     Ogre::Vector3 end(0.0f, 0.0f, 0.0f);
-    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -half_size.y + 0.1f, half_size.z)
+
+    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius + 0.5f, half_size.z)
                 + getPosition(Node::SCENE);
-    end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -half_size.y, half_size.z)
+    end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius - 0.5f, half_size.z)
                 + getPosition(Node::SCENE);
 
     btVector3 bt_start, bt_end;
@@ -120,7 +125,6 @@ bool Entity::isOnGround() {
 void Entity::onInitialize() {
     this->addComponent<dt::MeshComponent>(new dt::MeshComponent(mMeshHandle, "", MESH_COMPONENT));
     auto physics = this->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(MESH_COMPONENT, PHYSICS_BODY_COMPONENT, mCollisionShapeType, mMass));
-    physics->setGravity(0.0f, -17.0f, 0.0f);
 }
 
 void Entity::onDeinitialize() {

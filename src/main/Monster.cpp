@@ -88,16 +88,18 @@ void Monster::onDeinitialize() {
 }
 
 void Monster::onUpdate(double time_diff) {
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
-	velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
+    this->mIsUpdatingAfterChange = (time_diff == 0);
 
-	if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
-		physics_body->activate();
-		physics_body->getRigidBody()->setLinearVelocity(velocity);
-	}
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
+    velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
 
-	dt::Node::onUpdate(time_diff);
+    if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
+        physics_body->activate();
+        physics_body->getRigidBody()->setLinearVelocity(velocity);
+    }
+
+    Node::onUpdate(time_diff);
 }
 
 // --------------- slots -------------------//
@@ -107,7 +109,7 @@ void Monster::__onMove(MoveType type, bool is_pressed) {
 
     switch (type) {
     case FORWARD:
-        if (is_pressed/* && mMoveVector.z > -1.0f*/)
+        if (is_pressed && mMoveVector.z > -1.0f)
             mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
         else if (!is_pressed && mMoveVector.z < 1.0f)
             mMoveVector.z += 1.0f;
@@ -170,16 +172,17 @@ void Monster::__onMove(MoveType type, bool is_pressed) {
 void Monster::__onJump(bool is_pressed) {
 	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	if (is_pressed && this->isOnGround()) {
-		// 调整该处的脉冲值使跳跃更自然。
-		physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
+    if (is_pressed && this->isOnGround()) {
+        // 调整该处的脉冲值使跳跃更自然。
+        physics_body->activate();
+        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
 
-		this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
-	}
+        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
+    }
 
-	if (!is_pressed) {
-		this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->stopSound();
-	}
+    if(!is_pressed) {
+        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->stopSound();
+    }
 }
 
 void Monster::__onAttack(bool is_pressed) {
