@@ -40,7 +40,8 @@ Character::Character(const QString node_name, const QString mesh_handle, const d
       mJumpSoundHandle(jump_sound_handle),
       mRunSoundHandle(run_sound_handle),
       mVelocity(0.0, 0.0, 0.0),
-      mJumpSpeed(jump_speed) {}
+      mJumpSpeed(jump_speed),
+      mIsJumpping(false) {}
 
 void Character::onInitialize() {
     Entity::onInitialize();
@@ -58,7 +59,6 @@ void Character::onInitialize() {
 
     walk_sound->getSound().setLoop(true);
     run_sound->getSound().setLoop(true);
-    jump_sound->getSound().setLoop(false);
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
@@ -90,16 +90,44 @@ void Character::onUpdate(double time_diff) {
     possible_position.setOrigin(BtOgre::Convert::toBullet(getPosition(dt::Node::SCENE)));
     possible_position.setRotation(target_position.getRotation());
 
-    mVelocity.setX(new_velocity.x());
-    mVelocity.setZ(new_velocity.z());
-    
-    mVelocity += gravity * time_diff;
+    if (!mIsJumpping) {
+        mVelocity.setX(new_velocity.x());
+        mVelocity.setZ(new_velocity.z());
+    }
 
     if (this->isOnGround()) {
         if (mVelocity.getY() < 0.0f) {
             // 人物已在地面上，因此将掉落速度清零。
             mVelocity.setY(0.0f);
         }
+
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+
+
+        if (mIsJumpping && mesh->isAnimationStopped()) {
+            mIsJumpping = false;
+            
+            mesh->stopAnimation();
+
+            if (!mIsMoving) {
+                mVelocity.setZero();
+                mMoveVector = Ogre::Vector3::ZERO;
+            }
+
+            if (!mVelocity.isZero()) {
+                if (mHasSpeededUp) {
+                    mesh->setAnimation("run");
+                } else {
+                    mesh->setAnimation("walk");
+                }
+
+                mesh->setLoopAnimation(true);
+                mesh->playAnimation();
+            }
+        }
+
+    } else {
+        mVelocity += gravity * time_diff;
     }
 
     target_position.setOrigin(target_position.getOrigin() + mVelocity * time_diff);
@@ -107,9 +135,11 @@ void Character::onUpdate(double time_diff) {
     if (__canMoveTo(target_position, possible_position)) {
         // 竟然能够移动到这里！！！
         motion->setWorldTransform(target_position);
+        //std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+
     } else {
         // 移动不到……
-        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+        mVelocity.setY(1.0f);
     }
 
     this->mIsUpdatingAfterChange = false;
@@ -126,68 +156,80 @@ float Character::getJumpSpeed() const {
 }
 
 void Character::__onMove(Entity::MoveType type, bool is_pressed) {
-    bool is_stopped = false;
+    if (!mIsJumpping) {
+        bool is_stopped = false;
 
-    switch (type) {
-    case FORWARD:
-        if (is_pressed && mMoveVector.z > -1.0f)
-            mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
-        else if (!is_pressed && mMoveVector.z < 1.0f)
-            mMoveVector.z += 1.0f;
+        switch (type) {
+        case FORWARD:
+            if (is_pressed && mMoveVector.z > -1.0f)
+                mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
+            else if (!is_pressed && mMoveVector.z < 1.0f)
+                mMoveVector.z += 1.0f;
 
-        break;
+            break;
 
-    case BACKWARD:
-        if (is_pressed && mMoveVector.z < 1.0f)
-            mMoveVector.z += 1.0f;
-        else if (!is_pressed && mMoveVector.z > -1.0f)
-            mMoveVector.z -= 1.0f;
+        case BACKWARD:
+            if (is_pressed && mMoveVector.z < 1.0f)
+                mMoveVector.z += 1.0f;
+            else if (!is_pressed && mMoveVector.z > -1.0f)
+                mMoveVector.z -= 1.0f;
 
-        break;
+            break;
 
-    case LEFTWARD:
-        if (is_pressed && mMoveVector.x > -1.0f)
-            mMoveVector.x -= 1.0f;
-        else if (!is_pressed && mMoveVector.x < 1.0f)
-            mMoveVector.x += 1.0f;
+        case LEFTWARD:
+            if (is_pressed && mMoveVector.x > -1.0f)
+                mMoveVector.x -= 1.0f;
+            else if (!is_pressed && mMoveVector.x < 1.0f)
+                mMoveVector.x += 1.0f;
 
-        break;
+            break;
 
-    case RIGHTWARD:
-        if (is_pressed && mMoveVector.x < 1.0f)
-            mMoveVector.x += 1.0f;
-        else if (!is_pressed && mMoveVector.x > -1.0f)
-            mMoveVector.x -= 1.0f;
+        case RIGHTWARD:
+            if (is_pressed && mMoveVector.x < 1.0f)
+                mMoveVector.x += 1.0f;
+            else if (!is_pressed && mMoveVector.x > -1.0f)
+                mMoveVector.x -= 1.0f;
 
-        break;
+            break;
 
-    case STOP:
-        mMoveVector.x = 0.0f;
-        mMoveVector.z = 0.0f;
-        is_stopped = true;
+        case STOP:
+            mMoveVector.x = 0.0f;
+            mMoveVector.z = 0.0f;
+            is_stopped = true;
 
-        break;
+            break;
 
-    default:
-        dt::Logger::get().debug("Not processed MoveType!");
-    }
-
-    if (is_stopped) {
-        this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-        this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-    } else {
-        std::shared_ptr<dt::SoundComponent> move_sound;
-
-        if (mHasSpeededUp) {
-            move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
-        } else {
-            move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
+        default:
+            dt::Logger::get().debug("Not processed MoveType!");
         }
 
-        move_sound->playSound();
-    }
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 
-    mIsMoving = !is_stopped;
+        mesh->stopAnimation();
+
+        if (is_stopped) {
+            this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
+            this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
+        } else {
+            std::shared_ptr<dt::SoundComponent> move_sound;
+
+            if (mHasSpeededUp) {
+                move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
+                mesh->setAnimation("run");
+            } else {
+                move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
+                mesh->setAnimation("walk");
+            }
+
+            mesh->setLoopAnimation(true);
+            mesh->playAnimation();
+            move_sound->playSound();
+        }
+
+        mIsMoving = !is_stopped;
+    } else {
+        mIsMoving = (type != STOP);
+    }
 }
 
 void Character::__onJump(bool is_pressed) {
@@ -197,18 +239,34 @@ void Character::__onJump(bool is_pressed) {
         mVelocity.setY(mJumpSpeed);
 
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
+
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+
+        mesh->stopAnimation();
+        mesh->setAnimation("jump-begin");
+        mesh->setLoopAnimation(false);
+        mesh->playAnimation();
+
+        mIsJumpping = true;
     }
 }
 
 void Character::__onSpeedUp(bool is_pressed) {
     float increasing_rate = 1.5f;
 
-    if (is_pressed) {
+    if (is_pressed && !mIsJumpping) {
         this->setCurSpeed(this->getCurSpeed() * increasing_rate);
 
         if (mIsMoving) {
             this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
             this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
+
+            auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+            mesh->setAnimation("walk");
+            mesh->stopAnimation();
+            mesh->setAnimation("run");
+            mesh->setLoopAnimation(true);
+            mesh->playAnimation();
         }
     } else {
         this->setCurSpeed(this->getCurSpeed() / increasing_rate);
@@ -216,6 +274,13 @@ void Character::__onSpeedUp(bool is_pressed) {
         if (mIsMoving) {
             this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
             this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
+
+            auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+            mesh->setAnimation("run");
+            mesh->stopAnimation();
+            mesh->setAnimation("walk");
+            mesh->setLoopAnimation(true);
+            mesh->playAnimation();
         }
     }
 
