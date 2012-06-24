@@ -19,6 +19,9 @@ public:
 	  * @fileName 信息的文件名	  
 	  */
 	 void loadMapInfo(string fileName);
+     void addEdge(uint16_t a, uint16_t b); 
+     void addArea(Ogre::Vector3 p); 
+     void afterLoadScene(); 
 	 void initialize();
      void deinitialize();
 	 /**

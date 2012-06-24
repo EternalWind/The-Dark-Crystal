@@ -4,6 +4,14 @@
 #include <string>
 using namespace std; 
 
+void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
+    mNxtArea[a].push_back(b); 
+    mNxtArea[b].push_back(a);     
+}
+void AIDivideAreaManager::addArea(Ogre::Vector3 p) {
+    mPosition[mAreaNum ++] = p; 
+}
+
 void AIDivideAreaManager::loadMapInfo(string fileName) {
 	ifstream fin(fileName);    
 	// read //
@@ -41,11 +49,38 @@ void AIDivideAreaManager::loadMapInfo(string fileName) {
 
         memset(mHasGunFriend, 0, sizeof(mHasGunFriend)); 
 
-}
+}    
 
-void AIDivideAreaManager::initialize() {
-}
+void AIDivideAreaManager::initialize() {  
 
+}
+void AIDivideAreaManager::afterLoadScene() {
+    for (uint16_t i = 0; i < mAreaNum; ++ i) 
+        for (uint16_t j = 0; j < mAreaNum;  ++ j) {
+			mEdge[i][j] = ( (i != j) ? 1e10 : 0 );
+            mArea[i][j] = ( (i != j) ? 100000 : 0);
+        }
+    for (uint16_t i = 0; i < mAreaNum; ++ i) {
+        for (vector<uint16_t>::iterator iter = mNxtArea[i].begin(); 
+                iter != mNxtArea[i].end(); iter ++) {
+            mArea[i][*iter] = 1; 
+            mEdge[i][*iter] = mPosition[i].distance(mPosition[*iter]);
+        }
+    }
+    
+    //floyed计算每两个点之间的最短距离,计算两点最少经过多少个点连接。
+
+	for (uint16_t k = 0; k < mAreaNum; ++ k) 
+		for (uint16_t i = 0; i < mAreaNum; ++ i) 
+			for (uint16_t j = 0; j < mAreaNum; ++ j) {
+				if (mEdge[i][k] + mEdge[k][j] < mEdge[i][j]) 
+					mEdge[i][j] = mEdge[i][k] + mEdge[k][j]; 
+                if (mArea[i][k] + mArea[k][j] < mArea[i][j])
+                    mArea[i][j] = mArea[i][k] + mArea[k][j]; 
+            }
+
+        memset(mHasGunFriend, 0, sizeof(mHasGunFriend)); 
+}
 void AIDivideAreaManager::deinitialize() {
 }
 
