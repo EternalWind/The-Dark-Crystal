@@ -19,9 +19,7 @@ Weapon::Weapon( const QString &name,
 				const QString &firing_sound_handle, 
 				const QString &reloading_begin_sound_handle, 
 				const QString &reloading_done_sound_handle, 
-				const QString &mesh_handle,
-				float hitting_range, 
-				const QString &material_handle)
+				float hitting_range)
 			  : mWeaponType(type),
 				mPower(power), 
 				mCurClip(cur_clip), 
@@ -37,14 +35,11 @@ Weapon::Weapon( const QString &name,
 				mFiringSoundHandle(firing_sound_handle),
 				mReloadingBeginSoundHandle(reloading_begin_sound_handle),
 				mReloadingDoneSoundHandle(reloading_done_sound_handle),
-				mMeshHandle(mesh_handle),
 				mInteractor(nullptr),     
 				mFiringSound(nullptr),		  
 				mReloadingBeginSound(nullptr),    
 				mReloadingDoneSound(nullptr),  
-				mPhysicsBody(nullptr),    
 				mHittingRange(hitting_range),
-				mMaterialHandle(material_handle), 
 				Prop(name, WEAPON) { 
 }
 
@@ -159,6 +154,7 @@ bool Weapon::getIsPhysicsBodyEnabled() {
 }
 
 void Weapon::onInitialize() {
+	Prop::onInitialize();
 	if (mWeaponType == THROWABLE) {
 		mInteractor = new dt::CollisionComponent("bullet", "interactor");
 	} else {
@@ -167,9 +163,7 @@ void Weapon::onInitialize() {
 	mInteractor->setIntervalTime(mInterval);
 	this->addComponent(mInteractor);
 
-	this->addComponent(new dt::MeshComponent(mMeshHandle, mMaterialHandle, "weapon-mesh"));
-	mPhysicsBody = this->addComponent(new dt::PhysicsBodyComponent("weapon-mesh", "weapon-body",
-        dt::PhysicsBodyComponent::BOX)).get();
+	
 
 	mIsPhysicsBodyEnabled = true;
 
