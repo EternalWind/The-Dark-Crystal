@@ -295,7 +295,7 @@ void Character::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent
     btTransform trans;
 
     this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
-
+    this->findChildNode("getProp")->setRotation(agent_rot);
     motion->getWorldTransform(trans);
     trans.setRotation(BtOgre::Convert::toBullet(rotation));
     motion->setWorldTransform(trans);
