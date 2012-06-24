@@ -14,18 +14,19 @@
 #include "MonsterAIAgent.h"
 
 void AITest::onInitialize() {
-     
-    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
-      dt::ResourceManager::get()->addResourceLocation("Material", "FileSystem");
-     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
-     dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
-     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-     Alien* alien = new Alien("alien", "Sinbad.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
+
+    dt::ResourceManager::get()->addResourceLocation("a", "FileSystem", true);
+    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("sinbad.zip", "Zip", true);
+    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
+    Alien* alien = new Alien("alien", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
     alien->setEyePosition(Ogre::Vector3(0, 10, 10));
     dt::Scene* scene = SceneLoader::loadScene("FirstFloor.scene");
     addScene(scene);
     this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
+    scene->getPhysicsWorld()->setGravity(Ogre::Vector3::ZERO);
 
     scene->addChildNode(alien);
     alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
@@ -34,14 +35,22 @@ void AITest::onInitialize() {
 
     HumanAgent* human_agent = new HumanAgent("Player");
     human_agent->attachTo(alien);
-    
-    auto motion = alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->getRigidBody()->getMotionState();
-    
+
+    alien->setPosition(33, 50, -27);
+    alien->setScale(0.05);
+    /*auto motion = alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->getRigidBody()->getMotionState();
+
     btTransform trans;
     trans.setIdentity();
-    trans.setOrigin(btVector3(33, 10, -27));
+    trans.setOrigin(btVector3(33, 100, -27));
 
-    motion->setWorldTransform(trans);
+    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->getRigidBody()->setWorldTransform(trans);
+    motion->setWorldTransform(trans);*/
+
+    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+    /*alien->disable();
+    alien->enable();*/
+    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 
     //auto scene = addScene(new dt::Scene("1"));
 
@@ -53,11 +62,16 @@ void AITest::onInitialize() {
     /*auto camnode = scene->addChildNode(new dt::Node("cam"));
     camnode->addComponent(new dt::CameraComponent(""))->lookAt(0, 0, -1);*/
 
-     
 }
 void AITest::onDeinitialize() {
 
 }
 
 void AITest::updateStateFrame(double simulation_frame_time) {
+    static bool flag = false;
+
+    if (!flag) {
+        flag = true;
+        this->getScene("FirstFloor.scene")->getPhysicsWorld()->setGravity(Ogre::Vector3(0, -9.8, 0));
+    }
 }

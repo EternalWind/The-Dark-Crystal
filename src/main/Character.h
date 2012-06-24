@@ -64,6 +64,7 @@ protected:
     QString mRunSoundHandle;                        //!< 跑步音效句柄。
     btVector3 mVelocity;                            //!< 当前的速度向量。
     float mJumpSpeed;                               //!< 跳跃时的初速度大小。
+    bool mIsJumpping;                               //!< 是否处于跳跃中。
     const static QString WALK_SOUND_COMPONENT;      //!< 所有外星人类播放行走音效的SoundComponent的名字。
     const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
     const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。

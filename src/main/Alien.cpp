@@ -18,7 +18,7 @@ const QString Alien::INTERACTOR_COMPONENT = "interactor";
 
 Alien::Alien(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass,
     const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle)
-    : Character(node_name, mesh_handle, collision_shape_type, mass, walk_sound_handle, jump_sound_handle, run_sound_handle, 40.0f),
+    : Character(node_name, mesh_handle, collision_shape_type, mass, walk_sound_handle, jump_sound_handle, run_sound_handle, 20.0f),
       /*mWalkSoundHandle(walk_sound_handle),
       mJumpSoundHandle(jump_sound_handle),
       mRunSoundHandle(run_sound_handle),*/
@@ -63,7 +63,7 @@ void Alien::addWeapon(Weapon* weapon) {
 			removeWeapon(weapon->getWeaponType());
 
 			mWeapons[weapon->getWeaponType()] = weapon;
-			weapon->removeComponent("weapon-body");
+			weapon->removeComponent("physics_body");
 			weapon->setParent(this);
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
 			weapon->setPosition(0.5f, -0.5f, -1.0f);
@@ -73,7 +73,7 @@ void Alien::addWeapon(Weapon* weapon) {
 		}
 		else {
 			mWeapons[weapon->getWeaponType()] = weapon;
-			weapon->removeComponent("weapon-body");
+			weapon->removeComponent("physics_body");
 			weapon->setParent(this);
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
 			weapon->setPosition(0.5f, -0.5f, -1.0f);
@@ -121,7 +121,7 @@ void Alien::onInitialize() {
     run_sound->getSound().setLoop(true);
     jump_sound->getSound().setLoop(false);*/
 
-    auto node = this->addChildNode(new Node("getWeapon"));
+    auto node = this->addChildNode(new Node("getProp"));
 
     auto iteractor = node->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
     iteractor->setRange(10.0f);
@@ -170,7 +170,7 @@ void Alien::onUpdate(double time_diff) {
 
     if (mIsAddingEquipment) {
         mIsAddingEquipment = false;
-        this->findChildNode("getWeapon")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
+        this->findChildNode("getProp")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
     //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);

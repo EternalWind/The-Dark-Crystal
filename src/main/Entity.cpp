@@ -93,17 +93,22 @@ void Entity::setEyePosition(const Ogre::Vector3 eye_position) {
 
 bool Entity::isOnGround() {
     auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-    float height;
-    
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    float radius;
+    btVector3 center;
+
+    physics_body->getRigidBody()->getCollisionShape()->getBoundingSphere(center, radius);
+
     Ogre::Vector3 half_size = mesh->getOgreEntity()->getBoundingBox().getHalfSize();
 
     Ogre::Vector3 start(0.0f, 0.0f, 0.0f);
     Ogre::Vector3 end(0.0f, 0.0f, 0.0f);
 
 
-    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -half_size.y + 0.5f, half_size.z)
+    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius + 0.5f, half_size.z)
+
                 + getPosition(Node::SCENE);
-    end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -half_size.y - 0.5f, half_size.z)
+    end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius - 0.5f, half_size.z)
                 + getPosition(Node::SCENE);
 
     btVector3 bt_start, bt_end;
