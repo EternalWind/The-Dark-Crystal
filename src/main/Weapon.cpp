@@ -215,6 +215,7 @@ void Weapon::attack(bool is_pressed) {
 }
 
 void Weapon::onUpdate(double time_diff) {
+	Node::onUpdate(time_diff);
 	if (mIsPressed) {
 		if (mIsOneShot) {
 			fire();
