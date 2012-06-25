@@ -16,11 +16,17 @@
 void AITest::onInitialize() {
 
 
-    dt::ResourceManager::get()->addResourceLocation("a", "FileSystem", true);
+    dt::ResourceManager::get()->addResourceLocation("Material", "FileSystem", true);
     dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("sinbad.zip", "Zip", true);
+    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem"); 
+    
+
+     dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
+     dt::ResourceManager::get()->addResourceLocation("models/alien.zip", "Zip", true);
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
+   
+    
     Alien* alien = new Alien("alien", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
     alien->setEyePosition(Ogre::Vector3(0, 10, 10));
     dt::Scene* scene = SceneLoader::loadScene("FirstFloor.scene");
