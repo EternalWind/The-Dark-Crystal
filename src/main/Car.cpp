@@ -192,17 +192,31 @@ void Car::__onSpeedUp(bool is_pressed) {
 }
 
 void Car::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-    //Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
+	auto agent = this->findChildNode(Agent::AGENT);
 
-    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    //btTransform trans;
+	Ogre::Matrix3 orientMatrix;
+	agent->getRotation().ToRotationMatrix(orientMatrix);
 
-    //this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
+	Ogre::Radian yaw, pitch, roll;
+	orientMatrix.ToEulerAnglesYXZ(yaw, pitch, roll);
 
-    //physics_body->activate();
-    //trans = physics_body->getRigidBody()->getWorldTransform();
-    //trans.setRotation(BtOgre::Convert::toBullet(rotation));
-    //physics_body->getRigidBody()->setWorldTransform(trans);
+	yaw += Ogre::Radian(body_rot.getYaw());
+	pitch += Ogre::Radian(agent_rot.getPitch());	
+
+	if (pitch > Ogre::Degree(89.9)) {
+		pitch = Ogre::Degree(89.9);
+	}
+	if (pitch < Ogre::Degree(-30.0)) {
+		pitch = Ogre::Degree(-30.0);
+	}
+
+	orientMatrix.FromEulerAnglesYXZ(yaw, pitch, roll);
+
+	Ogre::Quaternion rotation;
+	rotation.FromRotationMatrix(orientMatrix);
+
+	agent->setRotation(rotation);
+	mLauncher->setRotation(rotation);
 }
 
 

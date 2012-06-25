@@ -219,17 +219,25 @@ void Monster::__onSpeedUp(bool is_pressed) {
 }
 
 void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
+	auto agent = this->findChildNode(Agent::AGENT);
+	Ogre::Radian pitch = agent->getRotation().getPitch() + agent_rot.getPitch();
+
+	if (pitch > Ogre::Degree(89.9)) {
+		pitch = Ogre::Degree(89.9);
+	}
+	if (pitch < Ogre::Degree(-89.9)) {
+		pitch = Ogre::Degree(-89.9);
+	}
+	agent->setRotation(Ogre::Quaternion(pitch, Ogre::Vector3(1, 0, 0)));
+
 	Ogre::Quaternion rotation = Ogre::Quaternion((this->getRotation() * body_rot).getYaw(), Ogre::Vector3(0, 1, 0));
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);	
+	btTransform trans;	
 
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    btTransform trans;
-
-    this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
-
-    physics_body->activate();
-    trans = physics_body->getRigidBody()->getWorldTransform();
-    trans.setRotation(BtOgre::Convert::toBullet(rotation));
-    physics_body->getRigidBody()->setWorldTransform(trans);
+	physics_body->activate();
+	trans = physics_body->getRigidBody()->getWorldTransform();
+	trans.setRotation(BtOgre::Convert::toBullet(rotation));
+	physics_body->getRigidBody()->setWorldTransform(trans);
 }
 
 void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
