@@ -10,7 +10,6 @@
 #include "MenuState.h"
 #include "OptionState.h"
 #include "AlienTest.h"
-
 #include <Scene/Game.hpp>
 
 int main(int argc, char** argv) {
