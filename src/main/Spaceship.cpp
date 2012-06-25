@@ -60,7 +60,7 @@ void Spaceship::onInitialize() {
 	mIsJumping = true;
 
 	//ÉèÖÃÉãÏñÍ·Î»ÖÃ
-	this->setEyePosition(this->getPosition() + Ogre::Vector3(0, 10, 34));
+	this->setEyePosition(this->getPosition() + Ogre::Vector3(0, 6, 34));
 
 	//Ìí¼ÓÎ²Ñæ
 	this->addFlame(
@@ -252,7 +252,7 @@ void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent
 	p->activate();
 
 	btTransform trans = p->getRigidBody()->getWorldTransform();
-	trans.setRotation(BtOgre::Convert::toBullet(body_rot * agent_rot));
+	trans.setRotation(BtOgre::Convert::toBullet(this->getRotation() * body_rot * agent_rot));
 	p->getRigidBody()->setWorldTransform(trans);
 }
 

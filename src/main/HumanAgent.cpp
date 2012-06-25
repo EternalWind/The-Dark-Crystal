@@ -127,7 +127,7 @@ void HumanAgent::__onMouseMove(const OIS::MouseEvent& event) {
             pitch = Ogre::Degree(-89.9);
 
 		emit sLookAround(
-			this->getParent()->getRotation() * Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)), 
+			Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)), 
 			Ogre::Quaternion(pitch, Ogre::Vector3(1, 0, 0))
 			);
     }
