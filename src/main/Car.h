@@ -29,6 +29,7 @@ public:
 	  */
 	Car(const QString node_name, 
 		const QString mesh_handle, 
+		const QString launcher_handle,
 		const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
 		const btScalar mass,
 		const uint16_t attack_value,
@@ -66,28 +67,26 @@ private:
 	  * @param dx 相对位移x(引用)
 	  * @param dy 相对位移y(引用)
 	  * @param alpha 相对转角(引用)
+	  * @param time_diff 每一帧时间
 	  */
-	void __getDelta(float &dx, float &dy, float &alpha);
+	void __getDelta(float &dx, float &dy, float &alpha, double time_diff = 1.0 / 60);
 	
 
 protected:
 	QString mMoveSoundHandle;                      //!< 战车移动声音句柄
 	QString mRushSoundHandle;                      //!< 战车加速声音句柄
+	QString mLauncherHandle;                       //!< 炮台实体句柄
 	float mWidth;                                  //!< 车身宽度
 	float mLength;                                 //!< 车身长度
-
 	float mMaxSpeed;                               //!< 战车最高速度
 	float mMinSpeed;                               //!< 战车最低速度/向后最大速度
 	float mSpeedPerFrame;                          //!< 战车速度增量
 	float mCurTheta;                               //!< 战车目前车轮转角
-	dt::Node::NodeSP mLauncher;                    //!< 发射台/大炮
-	
+	dt::Node::NodeSP mLauncher;                    //!< 发射台/大炮	
 	static const QString MOVE_SOUND_COMPONENT;     //!< 战车移动声音Component的名字
 	static const QString RUSH_SOUND_COMPONENT;     //!< 战车加速声音Component的名字
-
 	static const float MAX_THETA;                  //!< 车轮最大转角
 	static const float THETA_PER_FRAME;            //!< 车轮每一帧转角增量
-
 };
 
 #endif
