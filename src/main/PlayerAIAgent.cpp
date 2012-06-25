@@ -20,7 +20,7 @@ PlayerAIAgent::PlayerAIAgent(QString name, uint16_t cur_area): Agent(name) {
 
     mFollow = mThreat = mOnWay = false;     
     mPreDegree = 0;    
-
+    mNxtArea = cur_area;
 }
 
 bool PlayerAIAgent::isOnWay() {
@@ -47,6 +47,7 @@ void PlayerAIAgent::lookAround(double d_degree, double time_diff) {
               emit(sLookAround(Ogre::Quaternion(Ogre::Degree(mPreDegree - MOVE_ROTATE_SPEED * time_diff),
                                                 Ogre::Vector3(0,1,0))));
               mPreDegree -= MOVE_ROTATE_SPEED * time_diff;  
+             
         }
 }
 double PlayerAIAgent::clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre) {
@@ -98,8 +99,15 @@ void PlayerAIAgent::walk(double time_diff) {
 
     mExpectDegree = clacDegree(nxt_area_position, pre_position);
 
+   /* std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
+    std::cout << nxt_area_position.x << ' ' << nxt_area_position.y << ' ' << nxt_area_position.z << endl; 
+    std::cout << mExpectDegree << endl; 
+    std::cout << mPreDegree << endl; */
     double d_degree = mExpectDegree - mPreDegree;
-    fixDegree(d_degree);
+    fixTurn(d_degree);
+   /* std::cout << d_degree << endl;
+    std::cout << fabs(d_degree) << endl;
+    std::cout << time_diff << endl; */
     //当前帧如果已经在角度幅度内，则开始走动。
     if (fabs(d_degree) < ROTATE_FLOAT) {           
         emit(sMove(Entity::STOP, true));
@@ -123,6 +131,7 @@ void PlayerAIAgent::guard(double time_diff) {
     mHasEnemy = false; 
 }
 void PlayerAIAgent::decision(double time_diff) {   
+    /*
     //如果主角发出了跟随命令。
     if (mFollow) {
         Ogre::Vector3 cur_pos = mBody->getPosition(); 
@@ -142,18 +151,21 @@ void PlayerAIAgent::decision(double time_diff) {
             }
         }
     }
+    
     //否则，原地警戒。
     mThreat = true; 
     mThreatTime = THREAT_COOL_TIME; 
-    /*
+    */
+    
     mNxtArea = (mNxtArea + 1) % 17; 
     mOnWay = true;
-    */
+    
 }
 void PlayerAIAgent::onUpdate(double time_diff) {
 
     dt::Node::onUpdate(time_diff);
 
+    if (time_diff == 0) return; 
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
     if (mThreat) {
