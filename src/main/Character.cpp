@@ -300,7 +300,6 @@ void Character::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent
 	}
 	auto pitch_rot = Ogre::Quaternion(pitch, Ogre::Vector3(1, 0, 0));
 	agent->setRotation(pitch_rot);
-	this->findChildNode("getProp")->setRotation(agent_rot);
 
 	Ogre::Quaternion rotation = Ogre::Quaternion((this->getRotation() * body_rot).getYaw(), Ogre::Vector3(0, 1, 0));
 
