@@ -1,5 +1,7 @@
 #include "Entity.h"
 
+#include <Scene/Scene.hpp>
+
 const QString Entity::MESH_COMPONENT = "mesh";
 
 const QString Entity::PHYSICS_BODY_COMPONENT = "physics_body";
@@ -16,6 +18,7 @@ Entity::Entity(const QString name, const QString mesh_handle, const dt::PhysicsB
       mCollisionShapeType(collision_shape_type),
       mMass(mass),
       mMoveVector(0.0f, 0.0f, 0.0f),
+      //mDirection(Ogre::Quaternion::IDENTITY),
       mIsAddingEquipment(false),
       mIsMoving(false),
 	  mIsJumping(false),
@@ -89,14 +92,55 @@ void Entity::setEyePosition(const Ogre::Vector3 eye_position) {
 }
 
 bool Entity::isOnGround() {
-	return this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getTotalForce()
-		.getY() <= 0.10f;
+    auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    float radius;
+    btVector3 center;
+
+    physics_body->getRigidBody()->getCollisionShape()->getBoundingSphere(center, radius);
+
+    Ogre::Vector3 half_size = mesh->getOgreEntity()->getBoundingBox().getHalfSize();
+
+    Ogre::Vector3 start(0.0f, 0.0f, 0.0f);
+    Ogre::Vector3 end(0.0f, 0.0f, 0.0f);
+
+
+    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius + 0.5f, half_size.z)
+
+                + getPosition(Node::SCENE);
+    end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius - 0.5f, half_size.z)
+                + getPosition(Node::SCENE);
+
+    btVector3 bt_start, bt_end;
+    bt_start = BtOgre::Convert::toBullet(start);
+    bt_end = BtOgre::Convert::toBullet(end);
+
+    btCollisionWorld::ClosestRayResultCallback raycast_callback(bt_start, bt_end);
+
+    getScene()->getPhysicsWorld()->getBulletWorld()->rayTest(bt_start, bt_end, raycast_callback);
+
+    bool result = raycast_callback.hasHit();
+
+    return result;
 }
 
 void Entity::onInitialize() {
     this->addComponent<dt::MeshComponent>(new dt::MeshComponent(mMeshHandle, "", MESH_COMPONENT));
-    this->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(MESH_COMPONENT, PHYSICS_BODY_COMPONENT, mCollisionShapeType, mMass));
+    auto physics = this->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(MESH_COMPONENT, PHYSICS_BODY_COMPONENT, mCollisionShapeType, mMass));
 }
 
 void Entity::onDeinitialize() {
 }
+
+//void Entity::setEntityDirection(const Ogre::Quaternion direction) {
+//    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+//
+//    physics_body->disable();
+//    mDirection = direction;
+//    this->setRotation(mDirection);
+//    physics_body->enable();
+//}
+//
+//Ogre::Quaternion Entity::getEntityDirection() const {
+//    return mDirection;
+//}

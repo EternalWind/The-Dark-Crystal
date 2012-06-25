@@ -4,8 +4,8 @@ Ammo::Ammo() {
 }
 
 Ammo::Ammo(const QString &name, uint16_t clip_num, Weapon::WeaponType weapon_type)
-		: mClipNum(clip_num), mWeaponType(weapon_type) {
-		Prop(name, AMMO);
+		: mClipNum(clip_num), mWeaponType(weapon_type), Prop(name, AMMO){
+		
 }
 
 Ammo::~Ammo() {

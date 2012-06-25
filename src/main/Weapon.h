@@ -37,9 +37,7 @@ public:
 	    	const QString &firing_sound_handle, 
 	    	const QString &reloading_begin_sound_handle, 
 	    	const QString &reloading_done_sound_handle, 
-	    	const QString &mesh_handle,
-	    	float hitting_range = 0.0f, 
-	    	const QString &material_handle = "");
+			float hitting_range);
 
 	~Weapon();
 
@@ -144,16 +142,15 @@ private:
 	dt::Timer* mReloadTimer;                        //!< 控制时间
 	float mInterval;                                //!< 子弹射击间隔
 	float mReloadTime;                              //!< 补充子弹时间
-	QString mMaterialHandle;                        //!< 材质文件名
+	
 	QString mFiringSoundHandle;                     //!< 枪声文件名
 	QString mReloadingBeginSoundHandle;             //!< 重装弹药开始声音文件名
 	QString mReloadingDoneSoundHandle;              //!< 重装弹药完成声音文件名
-	QString mMeshHandle;                            //!< mesh文件名
+	
 	dt::InteractionComponent* mInteractor;          //!< InteractionComponent指针
 	dt::SoundComponent* mFiringSound;               //!< 枪声指针
 	dt::SoundComponent* mReloadingBeginSound;       //!< 重装弹药开始声音指针
 	dt::SoundComponent* mReloadingDoneSound;        //!< 重装弹药完成声音指针
-	dt::PhysicsBodyComponent* mPhysicsBody;         //!< PhysicsBodyComponent指针
 };
 
 #endif

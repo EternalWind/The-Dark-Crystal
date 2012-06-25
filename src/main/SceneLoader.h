@@ -122,34 +122,30 @@ using namespace dt;
 #define SL_TRIGGER_SCALE_Y "y"
 #define SL_TRIGGER_SCALE_Z "z"
 
+#define SL_ALIEN "Alien"
 #define SL_ALIEN_NAME "AlienName"
 #define SL_AGENT_TYPE "AgentType"
 
+#define SL_AMMO "Ammo"
 #define SL_AMMO_NAME "AmmoName"
 #define SL_AMMO_TYPE "AmmoType"
 #define SL_AMMO_NUM_CLIP "NumClip"
 
+#define SL_CRYSTAL "Crystal"
 #define SL_CRYSTAL_NAME "CrystalName"
 #define SL_CRYSTAL_UNLOCKTIME "UnlockTime"
 
+#define SL_FIRSTAIDKIT "FirstAidKit" 
 #define SL_FIRSTAIDKIT_NAME "FirstAidKitName"
 #define SL_RECOVERYVAL "RecoveryVal"
 
-#define SL_MONSTER_NAME "MonsterName"
-#define SL_MONSTER_ATTACKVAL "AttackValue"
-#define SL_MONSTER_RANGE "Range"
-#define SL_MONSTER_INTERVAL "Interval"
+#define SL_MONSTER "Monster"
+#define SL_MONSTER_ID "MonsterID"
 
-#define SL_WEAPON_NAME "WeaponName"
-#define SL_WEAPON_TYPE "WeaponType"
-#define SL_WEAPON_POWER "Power"
-#define SL_WEAPON_MAXCLIP "MaxClip"
-#define SL_WEAPON_AMMOPERCLIP "AmmoPerClip"
-#define SL_WEAPON_WEIGHT "Weight"
-#define SL_WEAPON_ISONESHOOT "IsOneShoot"
-#define SL_WEAPON_HITTINGRANGE "HittingRange"
-#define SL_WEAPON_INTERVAL "interval"
+#define SL_WEAPON "Weapon"
+#define SL_WEAPON_ID "WeaponID"
 
+#define SL_SPACESHIP "Spaceship"
 #define SL_SPACESHIP_NAME "SpaceshipName"
 #define SL_SPACESHIP_ATTACKVAL "AttackValue"
 #define SL_SPACESHIP_RANGE "Range"

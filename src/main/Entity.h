@@ -121,6 +121,18 @@ public:
       */
     bool isOnGround();
 
+    /**
+      * 设置该实体的朝向。
+      * @param direction 表示朝向的四元组
+      */
+    //void setEntityDirection(const Ogre::Quaternion direction);
+
+    /**
+      * 获取该实体的朝向。
+      * @returns 表示朝向的四元组
+      */
+    //Ogre::Quaternion getEntityDirection() const;
+
     virtual void onInitialize();
 
     virtual void onDeinitialize();
@@ -185,7 +197,7 @@ protected slots:
 
     virtual void __onGetOffVehicle() = 0;
 
-    virtual void __onLookAround(Ogre::Quaternion quaternion) = 0;
+    virtual void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) = 0;
 
     virtual void __onReload() = 0;
 

@@ -36,16 +36,27 @@ void BattleStateTest::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models/alien.zip", "Zip", true); 
+    dt::ResourceManager::get()->addResourceLocation("models/monster.zip", "Zip", true); 
+
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     auto scene = addScene(new dt::Scene("BattleStateTest"));
     OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
 
-    OgreProcedural::PlaneGenerator().setSizeX(100).setSizeY(100).realizeMesh("plane");
+    OgreProcedural::PlaneGenerator().setSizeX(10000).setSizeY(10000).setUTile(100).setVTile(100).realizeMesh("plane");
 
     Alien* alien = new Alien("alien", "Sinbad.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
-    alien->setEyePosition(Ogre::Vector3(0, 3, 0));
+    alien->setEyePosition(Ogre::Vector3(0, 3, 10));
     scene->addChildNode(alien);
+
+    /*
+    auto body = alien->findComponent<dt::PhysicsBodyComponent>("physics_body");
+    body->disable(); 
+    alien->setScale(0.05);
+    alien->setPosition(0, 40, 0); 
+    body->enable(); 
+    */
 
     HumanAgent* human_agent = new HumanAgent("Player");
     human_agent->attachTo(alien);

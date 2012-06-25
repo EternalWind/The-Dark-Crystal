@@ -25,7 +25,7 @@ void Agent::attachTo(Entity* entity) {
         QObject::connect(this, SIGNAL(sChangeWeapon(Weapon::WeaponType)), entity, SLOT(__onChangeWeapon(Weapon::WeaponType)));
         QObject::connect(this, SIGNAL(sRemoveWeapon()), entity, SLOT(__onRemoveWeapon()));
         QObject::connect(this, SIGNAL(sRemoveWeapon(Weapon::WeaponType)), entity, SLOT(__onRemoveWeapon(Weapon::WeaponType)));
-        QObject::connect(this, SIGNAL(sLookAround(Ogre::Quaternion)), entity, SLOT(__onLookAround(Ogre::Quaternion)));
+        QObject::connect(this, SIGNAL(sLookAround(Ogre::Quaternion, Ogre::Quaternion)), entity, SLOT(__onLookAround(Ogre::Quaternion, Ogre::Quaternion)));
         QObject::connect(this, SIGNAL(sReload()), entity, SLOT(__onReload()));
 
 		this->setPosition(entity->getEyePosition());
@@ -45,7 +45,7 @@ void Agent::detach() {
         QObject::disconnect(this, SIGNAL(sChangeWeapon(Weapon::WeaponType)), entity, SLOT(__onChangeWeapon(Weapon::WeaponType)));
         QObject::disconnect(this, SIGNAL(sRemoveWeapon()), entity, SLOT(__onRemoveWeapon()));
         QObject::disconnect(this, SIGNAL(sRemoveWeapon(Weapon::WeaponType)), entity, SLOT(__onRemoveWeapon(Weapon::WeaponType)));
-        QObject::disconnect(this, SIGNAL(sLookAround(Ogre::Quaternion)), entity, SLOT(__onLookAround(Ogre::Quaternion)));
+        QObject::disconnect(this, SIGNAL(sLookAround(Ogre::Quaternion, Ogre::Quaternion)), entity, SLOT(__onLookAround(Ogre::Quaternion, Ogre::Quaternion)));
         QObject::disconnect(this, SIGNAL(sReload()), entity, SLOT(__onReload()));
 
         this->setParent(this->getScene());

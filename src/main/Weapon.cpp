@@ -19,9 +19,7 @@ Weapon::Weapon( const QString &name,
 				const QString &firing_sound_handle, 
 				const QString &reloading_begin_sound_handle, 
 				const QString &reloading_done_sound_handle, 
-				const QString &mesh_handle,
-				float hitting_range, 
-				const QString &material_handle)
+				float hitting_range)
 			  : mWeaponType(type),
 				mPower(power), 
 				mCurClip(cur_clip), 
@@ -31,20 +29,18 @@ Weapon::Weapon( const QString &name,
 				mCurAmmo(cur_ammo),
 				mIsOneShot(is_one_shot),
 				mIsPhysicsBodyEnabled(false),
+				mIsPressed(false),
 				mReloadTimer(nullptr),
 				mInterval(interval),
 				mFiringSoundHandle(firing_sound_handle),
 				mReloadingBeginSoundHandle(reloading_begin_sound_handle),
 				mReloadingDoneSoundHandle(reloading_done_sound_handle),
-				mMeshHandle(mesh_handle),
 				mInteractor(nullptr),     
 				mFiringSound(nullptr),		  
 				mReloadingBeginSound(nullptr),    
 				mReloadingDoneSound(nullptr),  
-				mPhysicsBody(nullptr),    
 				mHittingRange(hitting_range),
-				mMaterialHandle(material_handle) { 
-	Prop(name, WEAPON);
+				Prop(name, WEAPON) { 
 }
 
 Weapon::~Weapon(){
@@ -158,6 +154,7 @@ bool Weapon::getIsPhysicsBodyEnabled() {
 }
 
 void Weapon::onInitialize() {
+	Prop::onInitialize();
 	if (mWeaponType == THROWABLE) {
 		mInteractor = new dt::CollisionComponent("bullet", "interactor");
 	} else {
@@ -166,9 +163,7 @@ void Weapon::onInitialize() {
 	mInteractor->setIntervalTime(mInterval);
 	this->addComponent(mInteractor);
 
-	this->addComponent(new dt::MeshComponent(mMeshHandle, mMaterialHandle, "weapon-mesh"));
-	mPhysicsBody = this->addComponent(new dt::PhysicsBodyComponent("weapon-mesh", "weapon-body",
-        dt::PhysicsBodyComponent::BOX)).get();
+	
 
 	mIsPhysicsBodyEnabled = true;
 
@@ -197,16 +192,6 @@ void Weapon::onInitialize() {
 }
 
 void Weapon::onDeinitialize() {
-	if (mInteractor != nullptr)
-		delete mInteractor;
-	if (mFiringSound != nullptr)
-		delete mFiringSound;
-	if (mReloadingBeginSound != nullptr)
-		delete mReloadingBeginSound;
-	if (mReloadingDoneSound != nullptr)
-		delete mReloadingDoneSound;
-	if (mPhysicsBody != nullptr)
-		delete mPhysicsBody;
 }
 
 void Weapon::fire() {
