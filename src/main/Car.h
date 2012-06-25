@@ -24,9 +24,12 @@ public:
 	  * @param move_sound_handle 战车移动声音句柄
 	  * @param rush_sound_handle 战车加速声音句柄
 	  * @param attack_sound_handle 战车攻击声音句柄
+	  * @param max_speed 战车最大速度
+	  * @param speed_per_frame 战车每帧速度增量(加速度）
 	  */
 	Car(const QString node_name, 
 		const QString mesh_handle, 
+		const QString launcher_handle,
 		const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
 		const btScalar mass,
 		const uint16_t attack_value,
@@ -35,11 +38,9 @@ public:
 		const QString attack_sound_handle,
 		const QString move_sound_handle,
 		const QString rush_sound_handle,
-		const float width,
-		const float length,
 		const float max_speed,
-		const float straight_acce,
-		const float angular_acce);
+		const float speed_per_frame
+		);
 
 	void onInitialize();
 
@@ -47,91 +48,45 @@ public:
 
 	void onUpdate(double time_diff);
 
-	/**
-	  * 返回车身宽度
-	  * @returns 车身宽度
-	  */
-	float getWidth() const;
+	void setCurTheta(float theta);
 
-	/**
-	  * 返回车身长度
-	  * @returns 车身长度
-	  */
-	float getLength() const;
-
-	/** 
-	  * 返回车轮最大转角
-	  * @returns 车轮最大转角
-	  */
-	float getMaxTheta() const;
-
-	/** 
-	  * 返回车轮当前转角
-	  * @returns 车轮当前转角
-	  */
-	float getCurTheta() const;
-	
-  	/**
-	  * 设置车轮当前转角
-	  * @param cur_theta 车轮当前转角
-	  */
-	void setCurTheta(const float& cur_theta);
-
-	/** 
-	  * 返回最高速度
-	  * @returns 最高速度
-	  */
-	float getMaxSpeed() const ;
-
-	/**
-	  * 返回最低速度/后退最高速度
-	  * @returns 最低速度
-	  */
-	float getMinSpeed() const;
-
+	float getCurTheta();
 
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
 
     void __onSpeedUp(bool is_pressed);
 
-	void __onLookAround(Ogre::Quaternion quaternion);
+	void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
 
 
 private:
-
-	//void __moveAround();	       
-
-	    
-	/**
-	  * 角度转弧度
-	  * @param degree 角度
-	  * @returns 弧度
-	  */
-	//float __getRadian(const float& degree);
 
 	/**
 	  * 获取相对位移，相对转角
 	  * @param dx 相对位移x(引用)
 	  * @param dy 相对位移y(引用)
 	  * @param alpha 相对转角(引用)
+	  * @param time_diff 每一帧时间
 	  */
-	//void __getDelta(float &dx, float &dy, float &alpha);
+	void __getDelta(float &dx, float &dy, float &alpha, double time_diff = 1.0 / 60);
 	
 
 protected:
 	QString mMoveSoundHandle;                      //!< 战车移动声音句柄
 	QString mRushSoundHandle;                      //!< 战车加速声音句柄
+	QString mLauncherHandle;                       //!< 炮台实体句柄
 	float mWidth;                                  //!< 车身宽度
 	float mLength;                                 //!< 车身长度
 	float mMaxSpeed;                               //!< 战车最高速度
 	float mMinSpeed;                               //!< 战车最低速度/向后最大速度
-	float mMaxTheta;                               //!< 战车车轮最大转角
+	float mSpeedPerFrame;                          //!< 战车速度增量
 	float mCurTheta;                               //!< 战车目前车轮转角
-	Ogre::Vector3 mAcceleration;                   //!< 战车的加速度
-	
+	dt::Node::NodeSP mLauncher;                    //!< 发射台/大炮	
 	static const QString MOVE_SOUND_COMPONENT;     //!< 战车移动声音Component的名字
 	static const QString RUSH_SOUND_COMPONENT;     //!< 战车加速声音Component的名字
+	static const float MAX_THETA;                  //!< 车轮最大转角
+	static const float THETA_PER_FRAME;            //!< 车轮每一帧转角增量
 };
 
 #endif
