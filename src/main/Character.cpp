@@ -90,19 +90,16 @@ void Character::onUpdate(double time_diff) {
     possible_position.setOrigin(BtOgre::Convert::toBullet(getPosition(dt::Node::SCENE)));
     possible_position.setRotation(target_position.getRotation());
 
-
     if (!mIsJumpping) {
         mVelocity.setX(new_velocity.x());
         mVelocity.setZ(new_velocity.z());
     }
-
 
     if (this->isOnGround()) {
         if (mVelocity.getY() < 0.0f) {
             // 人物已在地面上，因此将掉落速度清零。
             mVelocity.setY(0.0f);
         }
-
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 
@@ -129,7 +126,6 @@ void Character::onUpdate(double time_diff) {
             }
         }
 
-
     } else {
         mVelocity += gravity * time_diff;
     }
@@ -144,7 +140,6 @@ void Character::onUpdate(double time_diff) {
     } else {
         // 移动不到……
         mVelocity.setY(1.0f);
-
     }
 
     this->mIsUpdatingAfterChange = false;
@@ -293,7 +288,7 @@ void Character::__onSpeedUp(bool is_pressed) {
 }
 
 void Character::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-    Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
+    Ogre::Quaternion rotation = Ogre::Quaternion((this->getRotation() * body_rot).getYaw(), Ogre::Vector3(0, 1, 0));
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     auto motion = physics_body->getRigidBody()->getMotionState();

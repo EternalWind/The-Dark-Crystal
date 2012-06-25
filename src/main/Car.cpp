@@ -13,6 +13,7 @@ const float Car::THETA_PER_FRAME = Car::MAX_THETA / 2048;
 
 Car::Car(const QString node_name, 
 	const QString mesh_handle, 
+	const QString launcher_handle,
 	const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
 	const btScalar mass,
 	const uint16_t attack_value,
@@ -27,6 +28,7 @@ Car::Car(const QString node_name,
 	attack_value, attack_range, attack_interval, attack_sound_handle),
 	mMoveSoundHandle(move_sound_handle),
 	mRushSoundHandle(rush_sound_handle),
+	mLauncherHandle(launcher_handle),
 	mMaxSpeed(max_speed),
 	mSpeedPerFrame(speed_per_frame) {		
 }
@@ -46,6 +48,7 @@ void Car::onInitialize() {
 	//设置镜头位置
 	//this->setEyePosition(this->getPosition() + Ogre::Vector3(0, 6, 19));	
 
+	//设置汽车长、宽
 	btBoxShape* box = dynamic_cast<btBoxShape*>(this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)
 													->getRigidBody()->getCollisionShape());
 	if (box != nullptr) {
@@ -54,6 +57,11 @@ void Car::onInitialize() {
 		mLength = size.z();
 	}
 
+	//设置炮台
+	mLauncher = this->addChildNode(new dt::Node("launcher"));
+	mLauncher->addComponent<dt::MeshComponent>(new dt::MeshComponent(mLauncherHandle, "", "Launcher"));
+	mLauncher->setPosition(0, 2, 0);	
+	
 	mCurTheta = 0.0f;
 	mCurSpeed = 0.0f;
 	mMinSpeed = -mMaxSpeed / 2;
@@ -198,8 +206,9 @@ void Car::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) 
 }
 
 
-void Car::__getDelta(float &dx, float &dy, float &alpha) {
-	float dt = 1.0f / 60; //每一帧时间
+void Car::__getDelta(float &dx, float &dy, float &alpha, double time_diff) {
+	//float dt = 1.0f / 60; //每一帧时间
+	float dt = time_diff;
 
 	float theta = std::fabs(mCurTheta);
 	float L = std::fabs(this->mCurSpeed) * dt;
