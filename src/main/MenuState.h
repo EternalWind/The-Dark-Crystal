@@ -4,6 +4,7 @@
 #include <Scene/State.hpp>
 #include <Gui/GuiButton.hpp>
 #include <Gui/GuiImageBox.hpp>
+#include "GuiImageButton.h"
 
 /**
   * ÓÎÏ·Ö÷²Ëµ¥
@@ -30,14 +31,13 @@ private:
 
 private:
     dt::GuiImageBox* mLogo;
-    dt::GuiButton* mNewGameButton;
-    dt::GuiButton* mLoadRecordButton;
-    dt::GuiButton* mMultiPlayerButton;
-    dt::GuiButton* mSettingButton;
-    dt::GuiButton* mCreditButton;
-    dt::GuiButton* mExitButton;
+    GuiImageButton*  mNewGameButton;
+    GuiImageButton* mLoadRecordButton;
+    GuiImageButton* mMultiPlayerButton;
+    GuiImageButton* mSettingButton;
+    GuiImageButton* mCreditButton;
+    GuiImageButton* mExitButton;
 
-	
 };
 
 #endif
