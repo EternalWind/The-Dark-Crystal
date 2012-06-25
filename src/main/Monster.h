@@ -1,12 +1,12 @@
 #ifndef THE_DARK_CRYSTAL_MONSTER 
 #define THE_DARK_CRYSTAL_MONSTER 
 
-#include "Entity.h"
+#include "Character.h"
 
 /**
   * π÷ ﬁ µÃÂ¿‡
   */
-class Monster : public Entity {
+class Monster : public Character {
 	Q_OBJECT
 
 public:
@@ -70,13 +70,13 @@ public:
 
 protected slots:	   
 
-	void __onMove(MoveType type, bool is_pressed);
+	//void __onMove(MoveType type, bool is_pressed);
 
-    void __onJump(bool is_pressed);
+    //void __onJump(bool is_pressed);
 
     void __onAttack(bool is_pressed);
 
-    void __onSpeedUp(bool is_pressed);
+    //void __onSpeedUp(bool is_pressed);
 
     void __onChangeWeapon(Weapon::WeaponType type);
 
@@ -101,14 +101,14 @@ protected:
 	uint16_t mAttackValue;      //!< Ω– ﬁπ•ª˜¡¶
 	float mAttackRange;         //!< Ω– ﬁπ•ª˜∑∂Œß
 	float mAttackInterval;      //!< Ω– ﬁπ•ª˜º‰∏Ù ±º‰
-	QString mWalkSoundHandle;   //!< π÷ ﬁ◊ﬂ¬∑…˘“Ùæ‰±˙
-	QString mJumpSoundHandle;   //!< π÷ŒÔÃ¯‘æ…˘“Ùæ‰±˙
-	QString mRunSoundHandle;    //!< π÷ ﬁ≈‹≤Ω“Ù–ßæ‰±˙
+	//QString mWalkSoundHandle;   //!< π÷ ﬁ◊ﬂ¬∑…˘“Ùæ‰±˙
+	//QString mJumpSoundHandle;   //!< π÷ŒÔÃ¯‘æ…˘“Ùæ‰±˙
+	//QString mRunSoundHandle;    //!< π÷ ﬁ≈‹≤Ω“Ù–ßæ‰±˙
 	QString mAttackSoundHandle; //!< π÷ŒÔπ•ª˜…˘“Ùæ‰±˙
 
-	const static QString WALK_SOUND_COMPONENT;   //!< ≤•∑≈π÷ ﬁ––◊ﬂ“Ù–ßµƒSoundComponentµƒ√˚◊÷
-	const static QString JUMP_SOUND_COMPONENT;   //!< ≤•∑≈π÷ ﬁÃ¯‘æ“Ù–ßµƒSoundComponentµƒ√˚◊÷
-	const static QString RUN_SOUND_COMPONENT;    //!< ≤•∑≈π÷ ﬁ≈‹∂Ø“Ù–ßµƒSoundComponentµƒ√˚◊÷
+	//const static QString WALK_SOUND_COMPONENT;   //!< ≤•∑≈π÷ ﬁ––◊ﬂ“Ù–ßµƒSoundComponentµƒ√˚◊÷
+	//const static QString JUMP_SOUND_COMPONENT;   //!< ≤•∑≈π÷ ﬁÃ¯‘æ“Ù–ßµƒSoundComponentµƒ√˚◊÷
+	//const static QString RUN_SOUND_COMPONENT;    //!< ≤•∑≈π÷ ﬁ≈‹∂Ø“Ù–ßµƒSoundComponentµƒ√˚◊÷
 	const static QString ATTACK_SOUND_COMPONENT; //!< ≤•∑≈π÷ ﬁπ•ª˜“Ù–ßµƒSoundComponentµƒ√˚◊÷
 	const static QString INTERACTOR_COMPONENT;   //!< π÷ ﬁπ•ª˜Ωªª•µƒComponent√˚◊÷
 
