@@ -141,6 +141,14 @@ Node::NodeSP SceneLoader::__loadElement(const QDomElement& og_element, Node::Nod
 	else if (name == SL_SPACESHIP)
 	{
 		node = __loadSpaceship(og_element, dt_node);
+	} 
+	else if (name == SL_POINT)
+	{
+		node = __loadPoint(og_element, dt_node);
+	}
+	else if (name == SL_EDGE)
+	{
+		node = __loadEdge(og_element, dt_node);
 	}
     else if ( name == SL_NODE )
     {
@@ -748,7 +756,8 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + "_walk",
                                   alien_name + "_jump",
                                   alien_name + "_run");
-		pAlien->setEyePosition(Ogre::Vector3(0, 3, 0));
+		pAlien->setEyePosition(Ogre::Vector3(0, 10, 10));
+		
 		if (dt_parent)
 			node = dt_parent->addChildNode(pAlien);
 		else 
@@ -766,13 +775,20 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 		}
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		
+		QDomElement rot = og_node.firstChildElement(SL_ORI);
+		
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 					pos.attribute(SL_Z).toFloat());
-		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
-					rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		pAlien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+					rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
 		node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-					scale.attribute(SL_Z).toFloat()));		
+					scale.attribute(SL_Z).toFloat()));	
+		
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -798,15 +814,17 @@ Node::NodeSP SceneLoader::__loadAmmo(const QDomElement& og_node, Node::NodeSP dt
 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		QDomElement rot = og_node.firstChildElement(SL_ORI);
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 		    pos.attribute(SL_Z).toFloat());
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
-            rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+            rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));		
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -827,15 +845,17 @@ Node::NodeSP SceneLoader::__loadCrystal(const QDomElement& og_node, Node::NodeSP
 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		QDomElement rot = og_node.firstChildElement(SL_ORI);
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 							pos.attribute(SL_Z).toFloat());
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
-							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+							rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-							scale.attribute(SL_Z).toFloat()));		
+							scale.attribute(SL_Z).toFloat()));	
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();		
 	}
 	return node;
 }
@@ -856,15 +876,17 @@ Node::NodeSP SceneLoader::__loadFirstAidKit(const QDomElement& og_node, Node::No
 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		QDomElement rot = og_node.firstChildElement(SL_ORI);
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 		    pos.attribute(SL_Z).toFloat());
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
-            rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+            rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));		
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -919,15 +941,17 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		QDomElement rot = og_node.firstChildElement(SL_ORI);
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 		    pos.attribute(SL_Z).toFloat());
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
-            rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+            rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));		
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -1008,15 +1032,18 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		QDomElement rot = og_node.firstChildElement(SL_ORI);
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 							pos.attribute(SL_Z).toFloat());
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
-							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+							rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
+		
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-							scale.attribute(SL_Z).toFloat()));		
+							scale.attribute(SL_Z).toFloat()));	
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -1052,15 +1079,41 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		QDomElement rot = og_node.firstChildElement(SL_ROT);
+		QDomElement rot = og_node.firstChildElement(SL_ORI);
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
 							pos.attribute(SL_Z).toFloat());
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-		node->setRotation(Ogre::Quaternion(rot.attribute(SL_QW).toFloat(),
-							rot.attribute(SL_QX).toFloat(), rot.attribute(SL_QY).toFloat(), rot.attribute(SL_QZ).toFloat()));
+		node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+							rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
 		node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-							scale.attribute(SL_Z).toFloat()));		
+							scale.attribute(SL_Z).toFloat()));	
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();		
+	}
+	return node;
+}
+
+Node::NodeSP SceneLoader::__loadPoint(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QDomElement pos = og_node.firstChildElement(SL_POS);
+		QString id = og_node.attribute(SL_POINT_ID);
+		AIDivideAreaManager::get()->addArea(Ogre::Vector3(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(), pos.attribute(SL_Z).toFloat()), id.toInt());
+	}
+	return node;
+}
+
+Node::NodeSP SceneLoader::__loadEdge(const QDomElement& og_node, Node::NodeSP dt_parent) 
+{
+	Node::NodeSP node = nullptr;
+	if (!og_node.isNull())
+	{
+		QString Lp = og_node.attribute(SL_EDGE_LP);
+		QString Rp = og_node.attribute(SL_EDGE_RP);
+		AIDivideAreaManager::get()->addEdge(Lp.toInt(), Rp.toInt());
 	}
 	return node;
 }
