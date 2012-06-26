@@ -93,11 +93,11 @@ void MenuState::__resetGui() {
     int gap_v = (float)coordination.height / 15.0f;
     int size_h = (float)coordination.width / 7.0f;       //°´Å¥size
     int size_v = (float)coordination.height / 20.0f;
-    int position_h = (float)coordination.width * 0.7f;  //°´Å¥position
-    int position_v = (float)coordination.height *0.6f;
+    int position_h = (float)coordination.width * 0.75f;  //°´Å¥position
+    int position_v = (float)coordination.height *0.55f;
 
-    mLogo->setPosition(coordination.width / 15, coordination.height / 15);
-    mLogo->setSize(0.5f, 0.2f);
+    mLogo->setPosition(coordination.width / 15, coordination.height / 13);
+    mLogo->setSize(0.5f, 0.15f);
 
     mNewGameButton->setPosition(position_h, position_v);
     mLoadRecordButton->setPosition(position_h, position_v + gap_v);
