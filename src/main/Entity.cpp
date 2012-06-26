@@ -105,7 +105,7 @@ bool Entity::isOnGround() {
     Ogre::Vector3 end(0.0f, 0.0f, 0.0f);
 
 
-    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius + 0.5f, half_size.z)
+    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, radius, half_size.z)
 
                 + getPosition(Node::SCENE);
     end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius - 0.5f, half_size.z)
