@@ -14,7 +14,7 @@ const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 90;
 const double  MonsterAIAgent::PI = acos(-1.0);
 const double  MonsterAIAgent::ROTATE_FLOAT = PI / 24; 
 
-MonsterAIAgent::MonsterAIAgent(QString name, MonsterAIAgent::MonsterType type, uint16_t cur_area) : mType(type), Agent(name), mCurArea(cur_area){
+MonsterAIAgent::MonsterAIAgent(QString name, MonsterAIAgent::MonsterType type) : mType(type), Agent(name){
     this->mHasEnemy = this->mThreat = this->mOnWay = false;   
 }
 
