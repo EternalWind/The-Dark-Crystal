@@ -33,8 +33,8 @@ void CreaditState::onInitialize() {
 
     auto logo = win.addChildWidget(new dt::GuiImageBox("credit_logo")).get();
     logo->setImageTexture("logo.png");
-    logo->setPosition(coordination.width / 15, coordination.height / 15);
-    logo->setSize(0.5f, 0.2f); 
+    logo->setPosition(coordination.width / 15, coordination.height / 13);
+    logo->setSize(0.5f, 0.15f); 
 
     auto creadit = win.addChildWidget(new dt::GuiImageBox("logo")).get();
     creadit->setImageTexture("creadit.png");
