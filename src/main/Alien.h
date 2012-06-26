@@ -81,7 +81,7 @@ protected slots:
 
     void __onGetOffVehicle();
 
-    //void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
+    void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
 
     void __onReload();
 
@@ -97,6 +97,8 @@ protected:
     //const static QString WALK_SOUND_COMPONENT;      //!< 所有外星人类播放行走音效的SoundComponent的名字。
     //const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
     //const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。
+
+public:
     const static QString INTERACTOR_COMPONENT;      //!< 所有外星人类与场景进行交互的InteractorComponent的名字。
 
 };

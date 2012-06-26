@@ -3,7 +3,6 @@
 #include <Scene/Scene.hpp>
 
 const QString Entity::MESH_COMPONENT = "mesh";
-
 const QString Entity::PHYSICS_BODY_COMPONENT = "physics_body";
 
 Entity::Entity(const QString name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass) 
@@ -104,7 +103,7 @@ bool Entity::isOnGround() {
     Ogre::Vector3 start(0.0f, 0.0f, 0.0f);
     Ogre::Vector3 end(0.0f, 0.0f, 0.0f);
 
-    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius + 0.5f, half_size.z)
+    start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, radius, half_size.z)
                 + getPosition(Node::SCENE);
     end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -radius - 0.5f, half_size.z)
                 + getPosition(Node::SCENE);
@@ -129,16 +128,3 @@ void Entity::onInitialize() {
 
 void Entity::onDeinitialize() {
 }
-
-//void Entity::setEntityDirection(const Ogre::Quaternion direction) {
-//    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-//
-//    physics_body->disable();
-//    mDirection = direction;
-//    this->setRotation(mDirection);
-//    physics_body->enable();
-//}
-//
-//Ogre::Quaternion Entity::getEntityDirection() const {
-//    return mDirection;
-//}

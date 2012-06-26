@@ -5,6 +5,8 @@
 #include "MenuState.h"
 #include "SceneLoader.h"
 #include <iostream>
+#include "AIDivideAreaManager.h"
+#include "PlayerAIAgent.h"
 
 #include <Graphics/CameraComponent.hpp>
 #include <Graphics/LightComponent.hpp>
@@ -36,19 +38,59 @@ void BattleStateTest::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models/alien.zip", "Zip", true); 
+    dt::ResourceManager::get()->addResourceLocation("models/monster.zip", "Zip", true); 
+
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
+    AIDivideAreaManager::get()->loadMapInfo("map.txt");
+    
     auto scene = addScene(new dt::Scene("BattleStateTest"));
     OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
 
-    OgreProcedural::PlaneGenerator().setSizeX(100).setSizeY(100).realizeMesh("plane");
+    OgreProcedural::PlaneGenerator().setSizeX(10000).setSizeY(10000).setUTile(100).setVTile(100).realizeMesh("plane");
 
-    Alien* alien = new Alien("alien", "Sinbad.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
-    alien->setEyePosition(Ogre::Vector3(0, 3, 0));
+    Alien* alien = new Alien("alien", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
+    alien->setEyePosition(Ogre::Vector3(0, 0, 10));
+    //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
+    scene->getPhysicsWorld()->setGravity(Ogre::Vector3::ZERO);
+    
+    //auto cam_node = scene->addChildNode(new Node("camnode"));
+    //auto cam = cam_node->addComponent(new dt::CameraComponent("cam")); 
+    //cam_node->setPosition(0, 500, 0);
+    //cam->lookAt(0,0,0);
     scene->addChildNode(alien);
+    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+    //alien->setPosition(0, 100, 0);    
+    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 
+   /* HumanAgent* human_agent = new HumanAgent("Player");
+    human_agent->attachTo(alien);*/
+
+    PlayerAIAgent * pa = new PlayerAIAgent("rj", 0);
+    pa->attachTo(alien);
+    
+    Alien* alien1 = new Alien("alien1", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
+    alien1->setEyePosition(Ogre::Vector3(0, 10, -100));
+    scene->addChildNode(alien1);
     HumanAgent* human_agent = new HumanAgent("Player");
-    human_agent->attachTo(alien);
+    human_agent->attachTo(alien1);
+    
+    //alien->setPosition(33, 50, -27);
+    //alien->setScale(0.05);
+    auto motion = alien1->findComponent<dt::PhysicsBodyComponent>("physics_body")->getRigidBody()->getMotionState();
+
+    btTransform trans;
+    trans.setIdentity();
+    trans.setOrigin(btVector3(300, 300, 0));
+
+    alien1->findComponent<dt::PhysicsBodyComponent>("physics_body")->getRigidBody()->setWorldTransform(trans);
+    motion->setWorldTransform(trans);
+
+    alien1->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+    /*alien->disable();
+    alien->enable();*/
+    alien1->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
 
     auto plane_node = scene->addChildNode(new dt::Node("plane_node"));
     auto light_node = scene->addChildNode(new dt::Node("light"));
@@ -56,7 +98,7 @@ void BattleStateTest::onInitialize() {
     light_node->addComponent(new dt::LightComponent("l"));
 
     plane_node->addComponent(new dt::MeshComponent("plane", "PrimitivesTest/Pebbles", "Plane"));
-    plane_node->setPosition(0, -10, 0);
+    plane_node->setPosition(0, -100, 0);
     plane_node->addComponent(new dt::PhysicsBodyComponent("Plane", "plane_body", dt::PhysicsBodyComponent::BOX, 0.0f));
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
@@ -123,7 +165,14 @@ void BattleStateTest::onInitialize() {
     dt::GuiManager::get()->setMouseCursorVisible(false);
 }
 
-void BattleStateTest::updateStateFrame(double simulation_frame_time) {}
+void BattleStateTest::updateStateFrame(double simulation_frame_time) {
+    static bool flag = false;
+
+    if (!flag) {
+        flag = true;
+        this->getScene("BattleStateTest")->getPhysicsWorld()->setGravity(Ogre::Vector3(0, -9.8, 0));
+    }
+}
 
 BattleStateTest::BattleStateTest(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mQuestionLabel(nullptr),

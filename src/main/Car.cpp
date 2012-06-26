@@ -1,5 +1,6 @@
 #include "Car.h"
 #include "Agent.h"
+#include "Alien.h"
 
 #include <Logic/RaycastComponent.hpp>
 #include "ConfigurationManager.h"
@@ -13,6 +14,7 @@ const float Car::THETA_PER_FRAME = Car::MAX_THETA / 2048;
 
 Car::Car(const QString node_name, 
 	const QString mesh_handle, 
+	const QString launcher_handle,
 	const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
 	const btScalar mass,
 	const uint16_t attack_value,
@@ -27,6 +29,7 @@ Car::Car(const QString node_name,
 	attack_value, attack_range, attack_interval, attack_sound_handle),
 	mMoveSoundHandle(move_sound_handle),
 	mRushSoundHandle(rush_sound_handle),
+	mLauncherHandle(launcher_handle),
 	mMaxSpeed(max_speed),
 	mSpeedPerFrame(speed_per_frame) {		
 }
@@ -44,8 +47,9 @@ void Car::onInitialize() {
 	rush_sound->setVolume((float)sound_setting.getSoundEffect());
 
 	//设置镜头位置
-	//this->setEyePosition(this->getPosition() + Ogre::Vector3(0, 6, 19));	
+	this->setEyePosition(Ogre::Vector3(0, 2, 0));	
 
+	//设置汽车长、宽
 	btBoxShape* box = dynamic_cast<btBoxShape*>(this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)
 													->getRigidBody()->getCollisionShape());
 	if (box != nullptr) {
@@ -54,12 +58,17 @@ void Car::onInitialize() {
 		mLength = size.z();
 	}
 
+	//设置炮台
+	mLauncher = this->addChildNode(new dt::Node("launcher"));
+	mLauncher->addComponent<dt::MeshComponent>(new dt::MeshComponent(mLauncherHandle, "", "Launcher"));
+	mLauncher->setPosition(0, 2, 0);	
+	
 	mCurTheta = 0.0f;
 	mCurSpeed = 0.0f;
 	mMinSpeed = -mMaxSpeed / 2;
 	
 	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	physics_body->getRigidBody()->setFriction(0.0f);
+	//physics_body->getRigidBody()->setFriction(5.0f);
 	physics_body->setGravity(0, 0, 0);	
 }
 
@@ -101,7 +110,7 @@ void Car::onUpdate(double time_diff) {
 		if (0 == mod) {
 			if (mCurSpeed > 0) {
 				mCurSpeed -= mSpeedPerFrame;
-			} else if (mCurSpeed > 0) {
+			} else if (mCurSpeed < 0) {
 				mCurSpeed += mSpeedPerFrame;
 			}			
 		}
@@ -184,22 +193,37 @@ void Car::__onSpeedUp(bool is_pressed) {
 }
 
 void Car::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-    //Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
+	auto agent = this->findChildNode(Agent::AGENT);
 
-    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    //btTransform trans;
+	Ogre::Matrix3 orientMatrix;
+	agent->getRotation().ToRotationMatrix(orientMatrix);
 
-    //this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
+	Ogre::Radian yaw, pitch, roll;
+	orientMatrix.ToEulerAnglesYXZ(yaw, pitch, roll);
 
-    //physics_body->activate();
-    //trans = physics_body->getRigidBody()->getWorldTransform();
-    //trans.setRotation(BtOgre::Convert::toBullet(rotation));
-    //physics_body->getRigidBody()->setWorldTransform(trans);
+	yaw += Ogre::Radian(body_rot.getYaw());
+	pitch += Ogre::Radian(agent_rot.getPitch());	
+
+	if (pitch > Ogre::Degree(89.9)) {
+		pitch = Ogre::Degree(89.9);
+	}
+	if (pitch < Ogre::Degree(-30.0)) {
+		pitch = Ogre::Degree(-30.0);
+	}
+
+	orientMatrix.FromEulerAnglesYXZ(yaw, pitch, roll);
+
+	Ogre::Quaternion rotation;
+	rotation.FromRotationMatrix(orientMatrix);
+
+	agent->setRotation(rotation);
+	mLauncher->setRotation(rotation);
 }
 
 
-void Car::__getDelta(float &dx, float &dy, float &alpha) {
-	float dt = 1.0f / 60; //每一帧时间
+void Car::__getDelta(float &dx, float &dy, float &alpha, double time_diff) {
+	//float dt = 1.0f / 60; //每一帧时间
+	float dt = time_diff;
 
 	float theta = std::fabs(mCurTheta);
 	float L = std::fabs(this->mCurSpeed) * dt;
@@ -217,7 +241,6 @@ void Car::__getDelta(float &dx, float &dy, float &alpha) {
 	}
 
 	float k = (y1 - y2) / (x1 - x2);
-	//float a = mAcceleration.z;
 	float a = mLength;
 
 	float x0 = 0.0f;
@@ -229,4 +252,24 @@ void Car::__getDelta(float &dx, float &dy, float &alpha) {
 	dx = x3 - x0;
 	dy = y3 - y0;
 	alpha = std::atan(fabs(x2 - x3) / fabs(y2 - y3));
+}
+
+void Car::__onGetOffVehicle() {
+	// 速度太快就不能下车！否则就会被车撞死！！！
+	if (this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity().length() < 15.0f) {
+		Alien* alien;
+		alien = dynamic_cast<Alien*>(this->findChildNode("alien", false).get());
+
+		Agent* agent;
+		agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT, false).get());
+
+		agent->detach();
+
+		alien->setParent((dt::Node*)this->getScene());
+		alien->setPosition(this->getPosition() + Ogre::Vector3(this->mWidth * 2 + 0.5, 0, 0));
+		alien->findComponent<dt::MeshComponent>(Alien::MESH_COMPONENT)->enable();
+		alien->findComponent<dt::PhysicsBodyComponent>(Alien::PHYSICS_BODY_COMPONENT)->enable();
+
+		agent->attachTo(alien);
+	}
 }

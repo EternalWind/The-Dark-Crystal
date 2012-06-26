@@ -39,7 +39,7 @@ public:
 	PropType getPropType() const;  
 
 protected:
-	QString mName;                                  //!< 道具名称
+	QString mPropName;                              //!< 道具名称
 	PropType mPropType;                             //!< 道具类型
 	dt::PhysicsBodyComponent* mPhysicsBody;         //!< PhysicsBodyComponent指针
 };

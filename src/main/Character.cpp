@@ -139,7 +139,19 @@ void Character::onUpdate(double time_diff) {
 
     } else {
         // 移动不到……
-        mVelocity.setY(1.0f);
+        //mVelocity.setY(1.0f);
+        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+        //mVelocity.setZero();
+        btVector3 vec = BtOgre::Convert::toBullet(this->getPosition(dt::Node::SCENE)) - target_position.getOrigin();
+
+        if (!vec.isZero())
+            vec.normalize();
+
+        mVelocity.setX(vec.x());
+        if (mIsJumpping) {
+            mVelocity.setY(vec.y());
+        }
+        mVelocity.setZ(vec.z());
     }
 
     this->mIsUpdatingAfterChange = false;
@@ -288,17 +300,28 @@ void Character::__onSpeedUp(bool is_pressed) {
 }
 
 void Character::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-    Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
+	//先旋转镜头和武器
+	auto agent = this->findChildNode(Agent::AGENT);
+	Ogre::Radian pitch = agent->getRotation().getPitch() + agent_rot.getPitch();
 
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    auto motion = physics_body->getRigidBody()->getMotionState();
-    btTransform trans;
+	if (pitch > Ogre::Degree(89.9)) {
+		pitch = Ogre::Degree(89.9);
+	}
+	if (pitch < Ogre::Degree(-89.9)) {
+		pitch = Ogre::Degree(-89.9);
+	}
+	auto pitch_rot = Ogre::Quaternion(pitch, Ogre::Vector3(1, 0, 0));
+	agent->setRotation(pitch_rot);
 
-    this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
-    this->findChildNode("getProp")->setRotation(agent_rot);
-    motion->getWorldTransform(trans);
-    trans.setRotation(BtOgre::Convert::toBullet(rotation));
-    motion->setWorldTransform(trans);
+	Ogre::Quaternion rotation = Ogre::Quaternion((this->getRotation() * body_rot).getYaw(), Ogre::Vector3(0, 1, 0));
+
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	auto motion = physics_body->getRigidBody()->getMotionState();
+	btTransform trans;
+
+	motion->getWorldTransform(trans);
+	trans.setRotation(BtOgre::Convert::toBullet(rotation));
+	motion->setWorldTransform(trans);
 }
 
 bool Character::__canMoveTo(const btTransform& position, btTransform& closest_position) {

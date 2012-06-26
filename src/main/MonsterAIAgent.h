@@ -19,7 +19,7 @@ public:
         GUARD,
         PATROL
         };
-     MonsterAIAgent(QString name, MonsterAIAgent::MonsterType type = GUARD, uint16_t cur_area = 0);
+     MonsterAIAgent(QString name, MonsterAIAgent::MonsterType type = GUARD);
      bool isThreat();
      void setThreat(bool type); 
      void setBody(Monster * body);
@@ -36,8 +36,8 @@ private slots:
      void onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Component* component);
      void __onFind(dt::PhysicsBodyComponent* pbc);
 private:
-    uint16_t mCurArea;                                       //<! 当前所在区域ID。
-    uint16_t mNxtArea;                                       //<! 若有在路上这个状态，则代表目标地所在ID。 
+   
+    std::pair<uint16_t, uint16_t> mNxtArea;                  //<! 若有在路上这个状态，则代表目标地所在ID。 
     MonsterType mType;                                       //!< 怪物类型
     Monster * mBody;                                         //!< 怪物身体
     bool mThreat;                                            //!< 是否受到威胁  当周围一定范围内出现对方时，由thickComponent触发	
