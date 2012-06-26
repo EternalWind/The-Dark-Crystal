@@ -22,7 +22,7 @@ void AITest::onInitialize() {
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     Alien* alien = new Alien("alien", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
-    alien->setEyePosition(Ogre::Vector3(0, 10, 10));
+    alien->setEyePosition(Ogre::Vector3(0, 3, 3));
     dt::Scene* scene = SceneLoader::loadScene("FirstFloor.scene");
     addScene(scene);
     this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
@@ -37,7 +37,7 @@ void AITest::onInitialize() {
     human_agent->attachTo(alien);
 
     alien->setPosition(33, 50, -27);
-    alien->setScale(0.05);
+    alien->setScale(0.02);
     /*auto motion = alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->getRigidBody()->getMotionState();
 
     btTransform trans;
