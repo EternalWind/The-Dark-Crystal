@@ -2,8 +2,10 @@
 #include "Alien.h"
 #include "HumanAgent.h"
 #include "Car.h"
+#include "Entity.h"
 #include "MenuState.h"
 #include "SceneLoader.h"
+#include "EntityManager.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -71,6 +73,9 @@ void BattleState::onInitialize() {
     mQuestionLabel = question.get();
     mDialogLabel = dialog.get();
 
+	Alien *pAlien = EntityManager::get()->getHuman();
+	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
     }
@@ -89,10 +94,12 @@ void BattleState::onInitialize() {
 
     MyGUI::TextBox* text_box = dynamic_cast<MyGUI::TextBox*>(mDialogLabel->getMyGUIWidget());
     text_box->setTextAlign(MyGUI::Align::Left);
+	
+	
 
     __onHealthChanged(0,100);
-    __onAmmoChanged(0, 60);
-    __onClipNumChanged(0, 5);
+    __onAmmoChanged(0, 0);
+    __onClipNumChanged(0, 0);
 
     __resetGui();
 
@@ -197,6 +204,11 @@ void BattleState::__onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo) {
 
 void BattleState::__onClipNumChanged(uint16_t pre_num, uint16_t cur_num) {
     __changeDigits(mClipNumHUD, cur_num);
+}
+
+void BattleState::__onAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip) {
+	__changeDigits(mAmmoHUD, cur_ammo);
+	__changeDigits(mClipNumHUD, cur_clip);
 }
 
 void BattleState::__onGetCrystal() {
