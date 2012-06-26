@@ -9,7 +9,7 @@
 class PlayerAIAgent : public Agent {
 Q_OBJECT
 public: 
-    PlayerAIAgent(QString name, uint16_t cur_area); 
+    PlayerAIAgent(QString name); 
     bool isOnWay(); 
     void setOnWay(bool type); 	
     Alien* getBody(); 
@@ -50,10 +50,10 @@ private:
     bool mThreat;                                            //<! 由thickComponent触发，当受到威胁的时候，进入guard状态
     double mThreatTime;                                      //<! 当受到威胁开始每次update，威胁系数不断冷却。
     bool mHasEnemy;                                          //<! 警戒状态下正前方是否有敌人。
-    uint16_t mNxtArea;                                       //<! 若有在路上这个状态，则代表目标地所在ID,否则为当前所在地的ID。  
+    std::pair<uint16_t, uint16_t> mNxtArea;                                       //<! 若有在路上这个状态，则代表目标地所在ID,否则为当前所在地的ID。  
     dt::InteractionComponent * mIteractor;                   //<! 检验前方是否有怪物的component。
     dt::TriggerAreaComponent * mTrigger;                     //<! 检验是否触发trigger的component。
-
+    bool mOnMovePress;                                       
     const static QString TRIGGER_AREA_COMPONENT;             //!< TRIGGER_AREA_COMPONENT的名字。
     const static QString INTERACTOR_COMPONENT;               //!< 检测前方是否有攻击物体的InteractorComponent的名字。
     const static double THREAT_COOL_TIME;                    //!< 威胁解除时间。

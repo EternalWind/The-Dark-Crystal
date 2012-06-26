@@ -139,7 +139,17 @@ void Character::onUpdate(double time_diff) {
 
     } else {
         // ÒÆ¶¯²»µ½¡­¡­
-        mVelocity.setY(1.0f);
+        //mVelocity.setY(1.0f);
+        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+        //mVelocity.setZero();
+        btVector3 vec = BtOgre::Convert::toBullet(this->getPosition(dt::Node::SCENE)) - target_position.getOrigin();
+        vec.normalize();
+
+        mVelocity.setX(vec.x());
+        if (mIsJumpping) {
+            mVelocity.setY(vec.y());
+        }
+        mVelocity.setZ(vec.z());
     }
 
     this->mIsUpdatingAfterChange = false;
