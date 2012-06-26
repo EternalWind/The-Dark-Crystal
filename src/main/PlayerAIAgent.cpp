@@ -1,5 +1,6 @@
 #include "PlayerAIAgent.h"
 #include "AIDivideAreaManager.h"
+#include "EntityManager.h"
 #include "Monster.h"
 #include <Logic/RaycastComponent.hpp>
 
@@ -8,19 +9,20 @@ const QString PlayerAIAgent::TRIGGER_AREA_COMPONENT = "Player_AI_TRIGGER_AREA_CO
 const double  PlayerAIAgent::THREAT_COOL_TIME = 2.0;
 const double  PlayerAIAgent::eps = 1e-4;
 
-const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 270;
+const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 90;
 const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 90;
 const double  PlayerAIAgent::PI = acos(-1.0);
 const double  PlayerAIAgent::ROTATE_FLOAT = 180 / 24.0; 
 const double  PlayerAIAgent::ENTER_SCOPE = 0.1;
 
 
-PlayerAIAgent::PlayerAIAgent(QString name, uint16_t cur_area): Agent(name) {    
+PlayerAIAgent::PlayerAIAgent(QString name): Agent(name) {    
     //初始化无任何状态
 
     mFollow = mThreat = mOnWay = false;     
-    mPreDegree = 0;    
-    mNxtArea = cur_area;
+    mPreDegree = 0;        
+    mOnMovePress = false; 
+    mFollow = true; 
 }
 
 bool PlayerAIAgent::isOnWay() {
@@ -40,11 +42,11 @@ void PlayerAIAgent::setBody(Alien * body) {
 }
 void PlayerAIAgent::lookAround(double d_degree, double time_diff) {
      if (d_degree > 0) {
-              emit(sLookAround(Ogre::Quaternion(Ogre::Degree(mPreDegree + MOVE_ROTATE_SPEED * time_diff),
+         emit(sLookAround(Ogre::Quaternion(Ogre::Degree(MOVE_ROTATE_SPEED * time_diff),
                                                 Ogre::Vector3(0,1,0))));
               mPreDegree += MOVE_ROTATE_SPEED * time_diff;
         } else { 
-              emit(sLookAround(Ogre::Quaternion(Ogre::Degree(mPreDegree - MOVE_ROTATE_SPEED * time_diff),
+            emit(sLookAround(Ogre::Quaternion(Ogre::Degree(MOVE_ROTATE_SPEED * time_diff),
                                                 Ogre::Vector3(0,1,0))));
               mPreDegree -= MOVE_ROTATE_SPEED * time_diff;  
              
@@ -93,13 +95,16 @@ void PlayerAIAgent::walk(double time_diff) {
     //如果目标已经到达，则停止走动并退出。
     if (nxt_area_position.distance(pre_position) < ENTER_SCOPE) {
             mOnWay = false;     
-            emit(sMove(Entity::STOP, true)); 
+            if (mOnMovePress) {
+                emit(sMove(Entity::STOP, true)); 
+                mOnMovePress = 0; 
+            }
             return;
     }
 
     mExpectDegree = clacDegree(nxt_area_position, pre_position);
 
-   /* std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
+  /*  std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
     std::cout << nxt_area_position.x << ' ' << nxt_area_position.y << ' ' << nxt_area_position.z << endl; 
     std::cout << mExpectDegree << endl; 
     std::cout << mPreDegree << endl; */
@@ -109,9 +114,12 @@ void PlayerAIAgent::walk(double time_diff) {
     std::cout << fabs(d_degree) << endl;
     std::cout << time_diff << endl; */
     //当前帧如果已经在角度幅度内，则开始走动。
-    if (fabs(d_degree) < ROTATE_FLOAT) {           
-        emit(sMove(Entity::STOP, true));
-        emit(sMove(Entity::BACKWARD, true));          
+    if (fabs(d_degree) < ROTATE_FLOAT) { 
+        if (!mOnMovePress) { 
+            //emit(sMove(Entity::STOP, true));
+            emit(sMove(Entity::BACKWARD, true)); 
+            mOnMovePress = 1; 
+        }
       } else{        
       //  emit(sMove(Entity::STOP, true));   
           lookAround(d_degree, time_diff);      
@@ -131,34 +139,30 @@ void PlayerAIAgent::guard(double time_diff) {
     mHasEnemy = false; 
 }
 void PlayerAIAgent::decision(double time_diff) {   
-    /*
+    
     //如果主角发出了跟随命令。
     if (mFollow) {
         Ogre::Vector3 cur_pos = mBody->getPosition(); 
         uint16_t cur_id = AIDivideAreaManager::get()->getIdByPosition(cur_pos); 
-        Ogre::Vector3 human_pos = getHumanBody()->getPosition(); 
+        Ogre::Vector3 human_pos = EntityManager::get()->getHuman()->getPosition(); 
         uint16_t des_id = AIDivideAreaManager::get()->getIdByPosition(human_pos); 
         uint16_t diff = AIDivideAreaManager::get()->getAreaNumBetween(cur_id, des_id); 
-        if (diff < 3) {
-            uint16_t nxt_id = AIDivideAreaManager::get()->getNxtClosestId(cur_id, des_id);
-        
-            if (nxt_id != -1) {
-                mOnWay = true; 
-                AIDivideAreaManager::get()->markArea(mNxtArea, false); 
-                mNxtArea = nxt_id; 
-                AIDivideAreaManager::get()->markArea(mNxtArea, true);
-                return; 
+        if (diff > 0) {
+            uint16_t nxt_id = AIDivideAreaManager::get()->getNxtClosestId(cur_id, des_id);   
+               
+                
+            std::pair<uint16_t, uint16_t> tmp = AIDivideAreaManager::get()->randomPosition(nxt_id);
+            if (tmp.first != -1) {     
+                    mNxtArea = tmp;
+                    mOnWay = true; 
+                    return; 
             }
-        }
+        }        
     }
     
     //否则，原地警戒。
     mThreat = true; 
-    mThreatTime = THREAT_COOL_TIME; 
-    */
-    
-    mNxtArea = (mNxtArea + 1) % 17; 
-    mOnWay = true;
+    mThreatTime = THREAT_COOL_TIME;   
     
 }
 void PlayerAIAgent::onUpdate(double time_diff) {
@@ -166,6 +170,7 @@ void PlayerAIAgent::onUpdate(double time_diff) {
     dt::Node::onUpdate(time_diff);
 
     if (time_diff == 0) return; 
+
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
     if (mThreat) {
@@ -183,7 +188,7 @@ void PlayerAIAgent::onInitialize() {
 
     setBody(dynamic_cast<Alien *>(this->getParent()));
 
-    mIteractor = this->addComponent<dt::InteractionComponent>(
+ /*   mIteractor = this->addComponent<dt::InteractionComponent>(
         new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();
     
     mIteractor->setRange(3000.0f);    
@@ -193,15 +198,15 @@ void PlayerAIAgent::onInitialize() {
     mTrigger = this->addComponent<dt::TriggerAreaComponent>(new dt::TriggerAreaComponent(
         new btBoxShape(btVector3(20.0f, 20.0f, 20.0f)), TRIGGER_AREA_COMPONENT)).get();
     connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
+            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));*/
 
 
 }
 void PlayerAIAgent::onDeinitialize() {
-     disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
+    /* disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
      disconnect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
+            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));*/
 }
 
 void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {

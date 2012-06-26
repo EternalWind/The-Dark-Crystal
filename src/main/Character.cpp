@@ -107,7 +107,7 @@ void Character::onUpdate(double time_diff) {
         if (mIsJumpping && mesh->isAnimationStopped()) {
             mIsJumpping = false;
             
-            //mesh->playAnimation();
+            mesh->stopAnimation();
 
             if (!mIsMoving) {
                 mVelocity.setZero();
@@ -122,7 +122,7 @@ void Character::onUpdate(double time_diff) {
                 }
 
                 mesh->setLoopAnimation(true);
-                //mesh->playAnimation();
+                mesh->playAnimation();
             }
         }
 
@@ -205,7 +205,7 @@ void Character::__onMove(Entity::MoveType type, bool is_pressed) {
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 
-        //mesh->playAnimation();
+        mesh->stopAnimation();
 
         if (is_stopped) {
             this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
@@ -222,7 +222,7 @@ void Character::__onMove(Entity::MoveType type, bool is_pressed) {
             }
 
             mesh->setLoopAnimation(true);
-            //mesh->playAnimation();
+            mesh->playAnimation();
             move_sound->playSound();
         }
 
@@ -242,10 +242,10 @@ void Character::__onJump(bool is_pressed) {
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 
-        //mesh->playAnimation();
+        mesh->stopAnimation();
         mesh->setAnimation("jump-begin");
         mesh->setLoopAnimation(false);
-        //mesh->playAnimation();
+        mesh->playAnimation();
 
         mIsJumpping = true;
     }
@@ -263,10 +263,10 @@ void Character::__onSpeedUp(bool is_pressed) {
 
             auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
             mesh->setAnimation("walk");
-            //mesh->playAnimation();
+            mesh->stopAnimation();
             mesh->setAnimation("run");
             mesh->setLoopAnimation(true);
-            //mesh->playAnimation();
+            mesh->playAnimation();
         }
     } else {
         this->setCurSpeed(this->getCurSpeed() / increasing_rate);
@@ -277,10 +277,10 @@ void Character::__onSpeedUp(bool is_pressed) {
 
             auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
             mesh->setAnimation("run");
-            //mesh->playAnimation();
+            mesh->stopAnimation();
             mesh->setAnimation("walk");
             mesh->setLoopAnimation(true);
-            //mesh->playAnimation();
+            mesh->playAnimation();
         }
     }
 
