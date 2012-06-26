@@ -9,8 +9,10 @@ void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
     mNxtArea[b].push_back(a);     
 }
 void AIDivideAreaManager::addArea(Ogre::Vector3 p, uint16_t id) {
-    mPosition[id] = p; 
-	mAreaNum ++;
+
+    mPosition[id] = p;
+    mAreaNum ++; 
+
 }
 
 void AIDivideAreaManager::loadMapInfo(string fileName) {
@@ -21,8 +23,7 @@ void AIDivideAreaManager::loadMapInfo(string fileName) {
 		fin >> mPosition[i].x>> mPosition[i].y >> mPosition[i].z;
 
 	for (uint16_t i = 0; i < mAreaNum; ++ i) 
-        for (uint16_t j = 0; j < mAreaNum;  ++ j) {
-			mEdge[i][j] = ( (i != j) ? 1e10 : 0 );
+        for (uint16_t j = 0; j < mAreaNum;  ++ j) {			
             mArea[i][j] = 100000;
         }
 
@@ -30,8 +31,7 @@ void AIDivideAreaManager::loadMapInfo(string fileName) {
 	fin >> edge_num; 
 	for (uint16_t i = 0; i < edge_num; ++ i) {
 		uint16_t x, y; 		
-		fin >> x >> y; 
-		mEdge[x][y] = mEdge[y][x] = mPosition[x].distance(mPosition[y]); 
+		fin >> x >> y; 		
         mArea[x][y] = mArea[y][x] = 1; 
         mNxtArea[x].push_back(y); 
         mNxtArea[y].push_back(x); 
@@ -41,14 +41,11 @@ void AIDivideAreaManager::loadMapInfo(string fileName) {
 
 	for (uint16_t k = 0; k < mAreaNum; ++ k) 
 		for (uint16_t i = 0; i < mAreaNum; ++ i) 
-			for (uint16_t j = 0; j < mAreaNum; ++ j) {
-				if (mEdge[i][k] + mEdge[k][j] < mEdge[i][j]) 
-					mEdge[i][j] = mEdge[i][k] + mEdge[k][j]; 
+			for (uint16_t j = 0; j < mAreaNum; ++ j) {				
                 if (mArea[i][k] + mArea[k][j] < mArea[i][j])
                     mArea[i][j] = mArea[i][k] + mArea[k][j]; 
             }
-
-        memset(mHasGunFriend, 0, sizeof(mHasGunFriend)); 
+        
 
 }    
 
@@ -57,15 +54,13 @@ void AIDivideAreaManager::initialize() {
 }
 void AIDivideAreaManager::afterLoadScene() {
     for (uint16_t i = 0; i < mAreaNum; ++ i) 
-        for (uint16_t j = 0; j < mAreaNum;  ++ j) {
-			mEdge[i][j] = ( (i != j) ? 1e10 : 0 );
+        for (uint16_t j = 0; j < mAreaNum;  ++ j) {			
             mArea[i][j] = ( (i != j) ? 100000 : 0);
         }
     for (uint16_t i = 0; i < mAreaNum; ++ i) {
         for (vector<uint16_t>::iterator iter = mNxtArea[i].begin(); 
                 iter != mNxtArea[i].end(); iter ++) {
-            mArea[i][*iter] = 1; 
-            mEdge[i][*iter] = mPosition[i].distance(mPosition[*iter]);
+            mArea[i][*iter] = 1;             
         }
     }
     
@@ -73,21 +68,24 @@ void AIDivideAreaManager::afterLoadScene() {
 
 	for (uint16_t k = 0; k < mAreaNum; ++ k) 
 		for (uint16_t i = 0; i < mAreaNum; ++ i) 
-			for (uint16_t j = 0; j < mAreaNum; ++ j) {
-				if (mEdge[i][k] + mEdge[k][j] < mEdge[i][j]) 
-					mEdge[i][j] = mEdge[i][k] + mEdge[k][j]; 
+			for (uint16_t j = 0; j < mAreaNum; ++ j) {				
                 if (mArea[i][k] + mArea[k][j] < mArea[i][j])
                     mArea[i][j] = mArea[i][k] + mArea[k][j]; 
             }
-
-        memset(mHasGunFriend, 0, sizeof(mHasGunFriend)); 
+}
+       
+void AIDivideAreaManager::beforeLoadScene(double diameter, double part_dis) {
+    mRadius = diameter / 2.0;
+    mPartDis = part_dis; 
+    mAreaNum = 0; 
+    for (int i = 0; i < 1000; i ++) 
+        mNxtArea[i].clear();
+    memset(mPositionMark, 0, sizeof(mPositionMark));
 }
 void AIDivideAreaManager::deinitialize() {
 }
 
-void AIDivideAreaManager::markArea(uint16_t area, bool stats) {
-    mHasGunFriend[area] = stats; 
-}
+
 
 uint16_t AIDivideAreaManager::getAreaNumBetween(uint16_t a, uint16_t b) {
     return mArea[a][b]; 
@@ -95,12 +93,11 @@ uint16_t AIDivideAreaManager::getAreaNumBetween(uint16_t a, uint16_t b) {
 
 uint16_t AIDivideAreaManager::getNxtClosestId(uint16_t cur, uint16_t des) {
     uint16_t tmp = -1;
-    double tmp_dis = 1e10; 
+    uint16_t tmp_dis = 10000; 
     for (uint16_t i = 0; i < mNxtArea[cur].size(); i ++) { 
-        uint16_t v = mNxtArea[cur][i]; 
-        if (mHasGunFriend[v]) continue; 
-        if (mEdge[cur][v] + mEdge[v][des] < tmp_dis) {
-            tmp_dis = mEdge[cur][v] + mEdge[v][des]; 
+        uint16_t v = mNxtArea[cur][i];        
+        if (mArea[cur][v] + mArea[v][des] < tmp_dis) {
+            tmp_dis = mArea[cur][v] + mArea[v][des]; 
             tmp  = i; 
         }
     }
@@ -124,14 +121,34 @@ AIDivideAreaManager* AIDivideAreaManager::get() {
 	return singleton;
 }
 
-void AIDivideAreaManager::addArea(uint16_t pre, Ogre::Vector3 position) {
-	mPosition[mAreaNum] = position;
-	double dis = position.distance(mPosition[mAreaNum]);	
-	for (uint16_t i = 0; i < mAreaNum; ++ i) 
-		mEdge[i][mAreaNum] = mEdge[mAreaNum][i] = dis + mEdge[i][pre];  
-	++ mAreaNum;
+Ogre::Vector3 AIDivideAreaManager::getPositionById(std::pair<uint16_t, uint16_t> id) {
+    return mAreaPosition[id.first][id.second]; 
 }
 
-Ogre::Vector3 AIDivideAreaManager::getPositionById(uint16_t id) {
-	return mPosition[id]; 
+std::pair<uint16_t, uint16_t> AIDivideAreaManager::randomPosition(uint16_t area) {
+    double tmp = mRadius / 100.0;
+    Ogre::Vector3 p;
+    p.y = 0; 
+    while (1) {
+        p.x = rand() % 100 * tmp;
+        p.z = rand() % 100 * tmp;
+        bool flag = 0; 
+        for (int i = 0; i < 50; i ++) 
+            if (mPositionMark[area][i]) {
+                if (mAreaPosition[area][i].distance(p) < mPartDis) {
+                    flag = 1; 
+                    break; 
+                }
+            }
+        if (flag) break;        
+        if (p.x*p.x + p.z*p.z <= mRadius * mRadius) break; 
+    }   
+    for (int i = 0; i < 50; i ++) 
+        if (!mPositionMark[area][i]) {
+            mPositionMark[area][i] = 1; 
+            mAreaPosition[area][i] = p;
+            return make_pair(area, i);
+        }    
+    //如果这个区域人太多，则不选择这个区域。
+    return make_pair(-1,-1);
 }
