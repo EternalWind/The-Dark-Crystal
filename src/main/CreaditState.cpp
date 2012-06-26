@@ -22,7 +22,7 @@ void CreaditState::onInitialize() {
     // GUI
     dt::GuiRootWindow& win = dt::GuiManager::get()->getRootWindow();
 
-    auto background_imagebox = win.addChildWidget(new dt::GuiImageBox("background_imagebox"));
+    auto background_imagebox = win.addChildWidget(new dt::GuiImageBox("credit_background_imagebox"));
     background_imagebox->setPosition(0,0);
     background_imagebox->setSize(1.0f,1.0f);
     background_imagebox->setImageTexture("Space.png");
@@ -31,12 +31,17 @@ void CreaditState::onInitialize() {
     int size_h = (float)coordination.width / 10.0f;
     int size_v = (float)coordination.height / 10.0f;
 
-    auto logo = win.addChildWidget(new dt::GuiImageBox("logo")).get();
+    auto logo = win.addChildWidget(new dt::GuiImageBox("credit_logo")).get();
     logo->setImageTexture("logo.png");
     logo->setPosition(coordination.width / 15, coordination.height / 15);
     logo->setSize(0.5f, 0.2f); 
 
-    auto cancel_button = win.addChildWidget(new dt::GuiButton("cancel_button"));
+    auto creadit = win.addChildWidget(new dt::GuiImageBox("logo")).get();
+    creadit->setImageTexture("creadit.png");
+    creadit->setPosition(coordination.width / 15, coordination.height * 0.6);
+    creadit->setSize(0.3f, 0.3f); 
+
+    auto cancel_button = win.addChildWidget(new dt::GuiButton("credit_cancel_button"));
     cancel_button->setCaption(QString::fromLocal8Bit("·µ»ØÖ÷²Ëµ¥"));
     cancel_button->setSize(size_h, size_v * 0.5);
     cancel_button->setPosition(size_h * 8, size_v * 9);
@@ -44,7 +49,7 @@ void CreaditState::onInitialize() {
 }
 
 void CreaditState::onClick(MyGUI::Widget* sender) {
-    if (sender->getName() == "Gui.cancel_button") {
+    if (sender->getName() == "Gui.credit_cancel_button") {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new MenuState());
     }
