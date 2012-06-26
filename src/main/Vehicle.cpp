@@ -34,7 +34,7 @@ Vehicle::Vehicle(const QString node_name,
 	const uint16_t attack_value,
 	const float attack_range,
 	const float attack_interval,
-	const QString attack_sound_handle) 
+	const QString attack_sound_handle)
 	: Entity(node_name, mesh_handle, collision_shape_type, mass),
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
@@ -57,6 +57,15 @@ void Vehicle::onInitialize() {
 
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
 		this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
+
+	//设置载具长宽
+	btBoxShape* box = dynamic_cast<btBoxShape*>(this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)
+													->getRigidBody()->getCollisionShape());
+	if (box != nullptr) {
+		btVector3 size = box->getHalfExtentsWithoutMargin();
+		mWidth = size.x();
+		mLength = size.z();
+	}
 }
 
 void Vehicle::onDeinitialize() {
@@ -78,15 +87,6 @@ void Vehicle::__onAttack(bool is_pressed) {
 }
 
 void Vehicle::__onGetOffVehicle() {
-	// 载具驾驶者
-	Alien* alien = dynamic_cast<Alien*>(this->getParent());
-	alien->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->enable();
-	alien->findComponent<dt::MeshComponent>(MESH_COMPONENT)->enable();
-
-	this->setParent((Node*)this->getScene());
-	Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
-	agent->detach();
-	agent->attachTo(alien);
 }
 
 void Vehicle::__onHit(dt::PhysicsBodyComponent* hit) {

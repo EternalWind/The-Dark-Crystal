@@ -121,17 +121,16 @@ public:
       */
     bool isOnGround();
 
-    /**
-      * 设置该实体的朝向。
-      * @param direction 表示朝向的四元组
-      */
-    //void setEntityDirection(const Ogre::Quaternion direction);
+    /** 
+	  * 返回实体的质量
+	  * @returns 实体的质量
+	  */
+	btScalar getMass() const;
 
-    /**
-      * 获取该实体的朝向。
-      * @returns 表示朝向的四元组
-      */
-    //Ogre::Quaternion getEntityDirection() const;
+	/**
+	  * 重置PhysicsBodyComponent
+	  */
+	void resetPhysicsBody();
 
     virtual void onInitialize();
 
@@ -175,6 +174,7 @@ signals:
       * 一个在成功获取到一个水晶后会发送的signal。
       */
     void sGetCrystal(Entity* entity);
+
 
 protected slots:
     virtual void __onMove(Entity::MoveType type, bool is_pressed) = 0;
