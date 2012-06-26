@@ -772,7 +772,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 		}
 		if (agent.toInt() == 1)
 		{
-			PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer", 20);
+			PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
 			Ai_agent->attachTo(pAlien);
 			EntityManager::get()->addPlayer(pAlien);
 

@@ -9,16 +9,15 @@ const QString PlayerAIAgent::TRIGGER_AREA_COMPONENT = "Player_AI_TRIGGER_AREA_CO
 const double  PlayerAIAgent::THREAT_COOL_TIME = 2.0;
 const double  PlayerAIAgent::eps = 1e-4;
 
-const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 90;
+const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 180;
 const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 90;
 const double  PlayerAIAgent::PI = acos(-1.0);
 const double  PlayerAIAgent::ROTATE_FLOAT = 180 / 24.0; 
-const double  PlayerAIAgent::ENTER_SCOPE = 0.1;
+const double  PlayerAIAgent::ENTER_SCOPE = 1;
 
 
 PlayerAIAgent::PlayerAIAgent(QString name): Agent(name) {    
     //初始化无任何状态
-
     mFollow = mThreat = mOnWay = false;     
     mPreDegree = 0;        
     mOnMovePress = false; 
@@ -40,15 +39,15 @@ Alien* PlayerAIAgent::getBody() {
 void PlayerAIAgent::setBody(Alien * body) {
 	mBody = body;
 }
-void PlayerAIAgent::lookAround(double d_degree, double time_diff) {
+void PlayerAIAgent::lookAround(double d_degree, double time_diff, double speed) {
      if (d_degree > 0) {
-         emit(sLookAround(Ogre::Quaternion(Ogre::Degree(MOVE_ROTATE_SPEED * time_diff),
+         emit(sLookAround(Ogre::Quaternion(Ogre::Degree(speed * time_diff),
                                                 Ogre::Vector3(0,1,0))));
-              mPreDegree += MOVE_ROTATE_SPEED * time_diff;
+              mPreDegree += speed * time_diff;
         } else { 
-            emit(sLookAround(Ogre::Quaternion(Ogre::Degree(MOVE_ROTATE_SPEED * time_diff),
-                                                Ogre::Vector3(0,1,0))));
-              mPreDegree -= MOVE_ROTATE_SPEED * time_diff;  
+            emit(sLookAround(Ogre::Quaternion(Ogre::Degree(speed * time_diff),
+                                                Ogre::Vector3(0,-1,0))));
+              mPreDegree -= speed * time_diff;  
              
         }
 }
@@ -75,12 +74,7 @@ void PlayerAIAgent::fixTurn(double & d_degree) {
             else d_degree = d_degree - 360;
     }    
 }
-Alien * PlayerAIAgent::getHumanBody() {
-    return mHumanBody; 
-}
-void PlayerAIAgent::setHumanBody(Alien * body) {
-    this->mHumanBody = body; 
-}
+
 void PlayerAIAgent::walk(double time_diff) {      
    //[-180,180]    
     double cur_degree;    
@@ -96,23 +90,29 @@ void PlayerAIAgent::walk(double time_diff) {
     if (nxt_area_position.distance(pre_position) < ENTER_SCOPE) {
             mOnWay = false;     
             if (mOnMovePress) {
-                emit(sMove(Entity::STOP, true)); 
+                emit(sMove(Entity::STOP, true));                 
                 mOnMovePress = 0; 
             }
             return;
     }
 
     mExpectDegree = clacDegree(nxt_area_position, pre_position);
-
-  /*  std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
+   
+    
+    /*std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
     std::cout << nxt_area_position.x << ' ' << nxt_area_position.y << ' ' << nxt_area_position.z << endl; 
     std::cout << mExpectDegree << endl; 
     std::cout << mPreDegree << endl; */
     double d_degree = mExpectDegree - mPreDegree;
+
+   
+
     fixTurn(d_degree);
-   /* std::cout << d_degree << endl;
-    std::cout << fabs(d_degree) << endl;
-    std::cout << time_diff << endl; */
+  
+  /*  std::cout << mExpectDegree << endl; 
+    std::cout << mPreDegree << endl; 
+    std::cout << d_degree << endl; */
+
     //当前帧如果已经在角度幅度内，则开始走动。
     if (fabs(d_degree) < ROTATE_FLOAT) { 
         if (!mOnMovePress) { 
@@ -122,37 +122,50 @@ void PlayerAIAgent::walk(double time_diff) {
         }
       } else{        
       //  emit(sMove(Entity::STOP, true));   
-          lookAround(d_degree, time_diff);      
+          lookAround(d_degree, time_diff, MOVE_ROTATE_SPEED);      
     }
 }
 
 void PlayerAIAgent::guard(double time_diff) {
     //瞧瞧前面有没有异类，有就统统消灭！
-    this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
+   /* this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();*/
 
     if (!mHasEnemy) {        
        fixDegree(mPreDegree);
        double d_degree = mExpectDegree - mPreDegree;
-       fixDegree(d_degree);      
-       lookAround(d_degree, time_diff);      
+       fixTurn(d_degree);      
+       lookAround(d_degree, time_diff, GUARD_ROTATE_SPEED);   
+
+       //std::cout << mPreDegree << endl; 
     }
     mHasEnemy = false; 
 }
 void PlayerAIAgent::decision(double time_diff) {   
+    
     
     //如果主角发出了跟随命令。
     if (mFollow) {
         Ogre::Vector3 cur_pos = mBody->getPosition(); 
         uint16_t cur_id = AIDivideAreaManager::get()->getIdByPosition(cur_pos); 
         Ogre::Vector3 human_pos = EntityManager::get()->getHuman()->getPosition(); 
+        
         uint16_t des_id = AIDivideAreaManager::get()->getIdByPosition(human_pos); 
         uint16_t diff = AIDivideAreaManager::get()->getAreaNumBetween(cur_id, des_id); 
         if (diff > 0) {
-            uint16_t nxt_id = AIDivideAreaManager::get()->getNxtClosestId(cur_id, des_id);   
-               
+            uint16_t nxt_id = AIDivideAreaManager::get()->getNxtClosestId(cur_id, des_id);                
                 
             std::pair<uint16_t, uint16_t> tmp = AIDivideAreaManager::get()->randomPosition(nxt_id);
+
+            std::cout << cur_id << endl; 
+            std::cout << des_id << endl; 
+            std::cout << nxt_id << endl; 
+            std::cout << cur_pos.x << ' ' << cur_pos.z << endl; 
+            std::cout << AIDivideAreaManager::get()->getPositionById(tmp).x <<  ' ' <<
+                AIDivideAreaManager::get()->getPositionById(tmp).z << endl;
+
+            
             if (tmp.first != -1) {     
+                    AIDivideAreaManager::get()->destroy(mNxtArea);
                     mNxtArea = tmp;
                     mOnWay = true; 
                     return; 
@@ -167,9 +180,13 @@ void PlayerAIAgent::decision(double time_diff) {
 }
 void PlayerAIAgent::onUpdate(double time_diff) {
 
-    dt::Node::onUpdate(time_diff);
+  
+    
 
-    if (time_diff == 0) return; 
+      
+    if (time_diff == 0)  {
+        return; 
+    }
 
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
@@ -182,13 +199,15 @@ void PlayerAIAgent::onUpdate(double time_diff) {
     } else if (mOnWay) { //在行走，则走之。
         walk(time_diff); 
     } else decision(time_diff);  // 否则，决策之。
+
+    dt::Node::onUpdate(time_diff);
 }
 
 void PlayerAIAgent::onInitialize() {
 
     setBody(dynamic_cast<Alien *>(this->getParent()));
 
- /*   mIteractor = this->addComponent<dt::InteractionComponent>(
+    mIteractor = this->addComponent<dt::InteractionComponent>(
         new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();
     
     mIteractor->setRange(3000.0f);    
@@ -196,17 +215,17 @@ void PlayerAIAgent::onInitialize() {
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
 
     mTrigger = this->addComponent<dt::TriggerAreaComponent>(new dt::TriggerAreaComponent(
-        new btBoxShape(btVector3(20.0f, 20.0f, 20.0f)), TRIGGER_AREA_COMPONENT)).get();
+        new btBoxShape(btVector3(200.0f, 200.0f, 200.0f)), TRIGGER_AREA_COMPONENT)).get();
     connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));*/
+            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
 
 
 }
 void PlayerAIAgent::onDeinitialize() {
-    /* disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
+     disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
      disconnect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));*/
+            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
 }
 
 void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {
@@ -228,12 +247,26 @@ void PlayerAIAgent::__onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c)
         mExpectDegree = clacDegree(enemy->getPosition(), mBody->getPosition());
         return; 
     }
+
+    if (c->getNode()->getName() == "alien2") {
+        std::cout << "2143535" << std::endl;
+    }
+
     //炮友!
-    Alien * gun_friend = dynamic_cast<Alien *>(c->getNode());
+    Alien * gun_friend = dynamic_cast<Alien*>(c->getNode());
+  //  dt::Logger().get().debug(c->getNode()->getName());
+    
     if (gun_friend != nullptr) {
        // gun_friend->get
-        if (!mThreat) {
+        std::cout << "RJ" << mThreat << endl; 
+       if (!mThreat)
+        {
             mThreat = true; 
+            if (mOnMovePress) {
+                mOnMovePress = 0; 
+                emit(sMove(Entity::STOP, true)); 
+                mExpectDegree = mPreDegree + 180;
+            }
             //遇到队友就随机冷却时间防止互撞。
             mThreatTime = (rand()) % 10;
         }

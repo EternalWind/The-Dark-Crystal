@@ -15,11 +15,9 @@ public:
     Alien* getBody(); 
     void fixTurn(double & d_degree);
     void fixDegree(double & degree);
-    void lookAround(double d_degree, double time_diff);
+    void lookAround(double d_degree, double time_diff, double speed);
     double clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre); 
-    void setBody(Alien* body); 
-    void setHumanBody(Alien * body); 
-    Alien * getHumanBody(); 
+    void setBody(Alien* body);       
     /**
       * 若是mOnWay这个状态为true，则行走。
       */	
