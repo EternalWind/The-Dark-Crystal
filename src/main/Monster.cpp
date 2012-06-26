@@ -46,7 +46,7 @@ Monster::Monster(const QString node_name,
 }
 
 void Monster::onInitialize() {
-	Entity::onInitialize();
+	Character::onInitialize();
 
 	auto conf_mgr = ConfigurationManager::getInstance() ;
 	SoundSetting sound_setting = conf_mgr->getSoundSetting();
@@ -83,91 +83,10 @@ void Monster::onUpdate(double time_diff) {
         physics_body->getRigidBody()->setLinearVelocity(velocity);
     }
 
-    Node::onUpdate(time_diff);
+	Character::onUpdate(time_diff);
 }
 
 // --------------- slots -------------------//
-
-//void Monster::__onMove(MoveType type, bool is_pressed) {
-//    bool is_stopped = false;
-//
-//    switch (type) {
-//    case FORWARD:
-//        if (is_pressed && mMoveVector.z > -1.0f)
-//            mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
-//        else if (!is_pressed && mMoveVector.z < 1.0f)
-//            mMoveVector.z += 1.0f;
-//
-//        break;
-//
-//    case BACKWARD:
-//        if (is_pressed && mMoveVector.z < 1.0f)
-//            mMoveVector.z += 1.0f;
-//        else if (!is_pressed && mMoveVector.z > -1.0f)
-//            mMoveVector.z -= 1.0f;
-//
-//        break;
-//
-//    case LEFTWARD:
-//        if (is_pressed && mMoveVector.x > -1.0f)
-//            mMoveVector.x -= 1.0f;
-//        else if (!is_pressed && mMoveVector.x < 1.0f)
-//            mMoveVector.x += 1.0f;
-//
-//        break;
-//
-//    case RIGHTWARD:
-//        if (is_pressed && mMoveVector.x < 1.0f)
-//            mMoveVector.x += 1.0f;
-//        else if (!is_pressed && mMoveVector.x > -1.0f)
-//            mMoveVector.x -= 1.0f;
-//
-//        break;
-//
-//    case STOP:
-//        mMoveVector.x = 0.0f;
-//        mMoveVector.z = 0.0f;
-//        is_stopped = true;
-//
-//        break;
-//
-//    default:
-//        dt::Logger::get().debug("Not processed MoveType!");
-//    }
-//
-//    if (is_stopped) {
-//        this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-//        this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-//    } else {
-//        std::shared_ptr<dt::SoundComponent> move_sound;
-//
-//        if (mHasSpeededUp) {
-//            move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
-//        } else {
-//            move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
-//        }
-//
-//        move_sound->playSound();
-//    }
-//
-//    mIsMoving = !is_stopped;
-//}
-
-//void Monster::__onJump(bool is_pressed) {
-//	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-//
-//    if (is_pressed && this->isOnGround()) {
-//        // 调整该处的脉冲值使跳跃更自然。
-//        physics_body->activate();
-//        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);
-//
-//        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
-//    }
-//
-//    if(!is_pressed) {
-//        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->stopSound();
-//    }
-//}
 
 void Monster::__onAttack(bool is_pressed) {
 	if (is_pressed) {
@@ -179,28 +98,6 @@ void Monster::__onAttack(bool is_pressed) {
 		}
 	}
 }
-
-//void Monster::__onSpeedUp(bool is_pressed) {
-//	float increasing_rate = 1.5f;
-//
-//	if (is_pressed) {
-//		this->setCurSpeed(this->getCurSpeed() * increasing_rate);
-//
-//		if (mIsMoving) {
-//			this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-//			this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
-//		}
-//	} else {
-//		this->setCurSpeed(this->getCurSpeed() / increasing_rate);
-//
-//		if (mIsMoving) {
-//			this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-//			this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
-//		}
-//	}
-//
-//	mHasSpeededUp = is_pressed;
-//}
 
 void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
 	Character::__onLookAround(body_rot, agent_rot);
