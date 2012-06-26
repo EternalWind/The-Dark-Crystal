@@ -10,23 +10,12 @@
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
 
-//#include <BtOgreExtras.h>
-//
-//const QString Alien::WALK_SOUND_COMPONENT = "walk_sound";
-//const QString Alien::JUMP_SOUND_COMPONENT = "jump_sound";
-//const QString Alien::RUN_SOUND_COMPONENT = "run_sound";
 const QString Alien::INTERACTOR_COMPONENT = "interactor";
 
 Alien::Alien(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass,
     const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle)
     : Character(node_name, mesh_handle, collision_shape_type, mass, walk_sound_handle, jump_sound_handle, run_sound_handle, 20.0f),
-      /*mWalkSoundHandle(walk_sound_handle),
-      mJumpSoundHandle(jump_sound_handle),
-      mRunSoundHandle(run_sound_handle),*/
-      mCurWeapon(nullptr)
-      /*mVelocity(0.0f, 0.0f, 0.0f),
-      mBtController(nullptr),
-      mBtGhostObject(nullptr)*/ {
+      mCurWeapon(nullptr) {
         // 准备好3种武器的位置。
         mWeapons[Weapon::PRIMARY] = nullptr;
         mWeapons[Weapon::SECONDARY] = nullptr;
@@ -107,20 +96,6 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
 void Alien::onInitialize() {
     Character::onInitialize();
 
-    /*auto conf_mgr = ConfigurationManager::getInstance() ;
-    SoundSetting sound_setting = conf_mgr->getSoundSetting();
-
-    auto walk_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mWalkSoundHandle, WALK_SOUND_COMPONENT));
-    auto jump_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mJumpSoundHandle, JUMP_SOUND_COMPONENT));
-    auto run_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mRunSoundHandle, RUN_SOUND_COMPONENT));
-
-    walk_sound->setVolume((float)sound_setting.getSoundEffect());
-    jump_sound->setVolume((float)sound_setting.getSoundEffect());
-    run_sound->setVolume((float)sound_setting.getSoundEffect());
-
-    walk_sound->getSound().setLoop(true);
-    run_sound->getSound().setLoop(true);
-    jump_sound->getSound().setLoop(false);*/
 
     auto node = this->addChildNode(new Node("getProp"));
 
@@ -133,33 +108,6 @@ void Alien::onInitialize() {
     this->setOrigSpeed(10.0f);
     this->setCurSpeed(10.0f);
 
-    //this->removeComponent(PHYSICS_BODY_COMPONENT);
-
-    //btTransform  start_trans;
-    //start_trans.setIdentity();
-    //start_trans.setOrigin(btVector3(0, 30, 0));
-    //start_trans.setRotation(BtOgre::Convert::toBullet(getRotation(Node::SCENE)));
-
-    //Ogre::Vector3 size = findComponent<dt::MeshComponent>(MESH_COMPONENT)->getOgreEntity()->getBoundingBox().getHalfSize();
-    //btBoxShape* box = new btBoxShape(BtOgre::Convert::toBullet(size));
-
-    //mBtGhostObject = std::shared_ptr<btPairCachingGhostObject>(new btPairCachingGhostObject());
-    //mBtGhostObject->setWorldTransform(start_trans);
-    //mBtGhostObject->setCollisionShape(box);
-    //mBtGhostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    ////TODO: Make a better way to distinguish between AdvancedPlayerComponent and PhysicsBodyComponent.
-    ////For now, it's just a null pointer check to do this.
-    //mBtGhostObject->setUserPointer(nullptr);
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    //mBtController = std::shared_ptr<btKinematicCharacterController>
-    //    (new btKinematicCharacterController(mBtGhostObject.get(), box, 1));
-    //getScene()->getPhysicsWorld()->getBulletWorld()->addCollisionObject(mBtGhostObject.get());
-    //getScene()->getPhysicsWorld()->getBulletWorld()->addAction(mBtController.get());
-
-    // 外星人的行走不需要考虑摩擦力。
-    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    //physics_body->getRigidBody()->setFriction(0.0);
 }
 
 void Alien::onDeInitialize() {
@@ -285,6 +233,9 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 			agent->attachTo(vehicle);		
 
 			this->setParent(vehicle);
+			vehicle->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->setMass(vehicle->getMass());
+			vehicle->resetPhysicsBody();
+			
 		}		
     }
 }

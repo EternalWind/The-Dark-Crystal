@@ -49,15 +49,6 @@ void Car::onInitialize() {
 	//设置镜头位置
 	this->setEyePosition(Ogre::Vector3(0, 2, 0));	
 
-	//设置汽车长、宽
-	btBoxShape* box = dynamic_cast<btBoxShape*>(this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)
-													->getRigidBody()->getCollisionShape());
-	if (box != nullptr) {
-		btVector3 size = box->getHalfExtentsWithoutMargin();
-		mWidth = size.x();
-		mLength = size.z();
-	}
-
 	//设置炮台
 	mLauncher = this->addChildNode(new dt::Node("launcher"));
 	mLauncher->addComponent<dt::MeshComponent>(new dt::MeshComponent(mLauncherHandle, "", "Launcher"));
@@ -67,9 +58,9 @@ void Car::onInitialize() {
 	mCurSpeed = 0.0f;
 	mMinSpeed = -mMaxSpeed / 2;
 	
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	//physics_body->getRigidBody()->setFriction(5.0f);
-	physics_body->setGravity(0, 0, 0);	
+	//设为静态物体
+	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->setMass(0);
+	this->resetPhysicsBody();
 }
 
 void Car::onDeinitialize() {
@@ -256,7 +247,8 @@ void Car::__getDelta(float &dx, float &dy, float &alpha, double time_diff) {
 
 void Car::__onGetOffVehicle() {
 	// 速度太快就不能下车！否则就会被车撞死！！！
-	if (this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->getLinearVelocity().length() < 15.0f) {
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	if (physics_body->getRigidBody()->getLinearVelocity().length() < 15.0f) {
 		Alien* alien;
 		alien = dynamic_cast<Alien*>(this->findChildNode("alien", false).get());
 
@@ -271,5 +263,8 @@ void Car::__onGetOffVehicle() {
 		alien->findComponent<dt::PhysicsBodyComponent>(Alien::PHYSICS_BODY_COMPONENT)->enable();
 
 		agent->attachTo(alien);
+
+		physics_body->setMass(0);
+		this->resetPhysicsBody();
 	}
 }
