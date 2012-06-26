@@ -61,9 +61,9 @@ void HumanAgent::__onKeyDown(dt::InputManager::InputCode code, const OIS::EventA
         emit sGetOffVehicle();
     } else if (code == control_setting.getKey(ControlSetting::RELOAD)) {
         emit sReload();
-	} else if (code == control_setting.getKey(ControlSetting::THROW)) {
-		emit sRemoveWeapon();
-	}
+    } else if (code == control_setting.getKey(ControlSetting::THROW)) {
+       emit sRemoveWeapon();
+    }
 }
 
 void HumanAgent::__onKeyUp(dt::InputManager::InputCode code, const OIS::EventArg& event) {
