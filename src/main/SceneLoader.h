@@ -26,10 +26,15 @@ using namespace dt;
 #define SL_Y "y"
 #define SL_Z "z"
 #define SL_ROT "rotation"
+#define SL_ORI "orientation" 
 #define SL_QW "qw"
 #define SL_QX "qx"
 #define SL_QY "qy"
 #define SL_QZ "qz"
+#define SL_OW "w"
+#define SL_OX "x"
+#define SL_OY "y"
+#define SL_OZ "z"
 #define SL_COLOUR_R "r"
 #define SL_COLOUR_G "g"
 #define SL_COLOUR_B "b"
@@ -151,6 +156,14 @@ using namespace dt;
 #define SL_SPACESHIP_RANGE "Range"
 #define SL_SPACESHIP_INTERVAL "Interval"
 #define SL_SPACESHIP_MASS "Mass"
+
+#define SL_POINT "Point"
+#define SL_POINT_ID "PointID"
+
+#define SL_EDGE "Edge"
+#define SL_EDGE_LP "LpID"
+#define SL_EDGE_RP "RpID"
+
 //#define SL_BEGIN "terrain"
 
 class SceneLoader 
@@ -203,6 +216,10 @@ protected:
 	static Node::NodeSP __loadWeapon(const QDomElement& og_node, Node::NodeSP dt_parent);
 
 	static Node::NodeSP __loadSpaceship(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadPoint(const QDomElement& og_node, Node::NodeSP dt_parent);
+
+	static Node::NodeSP __loadEdge(const QDomElement& og_node, Node::NodeSP dt_parent);
 
     static Scene* mScene;
 };

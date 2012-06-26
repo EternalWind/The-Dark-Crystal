@@ -52,6 +52,14 @@ public slots:
     void onKeyDown(dt::InputManager::InputCode code, const OIS::EventArg& event);
 
 private:
+
+    /**
+	  * 按键设置辅助函数
+	  */
+    void addNewFuncButton(const QString name, const QString font_text, int x, int y);
+
+
+private:
     dt::GuiCheckBox* mQASettingCheckBox;        //!< 问答系统开关
     dt::GuiCheckBox* mDisplaySettingsCheckBox;  //!< 分辨率设置
     dt::GuiScrollBar* mSoundVolumeScrollBar;    //!< 音效大小滚动条
