@@ -24,6 +24,7 @@ void Agent::attachTo(Entity* entity) {
         QObject::connect(this, SIGNAL(sReload()), entity, SLOT(__onReload()));
 
 		this->setPosition(entity->getEyePosition());
+		this->setRotation(Ogre::Quaternion::IDENTITY);
     }
 }
 

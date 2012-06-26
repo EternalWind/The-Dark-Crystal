@@ -121,6 +121,19 @@ bool Entity::isOnGround() {
     return result;
 }
 
+btScalar Entity::getMass() const {
+	return mMass;
+}
+
+void Entity::resetPhysicsBody() {
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+
+	if (physics_body != nullptr) {
+		physics_body->disable();
+		physics_body->enable();
+	}
+}
+
 void Entity::onInitialize() {
     this->addComponent<dt::MeshComponent>(new dt::MeshComponent(mMeshHandle, "", MESH_COMPONENT));
     auto physics = this->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(MESH_COMPONENT, PHYSICS_BODY_COMPONENT, mCollisionShapeType, mMass));
