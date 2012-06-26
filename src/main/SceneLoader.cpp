@@ -24,6 +24,7 @@
 #include "Crystal.h"
 #include "Spaceship.h"
 #include "Agent.h"
+#include "EntityManager.h"
 #include "AIDivideAreaManager.h"
 #include "PlayerAIAgent.h"
 #include <OgreProcedural.h>
@@ -767,12 +768,17 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 		{
 			HumanAgent* human_agent = new HumanAgent("Player");
 			human_agent->attachTo(pAlien);
+			EntityManager::get()->setHuman(pAlien);
 		}
 		if (agent.toInt() == 1)
 		{
 			PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer", 20);
 			Ai_agent->attachTo(pAlien);
+			EntityManager::get()->addPlayer(pAlien);
+
 		}
+		
+		
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
 		
@@ -823,8 +829,8 @@ Node::NodeSP SceneLoader::__loadAmmo(const QDomElement& og_node, Node::NodeSP dt
             rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));		
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -854,8 +860,8 @@ Node::NodeSP SceneLoader::__loadCrystal(const QDomElement& og_node, Node::NodeSP
 							rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
 							scale.attribute(SL_Z).toFloat()));	
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();		
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();		
 	}
 	return node;
 }
@@ -885,8 +891,8 @@ Node::NodeSP SceneLoader::__loadFirstAidKit(const QDomElement& og_node, Node::No
             rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));		
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -934,10 +940,18 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
                                         power_num,
                                         range_num,
                                         interval_num);
+
+		
+
 		if (dt_parent)
 			node = dt_parent->addChildNode(pMonster);
 		else  
 			node = mScene->addChildNode(pMonster);
+
+		MonsterAIAgent *agent = new MonsterAIAgent(monster_id + "_agent");
+		agent->attachTo(pMonster);
+
+		EntityManager::get()->addMonster(pMonster);
 
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
@@ -950,8 +964,8 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
             rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));		
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -1042,8 +1056,8 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 		
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
 							scale.attribute(SL_Z).toFloat()));	
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
 	}
 	return node;
 }
@@ -1088,8 +1102,8 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 							rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
 		node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
 							scale.attribute(SL_Z).toFloat()));	
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-		//node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();		
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();		
 	}
 	return node;
 }
