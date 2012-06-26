@@ -5,6 +5,7 @@
 #include "FirstAidKit.h"
 #include "Crystal.h"
 #include "Agent.h"
+#include "Vehicle.h"
 
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
@@ -173,110 +174,8 @@ void Alien::onUpdate(double time_diff) {
         this->findChildNode("getProp")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
-    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    //auto gravity = physics_body->getRigidBody()->getGravity();  // 这Gravity是重力加速度…… >_<
-    /*auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
-
-    btTransform trans = mBtGhostObject->getWorldTransform();
-
-    setPosition(BtOgre::Convert::toOgre(trans.getOrigin()), dt::Node::SCENE);
-    setRotation(BtOgre::Convert::toOgre(trans.getRotation()), dt::Node::SCENE);*/
-    //mVelocity.setX(velocity.x()
-    //mVelocity += gravity;
-
-    //velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
-
-    /*if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
-        physics_body->activate();
-        physics_body->getRigidBody()->setLinearVelocity(velocity);
-    }*/
-
-    //mBtController->setVelocityForTimeInterval(velocity, 0.5);
-
     Character::onUpdate(time_diff);
 }
-
-//void Alien::__onMove(Entity::MoveType type, bool is_pressed) {
-//    bool is_stopped = false;
-//
-//    switch (type) {
-//    case FORWARD:
-//        if (is_pressed && mMoveVector.z > -1.0f)
-//            mMoveVector.z -= 1.0f; // Ogre Z轴正方向为垂直屏幕向外。
-//        else if (!is_pressed && mMoveVector.z < 1.0f)
-//            mMoveVector.z += 1.0f;
-//
-//        break;
-//
-//    case BACKWARD:
-//        if (is_pressed && mMoveVector.z < 1.0f)
-//            mMoveVector.z += 1.0f;
-//        else if (!is_pressed && mMoveVector.z > -1.0f)
-//            mMoveVector.z -= 1.0f;
-//
-//        break;
-//
-//    case LEFTWARD:
-//        if (is_pressed && mMoveVector.x > -1.0f)
-//            mMoveVector.x -= 1.0f;
-//        else if (!is_pressed && mMoveVector.x < 1.0f)
-//            mMoveVector.x += 1.0f;
-//
-//        break;
-//
-//    case RIGHTWARD:
-//        if (is_pressed && mMoveVector.x < 1.0f)
-//            mMoveVector.x += 1.0f;
-//        else if (!is_pressed && mMoveVector.x > -1.0f)
-//            mMoveVector.x -= 1.0f;
-//
-//        break;
-//
-//    case STOP:
-//        mMoveVector.x = 0.0f;
-//        mMoveVector.z = 0.0f;
-//        is_stopped = true;
-//
-//        break;
-//
-//    default:
-//        dt::Logger::get().debug("Not processed MoveType!");
-//    }
-//
-//    if (is_stopped) {
-//        this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-//        this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-//    } else {
-//        std::shared_ptr<dt::SoundComponent> move_sound;
-//
-//        if (mHasSpeededUp) {
-//            move_sound = this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT);
-//        } else {
-//            move_sound = this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT);
-//        }
-//
-//        move_sound->playSound();
-//    }
-//
-//    mIsMoving = !is_stopped;
-//}
-//
-//void Alien::__onJump(bool is_pressed) {
-//    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-//
-//    if (is_pressed && this->isOnGround()) {
-//        // 调整该处的脉冲值使跳跃更自然。
-//        /*physics_body->activate();
-//        physics_body->applyCentralImpulse(0.0f, 20.0f, 0.0f);*/
-//        mBtController->jump();
-//
-//        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
-//    }
-//
-//    if(!is_pressed) {
-//        this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->stopSound();
-//    }
-//}
 
 void Alien::__onAttack(bool is_pressed) {
     Weapon* weapon = this->getCurWeapon();
@@ -284,28 +183,6 @@ void Alien::__onAttack(bool is_pressed) {
     if (weapon != nullptr)
         weapon->attack(is_pressed);
 }
-
-//void Alien::__onSpeedUp(bool is_pressed) {
-//    float increasing_rate = 1.5f;
-//
-//    if (is_pressed) {
-//        this->setCurSpeed(this->getCurSpeed() * increasing_rate);
-//
-//        if (mIsMoving) {
-//            this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
-//            this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
-//        }
-//    } else {
-//        this->setCurSpeed(this->getCurSpeed() / increasing_rate);
-//
-//        if (mIsMoving) {
-//            this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
-//            this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
-//        }
-//    }
-//
-//    mHasSpeededUp = is_pressed;
-//}
 
 void Alien::__onChangeWeapon(Weapon::WeaponType type) {
     changeCurWeapon(type);
@@ -389,14 +266,26 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 
                 break;
 
-            case Prop::VEHICLE:
-
-                break;
-
             default:
                 dt::Logger::get().debug("Unknown prop type.");
             }
         }
+
+		// 如果是载具
+		Vehicle* vehicle; 
+		vehicle = dynamic_cast<Vehicle*>(object->getNode());
+
+		if (vehicle != nullptr) {
+			this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->disable();
+			this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->disable();
+
+			Agent* agent;
+			agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT, false).get());
+			agent->detach();
+			agent->attachTo(vehicle);		
+
+			this->setParent(vehicle);
+		}		
     }
 }
 
