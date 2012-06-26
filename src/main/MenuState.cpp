@@ -6,10 +6,12 @@
 #include <Scene/StateManager.hpp>
 #include <Core/ResourceManager.hpp>
 #include <Graphics/CameraComponent.hpp>
+#include <Graphics/DisplayManager.hpp>
 #include <Gui/GuiManager.hpp>
 
 void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
+//	dt::DisplayManager::get()->setFullscreen(true);
 
     dt::ResourceManager::get()->addDataPath(QDir("data"));
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
