@@ -402,18 +402,10 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 
 void Alien::__onGetOffVehicle() { /* =_= 很明显，外星人不是一种载具。*/ }
 
-//void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-//    Ogre::Quaternion rotation(body_rot.getYaw(), Ogre::Vector3(0.0f, 1.0f, 0.0f));
-//
-//    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-//    btTransform trans;
-//    trans = mBtGhostObject->getWorldTransform();
-//
-//    this->findChildNode(Agent::AGENT)->setRotation(agent_rot);
-//
-//    trans.setRotation(BtOgre::Convert::toBullet(rotation));
-//    mBtGhostObject->setWorldTransform(trans);
-//}
+void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
+	Character::__onLookAround(body_rot, agent_rot);
+	this->findChildNode("getProp")->setRotation(this->findChildNode(Agent::AGENT)->getRotation());
+}
 
 void Alien::__onReload() {
     getCurWeapon()->reload();

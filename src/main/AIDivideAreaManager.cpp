@@ -9,8 +9,10 @@ void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
     mNxtArea[b].push_back(a);     
 }
 void AIDivideAreaManager::addArea(Ogre::Vector3 p, uint16_t id) {
+
     mPosition[id] = p;
     mAreaNum ++; 
+
 }
 
 void AIDivideAreaManager::loadMapInfo(string fileName) {

@@ -117,18 +117,11 @@ void HumanAgent::__onMouseMove(const OIS::MouseEvent& event) {
 
     if (dx != 0 || dy != 0) {
 		Ogre::Radian yaw = Ogre::Radian(dx);
-		Ogre::Radian pitch = this->getRotation().getPitch() + Ogre::Radian(dy);
-
-        // do not let it look completely vertical, or the yaw will break
-        if (pitch > Ogre::Degree(89.9))
-            pitch = Ogre::Degree(89.9);
-
-        if (pitch < Ogre::Degree(-89.9))
-            pitch = Ogre::Degree(-89.9);
+		Ogre::Radian pitch = Ogre::Radian(dy);
 
 		emit sLookAround(
 			Ogre::Quaternion(yaw, Ogre::Vector3(0.0f, 1.0f, 0.0f)), 
 			Ogre::Quaternion(pitch, Ogre::Vector3(1, 0, 0))
-			);
+		);
     }
 }

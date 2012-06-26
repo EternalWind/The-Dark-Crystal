@@ -21,9 +21,11 @@ public:
 	 void loadMapInfo(string fileName);
      void addEdge(uint16_t a, uint16_t b); 
      void addArea(Ogre::Vector3 p, uint16_t id); 
+
      /**
        *sceneloader之后一定要调用afterLoadScene初始化AIDivideAreaManager。
        */
+
      void afterLoadScene(); 
      /**
        *sceneloader之前一定要调用afterLoadScene初始化AIDivideAreaManager。
