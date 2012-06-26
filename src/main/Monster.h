@@ -101,14 +101,9 @@ protected:
 	uint16_t mAttackValue;      //!< ½ÐÊÞ¹¥»÷Á¦
 	float mAttackRange;         //!< ½ÐÊÞ¹¥»÷·¶Î§
 	float mAttackInterval;      //!< ½ÐÊÞ¹¥»÷¼ä¸ôÊ±¼ä
-	//QString mWalkSoundHandle;   //!< ¹ÖÊÞ×ßÂ·ÉùÒô¾ä±ú
-	//QString mJumpSoundHandle;   //!< ¹ÖÎïÌøÔ¾ÉùÒô¾ä±ú
-	//QString mRunSoundHandle;    //!< ¹ÖÊÞÅÜ²½ÒôÐ§¾ä±ú
 	QString mAttackSoundHandle; //!< ¹ÖÎï¹¥»÷ÉùÒô¾ä±ú
 
-	//const static QString WALK_SOUND_COMPONENT;   //!< ²¥·Å¹ÖÊÞÐÐ×ßÒôÐ§µÄSoundComponentµÄÃû×Ö
-	//const static QString JUMP_SOUND_COMPONENT;   //!< ²¥·Å¹ÖÊÞÌøÔ¾ÒôÐ§µÄSoundComponentµÄÃû×Ö
-	//const static QString RUN_SOUND_COMPONENT;    //!< ²¥·Å¹ÖÊÞÅÜ¶¯ÒôÐ§µÄSoundComponentµÄÃû×Ö
+public:
 	const static QString ATTACK_SOUND_COMPONENT; //!< ²¥·Å¹ÖÊÞ¹¥»÷ÒôÐ§µÄSoundComponentµÄÃû×Ö
 	const static QString INTERACTOR_COMPONENT;   //!< ¹ÖÊÞ¹¥»÷½»»¥µÄComponentÃû×Ö
 
