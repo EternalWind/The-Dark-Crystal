@@ -79,7 +79,7 @@ void AIAlienTest::onInitialize() {
     scene->addChildNode(alien);
    /* HumanAgent * ha = new HumanAgent("RJ");
     ha->attachTo(alien);	*/
-    PlayerAIAgent * pt = new PlayerAIAgent("RJ", 1); 
+    PlayerAIAgent * pt = new PlayerAIAgent("RJ"); 
     pt->attachTo(alien); 
 	
 		

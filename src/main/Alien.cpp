@@ -57,18 +57,21 @@ void Alien::addWeapon(Weapon* weapon) {
 			weapon->setParent(this);
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
 			weapon->setPosition(0.5f, -0.5f, -1.0f);
-
+			this->mCurWeapon = weapon;
 			if (!is_enabled)
 				weapon->disable();
 		}
 		else {
 			mWeapons[weapon->getWeaponType()] = weapon;
-			weapon->removeComponent("physics_body");
+			//weapon->setIsPhysicsBodyEnabled(0);
+			weapon->removeComponent(PHYSICS_BODY_COMPONENT);
 			weapon->setParent(this);
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
-			weapon->setPosition(0.5f, -0.5f, -1.0f);
+			weapon->setPosition(1.0f, 0.0f, -4.0f);
+			weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));			
+			this->mCurWeapon = weapon;
 		}
-		emit sWeaponAdded(weapon);
+		emit sAmmoClipChange(weapon->getCurAmmo(), weapon->getCurClip());
 	}
 }
 
@@ -79,11 +82,13 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
         mWeapons[type] = nullptr;
 
         weapon->enable();
-        weapon->setPosition(0.0f, 2.0f, -2.0f);
         weapon->setParent((dt::Node*)(this->getScene()));
-        weapon->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(MESH_COMPONENT, PHYSICS_BODY_COMPONENT, 
-            dt::PhysicsBodyComponent::BOX, (float)weapon->getWeight()));
-
+        weapon->setPosition(this->getPosition().x + 0.0f, this->getPosition().y + 4.0f, this->getPosition().z -3.0f);
+        weapon->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent("prop_mesh", PHYSICS_BODY_COMPONENT, 
+            dt::PhysicsBodyComponent::BOX, 0)).get();
+        weapon->setScale(Ogre::Vector3(1, 1, 1));
+        weapon->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->disable();
+        weapon->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->enable();
         this->setCurSpeed(this->getOrigSpeed());
         if (mHasSpeededUp) {
             __onSpeedUp(true);
@@ -117,6 +122,12 @@ void Alien::onDeInitialize() {
 void Alien::onUpdate(double time_diff) {
     this->mIsUpdatingAfterChange = (time_diff == 0);
 
+	//if (hasweapon) {
+	//	std::cout << this->getPosition(dt::Node::SCENE).x << " " << this->getPosition(dt::Node::SCENE).y << " " << this->getPosition(dt::Node::SCENE).z << std::endl;
+	//	auto weapon = this->findChildNode("RailGun_node");
+	//	if (weapon)
+	//		std::cout << weapon->getPosition(dt::Node::SCENE).x << " " << weapon->getPosition(dt::Node::SCENE).y << " " << weapon->getPosition(dt::Node::SCENE).z << std::endl << std::endl;
+	//}
     if (mIsAddingEquipment) {
         mIsAddingEquipment = false;
         this->findChildNode("getProp")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
@@ -138,13 +149,17 @@ void Alien::__onChangeWeapon(Weapon::WeaponType type) {
 
 void Alien::__onRemoveWeapon() {
     removeWeapon(getCurWeapon()->getWeaponType());
-
-    for (auto iter = mWeapons.begin() ; iter != mWeapons.end() ; ++iter) {
+	auto iter = mWeapons.begin();
+    for ( ; iter != mWeapons.end() ; ++iter) {
         if (iter->second != nullptr) {
             changeCurWeapon(iter->second->getWeaponType());
 
             break;
         }
+    }
+    if (iter == mWeapons.end())
+    {
+        emit sAmmoClipChange(0, 0);
     }
 }
 
