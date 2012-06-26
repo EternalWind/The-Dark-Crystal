@@ -176,6 +176,13 @@ signals:
       */
     void sGetCrystal(Entity* entity);
 
+    /**
+      * 一个在变更屏幕上的显示时发出的signal
+      * @param cur_ammo 变换后的弹药数
+      * @param cur_clip 变换后的弹夹数
+      */
+    void sAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip);
+
 protected slots:
     virtual void __onMove(Entity::MoveType type, bool is_pressed) = 0;
 

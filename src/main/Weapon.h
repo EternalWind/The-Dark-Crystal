@@ -87,10 +87,6 @@ public:
 
 	float getHittingRange() const;
 
-	void setIsPhysicsBodyEnabled(bool is_enabled);
-
-	bool getIsPhysicsBodyEnabled();
-
 	const dt::InteractionComponent* getInterator() const;
 
 	/**

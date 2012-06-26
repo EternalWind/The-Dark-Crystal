@@ -763,21 +763,6 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 			node = dt_parent->addChildNode(pAlien);
 		else 
 			node = mScene->addChildNode(pAlien);
-
-		if (agent.toInt() == 0)
-		{
-			HumanAgent* human_agent = new HumanAgent("Player");
-			human_agent->attachTo(pAlien);
-			EntityManager::get()->setHuman(pAlien);
-		}
-		if (agent.toInt() == 1)
-		{
-			PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer", 20);
-			Ai_agent->attachTo(pAlien);
-			EntityManager::get()->addPlayer(pAlien);
-
-		}
-		
 		
 		QDomElement pos = og_node.firstChildElement(SL_POS);
 		QDomElement scale = og_node.firstChildElement(SL_SCALE);
@@ -794,7 +779,21 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 					scale.attribute(SL_Z).toFloat()));	
 		
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
+		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
+
+		if (agent.toInt() == 0)
+		{
+			HumanAgent* human_agent = new HumanAgent("Player");
+			human_agent->attachTo(pAlien);
+			EntityManager::get()->setHuman(pAlien);
+		}
+		if (agent.toInt() == 1)
+		{
+			PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
+			Ai_agent->attachTo(pAlien);
+			EntityManager::get()->addPlayer(pAlien);
+
+		}
 	}
 	return node;
 }
@@ -948,8 +947,7 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
 		else  
 			node = mScene->addChildNode(pMonster);
 
-		MonsterAIAgent *agent = new MonsterAIAgent(monster_id + "_agent");
-		agent->attachTo(pMonster);
+		
 
 		EntityManager::get()->addMonster(pMonster);
 
@@ -966,6 +964,9 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
             scale.attribute(SL_Z).toFloat()));		
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 		node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
+		
+		MonsterAIAgent *agent = new MonsterAIAgent(monster_id + "_agent");
+		agent->attachTo(pMonster);
 	}
 	return node;
 }
