@@ -104,8 +104,8 @@ void BattleState::onInitialize() {
     text_box->setTextAlign(MyGUI::Align::Left);
 
     __onHealthChanged(0,100);
-    __onAmmoChanged(0, 0);
-    __onClipNumChanged(0, 0);
+    __onAmmoChanged(0);
+    __onClipNumChanged(0);
 
     __resetGui();
 
@@ -204,11 +204,11 @@ void BattleState::__onHealthChanged(uint16_t pre_health, uint16_t cur_health) {
     __changeDigits(mHealthHUD, cur_health);
 }
 
-void BattleState::__onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo) {
+void BattleState::__onAmmoChanged(uint16_t cur_ammo) {
     __changeDigits(mAmmoHUD, cur_ammo);
 }
 
-void BattleState::__onClipNumChanged(uint16_t pre_num, uint16_t cur_num) {
+void BattleState::__onClipNumChanged(uint16_t cur_num) {
     __changeDigits(mClipNumHUD, cur_num);
 }
 

@@ -1035,6 +1035,9 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 		auto interval = w_node.firstChildElement("interval");
 		float interval_num = interval.text().toFloat();
 
+		auto reload_time = w_node.firstChildElement("reload_time");
+		float reload_time_num = reload_time.text().toFloat();
+
 		auto range = w_node.firstChildElement("range");
 		float range_num = range.text().toFloat();
 
@@ -1051,6 +1054,7 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
                                      ammo_per_clip_num,
                                      is_one_shot_num,
                                      interval_num,
+									 reload_time_num,
                                      weapon_id + "_fire",
                                      weapon_id + "_reload_begin",
                                      weapon_id + "_reload_done",

@@ -3,7 +3,7 @@
 
 #include "Entity.h"
 #include "Character.h"
-
+#include "Weapon.h"
 //#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 //#include <BulletDynamics/Character/btKinematicCharacterController.h>
 
