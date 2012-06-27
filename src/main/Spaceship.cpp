@@ -63,26 +63,35 @@ void Spaceship::onInitialize() {
 	this->setEyePosition(Ogre::Vector3(0, 2, 0));	
 
 	//添加尾焰
-	this->addFlame(
-		"back_left_flame", 
-		"Test/Particle",
-		Ogre::Vector3(-2.5, -0.9, 8.6),
-		Ogre::Vector3(0, 0, 1)
-		);
+	//this->addFlame(
+	//	"back_left_flame", 
+	//	"Test/Particle",
+	//	Ogre::Vector3(-2.5, -0.9, 8.6),
+	//	Ogre::Vector3(0, 0, 1)
+	//	);
 
-	this->addFlame(
-		"back_right_flame",
-		"Test/Particle",
-		Ogre::Vector3(2.5, -0.9, 8.6),
-		Ogre::Vector3(0, 0, 1)
-		);
+	//this->addFlame(
+	//	"back_right_flame",
+	//	"Test/Particle",
+	//	Ogre::Vector3(2.5, -0.9, 8.6),
+	//	Ogre::Vector3(0, 0, 1)
+	//	);
+
+
+	//auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+
+	//mesh->setAnimation("takeOff");
+	//mesh->setLoopAnimation(true);
+	//mesh->playAnimation();
+	//
 }
 
 void Spaceship::__onGetOffVehicle() {
 	// 速度太快或者高度太高就不能下飞船，否则就会被摔死！！！恶狠狠地摔！！！
 	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	if (physics_body->getRigidBody()->getWorldTransform().getOrigin().y() < 30.0f &&
+	if (physics_body != nullptr && 
+		physics_body->getRigidBody()->getWorldTransform().getOrigin().y() < 30.0f &&
 		physics_body->getRigidBody()->getLinearVelocity().length() < 20.0f) {
 		Alien* alien;
 		alien = dynamic_cast<Alien*>(this->findChildNode("alien", false).get());
