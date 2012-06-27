@@ -140,19 +140,6 @@ float Weapon::getHittingRange() const {
 	return mHittingRange;
 }
 
-void Weapon::setIsPhysicsBodyEnabled(bool is_enabled) {
-	mIsPhysicsBodyEnabled = is_enabled;
-	
-	if (is_enabled)
-		mPhysicsBody->enable();
-	else
-		mPhysicsBody->disable();
-}
-
-bool Weapon::getIsPhysicsBodyEnabled() {
-	return mIsPhysicsBodyEnabled;
-}
-
 void Weapon::onInitialize() {
 	Prop::onInitialize();
 	if (mWeaponType == THROWABLE) {

@@ -56,11 +56,12 @@ void AITest::onInitialize() {
     
     Alien* alien1 = new Alien("alien1", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
     scene->addChildNode(alien1);
+
     
     alien1->setPosition(0, 10, -100);
     alien1->setScale(0.005);    
     
-    
+
     PlayerAIAgent * pa = new PlayerAIAgent("rj");
     pa->attachTo(alien1);
 

@@ -8,11 +8,6 @@ Agent::Agent(const QString name) : dt::Node(AGENT), mName(name) {}
 
 void Agent::attachTo(Entity* entity) {
     if (entity != nullptr) {
-        Agent* agent = dynamic_cast<Agent*>(entity->findChildNode(AGENT, false).get());
-
-        if (agent != nullptr) {
-            agent->detach();
-        }
 
         this->setParent(entity);
 
@@ -29,6 +24,7 @@ void Agent::attachTo(Entity* entity) {
         QObject::connect(this, SIGNAL(sReload()), entity, SLOT(__onReload()));
 
 		this->setPosition(entity->getEyePosition());
+		this->setRotation(Ogre::Quaternion::IDENTITY);
     }
 }
 
@@ -36,7 +32,7 @@ void Agent::detach() {
     Entity* entity = dynamic_cast<Entity*>(this->getParent());
 
     if (entity != nullptr) {
-        QObject::disconnect(this, SIGNAL(sMove(Entity::MoveType, bool)), entity, SLOT(__onMove(MoveType, bool)));
+        QObject::disconnect(this, SIGNAL(sMove(Entity::MoveType, bool)), entity, SLOT(__onMove(Entity::MoveType, bool)));
         QObject::disconnect(this, SIGNAL(sAttack(bool)), entity, SLOT(__onAttack(bool)));
         QObject::disconnect(this, SIGNAL(sJump(bool)), entity, SLOT(__onJump(bool)));
         QObject::disconnect(this, SIGNAL(sSpeedUp(bool)), entity, SLOT(__onSpeedUp(bool)));

@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <QString>
 #include <vector>
-
+#include "Weapon.h"
 /**
   * 游戏的战斗场景
   * 默认第一人称视角
@@ -165,6 +165,8 @@ protected slots:
 	void __onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender);
 
     void __changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number);
+
+	void __onAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip);
 
 protected:
 	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值

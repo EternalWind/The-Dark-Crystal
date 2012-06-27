@@ -1,5 +1,6 @@
 #include "Spaceship.h"
 #include "Agent.h"
+#include "Alien.h"
 
 #include "ConfigurationManager.h"
 
@@ -52,15 +53,14 @@ void Spaceship::onInitialize() {
 	rise_sound->setVolume((float)sound_setting.getSoundEffect());
 	fall_sound->setVolume((float)sound_setting.getSoundEffect());
 
-	auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	p->getRigidBody()->setFriction(0.0);
-	p->setGravity(0, 0, 0);
+	//设为静态物体
+	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->setMass(0);
+	this->resetPhysicsBody();
 
 	this->setCurSpeed(0.0f);
-	mIsJumping = true;
 
 	//设置摄像头位置
-	this->setEyePosition(this->getPosition() + Ogre::Vector3(0, 6, 34));
+	this->setEyePosition(Ogre::Vector3(0, 2, 0));	
 
 	//添加尾焰
 	this->addFlame(
@@ -76,7 +76,33 @@ void Spaceship::onInitialize() {
 		Ogre::Vector3(2.5, -0.9, 8.6),
 		Ogre::Vector3(0, 0, 1)
 		);
-	
+}
+
+void Spaceship::__onGetOffVehicle() {
+	// 速度太快或者高度太高就不能下飞船，否则就会被摔死！！！恶狠狠地摔！！！
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+
+	if (physics_body->getRigidBody()->getWorldTransform().getOrigin().y() < 30.0f &&
+		physics_body->getRigidBody()->getLinearVelocity().length() < 20.0f) {
+		Alien* alien;
+		alien = dynamic_cast<Alien*>(this->findChildNode("alien", false).get());
+
+		Agent* agent;
+		agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT, false).get());
+
+		agent->detach();
+
+		alien->setParent((dt::Node*)this->getScene());
+		alien->setPosition(this->getPosition() + Ogre::Vector3(mWidth * 2 + 0.5, 0, 0));
+		alien->findComponent<dt::MeshComponent>(Alien::MESH_COMPONENT)->enable();
+		alien->findComponent<dt::PhysicsBodyComponent>(Alien::PHYSICS_BODY_COMPONENT)->enable();
+
+		agent->attachTo(alien);
+
+		// 下船之后船为静态物体
+		physics_body->setMass(0);
+		this->resetPhysicsBody();
+	}
 }
 
 void Spaceship::onDeinitialize() {
