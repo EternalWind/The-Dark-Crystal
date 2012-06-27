@@ -184,7 +184,7 @@ void PlayerAIAgent::onUpdate(double time_diff) {
     
 
       
-    if (time_diff == 0)  {
+    if (time_diff == 0.0)  {
         return; 
     }
 
@@ -215,7 +215,7 @@ void PlayerAIAgent::onInitialize() {
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
 
     mTrigger = this->addComponent<dt::TriggerAreaComponent>(new dt::TriggerAreaComponent(
-        new btBoxShape(btVector3(200.0f, 200.0f, 200.0f)), TRIGGER_AREA_COMPONENT)).get();
+        new btBoxShape(btVector3(20.0f, 20.0f, 20.0f)), TRIGGER_AREA_COMPONENT)).get();
     connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
             this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
 
@@ -248,12 +248,13 @@ void PlayerAIAgent::__onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c)
         return; 
     }
 
-    if (c->getNode()->getName() == "alien2") {
+    if (c->getNode()->getName() == "alien") {
         std::cout << "2143535" << std::endl;
     }
 
+
     //езся!
-    Alien * gun_friend = dynamic_cast<Alien*>(c->getNode());
+    Character * gun_friend = dynamic_cast<Character*>(c->getNode());
   //  dt::Logger().get().debug(c->getNode()->getName());
     
     if (gun_friend != nullptr) {
