@@ -2,6 +2,7 @@
 #include "OptionState.h"
 #include "CreaditState.h"
 #include "BattleStateTest.h"
+#include "BattleState.h"
 
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
@@ -70,7 +71,7 @@ void MenuState::onClick(MyGUI::Widget* sender) {
         dt::StateManager::get()->setNewState(new OptionState());
     } else if (sender->getName() == "Gui.new_game_button") {
         dt::StateManager::get()->pop();
-        dt::StateManager::get()->setNewState(new BattleStateTest());
+        dt::StateManager::get()->setNewState(new BattleState("01"));
     } else if (sender->getName() == "Gui.load_record_button") {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new BattleStateTest());

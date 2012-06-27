@@ -19,6 +19,7 @@
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 #include <Logic/ScriptComponent.hpp>
+#include <Logic/ScriptManager.hpp>
 
 #include <OgreProcedural.h>
 
@@ -34,8 +35,15 @@ BattleState::BattleState(const QString stage_name)
 
 void BattleState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
+    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
 
-    auto scene = addScene(new dt::Scene("BattleStateTest"));
+    dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
+
+    auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
+    scene->addComponent(new dt::ScriptComponent(mStage + ".js", "state_script", true));
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
 
@@ -94,8 +102,6 @@ void BattleState::onInitialize() {
 
     MyGUI::TextBox* text_box = dynamic_cast<MyGUI::TextBox*>(mDialogLabel->getMyGUIWidget());
     text_box->setTextAlign(MyGUI::Align::Left);
-	
-	
 
     __onHealthChanged(0,100);
     __onAmmoChanged(0, 0);
@@ -146,35 +152,35 @@ void BattleState::setDialogLabel(dt::GuiLabel* dialog_label) {
 	}
 }
 
-uint16_t BattleState::getTotalEnemyNum() const {
+int BattleState::getTotalEnemyNum() const {
 	return mTotalEnemyNum;
 }
 
-void BattleState::setTotalEnemyNum(uint16_t total_enemy_num) {
+void BattleState::setTotalEnemyNum(int total_enemy_num) {
 	mTotalEnemyNum = total_enemy_num;
 }
 
-uint16_t BattleState::getRemainEnemyNum() const {
+int BattleState::getRemainEnemyNum() const {
 	return mRemainEnemyNum;
 }
 
-void BattleState::setRemainEnemyNum(uint16_t remain_enemy_num) {
+void BattleState::setRemainEnemyNum(int remain_enemy_num) {
 	mRemainEnemyNum = remain_enemy_num;
 }
 
-uint16_t BattleState::getTotalCrystalNum() const {
+int BattleState::getTotalCrystalNum() const {
 	return mTotalCrystalNum;
 }
 
-void BattleState::setTotalCrystalNum(uint16_t total_crystal_num) {
+void BattleState::setTotalCrystalNum(int total_crystal_num) {
 	mTotalCrystalNum = total_crystal_num;
 }
 
-uint16_t BattleState::getObtainedCrystalNum() const {
+int BattleState::getObtainedCrystalNum() const {
 	return mObtainedCrystalNum;
 }
 
-void BattleState::setObtainedCrystalNum(uint16_t obtained_crystal_num) {
+void BattleState::setObtainedCrystalNum(int obtained_crystal_num) {
 	mObtainedCrystalNum = obtained_crystal_num;
 }
 
