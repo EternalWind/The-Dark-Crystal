@@ -4,6 +4,9 @@
 #include <string>
 using namespace std; 
 
+Ogre::Vector3 AIDivideAreaManager::getArea(uint16_t id) {
+    return mPosition[id];
+}
 void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
     mNxtArea[a].push_back(b); 
     mNxtArea[b].push_back(a);     
@@ -148,9 +151,7 @@ std::pair<uint16_t, uint16_t> AIDivideAreaManager::randomPosition(uint16_t area)
         if (p.x*p.x + p.z*p.z <= mRadius * mRadius) break; 
     }   
 
-    std::cout << mRadius << endl; 
-            std::cout << p.x << ' ' << p.z << endl; 
-            std::cout << mPosition[area].x << ' ' << mPosition[area].z << endl; 
+  
     for (int i = 0; i < 50; i ++) 
         if (!mPositionMark[area][i]) {
             

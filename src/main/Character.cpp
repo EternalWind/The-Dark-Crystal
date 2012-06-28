@@ -140,7 +140,9 @@ void Character::onUpdate(double time_diff) {
     } else {
         // ÒÆ¶¯²»µ½¡­¡­
         //mVelocity.setY(1.0f);
-        //std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+
+       // std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+
         //mVelocity.setZero();
         btVector3 vec = BtOgre::Convert::toBullet(this->getPosition(dt::Node::SCENE)) - target_position.getOrigin();
 
