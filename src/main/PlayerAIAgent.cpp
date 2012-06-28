@@ -8,7 +8,6 @@ const QString PlayerAIAgent::INTERACTOR_COMPONENT = "Player_AI_Agent_Interactor"
 const QString PlayerAIAgent::TRIGGER_AREA_COMPONENT = "Player_AI_TRIGGER_AREA_COMPONENT";
 const double  PlayerAIAgent::THREAT_COOL_TIME = 2.0;
 const double  PlayerAIAgent::eps = 1e-4;
-
 const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 270;
 const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 90;
 const double  PlayerAIAgent::PI = acos(-1.0);
@@ -22,6 +21,8 @@ PlayerAIAgent::PlayerAIAgent(QString name): Agent(name) {
     mPreDegree = 0;        
     mOnMovePress = false; 
     mFollow = true; 
+    mAttack = false; 
+    
 }
 
 bool PlayerAIAgent::isOnWay() {
@@ -159,14 +160,7 @@ void PlayerAIAgent::decision(double time_diff) {
             uint16_t nxt_id = AIDivideAreaManager::get()->getNxtClosestId(cur_id, des_id);                
                 
             std::pair<uint16_t, uint16_t> tmp = AIDivideAreaManager::get()->randomPosition(nxt_id);
-
-          /*  std::cout << cur_id << endl; 
-            std::cout << des_id << endl; 
-            std::cout << nxt_id << endl; 
-            std::cout << cur_pos.x << ' ' << cur_pos.z << endl; 
-            std::cout << AIDivideAreaManager::get()->getPositionById(tmp).x <<  ' ' <<
-                AIDivideAreaManager::get()->getPositionById(tmp).z << endl;
-*/
+       
             dt::Logger().get().debug(this->getBody()->getName());
             if (tmp.first != -1) {     
                     AIDivideAreaManager::get()->destroy(mNxtArea);
@@ -184,6 +178,7 @@ void PlayerAIAgent::decision(double time_diff) {
 }
 void PlayerAIAgent::onUpdate(double time_diff) {
       
+   
     if (time_diff == 0.0)  {
         return; 
     }
@@ -229,14 +224,18 @@ void PlayerAIAgent::onDeinitialize() {
 }
 
 void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {
-     Monster* enemy = dynamic_cast<Monster*>(pbc->getNode());
-     if (enemy != nullptr) {
-        emit(sAttack(true));
-        mHasEnemy = true; 
-       // std::cout << "mHasEnemy " << mHasEnemy << endl; 
-     } else {
-        emit(sAttack(false));        
-     }
+    if (pbc != nullptr) {
+        Monster* enemy = dynamic_cast<Monster*>(pbc->getNode());
+        if (enemy != nullptr) {
+            if (!mAttack)
+                emit(sAttack(true));
+            mHasEnemy = true; 
+            // std::cout << "mHasEnemy " << mHasEnemy << endl; 
+        } else {
+            if (mAttack)
+                emit(sAttack(false));        
+        }
+    }
 }
 
 void PlayerAIAgent::__onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c) {
