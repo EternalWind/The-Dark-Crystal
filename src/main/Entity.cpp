@@ -38,7 +38,7 @@ void Entity::setCurHealth(const uint16_t current_health) {
             mCurHealth = mMaxHealth;
         }
 
-        emit sHealthChanged(pre_health, mCurHealth);
+        emit sHealthChanged(mCurHealth);
     }
 }
 

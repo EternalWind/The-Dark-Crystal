@@ -142,10 +142,9 @@ public:
 signals:
     /**
       * 一个当该实体的生命值被改变时会发送的signal。
-      * @param pre_health 改变前的生命值
       * @param cur_health 改变后的生命值
       */
-    void sHealthChanged(uint16_t pre_health, uint16_t cur_health);
+    void sHealthChanged(uint16_t cur_health);
 
     /**
       * 一个当该实体的速度值被改变时会发送的signal。

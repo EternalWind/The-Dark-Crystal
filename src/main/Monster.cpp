@@ -27,6 +27,12 @@ void Monster::setAttackRange(float attack_range) {
 	}
 }
 
+void Monster::onKilled() {
+	auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+	mesh->setAnimation("die");
+	mesh->playAnimation();
+}
+
 Monster::Monster(const QString node_name,
 	const QString mesh_handle,
 	const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
@@ -84,8 +90,13 @@ void Monster::onUpdate(double time_diff) {
     }
 
 	Character::onUpdate(time_diff);
-}
 
+	if (this->getCurHealth() == 0) {
+		auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+		if (mesh->isAnimationStopped())
+			this->kill();
+	}
+}
 // --------------- slots -------------------//
 
 void Monster::__onAttack(bool is_pressed) {

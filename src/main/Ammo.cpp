@@ -3,8 +3,8 @@
 Ammo::Ammo() {
 }
 
-Ammo::Ammo(const QString &name, uint16_t clip_num, Weapon::WeaponType weapon_type)
-		: mClipNum(clip_num), mWeaponType(weapon_type), Prop(name, AMMO){
+Ammo::Ammo(const QString &prop_name, const QString &node_name, uint16_t clip_num, Weapon::WeaponType weapon_type)
+		: mClipNum(clip_num), mWeaponType(weapon_type), Prop(prop_name, node_name, AMMO){
 		
 }
 
@@ -13,6 +13,10 @@ Ammo::~Ammo() {
 
 uint16_t Ammo::getClipNum() const {
 	return mClipNum;
+}
+
+void Ammo::onInitialize() {
+	Prop::onInitialize();
 }
 
 void Ammo::setClipNum(uint16_t clip_num) {
