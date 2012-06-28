@@ -4,6 +4,7 @@
 #include <Logic/CollisionComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
 #include <OgreProcedural.h>
+#include "AdvanceCollisionComponent.h"
 Weapon::Weapon(){
 }
 
@@ -149,7 +150,7 @@ void Weapon::onInitialize() {
 	auto node = this->addChildNode(new Node("ammo_node"));
 	OgreProcedural::SphereGenerator().setRadius(0.3f).setUTile(.5f).realizeMesh("Bullet");
 	if (mWeaponType == THROWABLE || mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
-		mInteractor = node->addComponent(new dt::CollisionComponent("Bullet", "interactor")).get();
+		mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", "interactor")).get();
 	} else {
 		mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();
 	}
