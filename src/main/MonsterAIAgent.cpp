@@ -136,6 +136,12 @@ void MonsterAIAgent::walk(double time_diff) {
     }
 }
 void MonsterAIAgent::onUpdate(double time_diff) {    
+
+    if (this->getParent() == nullptr) {
+        this->disable(); 
+        this->kill();
+        return;
+    }
      //update调用子节点的update和它的component。    
     dt::Node::onUpdate(time_diff);  
     

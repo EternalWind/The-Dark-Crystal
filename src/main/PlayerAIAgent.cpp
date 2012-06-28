@@ -11,7 +11,7 @@ const double  PlayerAIAgent::eps = 1e-4;
 const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 270;
 const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 90;
 const double  PlayerAIAgent::PI = acos(-1.0);
-const double  PlayerAIAgent::ROTATE_FLOAT = 6.0; 
+const double  PlayerAIAgent::ROTATE_FLOAT = 3.0; 
 const double  PlayerAIAgent::ENTER_SCOPE = 3;
 
 
@@ -178,7 +178,11 @@ void PlayerAIAgent::decision(double time_diff) {
 }
 void PlayerAIAgent::onUpdate(double time_diff) {
       
-   
+    if (this->getParent() == nullptr) {
+        this->disable(); 
+        this->kill();
+        return;
+    }
     if (time_diff == 0.0)  {
         return; 
     }
@@ -188,7 +192,12 @@ void PlayerAIAgent::onUpdate(double time_diff) {
     if (mThreat) {
         mThreatTime -= time_diff; 
         if (mThreatTime <= eps) {
+             if (mAttack) {
+                emit(sAttack(false)); 
+                mAttack = false;
+            }
             mThreat = false; 
+
         }
         guard(time_diff); 
     } else if (mOnWay) { //在行走，则走之。
@@ -210,7 +219,7 @@ void PlayerAIAgent::onInitialize() {
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
 
     mTrigger = this->addComponent<dt::TriggerAreaComponent>(new dt::TriggerAreaComponent(
-        new btBoxShape(btVector3(20.0f, 20.0f, 20.0f)), TRIGGER_AREA_COMPONENT)).get();
+        new btBoxShape(btVector3(10.0f, 10.0f, 10.0f)), TRIGGER_AREA_COMPONENT)).get();
     connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
             this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
 
@@ -232,8 +241,10 @@ void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {
             mHasEnemy = true; 
             // std::cout << "mHasEnemy " << mHasEnemy << endl; 
         } else {
-            if (mAttack)
-                emit(sAttack(false));        
+            if (mAttack) {
+                emit(sAttack(false)); 
+                mAttack = false;
+            }
         }
     }
 }

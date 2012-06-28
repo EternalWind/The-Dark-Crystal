@@ -32,7 +32,8 @@ void Monster::onKilled() {
 	auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 	mesh->setAnimation("die");
 	mesh->setLoopAnimation(false);
-	mesh->playAnimation();
+	mesh->playAnimation();    
+    mKill = true; 
 }
 
 Monster::Monster(const QString node_name,
@@ -51,6 +52,7 @@ Monster::Monster(const QString node_name,
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
 	mAttackInterval(attack_interval) {
+        mKill = false; 
 }
 
 void Monster::onInitialize() {
@@ -80,6 +82,14 @@ void Monster::onDeinitialize() {
 }
 
 void Monster::onUpdate(double time_diff) {
+    if (mKill) {
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        if (mesh->isAnimationStopped()) {
+            this->disable(); 
+            this->kill(); 
+            return; 
+        }
+    }
     this->mIsUpdatingAfterChange = (time_diff == 0);
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
