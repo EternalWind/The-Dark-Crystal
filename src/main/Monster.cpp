@@ -1,5 +1,6 @@
 #include "Monster.h"
 #include "Agent.h"
+#include "Alien.h"
 
 #include "ConfigurationManager.h"
 
@@ -89,13 +90,13 @@ void Monster::onUpdate(double time_diff) {
         physics_body->getRigidBody()->setLinearVelocity(velocity);
     }
 
-	Character::onUpdate(time_diff);
-
 	if (this->getCurHealth() == 0) {
-		auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-		if (mesh->isAnimationStopped())
+		if (this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->isAnimationStopped()) {
 			this->kill();
+		}
 	}
+
+	Character::onUpdate(time_diff);
 }
 // --------------- slots -------------------//
 
@@ -106,6 +107,12 @@ void Monster::__onAttack(bool is_pressed) {
 		if (interator->isReady()) {
 			attack_sound->playSound();
 			interator->check();
+			
+			// 播放攻击动画
+			auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+			mesh->setAnimation("attack");
+			mesh->setLoopAnimation(false);
+			mesh->playAnimation();
 		}
 	}
 }
@@ -115,11 +122,17 @@ void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_r
 }
 
 void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
-	Entity* obj = dynamic_cast<Entity*>(hit->getNode());
+	// 只能攻击Alien
+	Alien* obj = dynamic_cast<Alien*>(hit->getNode());
 
 	if (obj != nullptr) {
 		uint16_t cur_health = obj->getCurHealth();
 		obj->setCurHealth(getAttackValue() > cur_health ? 0 : cur_health - getAttackValue());
+
+		// 如果他挂了>_<
+		if (obj->getCurHealth() == 0) {
+			obj->onKilled();
+		}
 	}
 }
 
