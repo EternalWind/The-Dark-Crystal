@@ -14,9 +14,9 @@ public:
       * @param mesh_handle 模型句柄
       * @param collison_shape_type 物理外形
       * @param mass 该实体的质量
-      * @param walk_sound_handle 外星人行走时的音效
-      * @param jump_sound_handle 外星人跳跃时的音效
-      * @param run_sound_handle 外星人跑步时的音效
+      * @param walk_sound_handle 人物行走时的音效
+      * @param jump_sound_handle 人物跳跃时的音效
+      * @param run_sound_handle 人物跑步时的音效
       * @param jump_speed 跳跃时的初速度大小
       */
     Character(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass, 
@@ -39,6 +39,10 @@ public:
       * @returns 跳跃时的初速度大小
       */
     float getJumpSpeed() const;
+
+protected:
+
+	bool __canJump();
 
 protected slots:
     virtual void __onMove(Entity::MoveType type, bool is_pressed);
@@ -64,12 +68,13 @@ protected:
     QString mRunSoundHandle;                        //!< 跑步音效句柄。
     btVector3 mVelocity;                            //!< 当前的速度向量。
     float mJumpSpeed;                               //!< 跳跃时的初速度大小。
-    bool mIsJumpping;                               //!< 是否处于跳跃中。
+	double mJumpingInterval;                        //!< 跳跃冷却时间
+	double mTimeElapseAfterJumping;                 //!< 跳跃后流逝的时间
 
 public:
-    const static QString WALK_SOUND_COMPONENT;      //!< 所有外星人类播放行走音效的SoundComponent的名字。
-    const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
-    const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。
+    const static QString WALK_SOUND_COMPONENT;      //!< 所有人物播放行走音效的SoundComponent的名字。
+    const static QString JUMP_SOUND_COMPONENT;      //!< 所有人物播放跳跃音效的SoundComponent的名字。
+    const static QString RUN_SOUND_COMPONENT;       //!< 所有人物播放跑动音效的SoundComponent的名字。
 };
 
 #endif
