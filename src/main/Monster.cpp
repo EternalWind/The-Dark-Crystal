@@ -90,11 +90,11 @@ void Monster::onUpdate(double time_diff) {
         physics_body->getRigidBody()->setLinearVelocity(velocity);
     }
 
-	if (this->getCurHealth() == 0) {
-		if (this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->isAnimationStopped()) {
-			this->kill();
-		}
-	}
+	//if (this->getCurHealth() == 0) {
+	//	if (this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->isAnimationStopped()) {
+	//		this->kill();
+	//	}
+	//}
 
 	Character::onUpdate(time_diff);
 }

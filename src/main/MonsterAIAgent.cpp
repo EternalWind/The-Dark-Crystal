@@ -61,7 +61,7 @@ void MonsterAIAgent::onInitialize() {
 
     mTrigger = this->addComponent(new dt::TriggerAreaComponent(
         new btBoxShape(btVector3(20.0f, 20.0f, 20.0f)), TRIGGER_AREA_COMPONENT)).get();
-    dt::Logger::get().debug(mTrigger->getFullName());
+   
     if (!QObject::connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
             this, SLOT(onTriggerr(dt::TriggerAreaComponent*, dt::Component*))) ) {
              dt::Logger::get().error("can't connect triggerAreaComponent to MonsterAIAgent's __onTrigger");
