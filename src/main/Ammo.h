@@ -11,9 +11,11 @@ class Ammo : public Prop {
 public:
 	Ammo();
 
-	Ammo(const QString &name, uint16_t clip_num, Weapon::WeaponType weapon_type);
+	Ammo(const QString &prop_name, const QString &node_name, uint16_t clip_num, Weapon::WeaponType weapon_type);
 
 	~Ammo();
+
+	void onInitialize();
 
 	uint16_t getClipNum() const;
 
