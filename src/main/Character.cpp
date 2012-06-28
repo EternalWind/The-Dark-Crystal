@@ -117,18 +117,18 @@ void Character::onUpdate(double time_diff) {
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 
+		// 刚刚落地
+		if (mIsJumping && mesh->isAnimationStopped()) {
+			mIsJumping = false;
 
-        if (mIsJumping && mesh->isAnimationStopped()) {
-            mIsJumping = false;
-            
-            mesh->stopAnimation();
+			mesh->stopAnimation();
 
-            if (!mIsMoving) {
-                mVelocity.setZero();
-                mMoveVector = Ogre::Vector3::ZERO;
-            }
+			if (!mIsMoving) {
+				mVelocity.setZero();
+				mMoveVector = Ogre::Vector3::ZERO;
+			}
 
-            if (!mVelocity.isZero()) {
+			if (!mVelocity.isZero()) {
                 if (mHasSpeededUp) {
                     mesh->setAnimation("run");
                 } else {
@@ -152,9 +152,7 @@ void Character::onUpdate(double time_diff) {
 
     } else {
         // 移动不到……
-        //mVelocity.setY(1.0f);
-        //std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
-        //mVelocity.setZero();
+
         btVector3 vec = BtOgre::Convert::toBullet(this->getPosition(dt::Node::SCENE)) - target_position.getOrigin();
 
         if (!vec.isZero())
@@ -167,7 +165,7 @@ void Character::onUpdate(double time_diff) {
         mVelocity.setZ(vec.z());
     }
 
-    this->mIsUpdatingAfterChange = false;
+    //this->mIsUpdatingAfterChange = false;
 
     Node::onUpdate(time_diff);
 }
@@ -280,10 +278,12 @@ void Character::__onJump(bool is_pressed) {
 void Character::__onSpeedUp(bool is_pressed) {
     float increasing_rate = 1.5f;
 
-    if (is_pressed && !mIsJumping) {
-        this->setCurSpeed(this->getCurSpeed() * increasing_rate);
+    if (is_pressed /* && !mIsJumping */) {
+		if (mCurSpeed == mOrigSpeed) {
+			this->setCurSpeed(mOrigSpeed * increasing_rate);
+		}
 
-        if (mIsMoving) {
+        if (!mIsJumping && mIsMoving) {
             this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
             this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
 
@@ -295,9 +295,11 @@ void Character::__onSpeedUp(bool is_pressed) {
             mesh->playAnimation();
         }
     } else {
-        this->setCurSpeed(this->getCurSpeed() / increasing_rate);
+		if (mCurSpeed != mOrigSpeed) {
+			this->setCurSpeed(mOrigSpeed);
+		}
 
-        if (mIsMoving) {
+		if (!mIsJumping && mIsMoving) {
             this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
             this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
 
