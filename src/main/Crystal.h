@@ -10,7 +10,7 @@ class Crystal: public Prop {
 public:
 	Crystal();
 	
-	Crystal(const QString &name, double unlock_time);
+	Crystal(const QString &prop_name, const QString &node_name, double unlock_time);
 	
 	~Crystal();
 

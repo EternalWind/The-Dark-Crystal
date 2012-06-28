@@ -3,8 +3,8 @@
 Prop::Prop() {
 }
 
-Prop::Prop(const QString &name, PropType prop_type)
-			: mPropName(name), mPropType(prop_type), Node(name + "_node") {
+Prop::Prop(const QString &prop_name, const QString &node_name, PropType prop_type)
+			: mPropName(prop_name), mPropType(prop_type), Node(node_name) {
 }
 
 Prop::~Prop() {

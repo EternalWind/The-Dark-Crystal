@@ -7,7 +7,8 @@
 Weapon::Weapon(){
 }
 
-Weapon::Weapon( const QString &name, 
+Weapon::Weapon( const QString &prop_name,
+                const QString &node_name, 
 				WeaponType type, 
 				uint16_t power, 
 				uint16_t cur_clip, 
@@ -43,7 +44,7 @@ Weapon::Weapon( const QString &name,
 				mReloadingBeginSound(nullptr),    
 				mReloadingDoneSound(nullptr),  
 				mHittingRange(hitting_range),
-				Prop(name, WEAPON) { 
+				Prop(prop_name, node_name, WEAPON) { 
 }
 
 Weapon::~Weapon(){
@@ -154,6 +155,7 @@ void Weapon::onInitialize() {
 	}
 	mInteractor->setIntervalTime(mInterval);
 	mInteractor->setRange(mHittingRange);
+	mInteractor->setOffset(1.0);
 
 	mIsPhysicsBodyEnabled = true;
 
@@ -238,6 +240,8 @@ void Weapon::_onHit(dt::PhysicsBodyComponent* hit) {
 			obj->setCurHealth(curHealth - mPower);
 		else
 			obj->setCurHealth(0);
+		if (obj->getCurHealth() == 0)
+			obj->onKilled();
 	}
 }
 
