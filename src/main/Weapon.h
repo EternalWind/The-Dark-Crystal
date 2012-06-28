@@ -24,7 +24,8 @@ public:
 	Weapon();
 
 	//当不是投掷型武器时忽略参数hitting_range
-	Weapon( const QString &name, 
+	Weapon( const QString &prop_name, 
+	        const QString &node_name,
             WeaponType type, 
             uint16_t power, 
             uint16_t CurClip, 

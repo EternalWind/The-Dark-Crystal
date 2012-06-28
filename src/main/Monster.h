@@ -67,6 +67,7 @@ public:
 
 	void onUpdate(double time_diff);
 
+	void onKilled();
 
 protected slots:	   
 
