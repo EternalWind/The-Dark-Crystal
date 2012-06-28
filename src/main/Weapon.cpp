@@ -1,8 +1,9 @@
 #include "Weapon.h"
 #include "Entity.h"
+#include "Alien.h"
 #include <Logic/CollisionComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
-
+#include <OgreProcedural.h>
 Weapon::Weapon(){
 }
 
@@ -16,6 +17,7 @@ Weapon::Weapon( const QString &name,
 				uint16_t cur_ammo, 
 				bool is_one_shot, 
 				float interval,
+				float reload_time,
 				const QString &firing_sound_handle, 
 				const QString &reloading_begin_sound_handle, 
 				const QString &reloading_done_sound_handle, 
@@ -32,6 +34,7 @@ Weapon::Weapon( const QString &name,
 				mIsPressed(false),
 				mReloadTimer(nullptr),
 				mInterval(interval),
+				mReloadTime(reload_time),
 				mFiringSoundHandle(firing_sound_handle),
 				mReloadingBeginSoundHandle(reloading_begin_sound_handle),
 				mReloadingDoneSoundHandle(reloading_done_sound_handle),
@@ -142,15 +145,15 @@ float Weapon::getHittingRange() const {
 
 void Weapon::onInitialize() {
 	Prop::onInitialize();
-	if (mWeaponType == THROWABLE) {
-		mInteractor = new dt::CollisionComponent("bullet", "interactor");
+	auto node = this->addChildNode(new Node("ammo_node"));
+	OgreProcedural::SphereGenerator().setRadius(0.3f).setUTile(.5f).realizeMesh("Bullet");
+	if (mWeaponType == THROWABLE || mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
+		mInteractor = node->addComponent(new dt::CollisionComponent("Bullet", "interactor")).get();
 	} else {
-		mInteractor = new dt::RaycastComponent("interactor");
+		mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();
 	}
 	mInteractor->setIntervalTime(mInterval);
-	this->addComponent(mInteractor);
-
-	
+	mInteractor->setRange(mHittingRange);
 
 	mIsPhysicsBodyEnabled = true;
 
