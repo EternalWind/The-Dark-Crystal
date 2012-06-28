@@ -74,6 +74,7 @@ public:
 	  */
 	void stopFlame(const QString& name);
 
+
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
 
@@ -86,19 +87,21 @@ protected slots:
 
 	void __onJump(bool is_pressed);
 
+	void __onGetOffVehicle();
 
 protected:
 	QString mFlyingSoundHandle;                    //!< 飞机飞行声音句柄
 	QString mRiseSoundHandle;                      //!< 飞机上升声音句柄
 	QString mFallSoundHandle;                      //!< 飞机下降声音句柄
 
+public:
 	const static QString FLYING_SOUND_COMPONENT;   //!< 飞机飞行声音Component的名字
 	const static QString RISE_SOUND_COMPONENT;     //!< 飞机上升声音Component的名字
 	const static QString FALL_SOUND_COMPONENT;     //!< 飞机下降声音Component的名字
-	const static float MAX_LEAN_ANGLE;             //!< 飞机平移时最大的倾斜角
-	const static float ANGLE_PER_MOVE;             //!< 飞机每一帧转动的角度
 
 private:
+	const static float MAX_LEAN_ANGLE;             //!< 飞机平移时最大的倾斜角
+	const static float ANGLE_PER_MOVE;             //!< 飞机每一帧转动的角度
 	float mCurAngle;                               //!< 飞机当前倾斜角度      
 	float mMaxSpeed;                               //!< 飞机飞行最大速度
 	float mSpeedPerFrame;                          //!< 飞机加速时每一帧的速度的增量(加速度)

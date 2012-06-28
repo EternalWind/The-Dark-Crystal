@@ -41,7 +41,6 @@ public:
 protected:
 	QString mPropName;                              //!< 道具名称
 	PropType mPropType;                             //!< 道具类型
-	dt::PhysicsBodyComponent* mPhysicsBody;         //!< PhysicsBodyComponent指针
 };
 
 #endif

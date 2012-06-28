@@ -59,6 +59,7 @@ protected slots:
 
 	void __onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot);
 
+	void __onGetOffVehicle();
 
 private:
 
@@ -76,8 +77,6 @@ protected:
 	QString mMoveSoundHandle;                      //!< 战车移动声音句柄
 	QString mRushSoundHandle;                      //!< 战车加速声音句柄
 	QString mLauncherHandle;                       //!< 炮台实体句柄
-	float mWidth;                                  //!< 车身宽度
-	float mLength;                                 //!< 车身长度
 	float mMaxSpeed;                               //!< 战车最高速度
 	float mMinSpeed;                               //!< 战车最低速度/向后最大速度
 	float mSpeedPerFrame;                          //!< 战车速度增量

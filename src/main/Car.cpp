@@ -1,5 +1,6 @@
 #include "Car.h"
 #include "Agent.h"
+#include "Alien.h"
 
 #include <Logic/RaycastComponent.hpp>
 #include "ConfigurationManager.h"
@@ -46,16 +47,7 @@ void Car::onInitialize() {
 	rush_sound->setVolume((float)sound_setting.getSoundEffect());
 
 	//设置镜头位置
-	//this->setEyePosition(this->getPosition() + Ogre::Vector3(0, 6, 19));	
-
-	//设置汽车长、宽
-	btBoxShape* box = dynamic_cast<btBoxShape*>(this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)
-													->getRigidBody()->getCollisionShape());
-	if (box != nullptr) {
-		btVector3 size = box->getHalfExtentsWithoutMargin();
-		mWidth = size.x();
-		mLength = size.z();
-	}
+	this->setEyePosition(Ogre::Vector3(0, 2, 0));	
 
 	//设置炮台
 	mLauncher = this->addChildNode(new dt::Node("launcher"));
@@ -66,9 +58,9 @@ void Car::onInitialize() {
 	mCurSpeed = 0.0f;
 	mMinSpeed = -mMaxSpeed / 2;
 	
-	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-	physics_body->getRigidBody()->setFriction(0.0f);
-	physics_body->setGravity(0, 0, 0);	
+	//设为静态物体
+	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->setMass(0);
+	this->resetPhysicsBody();
 }
 
 void Car::onDeinitialize() {
@@ -109,7 +101,7 @@ void Car::onUpdate(double time_diff) {
 		if (0 == mod) {
 			if (mCurSpeed > 0) {
 				mCurSpeed -= mSpeedPerFrame;
-			} else if (mCurSpeed > 0) {
+			} else if (mCurSpeed < 0) {
 				mCurSpeed += mSpeedPerFrame;
 			}			
 		}
@@ -240,7 +232,6 @@ void Car::__getDelta(float &dx, float &dy, float &alpha, double time_diff) {
 	}
 
 	float k = (y1 - y2) / (x1 - x2);
-	//float a = mAcceleration.z;
 	float a = mLength;
 
 	float x0 = 0.0f;
@@ -252,4 +243,28 @@ void Car::__getDelta(float &dx, float &dy, float &alpha, double time_diff) {
 	dx = x3 - x0;
 	dy = y3 - y0;
 	alpha = std::atan(fabs(x2 - x3) / fabs(y2 - y3));
+}
+
+void Car::__onGetOffVehicle() {
+	// 速度太快就不能下车！否则就会被车撞死！！！
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	if (physics_body->getRigidBody()->getLinearVelocity().length() < 15.0f) {
+		Alien* alien;
+		alien = dynamic_cast<Alien*>(this->findChildNode("alien", false).get());
+
+		Agent* agent;
+		agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT, false).get());
+
+		agent->detach();
+
+		alien->setParent((dt::Node*)this->getScene());
+		alien->setPosition(this->getPosition() + Ogre::Vector3(this->mWidth * 2 + 0.5, 0, 0));
+		alien->findComponent<dt::MeshComponent>(Alien::MESH_COMPONENT)->enable();
+		alien->findComponent<dt::PhysicsBodyComponent>(Alien::PHYSICS_BODY_COMPONENT)->enable();
+
+		agent->attachTo(alien);
+
+		physics_body->setMass(0);
+		this->resetPhysicsBody();
+	}
 }

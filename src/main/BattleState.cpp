@@ -2,8 +2,10 @@
 #include "Alien.h"
 #include "HumanAgent.h"
 #include "Car.h"
+#include "Entity.h"
 #include "MenuState.h"
 #include "SceneLoader.h"
+#include "EntityManager.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -17,6 +19,7 @@
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 #include <Logic/ScriptComponent.hpp>
+#include <Logic/ScriptManager.hpp>
 
 #include <OgreProcedural.h>
 
@@ -32,8 +35,15 @@ BattleState::BattleState(const QString stage_name)
 
 void BattleState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
+    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
 
-    auto scene = addScene(new dt::Scene("BattleStateTest"));
+    dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
+
+    auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
+    scene->addComponent(new dt::ScriptComponent(mStage + ".js", "state_script", true));
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
 
@@ -71,6 +81,9 @@ void BattleState::onInitialize() {
     mQuestionLabel = question.get();
     mDialogLabel = dialog.get();
 
+	Alien *pAlien = EntityManager::get()->getHuman();
+	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
     }
@@ -91,8 +104,8 @@ void BattleState::onInitialize() {
     text_box->setTextAlign(MyGUI::Align::Left);
 
     __onHealthChanged(0,100);
-    __onAmmoChanged(0, 60);
-    __onClipNumChanged(0, 5);
+    __onAmmoChanged(0);
+    __onClipNumChanged(0);
 
     __resetGui();
 
@@ -139,35 +152,35 @@ void BattleState::setDialogLabel(dt::GuiLabel* dialog_label) {
 	}
 }
 
-uint16_t BattleState::getTotalEnemyNum() const {
+int BattleState::getTotalEnemyNum() const {
 	return mTotalEnemyNum;
 }
 
-void BattleState::setTotalEnemyNum(uint16_t total_enemy_num) {
+void BattleState::setTotalEnemyNum(int total_enemy_num) {
 	mTotalEnemyNum = total_enemy_num;
 }
 
-uint16_t BattleState::getRemainEnemyNum() const {
+int BattleState::getRemainEnemyNum() const {
 	return mRemainEnemyNum;
 }
 
-void BattleState::setRemainEnemyNum(uint16_t remain_enemy_num) {
+void BattleState::setRemainEnemyNum(int remain_enemy_num) {
 	mRemainEnemyNum = remain_enemy_num;
 }
 
-uint16_t BattleState::getTotalCrystalNum() const {
+int BattleState::getTotalCrystalNum() const {
 	return mTotalCrystalNum;
 }
 
-void BattleState::setTotalCrystalNum(uint16_t total_crystal_num) {
+void BattleState::setTotalCrystalNum(int total_crystal_num) {
 	mTotalCrystalNum = total_crystal_num;
 }
 
-uint16_t BattleState::getObtainedCrystalNum() const {
+int BattleState::getObtainedCrystalNum() const {
 	return mObtainedCrystalNum;
 }
 
-void BattleState::setObtainedCrystalNum(uint16_t obtained_crystal_num) {
+void BattleState::setObtainedCrystalNum(int obtained_crystal_num) {
 	mObtainedCrystalNum = obtained_crystal_num;
 }
 
@@ -191,12 +204,17 @@ void BattleState::__onHealthChanged(uint16_t pre_health, uint16_t cur_health) {
     __changeDigits(mHealthHUD, cur_health);
 }
 
-void BattleState::__onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo) {
+void BattleState::__onAmmoChanged(uint16_t cur_ammo) {
     __changeDigits(mAmmoHUD, cur_ammo);
 }
 
-void BattleState::__onClipNumChanged(uint16_t pre_num, uint16_t cur_num) {
+void BattleState::__onClipNumChanged(uint16_t cur_num) {
     __changeDigits(mClipNumHUD, cur_num);
+}
+
+void BattleState::__onAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip) {
+	__changeDigits(mAmmoHUD, cur_ammo);
+	__changeDigits(mClipNumHUD, cur_clip);
 }
 
 void BattleState::__onGetCrystal() {

@@ -2,6 +2,7 @@
 #define THE_DARK_CRYSTAL_VEHICLE
 
 #include "Entity.h"
+#include "Prop.h"
 
 /**
   * 载具类, 游戏中出现的载具
@@ -87,6 +88,10 @@ protected:
 	float mAttackRange;                          //!< 攻击范围
 	float mAttackInterval;                       //!< 攻击间隔时间
 	QString mAttackSoundHandle;                  //!< 载具攻击声音句柄
+	float mWidth;                                //!< 载具宽度
+	float mLength;                               //!< 载具长度
+
+public:
 	static const QString ATTACK_SOUND_COMPONENT; //!< 载具攻击声音Component的名字
 	static const QString INTERATOR_COMPONENT;    //!< 载具攻击交互Component的名字
 };

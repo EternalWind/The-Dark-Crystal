@@ -140,15 +140,12 @@ void Character::onUpdate(double time_diff) {
     } else {
         // ÒÆ¶¯²»µ½¡­¡­
         //mVelocity.setY(1.0f);
-//        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+        //std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
         //mVelocity.setZero();
         btVector3 vec = BtOgre::Convert::toBullet(this->getPosition(dt::Node::SCENE)) - target_position.getOrigin();
-//        std::cout <<"vec:"<< vec.x() << " " << vec.y() << " " << vec.z() << std::endl;
-       if(!vec.isZero()) {
+
+        if (!vec.isZero())
             vec.normalize();
-        }
-       mVelocity.setX(vec.x());
-       mVelocity.setZ(vec.z());
 
         if (!mIsJumpping) {
             mVelocity.setY(vec.y());

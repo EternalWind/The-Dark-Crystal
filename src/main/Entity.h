@@ -121,17 +121,16 @@ public:
       */
     bool isOnGround();
 
-    /**
-      * 设置该实体的朝向。
-      * @param direction 表示朝向的四元组
-      */
-    //void setEntityDirection(const Ogre::Quaternion direction);
+    /** 
+	  * 返回实体的质量
+	  * @returns 实体的质量
+	  */
+	btScalar getMass() const;
 
-    /**
-      * 获取该实体的朝向。
-      * @returns 表示朝向的四元组
-      */
-    //Ogre::Quaternion getEntityDirection() const;
+	/**
+	  * 重置PhysicsBodyComponent
+	  */
+	void resetPhysicsBody();
 
     virtual void onInitialize();
 
@@ -176,6 +175,13 @@ signals:
       */
     void sGetCrystal(Entity* entity);
 
+    /**
+      * 一个在变更屏幕上的显示时发出的signal
+      * @param cur_ammo 变换后的弹药数
+      * @param cur_clip 变换后的弹夹数
+      */
+    void sAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip);
+
 protected slots:
     virtual void __onMove(Entity::MoveType type, bool is_pressed) = 0;
 
@@ -216,6 +222,8 @@ protected:
     bool mIsMoving;                                                   //!< 标记该实体是否正在移动。
 	bool mIsJumping;                                                  //!< 标记该实体是否正在跳跃中
     bool mHasSpeededUp;                                               //!< 标记该实体是否处于提升了速度的状态。
+	
+public:
     const static QString MESH_COMPONENT;                              //!< 所有实体类的MeshComponent的名字。
     const static QString PHYSICS_BODY_COMPONENT;                      //!< 所有实体类的PhysicsBodyComponent的名字。
 };

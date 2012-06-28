@@ -4,17 +4,17 @@ Prop::Prop() {
 }
 
 Prop::Prop(const QString &name, PropType prop_type)
-			: mPropName(name), mPropType(prop_type), mPhysicsBody(nullptr), Node(name + "_node") {
+			: mPropName(name), mPropType(prop_type), Node(name + "_node") {
 }
 
 Prop::~Prop() {
 }
 
 void Prop::onInitialize() {
-	this->addComponent(new dt::MeshComponent(mPropName + ".mesh", mPropName + ".material", "prop_mesh"));
-	mPhysicsBody = this->addComponent(new dt::PhysicsBodyComponent("prop_mesh", "physics_body",
+	this->addComponent(new dt::MeshComponent(mPropName + ".mesh", mPropName, "prop_mesh"));
+	auto PhysicsBody = this->addComponent(new dt::PhysicsBodyComponent("prop_mesh", "physics_body",
         dt::PhysicsBodyComponent::BOX, 0)).get();
-	mPhysicsBody->setGravity(0.0f, 0.0f, 0.0f);
+	PhysicsBody->setGravity(0.0f, 0.0f, 0.0f);
 }
 
 QString Prop::getName() const {

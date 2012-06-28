@@ -3,7 +3,7 @@
 
 #include "Entity.h"
 #include "Character.h"
-
+#include "Weapon.h"
 //#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 //#include <BulletDynamics/Character/btKinematicCharacterController.h>
 
@@ -97,6 +97,8 @@ protected:
     //const static QString WALK_SOUND_COMPONENT;      //!< 所有外星人类播放行走音效的SoundComponent的名字。
     //const static QString JUMP_SOUND_COMPONENT;      //!< 所有外星人类播放跳跃音效的SoundComponent的名字。
     //const static QString RUN_SOUND_COMPONENT;       //!< 所有外星人类播放跑动音效的SoundComponent的名字。
+
+public:
     const static QString INTERACTOR_COMPONENT;      //!< 所有外星人类与场景进行交互的InteractorComponent的名字。
 
 };

@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <QString>
 #include <vector>
-
+#include "Weapon.h"
 /**
   * 游戏的战斗场景
   * 默认第一人称视角
@@ -48,54 +48,6 @@ public:
 	  * @param 设置对话窗口
 	  */
 	void setDialogLabel(dt::GuiLabel* dialog_label);
-
-	/**
-	  * 返回总敌人数量
-	  * @returns 总敌人数量
-	  */
-	uint16_t getTotalEnemyNum() const;
-
-	/**
-	  * 设置总敌人数量
-	  * @param total_enemy_num
-	  */
-	void setTotalEnemyNum(uint16_t total_enemy_num);
-
-	/**
-	  * 返回剩下的敌人数量
-	  * @returns 剩下的敌人数量
-	  */
-	uint16_t getRemainEnemyNum() const;
-
-	/*
-	 * 设置剩下敌人数量
-	 * @param remain_enemy_num 剩余敌人数量
-	 */
-	void setRemainEnemyNum(uint16_t remain_enemy_num);
-
-	/**
-	  * 返回水晶总数
-	  * @returns 水晶总数
-	  */
-	uint16_t getTotalCrystalNum() const;
-
-	/**
-	  * 设置总水晶数量
-	  * @param total_crystal_num 水晶总数量
-	  */
-	void setTotalCrystalNum(uint16_t total_crystal_num);
-
-	/** 
-	  * 返回已获得水晶数量
-	  * @returns 已获得水晶数量
-	  */
-	uint16_t getObtainedCrystalNum() const;
-
-	/**
-	  * 设置已获得水晶数量
-	  * @param obtained_crystal_num 已获得水晶数量
-	  */
-	void setObtainedCrystalNum(uint16_t obtained_crystal_num);
 
 	/**
 	  * 返回问答窗口
@@ -145,6 +97,54 @@ public slots:
       */
     void setNextStage(const QString next_stage);
 
+    /**
+	  * 返回总敌人数量
+	  * @returns 总敌人数量
+	  */
+	int getTotalEnemyNum() const;
+
+	/**
+	  * 设置总敌人数量
+	  * @param total_enemy_num
+	  */
+	void setTotalEnemyNum(int total_enemy_num);
+
+	/**
+	  * 返回剩下的敌人数量
+	  * @returns 剩下的敌人数量
+	  */
+	int getRemainEnemyNum() const;
+
+	/*
+	 * 设置剩下敌人数量
+	 * @param remain_enemy_num 剩余敌人数量
+	 */
+	void setRemainEnemyNum(int remain_enemy_num);
+
+	/**
+	  * 返回水晶总数
+	  * @returns 水晶总数
+	  */
+	int getTotalCrystalNum() const;
+
+	/**
+	  * 设置总水晶数量
+	  * @param total_crystal_num 水晶总数量
+	  */
+	void setTotalCrystalNum(int total_crystal_num);
+
+	/** 
+	  * 返回已获得水晶数量
+	  * @returns 已获得水晶数量
+	  */
+	int getObtainedCrystalNum() const;
+
+	/**
+	  * 设置已获得水晶数量
+	  * @param obtained_crystal_num 已获得水晶数量
+	  */
+	void setObtainedCrystalNum(int obtained_crystal_num);
+
 private:
     void __resetGui();
 
@@ -154,9 +154,9 @@ protected slots:
 
 	void __onHealthChanged(uint16_t pre_health, uint16_t cur_health);
 
-	void __onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo);
+	void __onAmmoChanged(uint16_t cur_ammo);
 
-	void __onClipNumChanged(uint16_t pre_num, uint16_t cur_num);
+	void __onClipNumChanged(uint16_t cur_num);
 
 	void __onGetCrystal(); 
 
@@ -165,6 +165,8 @@ protected slots:
 	void __onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender);
 
     void __changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number);
+
+	void __onAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip);
 
 protected:
 	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值
