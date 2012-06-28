@@ -145,6 +145,18 @@ public slots:
 	  */
 	void setObtainedCrystalNum(int obtained_crystal_num);
 
+    /**
+      * 设置场景参数1
+      * @param param1 参数1
+      */
+    void setSceneParam1(double param1);
+
+    /**
+      * 设置场景参数2
+      * @param param2 参数2
+      */
+    void setSceneParam2(double param2);
+
 private:
     void __resetGui();
 
@@ -154,9 +166,9 @@ protected slots:
 
 	void __onHealthChanged(uint16_t pre_health, uint16_t cur_health);
 
-	void __onAmmoChanged(uint16_t cur_ammo);
+	void __onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo);
 
-	void __onClipNumChanged(uint16_t cur_num);
+	void __onClipNumChanged(uint16_t pre_num, uint16_t cur_num);
 
 	void __onGetCrystal(); 
 
@@ -182,7 +194,8 @@ protected:
 	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
     QString mStage;                             //!< 当前关卡
     QString mNextStage;                         //!< 下一关卡
-
+    double mSceneParam1;
+    double mSceneParam2;
 };
 
 #endif

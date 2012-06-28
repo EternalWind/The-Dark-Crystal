@@ -19,6 +19,8 @@ void MenuState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("gui/buttons", "FileSystem");
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
+    dt::DisplayManager::get()->setWindowSize(640, 400);
+
 //    dt::DisplayManager::get()->setFullscreen(true);
 
     auto camnode = scene->addChildNode(new dt::Node("camera_node"));
