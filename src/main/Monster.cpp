@@ -31,6 +31,7 @@ void Monster::setAttackRange(float attack_range) {
 void Monster::onKilled() {
 	auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 	mesh->setAnimation("die");
+	mesh->setLoopAnimation(false);
 	mesh->playAnimation();
 }
 
@@ -89,14 +90,16 @@ void Monster::onUpdate(double time_diff) {
         physics_body->activate();
         physics_body->getRigidBody()->setLinearVelocity(velocity);
     }
-
 	if (this->getCurHealth() == 0) {
-		if (this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->isAnimationStopped()) {
+		auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+		if (mesh->isAnimationStopped()) {
 			this->kill();
+			std::cout << "be killed" << std::endl;
 		}
 	}
-
 	Character::onUpdate(time_diff);
+
+	
 }
 // --------------- slots -------------------//
 
