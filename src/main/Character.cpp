@@ -106,7 +106,7 @@ void Character::onUpdate(double time_diff) {
 
         if (mIsJumpping && mesh->isAnimationStopped()) {
             mIsJumpping = false;
-            
+            std::cout<<"mIsJumpping = false;"<<std::endl;
             mesh->stopAnimation();
 
             if (!mIsMoving) {
@@ -140,16 +140,25 @@ void Character::onUpdate(double time_diff) {
     } else {
         // ÒÆ¶¯²»µ½¡­¡­
         //mVelocity.setY(1.0f);
-        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
+//        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
         //mVelocity.setZero();
         btVector3 vec = BtOgre::Convert::toBullet(this->getPosition(dt::Node::SCENE)) - target_position.getOrigin();
-        vec.normalize();
-
-        mVelocity.setX(vec.x());
-        if (mIsJumpping) {
-            mVelocity.setY(vec.y());
+//        std::cout <<"vec:"<< vec.x() << " " << vec.y() << " " << vec.z() << std::endl;
+       if(!vec.isZero()) {
+            vec.normalize();
         }
-        mVelocity.setZ(vec.z());
+       mVelocity.setX(vec.x());
+       mVelocity.setZ(vec.z());
+
+        if (!mIsJumpping) {
+            mVelocity.setY(vec.y());
+            
+            //mVelocity = -mVelocity;
+            //if(!mVelocity.isZero()) {
+            //    mVelocity.normalize();
+            //}
+        }
+        
     }
 
     this->mIsUpdatingAfterChange = false;
@@ -245,9 +254,10 @@ void Character::__onMove(Entity::MoveType type, bool is_pressed) {
 void Character::__onJump(bool is_pressed) {
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-    if (is_pressed && this->isOnGround()) {
+//    if (is_pressed && this->isOnGround()) {
+    if (is_pressed && (!this->mIsJumpping)) {
         mVelocity.setY(mJumpSpeed);
-
+        
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
@@ -258,6 +268,7 @@ void Character::__onJump(bool is_pressed) {
         mesh->playAnimation();
 
         mIsJumpping = true;
+        std::cout<<"mIsJumpping = true;"<<std::endl;
     }
 }
 
