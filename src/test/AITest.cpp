@@ -6,7 +6,6 @@
 #include <Scene/Game.hpp>
 #include <Graphics/LightComponent.hpp>
 
-#include <OgreProcedural.h>
 
 #include "Alien.h"
 #include "HumanAgent.h"
@@ -19,15 +18,19 @@
 
 void AITest::onInitialize() {
 
-    dt::ResourceManager::get()->addResourceLocation("", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("a", "FileSystem", true);
+
+    dt::ResourceManager::get()->addResourceLocation("Material", "FileSystem", true);
     dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("sinbad.zip", "Zip", true);
+    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem"); 
+    
+
+     dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
+     dt::ResourceManager::get()->addResourceLocation("models/alien.zip", "Zip", true);
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     //AIDivideAreaManager::get()->loadMapInfo("map.txt");
     
-    AIDivideAreaManager::get()->beforeLoadScene(34.0, 8.0);  
+    AIDivideAreaManager::get()->beforeLoadScene(34.0, 8.0);   
     dt::Scene* scene = SceneLoader::loadScene("FirstFloor.scene");
     AIDivideAreaManager::get()->afterLoadScene();   
 
@@ -35,20 +38,10 @@ void AITest::onInitialize() {
     this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->getPhysicsWorld()->setGravity(Ogre::Vector3::ZERO);
 
-    OgreProcedural::Root::getInstance()->sceneManager = scene->getSceneManager();
-
-    OgreProcedural::PlaneGenerator().setSizeX(10000).setSizeY(10000).setUTile(100).setVTile(100).realizeMesh("plane");
-
-    auto plane_node = scene->addChildNode(new dt::Node("plane_node"));
-    plane_node->setPosition(0, -10, 0);
-    plane_node->addComponent<dt::MeshComponent>(new dt::MeshComponent("plane", "PrimitivesTest/Pebbles", "Plane"));
-    plane_node->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent("Plane", "plane_body", dt::PhysicsBodyComponent::BOX, 0.0f));
-
-    scene->addChildNode(alien);
-    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-    alien->setPosition(33, 100, -30);    
-    alien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-
+    
+    Alien* alien = new Alien("alien", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");    
+     scene->addChildNode(alien);
+    alien->setEyePosition(Ogre::Vector3(0, 3, 3));
     HumanAgent* human_agent = new HumanAgent("Player");
     
     alien->setPosition(-50, 10, -100);
