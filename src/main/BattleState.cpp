@@ -42,6 +42,8 @@ void BattleState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("particle", "FileSystem");
+    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
 
