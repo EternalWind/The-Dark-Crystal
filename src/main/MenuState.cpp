@@ -20,9 +20,11 @@ void MenuState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");    
     dt::ResourceManager::get()->addResourceLocation("gui/buttons", "FileSystem");
+
     dt::ResourceManager::get()->addResourceLocation("particle", "FileSystem");
     
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
 
     dt::DisplayManager::get()->setWindowSize(1200, 900);
 

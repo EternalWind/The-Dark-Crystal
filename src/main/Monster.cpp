@@ -4,6 +4,7 @@
 
 #include "ConfigurationManager.h"
 
+#include <Scene/Scene.hpp>
 #include <Audio/SoundComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
 
@@ -30,6 +31,12 @@ void Monster::setAttackRange(float attack_range) {
 
 void Monster::onKilled() {
 	auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+    Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
+
+    if (agent != nullptr) {
+        agent->disable();
+    }
+
 	mesh->setAnimation("die");
 	mesh->setLoopAnimation(false);
 	mesh->playAnimation();    
@@ -79,6 +86,7 @@ void Monster::onInitialize() {
 }
 
 void Monster::onDeinitialize() {
+    Character::onDeinitialize();
 }
 
 void Monster::onUpdate(double time_diff) {
@@ -92,13 +100,19 @@ void Monster::onUpdate(double time_diff) {
     }
     this->mIsUpdatingAfterChange = (time_diff == 0);
 
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
-    velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
+    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
+    //velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
 
-    if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
-        physics_body->activate();
-        physics_body->getRigidBody()->setLinearVelocity(velocity);
+    //if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
+    //    physics_body->activate();
+    //    physics_body->getRigidBody()->setLinearVelocity(velocity);
+    //}
+    if (this->getCurHealth() == 0) {
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        if (mesh->isAnimationStopped()) {
+            this->kill();
+        }
     }
 
 	if (this->getCurHealth() == 0) {
@@ -110,7 +124,6 @@ void Monster::onUpdate(double time_diff) {
 	}
 	Character::onUpdate(time_diff);
 
-	
 }
 // --------------- slots -------------------//
 

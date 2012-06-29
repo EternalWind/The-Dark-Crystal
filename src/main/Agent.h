@@ -36,6 +36,10 @@ public:
       */
     void detach();
 
+    virtual void onEnable();
+
+    virtual void onDisable();
+
 signals:
 	void sMove(Entity::MoveType type, bool is_pressed); 
 	void sAttack(bool is_pressed);
