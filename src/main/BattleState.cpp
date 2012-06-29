@@ -37,23 +37,14 @@ BattleState::BattleState(const QString stage_name)
       mSceneParam2(0.0) {}
 
 void BattleState::onInitialize() {
-    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
-	dt::ResourceManager::get()->addResourceLocation("models/particle", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("particle", "FileSystem");
-    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
-	 Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+	 //Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     dt::Node* script_node = new dt::Node("script_node");
     script_node->addComponent(new dt::ScriptComponent(mStage + ".js", "state_script", true));
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
-    auto scene = addScene(SceneLoader::loadScene(mStage + "test.scene"));
+    auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
 
     scene->addChildNode(script_node);
 
@@ -142,7 +133,8 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 
 void BattleState::win() {
     auto state_mgr = dt::StateManager::get();
-    state_mgr->pop(1);
+    //state_mgr->pop(1);
+    emit sVictory();
 
     if (mNextStage != "") {
         state_mgr->setNewState(new BattleState(mNextStage));

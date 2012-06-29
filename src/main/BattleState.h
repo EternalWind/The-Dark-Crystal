@@ -61,6 +61,9 @@ public:
 	  */
 	void setQuestionLabel(dt::GuiEditBox* edit_box);
 
+signals:
+    void sVictory();
+
 public slots:
     /**
 	  * 判断玩家当前是否已经取得胜利
