@@ -164,11 +164,11 @@ protected slots:
 
 	void __onTriggerText(uint16_t text_id);
 
-	void __onHealthChanged(uint16_t pre_health, uint16_t cur_health);
+	void __onHealthChanged(uint16_t cur_health);
 
-	void __onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo);
+	void __onAmmoChanged(uint16_t cur_ammo);
 
-	void __onClipNumChanged(uint16_t pre_num, uint16_t cur_num);
+	void __onClipNumChanged(uint16_t cur_num);
 
 	void __onGetCrystal(); 
 

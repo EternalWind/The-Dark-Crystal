@@ -40,17 +40,18 @@ void BattleState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
+	dt::ResourceManager::get()->addResourceLocation("models/particle", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
 
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
-
+	 Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     dt::Node* script_node = new dt::Node("script_node");
     script_node->addComponent(new dt::ScriptComponent(mStage + ".js", "state_script", true));
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
-    auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
+    auto scene = addScene(SceneLoader::loadScene(mStage + "test.scene"));
 
     scene->addChildNode(script_node);
 
@@ -92,6 +93,7 @@ void BattleState::onInitialize() {
 
 	Alien *pAlien = EntityManager::get()->getHuman();
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
@@ -112,9 +114,9 @@ void BattleState::onInitialize() {
     MyGUI::TextBox* text_box = dynamic_cast<MyGUI::TextBox*>(mDialogLabel->getMyGUIWidget());
     text_box->setTextAlign(MyGUI::Align::Left);
 
-    __onHealthChanged(0,100);
-    __onAmmoChanged(0, 0);
-    __onClipNumChanged(0, 0);
+    __onHealthChanged(50);
+    __onAmmoChanged(0);
+    __onClipNumChanged(0);
 
     __resetGui();
 
@@ -209,15 +211,15 @@ void BattleState::__onTriggerText(uint16_t text_id) {
 	mQuestionLabel->show();
 }
 
-void BattleState::__onHealthChanged(uint16_t pre_health, uint16_t cur_health) {
+void BattleState::__onHealthChanged(uint16_t cur_health) {
     __changeDigits(mHealthHUD, cur_health);
 }
 
-void BattleState::__onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo) {
+void BattleState::__onAmmoChanged(uint16_t cur_ammo) {
     __changeDigits(mAmmoHUD, cur_ammo);
 }
 
-void BattleState::__onClipNumChanged(uint16_t pre_num, uint16_t cur_num) {
+void BattleState::__onClipNumChanged(uint16_t cur_num) {
     __changeDigits(mClipNumHUD, cur_num);
 }
 
