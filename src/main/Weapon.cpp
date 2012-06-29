@@ -3,6 +3,7 @@
 #include "Alien.h"
 #include <Logic/CollisionComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
+#include "ParticlesEffect.h"
 #include <OgreProcedural.h>
 #include "AdvanceCollisionComponent.h"
 Weapon::Weapon(){
