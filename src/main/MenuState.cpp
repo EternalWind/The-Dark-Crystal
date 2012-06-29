@@ -13,13 +13,18 @@
 
 void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
-
     dt::ResourceManager::get()->addDataPath(QDir("data"));
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models/alien_mirror.zip", "Zip", true);
+    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");    
     dt::ResourceManager::get()->addResourceLocation("gui/buttons", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("particle", "FileSystem");
+    
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-    dt::DisplayManager::get()->setWindowSize(640, 400);
+    dt::DisplayManager::get()->setWindowSize(1200, 900);
 
 //    dt::DisplayManager::get()->setFullscreen(true);
 

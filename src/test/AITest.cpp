@@ -18,20 +18,7 @@
 #include "Character.h"
 #include "Weapon.h"
 
-void setP(Character * alien, Agent * human_agent, double x, double y, double z) {
-auto physics = alien->findComponent<dt::PhysicsBodyComponent>("physics_body");
-    auto motion = physics->getRigidBody()->getMotionState();
-    btTransform trans;
-    motion->getWorldTransform(trans);
-    trans.setOrigin(btVector3(x, y, z));
-    motion->setWorldTransform(trans);
-    physics->getRigidBody()->getCollisionShape()->setLocalScaling(btVector3(0.01, 0.01, 0.01));   
-    alien->setPosition(x, y, z);
-    alien->setScale(0.01);
-     human_agent->attachTo(alien);
-  
 
-}
 
 void AITest::onInitialize() {
 
