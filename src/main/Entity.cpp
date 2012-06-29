@@ -4,6 +4,7 @@
 
 const QString Entity::MESH_COMPONENT = "mesh";
 const QString Entity::PHYSICS_BODY_COMPONENT = "physics_body";
+const float Entity::LENGTH_BEYOND_ONGROUND_DETECTING_RADIUS = 0.5f;
 
 Entity::Entity(const QString name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass) 
     : dt::Node(name),
@@ -37,7 +38,7 @@ void Entity::setCurHealth(const uint16_t current_health) {
             mCurHealth = mMaxHealth;
         }
 
-        emit sHealthChanged(pre_health, mCurHealth);
+        emit sHealthChanged(mCurHealth);
     }
 }
 
@@ -107,7 +108,7 @@ bool Entity::isOnGround() {
 
     start = getRotation(Node::SCENE) * Ogre::Vector3(0.0, size.y(), size.z())
                 + getPosition(Node::SCENE);
-    end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -size.y() - 0.5f, size.z())
+    end = getRotation(Node::SCENE) * Ogre::Vector3(0.0, -size.y() - LENGTH_BEYOND_ONGROUND_DETECTING_RADIUS, size.z())
                 + getPosition(Node::SCENE);
 
     btVector3 bt_start, bt_end;
@@ -134,6 +135,9 @@ void Entity::resetPhysicsBody() {
 		physics_body->disable();
 		physics_body->enable();
 	}
+}
+
+void Entity::onKilled() {
 }
 
 void Entity::onInitialize() {

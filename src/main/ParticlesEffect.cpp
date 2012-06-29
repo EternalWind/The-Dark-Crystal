@@ -11,7 +11,9 @@ ParticlesEffect::ParticlesEffect(const QString node_name, const QString &materia
 	: dt::Node(node_name),
 	  mMaterialHandle(material_handle),
       mSoundHandle(sound_handle),
-      mRuntime(0) {}
+      mRuntime(0) {
+		
+	  }
 
 ParticlesEffect::~ParticlesEffect() {
 }
@@ -25,7 +27,8 @@ void ParticlesEffect::onInitialize() {
 	sound->playSound();  
 
 	// create the particle system
-	auto p_sys = this->addComponent(new dt::ParticleSystemComponent("p_sys"));
+	
+	auto p_sys = this->addComponent(new dt::ParticleSystemComponent(this->getName() + QUuid::createUuid().toString() + "_p_sys"));
 	p_sys->setMaterialName(mMaterialHandle);
 	p_sys->setParticleCountLimit(1000);
 	p_sys->getOgreParticleSystem()->setDefaultDimensions(1, 1);
@@ -45,11 +48,11 @@ void ParticlesEffect::onInitialize() {
 	//设置颜色变化效果
 	Ogre::ParticleAffector* a = p_sys->addAffector("colour_interpolator", "ColourInterpolator");
 	a->setParameter("time0", "0");
-	a->setParameter("colour0", "1 1 0 1");
+	a->setParameter("colour0", "0 1 1 1");
 	a->setParameter("time1", "0.5");
-	a->setParameter("colour1", "1 0.3 0 1");
+	a->setParameter("colour1", "0 0.3 1 1");
 	a->setParameter("time2", "1");
-	a->setParameter("colour2", "1 0 0 0");
+	a->setParameter("colour2", "0 0 1 0");
 
 
 }

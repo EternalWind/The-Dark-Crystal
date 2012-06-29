@@ -40,7 +40,7 @@ private:
 
     double mPreDegree;                                       //<! 存储上一帧身体的朝向。
     double mExpectDegree;                                    //<! 期望的朝向。
-
+    bool mAttack;                                            //<! 是否处于攻击状态。
     bool mFollow;                                            //<! 若为true，则快速行走到玩家身边
     Alien* mBody;                                            //<! 外星人身体，为agent的父节点，agent充当着控制外星人的大脑。
     Alien* mHumanBody;                                       //<! 玩家指针

@@ -3,11 +3,14 @@
 #include "Alien.h"
 #include <Logic/CollisionComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
+#include "ParticlesEffect.h"
 #include <OgreProcedural.h>
+#include "AdvanceCollisionComponent.h"
 Weapon::Weapon(){
 }
 
-Weapon::Weapon( const QString &name, 
+Weapon::Weapon( const QString &prop_name,
+                const QString &node_name, 
 				WeaponType type, 
 				uint16_t power, 
 				uint16_t cur_clip, 
@@ -43,7 +46,7 @@ Weapon::Weapon( const QString &name,
 				mReloadingBeginSound(nullptr),    
 				mReloadingDoneSound(nullptr),  
 				mHittingRange(hitting_range),
-				Prop(name, WEAPON) { 
+				Prop(prop_name, node_name, WEAPON) { 
 }
 
 Weapon::~Weapon(){
@@ -148,12 +151,13 @@ void Weapon::onInitialize() {
 	auto node = this->addChildNode(new Node("ammo_node"));
 	OgreProcedural::SphereGenerator().setRadius(0.3f).setUTile(.5f).realizeMesh("Bullet");
 	if (mWeaponType == THROWABLE || mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
-		mInteractor = node->addComponent(new dt::CollisionComponent("Bullet", "interactor")).get();
+		mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", "interactor")).get();
 	} else {
 		mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();
 	}
 	mInteractor->setIntervalTime(mInterval);
 	mInteractor->setRange(mHittingRange);
+	mInteractor->setOffset(1.0);
 
 	mIsPhysicsBodyEnabled = true;
 
@@ -238,6 +242,8 @@ void Weapon::_onHit(dt::PhysicsBodyComponent* hit) {
 			obj->setCurHealth(curHealth - mPower);
 		else
 			obj->setCurHealth(0);
+		if (obj->getCurHealth() == 0)
+			obj->onKilled();
 	}
 }
 

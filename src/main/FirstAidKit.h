@@ -11,7 +11,7 @@ class FirstAidKit: public Prop {
 public:
 	FirstAidKit();
 
-	FirstAidKit(const QString &name, uint16_t recovery_val);
+	FirstAidKit(const QString &prop_name, const QString &node_name, uint16_t recovery_val);
 
 	~FirstAidKit();
 	

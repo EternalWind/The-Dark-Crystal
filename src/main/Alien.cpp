@@ -14,7 +14,7 @@ const QString Alien::INTERACTOR_COMPONENT = "interactor";
 
 Alien::Alien(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass,
     const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle)
-    : Character(node_name, mesh_handle, collision_shape_type, mass, walk_sound_handle, jump_sound_handle, run_sound_handle, 20.0f),
+    : Character(node_name, mesh_handle, collision_shape_type, mass, walk_sound_handle, jump_sound_handle, run_sound_handle, 10.0f),
       mCurWeapon(nullptr) {
         // 准备好3种武器的位置。
         mWeapons[Weapon::PRIMARY] = nullptr;

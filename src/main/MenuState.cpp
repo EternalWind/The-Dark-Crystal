@@ -17,7 +17,9 @@ void MenuState::onInitialize() {
     dt::ResourceManager::get()->addDataPath(QDir("data"));
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui/buttons", "FileSystem");
-    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    //Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
+    dt::DisplayManager::get()->setWindowSize(640, 400);
 
 //    dt::DisplayManager::get()->setFullscreen(true);
 

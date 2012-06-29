@@ -3,8 +3,8 @@
 Crystal::Crystal() {
 }
 	
-Crystal::Crystal(const QString &name, double unlock_time) 
-			: Prop(name, CRYSTAL),
+Crystal::Crystal(const QString &prop_name, const QString &node_name, double unlock_time) 
+			: Prop(prop_name, node_name, CRYSTAL),
               mUnlockTime(unlock_time),
               mUnlockProgress(0.0),
               mIsUnlocking(false) {}
