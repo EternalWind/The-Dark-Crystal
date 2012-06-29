@@ -63,6 +63,7 @@ void BattleState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();*/
 
+   
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
 
     dt::Node* script_node = new dt::Node("script_node");
@@ -71,7 +72,7 @@ void BattleState::onInitialize() {
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-
+   // this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
@@ -110,6 +111,9 @@ void BattleState::onInitialize() {
     mQuestionLabel = question.get();
     mDialogLabel = dialog.get();
 
+
+  
+
 	Alien *pAlien = EntityManager::get()->getHuman();
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 
@@ -143,13 +147,13 @@ void BattleState::onInitialize() {
     Alien* alien1 = new Alien("alien1", "alien_mirror.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
     scene->addChildNode(alien1);
     PlayerAIAgent * pa = new PlayerAIAgent("rj");    
-     Ogre::Vector3 tmp = AIDivideAreaManager::get()->getArea(40);
+     Ogre::Vector3 tmp = AIDivideAreaManager::get()->getArea(41);
     setP(alien1, pa, tmp.x, 10, tmp.z);   
     
     EntityManager::get()->addPlayer(alien1);
     Weapon * weapon = new Weapon("RailGun","w", Weapon::PRIMARY, 3, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 300);
      alien1->addWeapon(weapon);
-     for (int  i = 0; i < 50; i ++) {
+     for (int  i = 0; i < 40; i ++) {
         Monster * monster = new Monster("monster" + dt::Utils::toString(i), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 3, 3);
         scene->addChildNode(monster);
         //monster->setCurHealth(100);

@@ -43,11 +43,13 @@ void AITest::onInitialize() {
     scene->getPhysicsWorld()->setGravity(Ogre::Vector3::ZERO);
 
     
-    //Alien* alien = new Alien("alien", "alien_mirror.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");    
-    // scene->addChildNode(alien);
+    
     // Weapon * weapon = new Weapon("RailGun", Weapon::PRIMARY, 3, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 300);
     // alien->addWeapon(weapon);
     // 
+
+    //Alien* alien = new Alien("alien", "alien_mirror.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");    
+    // scene->addChildNode(alien);
     //alien->setEyePosition(Ogre::Vector3(0, 1.5, 1.5));
     //HumanAgent* human_agent = new HumanAgent("Player");    
     //  Ogre::Vector3 t = AIDivideAreaManager::get()->getArea(40);
