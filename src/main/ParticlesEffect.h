@@ -5,6 +5,7 @@
 #include <Scene/Node.hpp>
 #include <QString>
 #include <cstdint>
+#include <OgreParticleAffector.h>
 
 /**
   * 粒子效果类，用于爆炸效果

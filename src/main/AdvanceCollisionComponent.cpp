@@ -8,7 +8,8 @@
 #include "AdvanceCollisionComponent.h"
 #include <Graphics/ParticleSystemComponent.hpp>
 #include <OgreParticleAffector.h>
-
+#include "ParticlesEffect.h"
+#include "stateManager.h"
 
 AdvanceCollisionComponent::AdvanceCollisionComponent(const QString bullet_handle, const QString name)
     : dt::InteractionComponent(name),
@@ -23,8 +24,9 @@ void AdvanceCollisionComponent::onCheck(const Ogre::Vector3& start, const Ogre::
 
     auto id = autoid ++;
     QString name = QString("bullet") + dt::Utils::toString(id);
+	
 
-    std::shared_ptr<dt::Node> bullet = getNode()->getScene()->addChildNode(new dt::Node(QString(id)));
+    std::shared_ptr<dt::Node> bullet = getNode()->getScene()->addChildNode(new dt::Node(name + "_ball_node"));
 
     bullet->addComponent<dt::MeshComponent>(new dt::MeshComponent(mBulletMeshHandle, "", name));
     bullet->setPosition(start, dt::Node::SCENE);
@@ -65,6 +67,11 @@ void AdvanceCollisionComponent::onCheck(const Ogre::Vector3& start, const Ogre::
 
 void AdvanceCollisionComponent::onHit(dt::PhysicsBodyComponent* hit, dt::PhysicsBodyComponent* bullet) {
     dt::Node* node = bullet->getNode();
+
+	ParticlesEffect *pp = new ParticlesEffect(node->getName() + "_particle", "Test/Particle", "");
+	pp->setPosition(node->getPosition().x, node->getPosition().y, node->getPosition().z);
+	node->getScene()->addChildNode(pp);
+	
     node->kill();
 
     emit sHit(hit);
