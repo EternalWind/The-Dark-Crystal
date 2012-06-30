@@ -12,7 +12,7 @@ const QString Spaceship::FLYING_SOUND_COMPONENT = "flying_sound";
 const QString Spaceship::RISE_SOUND_COMPONENT = "rise_sound";
 const QString Spaceship::FALL_SOUND_COMPONENT = "fall_sound";
 const float Spaceship::MAX_LEAN_ANGLE = 16.0f;
-const float Spaceship::ANGLE_PER_MOVE = Spaceship::MAX_LEAN_ANGLE / 1024;
+const float Spaceship::ANGLE_PER_MOVE = Spaceship::MAX_LEAN_ANGLE / 8192;
 
 Spaceship::Spaceship(const QString node_name, 
 	const QString mesh_handle, 
@@ -27,7 +27,8 @@ Spaceship::Spaceship(const QString node_name,
 	const QString fall_sound_handle,
 	const float max_speed,
 	const float speed_per_frame,
-	const float parallel_move_speed)
+	const float parallel_move_speed, 
+	const float up_down_speed)
 	: Vehicle(node_name, mesh_handle, collision_shape_type, mass, 
 	attack_value, attack_range, attack_interval, attack_sound_handle),
 	mFlyingSoundHandle(flying_sound_handle),
@@ -36,7 +37,8 @@ Spaceship::Spaceship(const QString node_name,
 	mCurAngle(0),
 	mMaxSpeed(max_speed),
 	mSpeedPerFrame(speed_per_frame),
-	mParallelMoveSpeed(parallel_move_speed) {
+	mParallelMoveSpeed(parallel_move_speed),
+	mUpDownSpeed(up_down_speed) {
 }
 
 void Spaceship::onInitialize() {

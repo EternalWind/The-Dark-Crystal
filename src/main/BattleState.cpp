@@ -91,6 +91,10 @@ void BattleState::onInitialize() {
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
+	Alien *pAlien = EntityManager::get()->getHuman();
+	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
+
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
     }
@@ -116,7 +120,7 @@ void BattleState::onInitialize() {
 
 	mPickUpCrystalBar->setProgressRange(100);
 	mPickUpCrystalBar->setProgressPosition(0);
-//	mPickUpCrystalBar->setVisible(false);
+	mPickUpCrystalBar->setVisible(false);
 
     __resetGui();
 
@@ -145,10 +149,6 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mTotalCrystalNum(tot_crystal_num),
 		mObtainedCrystalNum(0) {
 }
-
-//bool BattleState::isVictory() {
-//	return false;
-//}
 
 void BattleState::win() {
     auto state_mgr = dt::StateManager::get();

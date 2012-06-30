@@ -7,7 +7,10 @@
 #include <Scene/StateManager.hpp>
 #include <Core/ResourceManager.hpp>
 #include <Graphics/CameraComponent.hpp>
+#include <Graphics/DisplayManager.hpp>
 #include <Gui/GuiManager.hpp>
+
+#include <SFML/Audio/Listener.hpp>
 
 OptionState::OptionState():
 mActionButton(nullptr) {
@@ -27,6 +30,15 @@ void OptionState::onInitialize() {
 
     QObject::connect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
                           this, SLOT(onKeyDown(dt::InputManager::InputCode, const OIS::EventArg&)));
+
+    // ConfigurationManager
+    ConfigurationManager* config_mgr = ConfigurationManager::getInstance();
+    config_mgr->loadConfig();
+
+    mControlSettings = config_mgr->getControlSetting();
+    mScreenSettings = config_mgr->getScreenSetting();
+    mSoundSettings = config_mgr->getSoundSetting();
+    mQASettings = config_mgr->getQASetting();
 
     // GUI
     dt::GuiRootWindow& win = dt::GuiManager::get()->getRootWindow();
@@ -70,28 +82,43 @@ void OptionState::onInitialize() {
     mQASettingCheckBox->setPosition(position_h_func, position_v_func);
     mQASettingCheckBox->setCaption(QString::fromLocal8Bit("开启问答系统"));
     mQASettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
+    mQASettingCheckBox->setStateSelected(mQASettings.getIsQAEnable());
     mQASettingCheckBox->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onClick);
 
-    mDisplaySettingsCheckBox = win.addChildWidget(new dt::GuiCheckBox("DisplaySettingsCheckBox")).get();
-    mDisplaySettingsCheckBox->setSize(size_h_medium, size_v_medium);
-    mDisplaySettingsCheckBox->setPosition(position_h_func, position_v_func + gap_v_large);
-    mDisplaySettingsCheckBox->setCaption(QString::fromLocal8Bit("全屏"));
-    mDisplaySettingsCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
-    mDisplaySettingsCheckBox->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onClick);
+    mDisplaySettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("DisplaySettingsCheckBox")).get();
+    mDisplaySettingCheckBox->setSize(size_h_medium, size_v_medium);
+    mDisplaySettingCheckBox->setPosition(position_h_func, position_v_func + gap_v_large);
+    mDisplaySettingCheckBox->setCaption(QString::fromLocal8Bit("全屏"));
+    mDisplaySettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
+    mDisplaySettingCheckBox->setStateSelected(mScreenSettings.getFullScreen());
+    mDisplaySettingCheckBox->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onClick);
 
     mSoundVolumeScrollBar = win.addChildWidget(new dt::GuiScrollBar("SoundVolumeScrollBar")).get();
     mSoundVolumeScrollBar->setSize(size_h_large * 2, 15);
     mSoundVolumeScrollBar->setPosition(position_h_func, position_v_func + gap_v_large * 3);
     mSoundVolumeScrollBar->setScrollRange(101);
-    mSoundVolumeScrollBar->setScrollPosition(30);
+    mSoundVolumeScrollBar->setScrollPosition(mSoundSettings.getSoundEffect());
     dynamic_cast<MyGUI::ScrollBar*>(mSoundVolumeScrollBar->getMyGUIWidget())->eventScrollChangePosition += MyGUI::newDelegate(this, &OptionState::onScrollChangePosition);
 
     mMusicVolumeScrollBar = win.addChildWidget(new dt::GuiScrollBar("MusicVolumeScrollBar")).get();
     mMusicVolumeScrollBar->setSize(size_h_large * 2, 15);
     mMusicVolumeScrollBar->setPosition(position_h_func, position_v_func + gap_v_large * 4);
     mMusicVolumeScrollBar->setScrollRange(101);
-    mMusicVolumeScrollBar->setScrollPosition(30);
+    mMusicVolumeScrollBar->setScrollPosition(mSoundSettings.getMusic());
     dynamic_cast<MyGUI::ScrollBar*>(mMusicVolumeScrollBar->getMyGUIWidget())->eventScrollChangePosition += MyGUI::newDelegate(this, &OptionState::onScrollChangePosition);
+
+    mMasterVolumeScrollBar = win.addChildWidget(new dt::GuiScrollBar("MasterVolumeScrollBar")).get();
+    mMasterVolumeScrollBar->setSize(size_h_large * 2, 15);
+    mMasterVolumeScrollBar->setPosition(position_h_func, position_v_func + gap_v_large * 2);
+    mMasterVolumeScrollBar->setScrollRange(101);
+    mMasterVolumeScrollBar->setScrollPosition(mSoundSettings.getMainVolume());
+    dynamic_cast<MyGUI::ScrollBar*>(mMasterVolumeScrollBar->getMyGUIWidget())->eventScrollChangePosition += MyGUI::newDelegate(this, &OptionState::onScrollChangePosition);
+
+    mMasterVolumeLabel = win.addChildWidget(new dt::GuiLabel("MasterVolumeLabel")).get();
+    mMasterVolumeLabel->setSize(size_h_medium, size_v_small * 0.6);
+    mMasterVolumeLabel->setPosition(position_h_func, position_v_func + gap_v_large * 2 - gap_v_small);
+    mMasterVolumeLabel->setCaption(QString::fromLocal8Bit("主音量："));
+    mMasterVolumeLabel->setTextColour(MyGUI::Colour(0.0, 0.9, 0.9));
 
     mSoundVolumeLabel = win.addChildWidget(new dt::GuiLabel("SoundVolumeLabel")).get();
     mSoundVolumeLabel->setSize(size_h_medium, size_v_small * 0.6);
@@ -136,7 +163,7 @@ void OptionState::onInitialize() {
     addNewFuncButton("arm2_button", QString::fromLocal8Bit("武器2"), 1, 1);
     addNewFuncButton("arm3_button", QString::fromLocal8Bit("武器3"), 1, 2);
     addNewFuncButton("attack_button", QString::fromLocal8Bit("攻击"), 1, 3);
-    addNewFuncButton("throw_button", QString::fromLocal8Bit("炸弹"), 1, 4);
+    addNewFuncButton("throw_button", QString::fromLocal8Bit("丢弃"), 1, 4);
     addNewFuncButton("getoff_button", QString::fromLocal8Bit("下车"), 1, 5);
     addNewFuncButton("activate_button", QString::fromLocal8Bit("拾取"), 1, 6);
 
@@ -164,12 +191,33 @@ void OptionState::addNewFuncButton(const QString name, const QString font_text, 
 void OptionState::onClick(MyGUI::Widget* sender) {
     if (sender->getName() == "Gui.confirm_button") {
         ConfigurationManager* cfg = ConfigurationManager::getInstance();
-        cfg->getQASetting().setIsQAEnable(mQASettingCheckBox->getStateSelected());
-        cfg->getScreenSetting().setFullScreen(mDisplaySettingsCheckBox->getStateSelected());
-        cfg->getSoundSetting().setMusic(mMusicVolumeScrollBar->getScrollPosition());
-        cfg->getSoundSetting().setSoundEffect(mSoundVolumeScrollBar->getScrollPosition());
+
+        //mSoundSettings.setMainVolume(mMasterVolumeScrollBar->getScrollPosition());
+        mSoundSettings.setMusic(mMusicVolumeScrollBar->getScrollPosition());
+        mSoundSettings.setSoundEffect(mSoundVolumeScrollBar->getScrollPosition());
+
+        mQASettings.setIsQAEnable(mQASettingCheckBox->getStateSelected());
+        
+        //sf::Listener::setGlobalVolume((float)mMasterVolumeScrollBar->getScrollPosition());
+        if (mScreenSettings.getFullScreen() != mDisplaySettingCheckBox->getStateSelected()) {
+            dt::DisplayManager::get()->setWindowSize(640, 400);
+            mScreenSettings.setFullScreen(mDisplaySettingCheckBox->getStateSelected());
+            dt::DisplayManager::get()->setFullscreen(mDisplaySettingCheckBox->getStateSelected());
+        }
+
+        dt::GuiRootWindow& root = dt::GuiManager::get()->getRootWindow();
+        auto win = dt::DisplayManager::get()->getRenderWindow();
+        root.setSize((int)win->getWidth(), (int)win->getHeight());
+
+        cfg->setControlSetting(mControlSettings);
+        cfg->setQASetting(mQASettings);
+        cfg->setScreenSetting(mScreenSettings);
+        cfg->setSoundSetting(mSoundSettings);
+
+        cfg->saveConfig();
+
+        dt::StateManager::get()->setNewState(new MenuState());
     } else if (sender->getName() == "Gui.cancel_button") {
-        dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new MenuState());
     } else if (sender->getName() == "Gui.QASettingCheckBox" || sender->getName() == "Gui.DisplaySettingsCheckBox") {
         bool state_value = dynamic_cast<MyGUI::Button*>(sender)->getStateSelected();
@@ -218,7 +266,7 @@ void OptionState::onKeyDown(dt::InputManager::InputCode code, const OIS::EventAr
         mActionToChange = ControlSetting::ACTIVATE;
     }
 
-    ConfigurationManager::getInstance()->getControlSetting().setKey(mActionToChange,code);
+    mControlSettings.setKey(mActionToChange, code);
     dynamic_cast<MyGUI::Button*>(mActionButton)->setStateSelected(false);
     mActionButton = nullptr;
     mMessageLabel->setCaption(QString::fromLocal8Bit("设置成功：") + ConfigurationManager::getInstance()->getControlSetting().getKeyName(mActionToChange));

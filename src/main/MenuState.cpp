@@ -29,7 +29,6 @@ void MenuState::onInitialize() {
 //    dt::DisplayManager::get()->setWindowSize(800, 600);
 
 //    dt::DisplayManager::get()->setFullscreen(true);
-
     auto camnode = scene->addChildNode(new dt::Node("camera_node"));
     camnode->setPosition(Ogre::Vector3(0, 5, 10));
     camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));
@@ -88,7 +87,7 @@ void MenuState::onClick(MyGUI::Widget* sender) {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
-        dt::StateManager::get()->pop();
+        exit(0);
     }
 }
 

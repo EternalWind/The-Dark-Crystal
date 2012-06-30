@@ -22,6 +22,8 @@ public:
     BattleState(const QString stage_name);
 
     void onInitialize();
+
+    void onDeinitialize();
 	
     void updateStateFrame(double simulation_frame_time);
 
@@ -62,41 +64,17 @@ public:
 	  */
 	void setQuestionLabel(dt::GuiEditBox* edit_box);
 
-public slots:
     /**
-	  * 判断玩家当前是否已经取得胜利
-	  * @returns 胜利与否
-	  */
-	//bool isVictory();
-
-	/**
-	  * 玩家取胜的情况下，下一步动作
-	  */
-	void win();
-
-    /**
-      * 设置当前关卡。
-      * @param stage 要设置的关卡
+      * 设置场景参数1
+      * @param param1 参数1
       */
-    void setStage(const QString stage);
+    void setSceneParam1(double param1);
 
     /**
-      * 获取当前关卡。
-      * @returns 当前关卡
+      * 设置场景参数2
+      * @param param2 参数2
       */
-    QString getStage() const;
-
-    /**
-      * 获取下一关卡。
-      * @returns 下一关卡
-      */
-    QString getNextStage() const;
-
-    /**
-      * 设置下一关卡。
-      * @param next_stage 要设置的下一关卡
-      */
-    void setNextStage(const QString next_stage);
+    void setSceneParam2(double param2);
 
     /**
 	  * 返回总敌人数量
@@ -201,7 +179,6 @@ protected:
 
 private:
 	double mCrystalBarPosition;                //!< 进度条进度
-
 };
 
 #endif
