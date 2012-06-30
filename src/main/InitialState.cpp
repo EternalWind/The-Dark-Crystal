@@ -35,10 +35,10 @@ void InitialState::onInitialize() {
     auto display_settings = config_mgr->getScreenSetting();
     auto sound_settings = config_mgr->getSoundSetting();
 
+    dt::DisplayManager::get()->setWindowSize(640, 400);
+
     if (display_settings.getFullScreen()) {
         dt::DisplayManager::get()->setFullscreen(true);
-    } else {
-        dt::DisplayManager::get()->setWindowSize(640, 400);
     }
 
     sf::Listener::setGlobalVolume(sound_settings.getMainVolume());
