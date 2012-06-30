@@ -64,17 +64,38 @@ public:
 	  */
 	void setQuestionLabel(dt::GuiEditBox* edit_box);
 
-    /**
-      * 设置场景参数1
-      * @param param1 参数1
-      */
-    void setSceneParam1(double param1);
+signals:
+    void sVictory();
+
+public slots:
+	/**
+	  * 玩家取胜的情况下，下一步动作
+	  */
+	void win();
 
     /**
-      * 设置场景参数2
-      * @param param2 参数2
+      * 设置当前关卡。
+      * @param stage 要设置的关卡
       */
-    void setSceneParam2(double param2);
+    void setStage(const QString stage);
+
+    /**
+      * 获取当前关卡。
+      * @returns 当前关卡
+      */
+    QString getStage() const;
+
+    /**
+      * 获取下一关卡。
+      * @returns 下一关卡
+      */
+    QString getNextStage() const;
+
+    /**
+      * 设置下一关卡。
+      * @param next_stage 要设置的下一关卡
+      */
+    void setNextStage(const QString next_stage);
 
     /**
 	  * 返回总敌人数量

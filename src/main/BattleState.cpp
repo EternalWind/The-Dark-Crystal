@@ -91,10 +91,6 @@ void BattleState::onInitialize() {
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
-	Alien *pAlien = EntityManager::get()->getHuman();
-	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
-	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
-
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
     }
@@ -127,11 +123,13 @@ void BattleState::onInitialize() {
     dt::GuiManager::get()->setMouseCursorVisible(false);
 }
 
+void BattleState::onDeinitialize() {}
+
 void BattleState::updateStateFrame(double simulation_frame_time) {
 	//拾起水晶进度条过程
 	if(mCrystalBarPosition != 0.0) {
 		mCrystalBarPosition += simulation_frame_time;
-		this->mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition * 20);
+		mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition * 20);
 		if(mCrystalBarPosition > 5.0) {
 			mCrystalBarPosition = 0.0;
 			mPickUpCrystalBar->setVisible(false);
@@ -152,7 +150,7 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 
 void BattleState::win() {
     auto state_mgr = dt::StateManager::get();
-    //state_mgr->pop(1);
+    emit sVictory();
 
     if (mNextStage != "") {
         state_mgr->setNewState(new BattleState(mNextStage));
