@@ -72,7 +72,7 @@ void MenuState::onClick(MyGUI::Widget* sender) {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
-        dt::StateManager::get()->pop();
+        exit(0);
     }
 }
 

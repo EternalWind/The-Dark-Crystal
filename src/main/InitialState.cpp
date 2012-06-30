@@ -42,10 +42,10 @@ void InitialState::onInitialize() {
     }
 
     sf::Listener::setGlobalVolume(sound_settings.getMainVolume());
-
-    dt::StateManager::get()->setNewState(new MenuState());
 }
 
 void InitialState::onDeinitialize() {}
 
-void InitialState::updateStateFrame(double simulation_frame_time) {}
+void InitialState::updateStateFrame(double simulation_frame_time) {
+        dt::StateManager::get()->setNewState(new MenuState());
+}
