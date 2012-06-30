@@ -122,7 +122,7 @@ void BattleState::onInitialize() {
 	mPickUpCrystalBar->setProgressPosition(0);
 	mPickUpCrystalBar->setVisible(false);
 
-    __resetGui();
+    __resetGui();  
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
 }

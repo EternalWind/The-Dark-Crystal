@@ -14,7 +14,7 @@
 /**
   * 游戏的战斗场景
   * 默认第一人称视角
-  * 显示血量，武器，弹夹数
+  * 显示血量，武器，弹夹数 
   */
 class BattleState : public dt::State {
     Q_OBJECT
