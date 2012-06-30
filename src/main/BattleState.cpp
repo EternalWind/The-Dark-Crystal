@@ -7,6 +7,10 @@
 #include "SceneLoader.h"
 #include "AIDivideAreaManager.h"
 #include "EntityManager.h"
+#include "MonsterAIAgent.h"
+#include "Monster.h"
+#include "PlayerAIAgent.h"
+#include "Alien.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -24,6 +28,19 @@
 
 #include <OgreProcedural.h>
 
+
+void setP(Character * alien, Agent * human_agent, double x, double y, double z) {
+auto physics = alien->findComponent<dt::PhysicsBodyComponent>("physics_body");
+    auto motion = physics->getRigidBody()->getMotionState();
+    btTransform trans;
+    motion->getWorldTransform(trans);
+    trans.setOrigin(btVector3(x, y, z));
+    motion->setWorldTransform(trans);
+    physics->getRigidBody()->getCollisionShape()->setLocalScaling(btVector3(0.01, 0.01, 0.01));   
+    alien->setPosition(x, y, z);
+    alien->setScale(0.01);
+     human_agent->attachTo(alien);
+}
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
       mDialogLabel(nullptr),
@@ -43,7 +60,9 @@ void BattleState::onInitialize() {
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
+
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
+   // this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
 
     scene->addChildNode(script_node);
 
@@ -83,6 +102,9 @@ void BattleState::onInitialize() {
     mQuestionLabel = question.get();
     mDialogLabel = dialog.get();
 
+
+  
+
 	Alien *pAlien = EntityManager::get()->getHuman();
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
@@ -113,6 +135,31 @@ void BattleState::onInitialize() {
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
+
+    //Alien* alien1 = new Alien("alien1", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
+    //scene->addChildNode(alien1);
+    //PlayerAIAgent * pa = new PlayerAIAgent("rj");    
+    // Ogre::Vector3 tmp = AIDivideAreaManager::get()->getArea(41);
+    //setP(alien1, pa, tmp.x, 10, tmp.z);   
+    //
+    //EntityManager::get()->addPlayer(alien1);
+    //
+    //Weapon * weapon = new Weapon("RailGun","w", Weapon::PRIMARY, 3, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 300);
+    // alien1->addWeapon(weapon);
+     for (int  i = 0; i < 1; i ++) {
+        Monster * monster = new Monster("monster" + dt::Utils::toString(i), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);
+        scene->addChildNode(monster);
+        //monster->setCurHealth(100);
+        //dt::Logger().get().debug(monster->getFullName());
+        MonsterAIAgent * ma5 = new MonsterAIAgent("ma" + dt::Utils::toString(i));
+        Ogre::Vector3 tmp = AIDivideAreaManager::get()->getArea(i);
+        setP(monster, ma5, tmp.x, 10, tmp.z);
+        monster->setCurSpeed(6.0);
+        monster->setScale(0.015);
+        monster->setAttackRange(40);
+        monster->setAttackValue(11);        
+        EntityManager::get()->addMonster(monster);
+    }
 }
 
 void BattleState::onDeinitialize() {}
