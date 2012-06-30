@@ -14,6 +14,7 @@
 void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
 
+
     auto camnode = scene->addChildNode(new dt::Node("camera_node"));
     camnode->setPosition(Ogre::Vector3(0, 5, 10));
     camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));

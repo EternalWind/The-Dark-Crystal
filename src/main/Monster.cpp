@@ -27,6 +27,7 @@ float Monster::getAttackRange() {
 void Monster::setAttackRange(float attack_range) {
 	if (attack_range > 0.0f) {
 		mAttackRange = attack_range;
+        this->findComponent<dt::RaycastComponent>(INTERACTOR_COMPONENT)->setRange(this->getAttackRange());
 	}
 }
 
@@ -133,8 +134,9 @@ void Monster::__onAttack(bool is_pressed) {
 			
 			// ²¥·Å¹¥»÷¶¯»­
 			auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+            mesh->stopAnimation();
 			mesh->setAnimation("attack");
-			mesh->setLoopAnimation(false);
+			mesh->setLoopAnimation(true);
 			mesh->playAnimation();
 		}
 	}

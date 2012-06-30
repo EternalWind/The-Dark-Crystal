@@ -53,7 +53,7 @@ void MonsterAIAgent::onInitialize() {
     mIteractor = this->addComponent(
         new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();
     
-    mIteractor->setRange(3000.0f);    
+    mIteractor->setRange(mBody->getAttackRange());    
     if (!QObject::connect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFind(dt::PhysicsBodyComponent*))) ) {
                 dt::Logger::get().error("can't connect interactionComponent to MonsterAIAgent's __Onfind");
@@ -127,7 +127,7 @@ void MonsterAIAgent::walk(double time_diff) {
                 mSpeedUpPress = 1;
             }
             mBody->setCurSpeed(4.0);
-            emit(sMove(Entity::BACKWARD, true)); 
+            emit(sMove(Entity::FORWARD, true)); 
             mOnMovePress = 1;            
         }
       } else{        
@@ -141,15 +141,15 @@ void MonsterAIAgent::onUpdate(double time_diff) {
     
     if (time_diff == 0.0) return; 
     
-    if (mColli) {
-        mOnWay = false; 
-        mThreat = true; 
-        mThreatTime = THREAT_COOL_TIME;
-        if (mOnMovePress) {
-            mOnMovePress = 0; 
-            emit(Entity::STOP, true);
-        }
-    }
+    //if (mColli) {
+    //    mOnWay = false; 
+    //    mThreat = true; 
+    //    mThreatTime = THREAT_COOL_TIME;
+    //    if (mOnMovePress) {
+    //        mOnMovePress = 0; 
+    //        emit(Entity::STOP, true);
+    //    }
+    //}
      //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
     if (mThreat) {
@@ -217,7 +217,7 @@ void MonsterAIAgent::onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Comp
     }
     Monster * my_friend = dynamic_cast<Monster*>(component->getNode());
     mColli = 0;
-   
+   /*
     if (my_friend != nullptr) {         
          if (mThreat) return;
          MonsterAIAgent * agent = dynamic_cast<MonsterAIAgent*>(my_friend->findChildNode("agent", true).get());
@@ -232,6 +232,7 @@ void MonsterAIAgent::onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Comp
             if (agent->isThreat()) mColli --; 
         }
     }
+    */
 }
 void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
     //操蛋的居然会传入空指针！！！
@@ -245,10 +246,29 @@ void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
          Ogre::Vector3 enemy_pos = enemy->getPosition();
          enemy_pos.y = 0;
          Ogre::Vector3 my_pos = mBody->getPosition();
-         if (enemy_pos.distance(my_pos) < 4.0) {
+         my_pos.y = 0;
+
+         //mThreatTime = THREAT_COOL_TIME;
+         if (!mAttackPress && !mOnMovePress) {
+            if (!mSpeedUpPress) {
+                emit(sSpeedUp(true));
+                mSpeedUpPress = 1;
+            }
+            emit(sMove(Entity::FORWARD, true));   
+            mOnMovePress = 1; 
+        }
+        mHasEnemy = true;    
+
+         if (enemy_pos.distance(my_pos) < 20.0) {
             if (!mAttackPress) {
+                if (mOnMovePress) {
+                    mOnMovePress = 0; 
+                    emit(sMove(Entity::STOP, true));
+                    
+                }
                 emit(sAttack(true));
                 mAttackPress = 1;
+                
             }
          } else {
              if (mAttackPress) {
@@ -256,16 +276,7 @@ void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
                  mAttackPress = 0;
              }
          }
-        mThreatTime = THREAT_COOL_TIME;
-        if (!mOnMovePress) {
-            if (!mSpeedUpPress) {
-                emit(sSpeedUp(true));
-                mSpeedUpPress = 1;
-            }
-            emit(sMove(Entity::BACKWARD, true));   
-            mOnMovePress = 1; 
-        }
-        mHasEnemy = true;    
+       
      }  else {
         if (mOnMovePress) {
             emit(sMove(Entity::STOP, true));
@@ -291,7 +302,7 @@ double MonsterAIAgent::clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre) {
     nxt.y = pre.y = 0;
     Ogre::Vector3 dy = Ogre::Vector3(0, 0, 1); 
     //由目标位置和当前位置算出期望方向的向量。
-    Ogre::Vector3 dv = nxt - pre; 
+    Ogre::Vector3 dv = pre - nxt; 
     dv.y = 0; 
     double res = asin((double) ( dy.crossProduct(dv).y / (dy.length() * dv.length()) )) * 180 / PI;
        if (dy.dotProduct(dv) < 0)
