@@ -3,6 +3,7 @@
 #include "ConfigurationManager.h"
 
 #include <Scene/Scene.hpp>
+#include <cstdio>
 
 const QString Character::WALK_SOUND_COMPONENT = "walk_sound";
 const QString Character::JUMP_SOUND_COMPONENT = "jump_sound";
@@ -35,13 +36,15 @@ private:
 
 Character::Character(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
     const btScalar mass, const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle, const float jump_speed)
-    : Entity(node_name, mesh_handle, collision_shape_type, mass),
-      mWalkSoundHandle(walk_sound_handle),
-      mJumpSoundHandle(jump_sound_handle),
-      mRunSoundHandle(run_sound_handle),
-      mVelocity(0.0, 0.0, 0.0),
-      mJumpSpeed(jump_speed),
-      mIsJumpping(false) {}
+	: Entity(node_name, mesh_handle, collision_shape_type, mass),
+	mWalkSoundHandle(walk_sound_handle),
+	mJumpSoundHandle(jump_sound_handle),
+	mRunSoundHandle(run_sound_handle),
+	mVelocity(0.0, 0.0, 0.0),
+	mJumpSpeed(jump_speed),
+	mTimeElapseAfterJumping(1e6) {
+		Entity::mIsJumping = false; 
+}
 
 void Character::onInitialize() {
     Entity::onInitialize();
@@ -65,6 +68,9 @@ void Character::onInitialize() {
     // 化身Kinematic Body拯救世界！！！
     physics_body->getRigidBody()->setCollisionFlags(physics_body->getRigidBody()->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
     physics_body->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+
+	// 初始化跳跃冷却时间
+	mJumpingInterval = mJumpSpeed / physics_body->getRigidBody()->getGravity().length();
 }
 
 void Character::onDeinitialize() {
@@ -73,6 +79,14 @@ void Character::onDeinitialize() {
 
 void Character::onUpdate(double time_diff) {
     this->mIsUpdatingAfterChange = (time_diff == 0);
+
+	// 处理跳跃后的时间
+	if (mIsJumping) {
+		mTimeElapseAfterJumping += time_diff;
+		if (mTimeElapseAfterJumping > mJumpingInterval + 1e-5) {
+			mTimeElapseAfterJumping = mJumpingInterval + 1e-5;
+		}
+	}
 
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
     btMotionState* motion = physics_body->getRigidBody()->getMotionState();
@@ -90,12 +104,12 @@ void Character::onUpdate(double time_diff) {
     possible_position.setOrigin(BtOgre::Convert::toBullet(getPosition(dt::Node::SCENE)));
     possible_position.setRotation(target_position.getRotation());
 
-    if (!mIsJumpping) {
+    if (!mIsJumping) {
         mVelocity.setX(new_velocity.x());
         mVelocity.setZ(new_velocity.z());
     }
 
-    if (this->isOnGround()) {
+    if (__canJump() && this->isOnGround()) {
         if (mVelocity.getY() < 0.0f) {
             // 人物已在地面上，因此将掉落速度清零。
             mVelocity.setY(0.0f);
@@ -103,18 +117,18 @@ void Character::onUpdate(double time_diff) {
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
 
+		// 刚刚落地
+		if (mIsJumping && mesh->isAnimationStopped()) {
+			mIsJumping = false;
 
-        if (mIsJumpping && mesh->isAnimationStopped()) {
-            mIsJumpping = false;
-            
-            mesh->stopAnimation();
+			mesh->stopAnimation();
 
-            if (!mIsMoving) {
-                mVelocity.setZero();
-                mMoveVector = Ogre::Vector3::ZERO;
-            }
+			if (!mIsMoving) {
+				mVelocity.setZero();
+				mMoveVector = Ogre::Vector3::ZERO;
+			}
 
-            if (!mVelocity.isZero()) {
+			if (!mVelocity.isZero()) {
                 if (mHasSpeededUp) {
                     mesh->setAnimation("run");
                 } else {
@@ -135,26 +149,28 @@ void Character::onUpdate(double time_diff) {
     if (__canMoveTo(target_position, possible_position)) {
         // 竟然能够移动到这里！！！
         motion->setWorldTransform(target_position);
-        //std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
 
     } else {
         // 移动不到……
-        //mVelocity.setY(1.0f);
-        std::cout << mVelocity.getX() << " " << mVelocity.getY() << " " << mVelocity.getZ() << std::endl;
-        //mVelocity.setZero();
+
         btVector3 vec = BtOgre::Convert::toBullet(this->getPosition(dt::Node::SCENE)) - target_position.getOrigin();
 
         if (!vec.isZero())
             vec.normalize();
 
         mVelocity.setX(vec.x());
-        if (mIsJumpping) {
+        if (mIsJumping) {
             mVelocity.setY(vec.y());
+            
+            //mVelocity = -mVelocity;
+            //if(!mVelocity.isZero()) {
+            //    mVelocity.normalize();
+            //}
         }
-        mVelocity.setZ(vec.z());
+        
     }
 
-    this->mIsUpdatingAfterChange = false;
+    //this->mIsUpdatingAfterChange = false;
 
     Node::onUpdate(time_diff);
 }
@@ -168,7 +184,7 @@ float Character::getJumpSpeed() const {
 }
 
 void Character::__onMove(Entity::MoveType type, bool is_pressed) {
-    if (!mIsJumpping) {
+    if (!mIsJumping) {
         bool is_stopped = false;
 
         switch (type) {
@@ -247,9 +263,9 @@ void Character::__onMove(Entity::MoveType type, bool is_pressed) {
 void Character::__onJump(bool is_pressed) {
     auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-    if (is_pressed && this->isOnGround()) {
-        mVelocity.setY(mJumpSpeed);
-
+    if (is_pressed && __canJump() && isOnGround()) {
+        mVelocity.setY(mJumpSpeed);		
+		mTimeElapseAfterJumping = 0.0f;
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
@@ -259,17 +275,19 @@ void Character::__onJump(bool is_pressed) {
         mesh->setLoopAnimation(false);
         mesh->playAnimation();
 
-        mIsJumpping = true;
+        mIsJumping = true;
     }
 }
 
 void Character::__onSpeedUp(bool is_pressed) {
     float increasing_rate = 1.5f;
 
-    if (is_pressed && !mIsJumpping) {
-        this->setCurSpeed(this->getCurSpeed() * increasing_rate);
+    if (is_pressed /* && !mIsJumping */) {
+		if (mCurSpeed == mOrigSpeed) {
+			this->setCurSpeed(mOrigSpeed * increasing_rate);
+		}
 
-        if (mIsMoving) {
+        if (!mIsJumping && mIsMoving) {
             this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
             this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
 
@@ -281,9 +299,11 @@ void Character::__onSpeedUp(bool is_pressed) {
             mesh->playAnimation();
         }
     } else {
-        this->setCurSpeed(this->getCurSpeed() / increasing_rate);
+		if (mCurSpeed != mOrigSpeed) {
+			this->setCurSpeed(mOrigSpeed);
+		}
 
-        if (mIsMoving) {
+		if (!mIsJumping && mIsMoving) {
             this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
             this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
 
@@ -364,4 +384,8 @@ bool Character::__canMoveTo(const btTransform& position, btTransform& closest_po
     }
     
     return true;
+}
+
+bool Character::__canJump() {
+	return mTimeElapseAfterJumping + 1e-5 > mJumpingInterval;
 }

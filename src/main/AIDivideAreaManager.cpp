@@ -4,6 +4,9 @@
 #include <string>
 using namespace std; 
 
+Ogre::Vector3 AIDivideAreaManager::getArea(uint16_t id) {
+    return mPosition[id];
+}
 void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
     mNxtArea[a].push_back(b); 
     mNxtArea[b].push_back(a);     
@@ -13,6 +16,9 @@ void AIDivideAreaManager::addArea(Ogre::Vector3 p, uint16_t id) {
     mPosition[id] = p;
     mAreaNum ++; 
 
+}
+uint16_t AIDivideAreaManager::getAreaNum() {
+    return mAreaNum; 
 }
 
 void AIDivideAreaManager::loadMapInfo(string fileName) {
@@ -92,13 +98,14 @@ uint16_t AIDivideAreaManager::getAreaNumBetween(uint16_t a, uint16_t b) {
 }
 
 uint16_t AIDivideAreaManager::getNxtClosestId(uint16_t cur, uint16_t des) {
-    uint16_t tmp = -1;
+    uint16_t tmp = des;
     uint16_t tmp_dis = 10000; 
+    if (cur == des) return tmp; 
     for (uint16_t i = 0; i < mNxtArea[cur].size(); i ++) { 
         uint16_t v = mNxtArea[cur][i];        
         if (mArea[cur][v] + mArea[v][des] < tmp_dis) {
             tmp_dis = mArea[cur][v] + mArea[v][des]; 
-            tmp  = i; 
+            tmp  = v; 
         }
     }
     return tmp; 
@@ -126,12 +133,12 @@ Ogre::Vector3 AIDivideAreaManager::getPositionById(std::pair<uint16_t, uint16_t>
 }
 
 std::pair<uint16_t, uint16_t> AIDivideAreaManager::randomPosition(uint16_t area) {
-    double tmp = mRadius / 100.0;
+    double tmp = mRadius * 2 / 100.0;
     Ogre::Vector3 p;
     p.y = 0; 
     while (1) {
-        p.x = rand() % 100 * tmp;
-        p.z = rand() % 100 * tmp;
+        p.x = (rand() % 100 - 50) * tmp;
+        p.z = (rand() % 100 - 50)* tmp;
         bool flag = 0; 
         for (int i = 0; i < 50; i ++) 
             if (mPositionMark[area][i]) {
@@ -140,15 +147,26 @@ std::pair<uint16_t, uint16_t> AIDivideAreaManager::randomPosition(uint16_t area)
                     break; 
                 }
             }
-        if (flag) break;        
+        if (flag) continue;        
         if (p.x*p.x + p.z*p.z <= mRadius * mRadius) break; 
     }   
+
+  
     for (int i = 0; i < 50; i ++) 
         if (!mPositionMark[area][i]) {
+            
+            p.x += mPosition[area].x; 
+            p.z += mPosition[area].z; 
             mPositionMark[area][i] = 1; 
             mAreaPosition[area][i] = p;
+
+            
             return make_pair(area, i);
         }    
     //如果这个区域人太多，则不选择这个区域。
     return make_pair(-1,-1);
+}
+
+void AIDivideAreaManager::destroy(std::pair<uint16_t, uint16_t> cur_id) {
+    mPositionMark[cur_id.first][cur_id.second] = 0; 
 }

@@ -24,20 +24,22 @@ public:
 	Weapon();
 
 	//当不是投掷型武器时忽略参数hitting_range
-	Weapon( const QString &name, 
-	    	WeaponType type, 
-	    	uint16_t power, 
-	    	uint16_t CurClip, 
-	    	uint16_t max_clip, 
-	    	uint16_t weight, 
-	    	uint16_t ammo_per_clip, 
-	    	uint16_t cur_ammo, 
-	    	bool is_one_shot, 
-	    	float interval,
-	    	const QString &firing_sound_handle, 
-	    	const QString &reloading_begin_sound_handle, 
-	    	const QString &reloading_done_sound_handle, 
-			float hitting_range);
+	Weapon( const QString &prop_name, 
+	        const QString &node_name,
+            WeaponType type, 
+            uint16_t power, 
+            uint16_t CurClip, 
+            uint16_t max_clip, 
+            uint16_t weight, 
+            uint16_t ammo_per_clip, 
+            uint16_t cur_ammo, 
+            bool is_one_shot, 
+            float interval,
+            float reload_time,
+            const QString &firing_sound_handle, 
+            const QString &reloading_begin_sound_handle, 
+            const QString &reloading_done_sound_handle, 
+            float hitting_range);
 
 	~Weapon();
 
@@ -86,10 +88,6 @@ public:
 	void setHittingRange(float hitting_range);
 
 	float getHittingRange() const;
-
-	void setIsPhysicsBodyEnabled(bool is_enabled);
-
-	bool getIsPhysicsBodyEnabled();
 
 	const dt::InteractionComponent* getInterator() const;
 

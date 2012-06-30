@@ -67,7 +67,7 @@ void BattleStateTest::onInitialize() {
    /* HumanAgent* human_agent = new HumanAgent("Player");
     human_agent->attachTo(alien);*/
 
-    PlayerAIAgent * pa = new PlayerAIAgent("rj", 0);
+    PlayerAIAgent * pa = new PlayerAIAgent("rj");
     pa->attachTo(alien);
     
     Alien* alien1 = new Alien("alien1", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");

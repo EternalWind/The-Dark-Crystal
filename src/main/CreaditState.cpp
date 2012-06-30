@@ -1,6 +1,5 @@
 #include "CreaditState.h"
 #include "MenuState.h"
-#include "ParticlesEffect.h"
 
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
@@ -14,7 +13,6 @@ void CreaditState::onInitialize() {
     dt::ResourceManager::get()->addDataPath(QDir("data"));
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("images","FileSystem", true);
-	dt::ResourceManager::get()->addResourceLocation("sounds","FileSystem", true);
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     auto camnode = scene->addChildNode(new dt::Node("camera_node"));

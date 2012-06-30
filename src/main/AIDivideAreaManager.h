@@ -20,8 +20,9 @@ public:
 	  */
 	 void loadMapInfo(string fileName);
      void addEdge(uint16_t a, uint16_t b); 
+     uint16_t getAreaNum();     
      void addArea(Ogre::Vector3 p, uint16_t id); 
-
+     Ogre::Vector3 getArea(uint16_t id);
      /**
        *sceneloader之后一定要调用afterLoadScene初始化AIDivideAreaManager。
        */
@@ -31,6 +32,7 @@ public:
        *sceneloader之前一定要调用afterLoadScene初始化AIDivideAreaManager。
        */
      void beforeLoadScene(double diameter, double part_dis);
+     void destroy(std::pair<uint16_t, uint16_t> cur_id);
 	 void initialize();
      void deinitialize();
 	 /**

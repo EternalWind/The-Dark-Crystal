@@ -1,8 +1,10 @@
 #include "Monster.h"
 #include "Agent.h"
+#include "Alien.h"
 
 #include "ConfigurationManager.h"
 
+#include <Scene/Scene.hpp>
 #include <Audio/SoundComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
 
@@ -27,6 +29,20 @@ void Monster::setAttackRange(float attack_range) {
 	}
 }
 
+void Monster::onKilled() {
+	auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+    Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
+
+    if (agent != nullptr) {
+        agent->disable();
+    }
+
+	mesh->setAnimation("die");
+	mesh->setLoopAnimation(false);
+	mesh->playAnimation();    
+    mKill = true; 
+}
+
 Monster::Monster(const QString node_name,
 	const QString mesh_handle,
 	const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
@@ -43,6 +59,7 @@ Monster::Monster(const QString node_name,
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
 	mAttackInterval(attack_interval) {
+        mKill = false; 
 }
 
 void Monster::onInitialize() {
@@ -69,23 +86,45 @@ void Monster::onInitialize() {
 }
 
 void Monster::onDeinitialize() {
+    Character::onDeinitialize();
 }
 
 void Monster::onUpdate(double time_diff) {
+    if (mKill) {
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        if (mesh->isAnimationStopped()) {
+            this->disable(); 
+            this->kill(); 
+            return; 
+        }
+    }
     this->mIsUpdatingAfterChange = (time_diff == 0);
 
-    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
-    auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
-    velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
+    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
+    //velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
 
-    if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
-        physics_body->activate();
-        physics_body->getRigidBody()->setLinearVelocity(velocity);
+    //if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
+    //    physics_body->activate();
+    //    physics_body->getRigidBody()->setLinearVelocity(velocity);
+    //}
+    if (this->getCurHealth() == 0) {
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        if (mesh->isAnimationStopped()) {
+            this->kill();
+        }
     }
 
+	if (this->getCurHealth() == 0) {
+		auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+		if (mesh->isAnimationStopped()) {
+			this->kill();
+			std::cout << "be killed" << std::endl;
+		}
+	}
 	Character::onUpdate(time_diff);
-}
 
+}
 // --------------- slots -------------------//
 
 void Monster::__onAttack(bool is_pressed) {
@@ -95,6 +134,12 @@ void Monster::__onAttack(bool is_pressed) {
 		if (interator->isReady()) {
 			attack_sound->playSound();
 			interator->check();
+			
+			// 播放攻击动画
+			auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+			mesh->setAnimation("attack");
+			mesh->setLoopAnimation(false);
+			mesh->playAnimation();
 		}
 	}
 }
@@ -104,11 +149,17 @@ void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_r
 }
 
 void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
-	Entity* obj = dynamic_cast<Entity*>(hit->getNode());
+	// 只能攻击Alien
+	Alien* obj = dynamic_cast<Alien*>(hit->getNode());
 
 	if (obj != nullptr) {
 		uint16_t cur_health = obj->getCurHealth();
 		obj->setCurHealth(getAttackValue() > cur_health ? 0 : cur_health - getAttackValue());
+
+		// 如果他挂了>_<
+		if (obj->getCurHealth() == 0) {
+			obj->onKilled();
+		}
 	}
 }
 

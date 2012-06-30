@@ -2,8 +2,11 @@
 #include "Alien.h"
 #include "HumanAgent.h"
 #include "Car.h"
+#include "Entity.h"
 #include "MenuState.h"
 #include "SceneLoader.h"
+#include "AIDivideAreaManager.h"
+#include "EntityManager.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -17,23 +20,34 @@
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 #include <Logic/ScriptComponent.hpp>
+#include <Logic/ScriptManager.hpp>
 
 #include <OgreProcedural.h>
 
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
       mDialogLabel(nullptr),
+	  mPickUpCrystalBar(nullptr),
       mTotalEnemyNum(0),
       mRemainEnemyNum(0),
       mTotalCrystalNum(0),
       mObtainedCrystalNum(0),
       mStage(stage_name),
-      mNextStage("") {}
+      mNextStage(""),
+      mSceneParam1(0.0),
+      mSceneParam2(0.0),
+      mCrystalBarPosition(0.0) {}
 
 void BattleState::onInitialize() {
-    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+    dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
+    dt::Node* script_node = new dt::Node("script_node");
+    script_node->addComponent(new dt::ScriptComponent(mStage + ".js", "state_script", true));
 
-    auto scene = addScene(new dt::Scene("BattleStateTest"));
+    AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
+
+    auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
+
+    scene->addChildNode(script_node);
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
 
@@ -53,6 +67,7 @@ void BattleState::onInitialize() {
     auto answer4 = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("answer4"));
     auto question = root_win.addChildWidget<dt::GuiEditBox>(new dt::GuiEditBox("question"));
     auto dialog = root_win.addChildWidget<dt::GuiLabel>(new dt::GuiLabel("dialog"));
+	auto pick_up_crystal_bar = root_win.addChildWidget<dt::GuiProgressBar>(new dt::GuiProgressBar("pick_up_crystal_bar"));
 
     mHealthHUD.push_back(health_img3.get());
     mHealthHUD.push_back(health_img2.get());
@@ -70,6 +85,11 @@ void BattleState::onInitialize() {
     mAnswerButtons.push_back(answer4.get());
     mQuestionLabel = question.get();
     mDialogLabel = dialog.get();
+	mPickUpCrystalBar = pick_up_crystal_bar.get();
+
+	Alien *pAlien = EntityManager::get()->getHuman();
+	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
@@ -90,16 +110,32 @@ void BattleState::onInitialize() {
     MyGUI::TextBox* text_box = dynamic_cast<MyGUI::TextBox*>(mDialogLabel->getMyGUIWidget());
     text_box->setTextAlign(MyGUI::Align::Left);
 
-    __onHealthChanged(0,100);
-    __onAmmoChanged(0, 60);
-    __onClipNumChanged(0, 5);
+    __onHealthChanged(50);
+    __onAmmoChanged(0);
+    __onClipNumChanged(0);
+
+	mPickUpCrystalBar->setProgressRange(100);
+	mPickUpCrystalBar->setProgressPosition(0);
+//	mPickUpCrystalBar->setVisible(false);
 
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
 }
 
-void BattleState::updateStateFrame(double simulation_frame_time) {}
+void BattleState::updateStateFrame(double simulation_frame_time) {
+	//拾起水晶进度条过程
+	if(mCrystalBarPosition != 0.0) {
+		mCrystalBarPosition += simulation_frame_time;
+		this->mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition * 20);
+		if(mCrystalBarPosition > 5.0) {
+			mCrystalBarPosition = 0.0;
+			mPickUpCrystalBar->setVisible(false);
+			++mObtainedCrystalNum;
+			setObtainedCrystalNum(mObtainedCrystalNum);
+		}
+	}
+}
 
 BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mQuestionLabel(nullptr),
@@ -116,7 +152,7 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 
 void BattleState::win() {
     auto state_mgr = dt::StateManager::get();
-    state_mgr->pop(1);
+    //state_mgr->pop(1);
 
     if (mNextStage != "") {
         state_mgr->setNewState(new BattleState(mNextStage));
@@ -139,35 +175,35 @@ void BattleState::setDialogLabel(dt::GuiLabel* dialog_label) {
 	}
 }
 
-uint16_t BattleState::getTotalEnemyNum() const {
+int BattleState::getTotalEnemyNum() const {
 	return mTotalEnemyNum;
 }
 
-void BattleState::setTotalEnemyNum(uint16_t total_enemy_num) {
+void BattleState::setTotalEnemyNum(int total_enemy_num) {
 	mTotalEnemyNum = total_enemy_num;
 }
 
-uint16_t BattleState::getRemainEnemyNum() const {
+int BattleState::getRemainEnemyNum() const {
 	return mRemainEnemyNum;
 }
 
-void BattleState::setRemainEnemyNum(uint16_t remain_enemy_num) {
+void BattleState::setRemainEnemyNum(int remain_enemy_num) {
 	mRemainEnemyNum = remain_enemy_num;
 }
 
-uint16_t BattleState::getTotalCrystalNum() const {
+int BattleState::getTotalCrystalNum() const {
 	return mTotalCrystalNum;
 }
 
-void BattleState::setTotalCrystalNum(uint16_t total_crystal_num) {
+void BattleState::setTotalCrystalNum(int total_crystal_num) {
 	mTotalCrystalNum = total_crystal_num;
 }
 
-uint16_t BattleState::getObtainedCrystalNum() const {
+int BattleState::getObtainedCrystalNum() const {
 	return mObtainedCrystalNum;
 }
 
-void BattleState::setObtainedCrystalNum(uint16_t obtained_crystal_num) {
+void BattleState::setObtainedCrystalNum(int obtained_crystal_num) {
 	mObtainedCrystalNum = obtained_crystal_num;
 }
 
@@ -187,20 +223,26 @@ void BattleState::__onTriggerText(uint16_t text_id) {
 	mQuestionLabel->show();
 }
 
-void BattleState::__onHealthChanged(uint16_t pre_health, uint16_t cur_health) {
+void BattleState::__onHealthChanged(uint16_t cur_health) {
     __changeDigits(mHealthHUD, cur_health);
 }
 
-void BattleState::__onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo) {
+void BattleState::__onAmmoChanged(uint16_t cur_ammo) {
     __changeDigits(mAmmoHUD, cur_ammo);
 }
 
-void BattleState::__onClipNumChanged(uint16_t pre_num, uint16_t cur_num) {
+void BattleState::__onClipNumChanged(uint16_t cur_num) {
     __changeDigits(mClipNumHUD, cur_num);
 }
 
-void BattleState::__onGetCrystal() {
+void BattleState::__onAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip) {
+	__changeDigits(mAmmoHUD, cur_ammo);
+	__changeDigits(mClipNumHUD, cur_clip);
+}
 
+void BattleState::__onGetCrystal() {
+	mCrystalBarPosition = 0.1;
+	mPickUpCrystalBar->setVisible(true);
 }
 
 void BattleState::__onTriggerQA() {
@@ -278,6 +320,9 @@ void BattleState::__resetGui() {
     mDialogLabel->setSize(300, size_v_small);
     mDialogLabel->setPosition(mHealthHUD[0]->getMyGUIWidget()->getPosition().left, mHealthHUD[0]->getMyGUIWidget()->getPosition().top - mHealthHUD[0]->getMyGUIWidget()->
         getSize().height - gap_v_small / 2);
+
+	mPickUpCrystalBar->setSize(400,15);
+	mPickUpCrystalBar->setPosition(int(coordination.width * 0.5 - 200), int(coordination.height * 0.9) );
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -292,4 +337,12 @@ void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t n
 
         pics[i]->setImageTexture(dt::Utils::toString(digit) + ".png");
     }
+}
+
+void BattleState::setSceneParam1(double param1) {
+    mSceneParam1 = param1;
+}
+
+void BattleState::setSceneParam2(double param2) {
+    mSceneParam2 = param2;
 }

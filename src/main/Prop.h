@@ -24,7 +24,7 @@ public:
 
 	Prop();
 
-	Prop(const QString &name, PropType prop_type);
+	Prop(const QString &prop_name, const QString &node_name, PropType prop_type);
 
 	~Prop();
 
@@ -41,7 +41,6 @@ public:
 protected:
 	QString mPropName;                              //!< 道具名称
 	PropType mPropType;                             //!< 道具类型
-	dt::PhysicsBodyComponent* mPhysicsBody;         //!< PhysicsBodyComponent指针
 };
 
 #endif

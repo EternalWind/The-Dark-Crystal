@@ -2,23 +2,31 @@
 #include "OptionState.h"
 #include "CreaditState.h"
 #include "BattleStateTest.h"
+#include "BattleState.h"
 
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
 #include <Core/ResourceManager.hpp>
 #include <Graphics/DisplayManager.hpp>
 #include <Graphics/CameraComponent.hpp>
-#include <Graphics/DisplayManager.hpp>
 #include <Gui/GuiManager.hpp>
 
 void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
-//	dt::DisplayManager::get()->setFullscreen(true);
 
     dt::ResourceManager::get()->addDataPath(QDir("data"));
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui/buttons", "FileSystem");
+    //Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
+	dt::ResourceManager::get()->addResourceLocation("models/particle", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("particle", "FileSystem");
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+//    dt::DisplayManager::get()->setWindowSize(800, 600);
 
 //    dt::DisplayManager::get()->setFullscreen(true);
 
@@ -72,7 +80,7 @@ void MenuState::onClick(MyGUI::Widget* sender) {
         dt::StateManager::get()->setNewState(new OptionState());
     } else if (sender->getName() == "Gui.new_game_button") {
         dt::StateManager::get()->pop();
-        dt::StateManager::get()->setNewState(new BattleStateTest());
+        dt::StateManager::get()->setNewState(new BattleState("01"));
     } else if (sender->getName() == "Gui.load_record_button") {
         dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new BattleStateTest());
