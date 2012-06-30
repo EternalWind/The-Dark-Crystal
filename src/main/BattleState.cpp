@@ -94,6 +94,17 @@ void BattleState::onInitialize() {
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
+    __onHealthChanged(pAlien->getCurHealth());
+    __onAmmoChanged(0);
+    __onClipNumChanged(0);
+
+    Weapon* weapon = pAlien->getCurWeapon();
+
+    if (weapon != nullptr) {
+        __onAmmoChanged(weapon->getCurAmmo());
+        __onClipNumChanged(weapon->getCurClip());
+    }
+
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
     }
@@ -112,10 +123,6 @@ void BattleState::onInitialize() {
 
     MyGUI::TextBox* text_box = dynamic_cast<MyGUI::TextBox*>(mDialogLabel->getMyGUIWidget());
     text_box->setTextAlign(MyGUI::Align::Left);
-
-    __onHealthChanged(50);
-    __onAmmoChanged(0);
-    __onClipNumChanged(0);
 
     __resetGui();
 
