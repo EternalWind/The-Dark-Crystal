@@ -7,6 +7,9 @@
 #include "SceneLoader.h"
 #include "AIDivideAreaManager.h"
 #include "EntityManager.h"
+#include "Monster.h"
+#include "MonsterAIAgent.h"
+#include "EntityManager.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -23,6 +26,10 @@
 #include <Logic/ScriptManager.hpp>
 
 #include <OgreProcedural.h>
+
+
+
+
 
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
@@ -113,6 +120,7 @@ void BattleState::onInitialize() {
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
+    EntityManager::get()->afterLoadScene(scene.get());    
 }
 
 void BattleState::onDeinitialize() {}
