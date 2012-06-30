@@ -745,6 +745,7 @@ Node::NodeSP SceneLoader::__loadTriggerArea(const QDomElement& og_component, Nod
 
 Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP dt_parent) 
 {
+
     Node::NodeSP node = nullptr;
     if (!og_node.isNull())
     {
@@ -752,63 +753,29 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         QString alien_name = og_node.attribute(SL_ALIEN_NAME);
         QString agent = og_node.attribute(SL_AGENT_TYPE);
         Alien *pAlien = new Alien(node_name, 
-            alien_name + ".mesh",
-            dt::PhysicsBodyComponent::BOX,
-            100, 
-            alien_name + "_walk",
-            alien_name + "_jump",
-            alien_name + "_run");
+                                  alien_name + ".mesh",
+                                  dt::PhysicsBodyComponent::BOX,
+                                  100, 
+                                  alien_name + "_walk",
+                                  alien_name + "_jump",
+                                  alien_name + "_run");
         pAlien->setMaxHealth(100);
         pAlien->setCurHealth(50);
-        pAlien->setEyePosition(Ogre::Vector3(0, 10, 10));
-
+        pAlien->setEyePosition(Ogre::Vector3(0, 3, 3));
+		
         if (dt_parent)
             node = dt_parent->addChildNode(pAlien);
         else 
             node = mScene->addChildNode(pAlien);
 
-        /*
-        if (agent.toInt() == 0)
-        {
-        HumanAgent* human_agent = new HumanAgent("Player");
-        human_agent->attachTo(pAlien);
-        EntityManager::get()->setHuman(pAlien);
-        }
-        if (agent.toInt() == 1)
-        {
-        PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
-        Ai_agent->attachTo(pAlien);
-        EntityManager::get()->addPlayer(pAlien);
-
-        }
-
-
         QDomElement pos = og_node.firstChildElement(SL_POS);
         QDomElement scale = og_node.firstChildElement(SL_SCALE);
-
-        QDomElement rot = og_node.firstChildElement(SL_ORI);
-
-
-        node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-        node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
-        pos.attribute(SL_Z).toFloat());
-        pAlien->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-        node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
-        rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
-        node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-        scale.attribute(SL_Z).toFloat()));	
-
-        node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-        node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-        */
-
-        QDomElement pos = og_node.firstChildElement(SL_POS);
-        QDomElement scale = og_node.firstChildElement(SL_SCALE);
-
+		
         QDomElement rot = og_node.firstChildElement(SL_ORI);
 
         auto physics = pAlien->findComponent<dt::PhysicsBodyComponent>("physics_body");
         auto motion = physics->getRigidBody()->getMotionState();
+
         btTransform trans;
         motion->getWorldTransform(trans);
 
@@ -853,16 +820,16 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
         QDomElement root = doc.documentElement();
 
-        QString id;
+        QString weapon_id;
 
         QDomElement primary = og_node.firstChildElement(SL_ALIEN_PRIMARY);
         QDomElement secondary = og_node.firstChildElement(SL_ALIEN_SECONDARY);
         QDomElement throwable = og_node.firstChildElement(SL_ALIEN_THROWABLE);
 
         if (!primary.isNull()) {
-            id = throwable.nodeValue();
+            weapon_id = throwable.nodeValue();
 
-            QDomElement w_node = root.firstChildElement(id);
+            QDomElement w_node = root.firstChildElement(weapon_id);
 
             auto type = w_node.firstChildElement("type");
 
@@ -897,31 +864,134 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 auto mass = w_node.firstChildElement("mass");
                 float mass_num = mass.text().toFloat();
 
-                Weapon *pWeapon = new Weapon(id, 
-                    node_name,
-                    Weapon::WeaponType(weapon_type),
-                    power_num,
-                    maximum_clip_num,
-                    maximum_clip_num, 
-                    mass_num,
-                    ammo_per_clip_num,
-                    ammo_per_clip_num,
-                    is_one_shot_num,
-                    interval_num,
-                    reload_time_num,
-                    id + "_fire",
-                    id + "_reload_begin",
-                    id + "_reload_done",
-                    range_num);
+                ParticleInfo FireBack_num, Bomb_num;
+				auto FireBack = w_node.firstChildElement("FireBack");
+
+				auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
+				FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+				auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
+				FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+				auto time0 = FireBack.firstChildElement("time0");
+				FireBack_num.time0 = time0.text().toFloat();
+
+				auto colour0r = FireBack.firstChildElement("colour0r");
+				FireBack_num.colour0.x = colour0r.text().toFloat();
+
+				auto colour0g = FireBack.firstChildElement("colour0g");
+				FireBack_num.colour0.y = colour0g.text().toFloat();
+
+				auto colour0b = FireBack.firstChildElement("colour0b");
+				FireBack_num.colour0.z = colour0b.text().toFloat();
+
+				auto time1 = FireBack.firstChildElement("time1");
+				FireBack_num.time1 = time1.text().toFloat();
+
+				auto colour1r = FireBack.firstChildElement("colour1r");
+				FireBack_num.colour1.x = colour1r.text().toFloat();
+
+				auto colour1g = FireBack.firstChildElement("colour1g");
+				FireBack_num.colour1.y = colour1g.text().toFloat();
+
+				auto colour1b = FireBack.firstChildElement("colour1b");
+				FireBack_num.colour1.z = colour1b.text().toFloat();
+
+				auto time2 = FireBack.firstChildElement("time2");
+				FireBack_num.time2 = time2.text().toFloat();
+
+				auto colour2r = FireBack.firstChildElement("colour2r");
+				FireBack_num.colour2.x = colour2r.text().toFloat();
+
+				auto colour2g = FireBack.firstChildElement("colour2g");
+				FireBack_num.colour2.y = colour2g.text().toFloat();
+
+				auto colour2b = FireBack.firstChildElement("colour2b");
+				FireBack_num.colour2.z = colour2b.text().toFloat();
+
+				auto degree = FireBack.firstChildElement("degree");
+				FireBack_num.degree = degree.text().toFloat();
+
+				auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
+				FireBack_num.MaterialHandle = MaterialHandle.text();
+
+				auto Bomb = w_node.firstChildElement("Bomb");
+
+				TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
+				Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+				TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
+				Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+				time0 = Bomb.firstChildElement("time0");
+				Bomb_num.time0 = time0.text().toFloat();
+
+				colour0r = Bomb.firstChildElement("colour0r");
+				Bomb_num.colour0.x = colour0r.text().toFloat();
+
+				colour0g = Bomb.firstChildElement("colour0g");
+				Bomb_num.colour0.y = colour0g.text().toFloat();
+
+				colour0b = Bomb.firstChildElement("colour0b");
+				Bomb_num.colour0.z = colour0b.text().toFloat();
+
+				time1 = Bomb.firstChildElement("time1");
+				Bomb_num.time1 = time1.text().toFloat();
+
+				colour1r = Bomb.firstChildElement("colour1r");
+				Bomb_num.colour1.x = colour1r.text().toFloat();
+
+				colour1g = Bomb.firstChildElement("colour1g");
+				Bomb_num.colour1.y = colour1g.text().toFloat();
+
+				colour1b = Bomb.firstChildElement("colour1b");
+				Bomb_num.colour1.z = colour1b.text().toFloat();
+
+				time2 = Bomb.firstChildElement("time2");
+				Bomb_num.time2 = time2.text().toFloat();
+
+				colour2r = Bomb.firstChildElement("colour2r");
+				Bomb_num.colour2.x = colour2r.text().toFloat();
+
+				colour2g = Bomb.firstChildElement("colour2g");
+				Bomb_num.colour2.y = colour2g.text().toFloat();
+
+				colour2b = Bomb.firstChildElement("colour2b");
+				Bomb_num.colour2.z = colour2b.text().toFloat();
+
+				degree = Bomb.firstChildElement("degree");
+				Bomb_num.degree = degree.text().toFloat();
+
+				MaterialHandle = Bomb.firstChildElement("MaterialHandle");
+				Bomb_num.MaterialHandle = MaterialHandle.text();
+
+				Weapon *pWeapon = new Weapon(weapon_id, 
+					node_name,
+					Weapon::WeaponType(weapon_type),
+					power_num,
+					maximum_clip_num,
+					maximum_clip_num, 
+					mass_num,
+					ammo_per_clip_num,
+					ammo_per_clip_num,
+					is_one_shot_num,
+					interval_num,
+					reload_time_num,
+					weapon_id + "_fire",
+					weapon_id + "_reload_begin",
+					weapon_id + "_reload_done",
+					range_num,
+					FireBack_num,
+					Bomb_num);
 
                 pAlien->addWeapon(pWeapon);
             }
         }
 
         if (!secondary.isNull()) {
-            id = secondary.nodeValue();
+            weapon_id = secondary.nodeValue();
 
-            QDomElement w_node = root.firstChildElement(id);
+            QDomElement w_node = root.firstChildElement(weapon_id);
 
             auto type = w_node.firstChildElement("type");
 
@@ -956,31 +1026,134 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 auto mass = w_node.firstChildElement("mass");
                 float mass_num = mass.text().toFloat();
 
-                Weapon *pWeapon = new Weapon(id, 
-                    node_name,
-                    Weapon::WeaponType(weapon_type),
-                    power_num,
-                    maximum_clip_num,
-                    maximum_clip_num, 
-                    mass_num,
-                    ammo_per_clip_num,
-                    ammo_per_clip_num,
-                    is_one_shot_num,
-                    interval_num,
-                    reload_time_num,
-                    id + "_fire",
-                    id + "_reload_begin",
-                    id + "_reload_done",
-                    range_num);
+				ParticleInfo FireBack_num, Bomb_num;
+				auto FireBack = w_node.firstChildElement("FireBack");
+
+				auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
+				FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+				auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
+				FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+				auto time0 = FireBack.firstChildElement("time0");
+				FireBack_num.time0 = time0.text().toFloat();
+
+				auto colour0r = FireBack.firstChildElement("colour0r");
+				FireBack_num.colour0.x = colour0r.text().toFloat();
+
+				auto colour0g = FireBack.firstChildElement("colour0g");
+				FireBack_num.colour0.y = colour0g.text().toFloat();
+
+				auto colour0b = FireBack.firstChildElement("colour0b");
+				FireBack_num.colour0.z = colour0b.text().toFloat();
+
+				auto time1 = FireBack.firstChildElement("time1");
+				FireBack_num.time1 = time1.text().toFloat();
+
+				auto colour1r = FireBack.firstChildElement("colour1r");
+				FireBack_num.colour1.x = colour1r.text().toFloat();
+
+				auto colour1g = FireBack.firstChildElement("colour1g");
+				FireBack_num.colour1.y = colour1g.text().toFloat();
+
+				auto colour1b = FireBack.firstChildElement("colour1b");
+				FireBack_num.colour1.z = colour1b.text().toFloat();
+
+				auto time2 = FireBack.firstChildElement("time2");
+				FireBack_num.time2 = time2.text().toFloat();
+
+				auto colour2r = FireBack.firstChildElement("colour2r");
+				FireBack_num.colour2.x = colour2r.text().toFloat();
+
+				auto colour2g = FireBack.firstChildElement("colour2g");
+				FireBack_num.colour2.y = colour2g.text().toFloat();
+
+				auto colour2b = FireBack.firstChildElement("colour2b");
+				FireBack_num.colour2.z = colour2b.text().toFloat();
+
+				auto degree = FireBack.firstChildElement("degree");
+				FireBack_num.degree = degree.text().toFloat();
+
+				auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
+				FireBack_num.MaterialHandle = MaterialHandle.text();
+
+				auto Bomb = w_node.firstChildElement("Bomb");
+
+				TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
+				Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+				TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
+				Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+				time0 = Bomb.firstChildElement("time0");
+				Bomb_num.time0 = time0.text().toFloat();
+
+				colour0r = Bomb.firstChildElement("colour0r");
+				Bomb_num.colour0.x = colour0r.text().toFloat();
+
+				colour0g = Bomb.firstChildElement("colour0g");
+				Bomb_num.colour0.y = colour0g.text().toFloat();
+
+				colour0b = Bomb.firstChildElement("colour0b");
+				Bomb_num.colour0.z = colour0b.text().toFloat();
+
+				time1 = Bomb.firstChildElement("time1");
+				Bomb_num.time1 = time1.text().toFloat();
+
+				colour1r = Bomb.firstChildElement("colour1r");
+				Bomb_num.colour1.x = colour1r.text().toFloat();
+
+				colour1g = Bomb.firstChildElement("colour1g");
+				Bomb_num.colour1.y = colour1g.text().toFloat();
+
+				colour1b = Bomb.firstChildElement("colour1b");
+				Bomb_num.colour1.z = colour1b.text().toFloat();
+
+				time2 = Bomb.firstChildElement("time2");
+				Bomb_num.time2 = time2.text().toFloat();
+
+				colour2r = Bomb.firstChildElement("colour2r");
+				Bomb_num.colour2.x = colour2r.text().toFloat();
+
+				colour2g = Bomb.firstChildElement("colour2g");
+				Bomb_num.colour2.y = colour2g.text().toFloat();
+
+				colour2b = Bomb.firstChildElement("colour2b");
+				Bomb_num.colour2.z = colour2b.text().toFloat();
+
+				degree = Bomb.firstChildElement("degree");
+				Bomb_num.degree = degree.text().toFloat();
+
+				MaterialHandle = Bomb.firstChildElement("MaterialHandle");
+				Bomb_num.MaterialHandle = MaterialHandle.text();
+
+				Weapon *pWeapon = new Weapon(weapon_id, 
+					node_name,
+					Weapon::WeaponType(weapon_type),
+					power_num,
+					maximum_clip_num,
+					maximum_clip_num, 
+					mass_num,
+					ammo_per_clip_num,
+					ammo_per_clip_num,
+					is_one_shot_num,
+					interval_num,
+					reload_time_num,
+					weapon_id + "_fire",
+					weapon_id + "_reload_begin",
+					weapon_id + "_reload_done",
+					range_num,
+					FireBack_num,
+					Bomb_num);
 
                 pAlien->addWeapon(pWeapon);
             }
         }
 
         if (!throwable.isNull()) {
-            id = throwable.nodeValue();
+            weapon_id = throwable.nodeValue();
 
-            QDomElement w_node = root.firstChildElement(id);
+            QDomElement w_node = root.firstChildElement(weapon_id);
 
             auto type = w_node.firstChildElement("type");
 
@@ -1015,22 +1188,125 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 auto mass = w_node.firstChildElement("mass");
                 float mass_num = mass.text().toFloat();
 
-                Weapon *pWeapon = new Weapon(id, 
-                    node_name,
-                    Weapon::WeaponType(weapon_type),
-                    power_num,
-                    maximum_clip_num,
-                    maximum_clip_num, 
-                    mass_num,
-                    ammo_per_clip_num,
-                    ammo_per_clip_num,
-                    is_one_shot_num,
-                    interval_num,
-                    reload_time_num,
-                    id + "_fire",
-                    id + "_reload_begin",
-                    id + "_reload_done",
-                    range_num);
+                ParticleInfo FireBack_num, Bomb_num;
+        auto FireBack = w_node.firstChildElement("FireBack");
+			
+			auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
+			FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+			auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
+			FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+			auto time0 = FireBack.firstChildElement("time0");
+			FireBack_num.time0 = time0.text().toFloat();
+
+			auto colour0r = FireBack.firstChildElement("colour0r");
+			FireBack_num.colour0.x = colour0r.text().toFloat();
+
+			auto colour0g = FireBack.firstChildElement("colour0g");
+			FireBack_num.colour0.y = colour0g.text().toFloat();
+
+			auto colour0b = FireBack.firstChildElement("colour0b");
+			FireBack_num.colour0.z = colour0b.text().toFloat();
+
+			auto time1 = FireBack.firstChildElement("time1");
+			FireBack_num.time1 = time1.text().toFloat();
+
+			auto colour1r = FireBack.firstChildElement("colour1r");
+			FireBack_num.colour1.x = colour1r.text().toFloat();
+
+			auto colour1g = FireBack.firstChildElement("colour1g");
+			FireBack_num.colour1.y = colour1g.text().toFloat();
+
+			auto colour1b = FireBack.firstChildElement("colour1b");
+			FireBack_num.colour1.z = colour1b.text().toFloat();
+
+			auto time2 = FireBack.firstChildElement("time2");
+			FireBack_num.time2 = time2.text().toFloat();
+
+			auto colour2r = FireBack.firstChildElement("colour2r");
+			FireBack_num.colour2.x = colour2r.text().toFloat();
+
+			auto colour2g = FireBack.firstChildElement("colour2g");
+			FireBack_num.colour2.y = colour2g.text().toFloat();
+
+			auto colour2b = FireBack.firstChildElement("colour2b");
+			FireBack_num.colour2.z = colour2b.text().toFloat();
+
+			auto degree = FireBack.firstChildElement("degree");
+			FireBack_num.degree = degree.text().toFloat();
+
+			auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
+			FireBack_num.MaterialHandle = MaterialHandle.text();
+
+        auto Bomb = w_node.firstChildElement("Bomb");
+			
+			TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
+			Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+			TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
+			Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+			time0 = Bomb.firstChildElement("time0");
+			Bomb_num.time0 = time0.text().toFloat();
+
+			colour0r = Bomb.firstChildElement("colour0r");
+			Bomb_num.colour0.x = colour0r.text().toFloat();
+
+			colour0g = Bomb.firstChildElement("colour0g");
+			Bomb_num.colour0.y = colour0g.text().toFloat();
+
+			colour0b = Bomb.firstChildElement("colour0b");
+			Bomb_num.colour0.z = colour0b.text().toFloat();
+
+			time1 = Bomb.firstChildElement("time1");
+			Bomb_num.time1 = time1.text().toFloat();
+
+			colour1r = Bomb.firstChildElement("colour1r");
+			Bomb_num.colour1.x = colour1r.text().toFloat();
+
+			colour1g = Bomb.firstChildElement("colour1g");
+			Bomb_num.colour1.y = colour1g.text().toFloat();
+
+			colour1b = Bomb.firstChildElement("colour1b");
+			Bomb_num.colour1.z = colour1b.text().toFloat();
+
+			time2 = Bomb.firstChildElement("time2");
+			Bomb_num.time2 = time2.text().toFloat();
+
+			colour2r = Bomb.firstChildElement("colour2r");
+			Bomb_num.colour2.x = colour2r.text().toFloat();
+
+			colour2g = Bomb.firstChildElement("colour2g");
+			Bomb_num.colour2.y = colour2g.text().toFloat();
+
+			colour2b = Bomb.firstChildElement("colour2b");
+			Bomb_num.colour2.z = colour2b.text().toFloat();
+
+			degree = Bomb.firstChildElement("degree");
+			Bomb_num.degree = degree.text().toFloat();
+
+			MaterialHandle = Bomb.firstChildElement("MaterialHandle");
+			Bomb_num.MaterialHandle = MaterialHandle.text();
+
+        Weapon *pWeapon = new Weapon(weapon_id, 
+                                     node_name,
+                                     Weapon::WeaponType(weapon_type),
+                                     power_num,
+                                     maximum_clip_num,
+                                     maximum_clip_num, 
+                                     mass_num,
+                                     ammo_per_clip_num,
+                                     ammo_per_clip_num,
+                                     is_one_shot_num,
+                                     interval_num,
+									 reload_time_num,
+                                     weapon_id + "_fire",
+                                     weapon_id + "_reload_begin",
+                                     weapon_id + "_reload_done",
+                                     range_num,
+									 FireBack_num,
+									 Bomb_num);
 
                 pAlien->addWeapon(pWeapon);
             }
@@ -1316,12 +1592,13 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
             dt::Logger::get().error("Couldn't open file WeaponAttribute.xml");
             return nullptr;
         }
+
         if (!doc.setContent(&file))
             return nullptr;
-
+		
         QDomElement root = doc.documentElement();
         QDomElement w_node = root.firstChildElement(weapon_id);
-
+		
         auto type = w_node.firstChildElement("type");
         uint16_t weapon_type;
         if (type.text().toStdString() == "Primary")
@@ -1333,10 +1610,10 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
         auto power = w_node.firstChildElement("power");
         uint16_t power_num = power.text().toUInt();
-
+		
         auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
         uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
-
+		
         auto maximum_clip = w_node.firstChildElement("maximum_clip");
         uint16_t maximum_clip_num = maximum_clip.text().toUInt();
 
@@ -1359,52 +1636,130 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
         auto mass = w_node.firstChildElement("mass");
         float mass_num = mass.text().toFloat();
 
-        Weapon *pWeapon = new Weapon(weapon_id, 
-            node_name,
-            Weapon::WeaponType(weapon_type),
-            power_num,
-            maximum_clip_num,
-            maximum_clip_num, 
-            mass_num,
-            ammo_per_clip_num,
-            ammo_per_clip_num,
-            is_one_shot_num,
-            interval_num,
-            reload_time_num,
-            weapon_id + "_fire",
-            weapon_id + "_reload_begin",
-            weapon_id + "_reload_done",
-            range_num);
+        ParticleInfo FireBack_num, Bomb_num;
+        auto FireBack = w_node.firstChildElement("FireBack");
+			
+			auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
+			FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
 
+			auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
+			FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+			auto time0 = FireBack.firstChildElement("time0");
+			FireBack_num.time0 = time0.text().toFloat();
+
+			auto colour0r = FireBack.firstChildElement("colour0r");
+			FireBack_num.colour0.x = colour0r.text().toFloat();
+
+			auto colour0g = FireBack.firstChildElement("colour0g");
+			FireBack_num.colour0.y = colour0g.text().toFloat();
+
+			auto colour0b = FireBack.firstChildElement("colour0b");
+			FireBack_num.colour0.z = colour0b.text().toFloat();
+
+			auto time1 = FireBack.firstChildElement("time1");
+			FireBack_num.time1 = time1.text().toFloat();
+
+			auto colour1r = FireBack.firstChildElement("colour1r");
+			FireBack_num.colour1.x = colour1r.text().toFloat();
+
+			auto colour1g = FireBack.firstChildElement("colour1g");
+			FireBack_num.colour1.y = colour1g.text().toFloat();
+
+			auto colour1b = FireBack.firstChildElement("colour1b");
+			FireBack_num.colour1.z = colour1b.text().toFloat();
+
+			auto time2 = FireBack.firstChildElement("time2");
+			FireBack_num.time2 = time2.text().toFloat();
+
+			auto colour2r = FireBack.firstChildElement("colour2r");
+			FireBack_num.colour2.x = colour2r.text().toFloat();
+
+			auto colour2g = FireBack.firstChildElement("colour2g");
+			FireBack_num.colour2.y = colour2g.text().toFloat();
+
+			auto colour2b = FireBack.firstChildElement("colour2b");
+			FireBack_num.colour2.z = colour2b.text().toFloat();
+
+			auto degree = FireBack.firstChildElement("degree");
+			FireBack_num.degree = degree.text().toFloat();
+
+			auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
+			FireBack_num.MaterialHandle = MaterialHandle.text();
+
+        auto Bomb = w_node.firstChildElement("Bomb");
+			
+			TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
+			Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+			TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
+			Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+			time0 = Bomb.firstChildElement("time0");
+			Bomb_num.time0 = time0.text().toFloat();
+
+			colour0r = Bomb.firstChildElement("colour0r");
+			Bomb_num.colour0.x = colour0r.text().toFloat();
+
+			colour0g = Bomb.firstChildElement("colour0g");
+			Bomb_num.colour0.y = colour0g.text().toFloat();
+
+			colour0b = Bomb.firstChildElement("colour0b");
+			Bomb_num.colour0.z = colour0b.text().toFloat();
+
+			time1 = Bomb.firstChildElement("time1");
+			Bomb_num.time1 = time1.text().toFloat();
+
+			colour1r = Bomb.firstChildElement("colour1r");
+			Bomb_num.colour1.x = colour1r.text().toFloat();
+
+			colour1g = Bomb.firstChildElement("colour1g");
+			Bomb_num.colour1.y = colour1g.text().toFloat();
+
+			colour1b = Bomb.firstChildElement("colour1b");
+			Bomb_num.colour1.z = colour1b.text().toFloat();
+
+			time2 = Bomb.firstChildElement("time2");
+			Bomb_num.time2 = time2.text().toFloat();
+
+			colour2r = Bomb.firstChildElement("colour2r");
+			Bomb_num.colour2.x = colour2r.text().toFloat();
+
+			colour2g = Bomb.firstChildElement("colour2g");
+			Bomb_num.colour2.y = colour2g.text().toFloat();
+
+			colour2b = Bomb.firstChildElement("colour2b");
+			Bomb_num.colour2.z = colour2b.text().toFloat();
+
+			degree = Bomb.firstChildElement("degree");
+			Bomb_num.degree = degree.text().toFloat();
+
+			MaterialHandle = Bomb.firstChildElement("MaterialHandle");
+			Bomb_num.MaterialHandle = MaterialHandle.text();
+
+        Weapon *pWeapon = new Weapon(weapon_id, 
+                                     node_name,
+                                     Weapon::WeaponType(weapon_type),
+                                     power_num,
+                                     maximum_clip_num,
+                                     maximum_clip_num, 
+                                     mass_num,
+                                     ammo_per_clip_num,
+                                     ammo_per_clip_num,
+                                     is_one_shot_num,
+                                     interval_num,
+									 reload_time_num,
+                                     weapon_id + "_fire",
+                                     weapon_id + "_reload_begin",
+                                     weapon_id + "_reload_done",
+                                     range_num,
+									 FireBack_num,
+									 Bomb_num);
+										  								
         if (dt_parent)
             node = dt_parent->addChildNode(pWeapon);
         else  
             node = mScene->addChildNode(pWeapon);
-        /*
-        QDomElement pos = og_node.firstChildElement(SL_POS);
-        QDomElement scale = og_node.firstChildElement(SL_SCALE);
-        QDomElement rot = og_node.firstChildElement(SL_ORI);
-
-        auto physics = pWeapon->findComponent<dt::PhysicsBodyComponent>("physics_body");
-        auto motion = physics->getRigidBody()->getMotionState();
-        btTransform trans;
-        motion->getWorldTransform(trans);
-
-        trans.setOrigin(btVector3(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
-        pos.attribute(SL_Z).toFloat()));
-        trans.setRotation(btQuaternion(
-        rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat(),rot.attribute(SL_OW).toFloat()));
-
-        motion->setWorldTransform(trans);
-        // physics->getRigidBody()->getCollisionShape()->setLocalScaling(btVector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-        //			scale.attribute(SL_Z).toFloat()));
-
-        pWeapon->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(), rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), 
-        rot.attribute(SL_OZ).toFloat()));
-        pWeapon->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
-        pos.attribute(SL_Z).toFloat());
-        pWeapon->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-        scale.attribute(SL_Z).toFloat()));*/
 
         QDomElement pos = og_node.firstChildElement(SL_POS);
         QDomElement scale = og_node.firstChildElement(SL_SCALE);
