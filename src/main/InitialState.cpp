@@ -47,5 +47,5 @@ void InitialState::onInitialize() {
 void InitialState::onDeinitialize() {}
 
 void InitialState::updateStateFrame(double simulation_frame_time) {
-        dt::StateManager::get()->setNewState(new MenuState());
+    dt::StateManager::get()->setNewState(new MenuState());
 }

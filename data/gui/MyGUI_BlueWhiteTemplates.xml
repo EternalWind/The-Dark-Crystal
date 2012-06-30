@@ -692,7 +692,7 @@
 		<Widget type="Label" skin="LabelSkin" position="20 25 29 26" name="Root">
   		<Property key="FontName" value="Default" /> 
   		<Property key="TextAlign" value="Center" /> 
-  		<UserString key="LE_TargetWidgetType" value="Label" /> 
+  		<UserString key="LE_TargetWidgetType" value="Button" /> 
   		</Widget>
   		<Widget type="Label" skin="Label" position="20 60 29 26" /> 
   	</Resource>

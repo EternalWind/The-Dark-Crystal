@@ -38,7 +38,6 @@ BattleState::BattleState(const QString stage_name)
 
 void BattleState::onInitialize() {
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
-	 //Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     dt::Node* script_node = new dt::Node("script_node");
     script_node->addComponent(new dt::ScriptComponent(mStage + ".js", "state_script", true));
 
@@ -116,6 +115,8 @@ void BattleState::onInitialize() {
     dt::GuiManager::get()->setMouseCursorVisible(false);
 }
 
+void BattleState::onDeinitialize() {}
+
 void BattleState::updateStateFrame(double simulation_frame_time) {}
 
 BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
@@ -127,13 +128,8 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mObtainedCrystalNum(0) {
 }
 
-//bool BattleState::isVictory() {
-//	return false;
-//}
-
 void BattleState::win() {
     auto state_mgr = dt::StateManager::get();
-    //state_mgr->pop(1);
     emit sVictory();
 
     if (mNextStage != "") {
