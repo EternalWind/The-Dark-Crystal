@@ -21,6 +21,8 @@ public:
     BattleState(const QString stage_name);
 
     void onInitialize();
+
+    void onDeinitialize();
 	
     void updateStateFrame(double simulation_frame_time);
 
@@ -65,12 +67,6 @@ signals:
     void sVictory();
 
 public slots:
-    /**
-	  * 判断玩家当前是否已经取得胜利
-	  * @returns 胜利与否
-	  */
-	//bool isVictory();
-
 	/**
 	  * 玩家取胜的情况下，下一步动作
 	  */
