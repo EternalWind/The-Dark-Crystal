@@ -1238,6 +1238,11 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 		QString range = og_node.attribute(SL_SPACESHIP_RANGE);
 		QString interval = og_node.attribute(SL_SPACESHIP_INTERVAL);
 		QString mass = og_node.attribute(SL_SPACESHIP_MASS);
+		QString max_speed = og_node.attribute(SL_SPACESHIP_MAX_SPEED);
+		QString speed_per_frame = og_node.attribute(SL_SPACESHIP_SPEED_PER_FRAME);
+		QString parallel_move_speed = og_node.attribute(SL_SPACESHIP_PARALLEL_MOVE_SPEED);
+		QString up_down_speed = og_node.attribute(SL_SPACESHIP_UP_DOWN_SPEED);
+
 		Spaceship *pSpaceship = new Spaceship(node_name, 
                                             Spaceship_name + ".mesh",
                                             dt::PhysicsBodyComponent::BOX,
@@ -1246,12 +1251,18 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
                                             range.toFloat(),
                                             interval.toFloat(),
 											Spaceship_name + "_attack",
-                                            Spaceship_name + "_flying",
-                                            Spaceship_name + "_rise",
-                                            Spaceship_name + "_fall",
-											256.0f,
-											256.0f / 8192,
-											64.0f);
+											Spaceship_name + "_flying",
+											Spaceship_name + "_rise",
+											Spaceship_name + "_fall",
+											max_speed.toFloat(),
+											speed_per_frame.toFloat(),
+											parallel_move_speed.toFloat(),
+											up_down_speed.toFloat()
+											);
+											//256.0f,
+											//256.0f / 8192,
+											//32.0f,
+											//16.0f);
 		if (dt_parent)
 			node = dt_parent->addChildNode(pSpaceship);
 		else  

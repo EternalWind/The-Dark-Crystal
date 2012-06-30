@@ -18,11 +18,11 @@ Entity::Entity(const QString name, const QString mesh_handle, const dt::PhysicsB
       mCollisionShapeType(collision_shape_type),
       mMass(mass),
       mMoveVector(0.0f, 0.0f, 0.0f),
-      //mDirection(Ogre::Quaternion::IDENTITY),
       mIsAddingEquipment(false),
       mIsMoving(false),
 	  mIsJumping(false),
-      mHasSpeededUp(false) {}
+      mHasSpeededUp(false),
+      mHasKilled(false) {}
 
 uint16_t Entity::getCurHealth() const {
     return mCurHealth;

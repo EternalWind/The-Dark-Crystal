@@ -1,6 +1,7 @@
 #include "Monster.h"
 #include "Agent.h"
 #include "Alien.h"
+#include "BattleState.h"
 
 #include "ConfigurationManager.h"
 
@@ -30,17 +31,22 @@ void Monster::setAttackRange(float attack_range) {
 }
 
 void Monster::onKilled() {
-	auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-    Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
+    if (!mHasKilled) {
+        mHasKilled = true;
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
 
-    if (agent != nullptr) {
-        agent->disable();
+        if (agent != nullptr) {
+            agent->disable();
+        }
+
+        mesh->setAnimation("die");
+        mesh->setLoopAnimation(false);
+        mesh->playAnimation();
+
+        BattleState* battle_state = dynamic_cast<BattleState*>(this->getScene()->getState());
+        battle_state->setRemainEnemyNum(battle_state->getRemainEnemyNum() - 1);
     }
-
-	mesh->setAnimation("die");
-	mesh->setLoopAnimation(false);
-	mesh->playAnimation();    
-    mKill = true; 
 }
 
 Monster::Monster(const QString node_name,
@@ -58,9 +64,7 @@ Monster::Monster(const QString node_name,
 	mAttackSoundHandle(attack_sound_handle),
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
-	mAttackInterval(attack_interval) {
-        mKill = false; 
-}
+	mAttackInterval(attack_interval) {}
 
 void Monster::onInitialize() {
 	Character::onInitialize();
@@ -90,7 +94,7 @@ void Monster::onDeinitialize() {
 }
 
 void Monster::onUpdate(double time_diff) {
-    if (mKill) {
+    if (this->getCurHealth() <= 0.0) {
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
         if (mesh->isAnimationStopped()) {
             this->disable(); 
@@ -114,14 +118,6 @@ void Monster::onUpdate(double time_diff) {
             this->kill();
         }
     }
-
-	if (this->getCurHealth() == 0) {
-		auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-		if (mesh->isAnimationStopped()) {
-			this->kill();
-			std::cout << "be killed" << std::endl;
-		}
-	}
 	Character::onUpdate(time_diff);
 
 }
