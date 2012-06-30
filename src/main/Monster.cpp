@@ -4,10 +4,10 @@
 #include "BattleState.h"
 
 #include "ConfigurationManager.h"
-#include "AttackDetectComponent.h"
 
 #include <Scene/Scene.hpp>
 #include <Audio/SoundComponent.hpp>
+#include <Logic/RaycastComponent.hpp>
 
 const QString Monster::ATTACK_SOUND_COMPONENT = "attack_sound";
 const QString Monster::INTERACTOR_COMPONENT = "interator";
@@ -27,7 +27,7 @@ float Monster::getAttackRange() {
 void Monster::setAttackRange(float attack_range) {
 	if (attack_range > 0.0f) {
 		mAttackRange = attack_range;
-		this->findComponent<AttackDetectComponent>(INTERACTOR_COMPONENT)->setRange(mAttackRange);
+        this->findComponent<dt::RaycastComponent>(INTERACTOR_COMPONENT)->setRange(this->getAttackRange());
 	}
 }
 
@@ -61,12 +61,11 @@ Monster::Monster(const QString node_name,
 	const uint16_t attack_value,
 	const float attack_range, 
 	const float attack_interval)
-	: Character(node_name, mesh_handle, collision_shape_type, mass, walk_sound_handle, jump_sound_handle, run_sound_handle, 10.0f),
+	: Character(node_name, mesh_handle, collision_shape_type, mass, walk_sound_handle, jump_sound_handle, run_sound_handle, 20.0f),
 	mAttackSoundHandle(attack_sound_handle),
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
-	mAttackInterval(attack_interval),
-	mIsAttacking(false) {}
+	mAttackInterval(attack_interval) {}
 
 void Monster::onInitialize() {
 	Character::onInitialize();
@@ -79,8 +78,8 @@ void Monster::onInitialize() {
 	attack_sound->setVolume((float)sound_setting.getSoundEffect());
 	attack_sound->getSound().setLoop(true);
 
-	auto interator = this->addComponent(new AttackDetectComponent(INTERACTOR_COMPONENT));
-	interator->setRange(mAttackRange);
+	auto interator = this->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
+	interator->setRange(this->getAttackRange());
 	interator->setIntervalTime(mAttackInterval);
 
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
@@ -106,31 +105,41 @@ void Monster::onUpdate(double time_diff) {
     }
     this->mIsUpdatingAfterChange = (time_diff == 0);
 
-	if (mIsAttacking) {
-		auto interactor = this->findComponent<AttackDetectComponent>(INTERACTOR_COMPONENT);
+    //auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    //auto velocity = BtOgre::Convert::toBullet(getRotation(dt::Node::SCENE) * mMoveVector * mCurSpeed);
+    //velocity.setY(physics_body->getRigidBody()->getLinearVelocity().y());
 
-		if (interactor->isReady()) {
-			auto attack_sound = this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT);
-			attack_sound->stopSound();
-			attack_sound->playSound();
-			interactor->check();
-
-			// ²¥·Å¹¥»÷¶¯»­
-			auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-			mesh->stopAnimation();
-			mesh->setAnimation("attack");
-			mesh->setLoopAnimation(false);
-			mesh->playAnimation();
-		}
-	}
-	
+    //if (velocity != physics_body->getRigidBody()->getLinearVelocity()) {
+    //    physics_body->activate();
+    //    physics_body->getRigidBody()->setLinearVelocity(velocity);
+    //}
+    if (this->getCurHealth() == 0) {
+        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        if (mesh->isAnimationStopped()) {
+            this->kill();
+        }
+    }
 	Character::onUpdate(time_diff);
 
 }
 // --------------- slots -------------------//
 
 void Monster::__onAttack(bool is_pressed) {
-	mIsAttacking = is_pressed;
+	if (is_pressed) {
+		auto interator = this->findComponent<dt::RaycastComponent>(INTERACTOR_COMPONENT);
+		auto attack_sound = this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT);
+		if (interator->isReady()) {
+			attack_sound->playSound();
+			interator->check();
+			
+			// ²¥·Å¹¥»÷¶¯»­
+			auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+            mesh->stopAnimation();
+			mesh->setAnimation("attack");
+			mesh->setLoopAnimation(true);
+			mesh->playAnimation();
+		}
+	}
 }
 
 void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
