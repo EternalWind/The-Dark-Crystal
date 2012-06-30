@@ -139,7 +139,7 @@ void BattleState::onInitialize() {
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
 
-    Alien* alien1 = new Alien("alien1", "alien_mirror.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
+    Alien* alien1 = new Alien("alien1", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
     scene->addChildNode(alien1);
     PlayerAIAgent * pa = new PlayerAIAgent("rj");    
      Ogre::Vector3 tmp = AIDivideAreaManager::get()->getArea(41);
