@@ -155,6 +155,7 @@ void BattleState::onInitialize() {
     setP(alien1, pa, tmp.x, 10, tmp.z);   
     
     EntityManager::get()->addPlayer(alien1);
+    
     Weapon * weapon = new Weapon("RailGun","w", Weapon::PRIMARY, 3, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 300);
      alien1->addWeapon(weapon);
      for (int  i = 0; i < 40; i ++) {
@@ -167,6 +168,8 @@ void BattleState::onInitialize() {
         setP(monster, ma5, tmp.x, 10, tmp.z);
         monster->setCurSpeed(6.0);
         monster->setScale(0.015);
+        monster->setAttackRange(20);
+        monster->setAttackValue(11);
         EntityManager::get()->addMonster(monster);
     }
 }

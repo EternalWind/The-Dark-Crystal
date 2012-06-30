@@ -127,7 +127,7 @@ void MonsterAIAgent::walk(double time_diff) {
                 mSpeedUpPress = 1;
             }
             mBody->setCurSpeed(4.0);
-            emit(sMove(Entity::BACKWARD, true)); 
+            emit(sMove(Entity::FORWARD, true)); 
             mOnMovePress = 1;            
         }
       } else{        
@@ -245,7 +245,8 @@ void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
          Ogre::Vector3 enemy_pos = enemy->getPosition();
          enemy_pos.y = 0;
          Ogre::Vector3 my_pos = mBody->getPosition();
-         if (enemy_pos.distance(my_pos) < 4.0) {
+         my_pos.y = 0;
+         if (enemy_pos.distance(my_pos) < 20.0) {
             if (!mAttackPress) {
                 emit(sAttack(true));
                 mAttackPress = 1;
@@ -262,7 +263,7 @@ void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
                 emit(sSpeedUp(true));
                 mSpeedUpPress = 1;
             }
-            emit(sMove(Entity::BACKWARD, true));   
+            emit(sMove(Entity::FORWARD, true));   
             mOnMovePress = 1; 
         }
         mHasEnemy = true;    
@@ -291,7 +292,7 @@ double MonsterAIAgent::clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre) {
     nxt.y = pre.y = 0;
     Ogre::Vector3 dy = Ogre::Vector3(0, 0, 1); 
     //由目标位置和当前位置算出期望方向的向量。
-    Ogre::Vector3 dv = nxt - pre; 
+    Ogre::Vector3 dv = pre - nxt; 
     dv.y = 0; 
     double res = asin((double) ( dy.crossProduct(dv).y / (dy.length() * dv.length()) )) * 180 / PI;
        if (dy.dotProduct(dv) < 0)
