@@ -2,6 +2,7 @@
 #include "Utils/Utils.hpp"
 #include <fstream>
 #include <string>
+#include <vector>
 using namespace std; 
 
 Ogre::Vector3 AIDivideAreaManager::getArea(uint16_t id) {
@@ -176,4 +177,8 @@ std::pair<uint16_t, uint16_t> AIDivideAreaManager::randomPosition(uint16_t area)
 
 void AIDivideAreaManager::destroy(std::pair<uint16_t, uint16_t> cur_id) {
     mPositionMark[cur_id.first][cur_id.second] = 0; 
+}
+
+vector<uint16_t> AIDivideAreaManager::getClosestArea(uint16_t cur) {
+    return mNxtArea[cur];
 }

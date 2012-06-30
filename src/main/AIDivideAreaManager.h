@@ -4,7 +4,7 @@
 #include <Core/Manager.hpp>
 #include <OgreVector3.h>
 #include <QString>
-
+#include <vector>
 using namespace std; 
 
 
@@ -25,6 +25,7 @@ public:
      bool isSameArea(Ogre::Vector3 a, Ogre::Vector3 b); 
      void addArea(Ogre::Vector3 p, uint16_t id); 
      Ogre::Vector3 getArea(uint16_t id);
+     vector<uint16_t> getClosestArea(uint16_t cur);
      /**
        *sceneloader之后一定要调用afterLoadScene初始化AIDivideAreaManager。
        */
