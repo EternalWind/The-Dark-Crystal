@@ -18,20 +18,7 @@
 #include "Character.h"
 #include "Weapon.h"
 
-void setP(Character * alien, Agent * human_agent, double x, double y, double z) {
-auto physics = alien->findComponent<dt::PhysicsBodyComponent>("physics_body");
-    auto motion = physics->getRigidBody()->getMotionState();
-    btTransform trans;
-    motion->getWorldTransform(trans);
-    trans.setOrigin(btVector3(x, y, z));
-    motion->setWorldTransform(trans);
-    physics->getRigidBody()->getCollisionShape()->setLocalScaling(btVector3(0.01, 0.01, 0.01));   
-    alien->setPosition(x, y, z);
-    alien->setScale(0.01);
-     human_agent->attachTo(alien);
-  
 
-}
 
 void AITest::onInitialize() {
 
@@ -56,11 +43,13 @@ void AITest::onInitialize() {
     scene->getPhysicsWorld()->setGravity(Ogre::Vector3::ZERO);
 
     
-    //Alien* alien = new Alien("alien", "alien_mirror.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");    
-    // scene->addChildNode(alien);
+    
     // Weapon * weapon = new Weapon("RailGun", Weapon::PRIMARY, 3, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 300);
     // alien->addWeapon(weapon);
     // 
+
+    //Alien* alien = new Alien("alien", "alien_mirror.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");    
+    // scene->addChildNode(alien);
     //alien->setEyePosition(Ogre::Vector3(0, 1.5, 1.5));
     //HumanAgent* human_agent = new HumanAgent("Player");    
     //  Ogre::Vector3 t = AIDivideAreaManager::get()->getArea(40);
