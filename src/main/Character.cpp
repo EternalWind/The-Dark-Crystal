@@ -161,8 +161,13 @@ void Character::onUpdate(double time_diff) {
         mVelocity.setX(vec.x());
         if (mIsJumping) {
             mVelocity.setY(vec.y());
+            
+            //mVelocity = -mVelocity;
+            //if(!mVelocity.isZero()) {
+            //    mVelocity.normalize();
+            //}
         }
-        mVelocity.setZ(vec.z());
+        
     }
 
     //this->mIsUpdatingAfterChange = false;
@@ -261,7 +266,6 @@ void Character::__onJump(bool is_pressed) {
     if (is_pressed && __canJump() && isOnGround()) {
         mVelocity.setY(mJumpSpeed);		
 		mTimeElapseAfterJumping = 0.0f;
-
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
