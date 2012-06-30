@@ -7,6 +7,9 @@ using namespace std;
 Ogre::Vector3 AIDivideAreaManager::getArea(uint16_t id) {
     return mPosition[id];
 }
+double AIDivideAreaManager::getRadius() {
+    return mRadius;
+}
 void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
     mNxtArea[a].push_back(b); 
     mNxtArea[b].push_back(a);     
@@ -20,7 +23,11 @@ void AIDivideAreaManager::addArea(Ogre::Vector3 p, uint16_t id) {
 uint16_t AIDivideAreaManager::getAreaNum() {
     return mAreaNum; 
 }
-
+bool AIDivideAreaManager::isSameArea(Ogre::Vector3 a, Ogre::Vector3 b) {
+    int a_id = getIdByPosition(a); 
+    int b_id = getIdByPosition(b); 
+    return a_id == b_id;
+}
 void AIDivideAreaManager::loadMapInfo(string fileName) {
 	ifstream fin(fileName);    
 	// read //

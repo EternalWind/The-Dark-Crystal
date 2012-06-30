@@ -8,12 +8,12 @@
 #include "Alien.h"
 #include <Utils/Utils.hpp>
 const double MonsterAIAgent::ENTER_SCOPE = 6.0;
-const double  MonsterAIAgent::THREAT_COOL_TIME = 2.0;
+const double  MonsterAIAgent::THREAT_COOL_TIME = 0.3;
 const QString MonsterAIAgent::INTERACTOR_COMPONENT = "Monster_INTERACTOR_COMPONENT";
 const QString MonsterAIAgent::TRIGGER_AREA_COMPONENT = "Monster_TRIGGER_AREA_COMPONENT";
 const double  MonsterAIAgent::eps = 1e-4;
 const double  MonsterAIAgent::MOVE_ROTATE_SPEED = 180;
-const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 90;
+const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 180;
 const double  MonsterAIAgent::PI = acos(-1.0);
 const double  MonsterAIAgent::ROTATE_FLOAT = 6.0; 
 
@@ -32,65 +32,56 @@ bool MonsterAIAgent::isThreat() {
 void MonsterAIAgent::setThreat(bool type) {
     mThreat = type; 
 }
-void MonsterAIAgent::findAndAttack(double time_diff) {
-    this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
-
-     if (!mHasEnemy) {        
-       fixDegree(mPreDegree);
-       double d_degree = mExpectDegree - mPreDegree;
-       fixTurn(d_degree);      
-       lookAround(d_degree, time_diff, GUARD_ROTATE_SPEED);   
-
-       //std::cout << mPreDegree << endl; 
-    }
-    mHasEnemy = false; 
-
+void MonsterAIAgent::setBody(Monster* body) {
+	mBody = body;
 }
-void MonsterAIAgent::onInitialize() {   
-     
-    setBody(dynamic_cast<Monster *>(this->getParent()));    
-    
+void MonsterAIAgent::onInitialize() {        
+    setBody(dynamic_cast<Monster *>(this->getParent()));        
     mIteractor = this->addComponent(
-        new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();
-    
+        new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();    
     mIteractor->setRange(mBody->getAttackRange());    
     if (!QObject::connect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFind(dt::PhysicsBodyComponent*))) ) {
                 dt::Logger::get().error("can't connect interactionComponent to MonsterAIAgent's __Onfind");
     }    
-
     mTrigger = this->addComponent(new dt::TriggerAreaComponent(
-        new btBoxShape(btVector3(20.0f, 20.0f, 20.0f)), TRIGGER_AREA_COMPONENT)).get();
-   
+        new btBoxShape(btVector3(AIDivideAreaManager::get()->getRadius()
+        , AIDivideAreaManager::get()->getRadius(), AIDivideAreaManager::get()->getRadius())), TRIGGER_AREA_COMPONENT)).get();   
     if (!QObject::connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
             this, SLOT(onTriggerr(dt::TriggerAreaComponent*, dt::Component*))) ) {
              dt::Logger::get().error("can't connect triggerAreaComponent to MonsterAIAgent's __onTrigger");
     }
 }
+
 void MonsterAIAgent::onDeinitialize() {
     disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFind(dt::PhysicsBodyComponent*)));    
     disconnect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
             this, SLOT(onTriggerr(dt::TriggerAreaComponent*, dt::Component*)));
 }
-void MonsterAIAgent::setBody(Monster* body) {
-	mBody = body;
+
+void MonsterAIAgent::findAndAttack(double time_diff) {
+    this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
+     if (!mHasEnemy) {             
+       fixDegree(mPreDegree);
+       double d_degree = mExpectDegree - mPreDegree;
+       fixTurn(d_degree);      
+       lookAround(d_degree, time_diff, GUARD_ROTATE_SPEED);         
+    }
+    mHasEnemy = false; 
 }
+
 void MonsterAIAgent::walk(double time_diff) {   
    //[-180,180]    
     double cur_degree;    
    //修正一下角度，使它一直在[-180,180]。
     fixDegree(mPreDegree);
     //指向z轴正方向的向量。
-    Ogre::Vector3 dy = Ogre::Vector3(0, 0, 1); 
-
-     
-    Ogre::Vector3 pre_position = mBody->getPosition(); 
-   
+    Ogre::Vector3 dy = Ogre::Vector3(0, 0, 1);      
+    Ogre::Vector3 pre_position = mBody->getPosition();    
     pre_position.y =0;
-
-     Ogre::Vector3 nxt_area_position = AIDivideAreaManager::get()->getPositionById(mNxtArea);   
-     nxt_area_position.y = 0;
+    Ogre::Vector3 nxt_area_position = AIDivideAreaManager::get()->getPositionById(mNxtArea);   
+    nxt_area_position.y = 0;
     //如果目标已经到达，则停止走动并退出。
     if (nxt_area_position.distance(pre_position) < ENTER_SCOPE) {
             mOnWay = false;     
@@ -102,36 +93,22 @@ void MonsterAIAgent::walk(double time_diff) {
     }
 
     mExpectDegree = clacDegree(nxt_area_position, pre_position);
-   
-    
-    /*std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
-    std::cout << nxt_area_position.x << ' ' << nxt_area_position.y << ' ' << nxt_area_position.z << endl; 
-    std::cout << mExpectDegree << endl; 
-    std::cout << mPreDegree << endl; */
-    double d_degree = mExpectDegree - mPreDegree;
 
-   
+    double d_degree = mExpectDegree - mPreDegree;   
 
     fixTurn(d_degree);
-  
-  /*  std::cout << mExpectDegree << endl; 
-    std::cout << mPreDegree << endl; 
-    std::cout << d_degree << endl; */
 
     //当前帧如果已经在角度幅度内，则开始走动。
     if (fabs(d_degree) < ROTATE_FLOAT) { 
-        if (!mOnMovePress) { 
-            //emit(sMove(Entity::STOP, true));
+        if (!mOnMovePress) {            
             if (!mSpeedUpPress) {
                 emit(sSpeedUp(true));
                 mSpeedUpPress = 1;
-            }
-            mBody->setCurSpeed(4.0);
+            }            
             emit(sMove(Entity::FORWARD, true)); 
             mOnMovePress = 1;            
         }
-      } else{        
-      //  emit(sMove(Entity::STOP, true));   
+      } else{              
           lookAround(d_degree, time_diff, MOVE_ROTATE_SPEED);      
     }
 }
@@ -153,11 +130,16 @@ void MonsterAIAgent::onUpdate(double time_diff) {
      //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
     if (mThreat) {
-        mThreatTime -= time_diff; 
+        findAndAttack(time_diff); 
+        mThreatTime -= time_diff;         
         if (mThreatTime <= eps) {
             mThreat = false; 
+            if (mAttackPress) {
+                mAttackPress = 0; 
+                emit(sAttack(false));
+            }            
         }
-        findAndAttack(time_diff); 
+       
     } else if (mOnWay) { //在行走，则走之。
         walk(time_diff); 
     } else decision(time_diff);  // 否则，决策之。
@@ -173,18 +155,8 @@ void MonsterAIAgent::decision(double time_diff) {
         uint16_t des_id = AIDivideAreaManager::get()->getIdByPosition(human_pos); 
         uint16_t diff = AIDivideAreaManager::get()->getAreaNumBetween(cur_id, des_id); 
         if (diff > 0) {
-            uint16_t nxt_id = AIDivideAreaManager::get()->getNxtClosestId(cur_id, des_id);                
-                
+            uint16_t nxt_id = AIDivideAreaManager::get()->getNxtClosestId(cur_id, des_id);                   
             std::pair<uint16_t, uint16_t> tmp = AIDivideAreaManager::get()->randomPosition(nxt_id);
-
-           /* std::cout << cur_id << endl; 
-            std::cout << des_id << endl; 
-            std::cout << nxt_id << endl; 
-            std::cout << cur_pos.x << ' ' << cur_pos.z << endl; 
-            std::cout << AIDivideAreaManager::get()->getPositionById(tmp).x <<  ' ' <<
-                AIDivideAreaManager::get()->getPositionById(tmp).z << endl;*/
-
-            
             if (tmp.first != -1) {     
                     AIDivideAreaManager::get()->destroy(mNxtArea);
                     mNxtArea = tmp;
@@ -205,12 +177,15 @@ void MonsterAIAgent::onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Comp
     }
     Alien* enemy = dynamic_cast<Alien*>(component->getNode());    
     if (enemy != nullptr) {
+        ////若不在同一个区域，还需要寻路系统找到同一个区域才可以攻击，以免被障碍物卡住。
+        //if (!AIDivideAreaManager::get()->isSameArea(enemy->getPosition(), mBody->getPosition()))
+        //    return;
         mThreat = true; 
         mThreatTime = THREAT_COOL_TIME;
         mOnWay = 0; 
         if (mOnMovePress) {
             mOnMovePress = 0; 
-            emit(Entity::STOP, true);
+            emit(sMove(Entity::STOP, true));            
         }
         mExpectDegree = clacDegree(enemy->getPosition(), mBody->getPosition());
         return; 
@@ -248,7 +223,6 @@ void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
          Ogre::Vector3 my_pos = mBody->getPosition();
          my_pos.y = 0;
 
-         //mThreatTime = THREAT_COOL_TIME;
          if (!mAttackPress && !mOnMovePress) {
             if (!mSpeedUpPress) {
                 emit(sSpeedUp(true));
@@ -258,25 +232,16 @@ void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
             mOnMovePress = 1; 
         }
         mHasEnemy = true;    
-
-         if (enemy_pos.distance(my_pos) < 20.0) {
+        if (enemy_pos.distance(my_pos) < mBody->getAttackRange()) {
             if (!mAttackPress) {
                 if (mOnMovePress) {
                     mOnMovePress = 0; 
-                    emit(sMove(Entity::STOP, true));
-                    
+                    emit(sMove(Entity::STOP, true));                    
                 }
                 emit(sAttack(true));
-                mAttackPress = 1;
-                
+                mAttackPress = 1;                
             }
-         } else {
-             if (mAttackPress) {
-                 emit(sAttack(false));
-                 mAttackPress = 0;
-             }
-         }
-       
+         }       
      }  else {
         if (mOnMovePress) {
             emit(sMove(Entity::STOP, true));
