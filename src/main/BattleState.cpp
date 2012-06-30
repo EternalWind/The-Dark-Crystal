@@ -7,10 +7,6 @@
 #include "SceneLoader.h"
 #include "AIDivideAreaManager.h"
 #include "EntityManager.h"
-#include "MonsterAIAgent.h"
-#include "Monster.h"
-#include "PlayerAIAgent.h"
-#include "Alien.h"
 #include <iostream>
 
 #include <Graphics/CameraComponent.hpp>
@@ -28,23 +24,9 @@
 
 #include <OgreProcedural.h>
 
-
-void setP(Character * alien, Agent * human_agent, double x, double y, double z) {
-auto physics = alien->findComponent<dt::PhysicsBodyComponent>("physics_body");
-    auto motion = physics->getRigidBody()->getMotionState();
-    btTransform trans;
-    motion->getWorldTransform(trans);
-    trans.setOrigin(btVector3(x, y, z));
-    motion->setWorldTransform(trans);
-    physics->getRigidBody()->getCollisionShape()->setLocalScaling(btVector3(0.01, 0.01, 0.01));   
-    alien->setPosition(x, y, z);
-    alien->setScale(0.01);
-     human_agent->attachTo(alien);
-}
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
       mDialogLabel(nullptr),
-	  mPickUpCrystalBar(nullptr),
       mTotalEnemyNum(0),
       mRemainEnemyNum(0),
       mTotalCrystalNum(0),
@@ -52,8 +34,7 @@ BattleState::BattleState(const QString stage_name)
       mStage(stage_name),
       mNextStage(""),
       mSceneParam1(0.0),
-      mSceneParam2(0.0),
-      mCrystalBarPosition(0.0) {}
+      mSceneParam2(0.0) {}
 
 void BattleState::onInitialize() {
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
@@ -62,9 +43,7 @@ void BattleState::onInitialize() {
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
-
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-   // this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
 
     scene->addChildNode(script_node);
 
@@ -86,7 +65,6 @@ void BattleState::onInitialize() {
     auto answer4 = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("answer4"));
     auto question = root_win.addChildWidget<dt::GuiEditBox>(new dt::GuiEditBox("question"));
     auto dialog = root_win.addChildWidget<dt::GuiLabel>(new dt::GuiLabel("dialog"));
-	auto pick_up_crystal_bar = root_win.addChildWidget<dt::GuiProgressBar>(new dt::GuiProgressBar("pick_up_crystal_bar"));
 
     mHealthHUD.push_back(health_img3.get());
     mHealthHUD.push_back(health_img2.get());
@@ -104,14 +82,6 @@ void BattleState::onInitialize() {
     mAnswerButtons.push_back(answer4.get());
     mQuestionLabel = question.get();
     mDialogLabel = dialog.get();
-	mPickUpCrystalBar = pick_up_crystal_bar.get();
-
-	Alien *pAlien = EntityManager::get()->getHuman();
-	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
-	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
-
-
-  
 
 	Alien *pAlien = EntityManager::get()->getHuman();
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
@@ -140,53 +110,14 @@ void BattleState::onInitialize() {
     __onAmmoChanged(0);
     __onClipNumChanged(0);
 
-	mPickUpCrystalBar->setProgressRange(100);
-	mPickUpCrystalBar->setProgressPosition(0);
-	mPickUpCrystalBar->setVisible(false);
-
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
-
-    //Alien* alien1 = new Alien("alien1", "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
-    //scene->addChildNode(alien1);
-    //PlayerAIAgent * pa = new PlayerAIAgent("rj");    
-    // Ogre::Vector3 tmp = AIDivideAreaManager::get()->getArea(41);
-    //setP(alien1, pa, tmp.x, 10, tmp.z);   
-    //
-    //EntityManager::get()->addPlayer(alien1);
-    //
-    //Weapon * weapon = new Weapon("RailGun","w", Weapon::PRIMARY, 3, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 300);
-    // alien1->addWeapon(weapon);
-     for (int  i = 0; i < 1; i ++) {
-        Monster * monster = new Monster("monster" + dt::Utils::toString(i), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);
-        scene->addChildNode(monster);
-        //monster->setCurHealth(100);
-        //dt::Logger().get().debug(monster->getFullName());
-        MonsterAIAgent * ma5 = new MonsterAIAgent("ma" + dt::Utils::toString(i));
-        Ogre::Vector3 tmp = AIDivideAreaManager::get()->getArea(i);
-        setP(monster, ma5, tmp.x, 10, tmp.z);
-        monster->setCurSpeed(6.0);
-        monster->setScale(0.015);
-        monster->setAttackRange(40);
-        monster->setAttackValue(11);        
-        EntityManager::get()->addMonster(monster);
-    }
 }
 
-void BattleState::updateStateFrame(double simulation_frame_time) {
-	//拾起水晶进度条过程
-	if(mCrystalBarPosition != 0.0) {
-		mCrystalBarPosition += simulation_frame_time;
-		this->mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition * 20);
-		if(mCrystalBarPosition > 5.0) {
-			mCrystalBarPosition = 0.0;
-			mPickUpCrystalBar->setVisible(false);
-			++mObtainedCrystalNum;
-			setObtainedCrystalNum(mObtainedCrystalNum);
-		}
-	}
-}
+void BattleState::onDeinitialize() {}
+
+void BattleState::updateStateFrame(double simulation_frame_time) {}
 
 BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mQuestionLabel(nullptr),
@@ -199,7 +130,7 @@ BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 
 void BattleState::win() {
     auto state_mgr = dt::StateManager::get();
-    //state_mgr->pop(1);
+    emit sVictory();
 
     if (mNextStage != "") {
         state_mgr->setNewState(new BattleState(mNextStage));
@@ -288,8 +219,7 @@ void BattleState::__onAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip) {
 }
 
 void BattleState::__onGetCrystal() {
-	mCrystalBarPosition = 0.1;
-	mPickUpCrystalBar->setVisible(true);
+
 }
 
 void BattleState::__onTriggerQA() {
@@ -367,9 +297,6 @@ void BattleState::__resetGui() {
     mDialogLabel->setSize(300, size_v_small);
     mDialogLabel->setPosition(mHealthHUD[0]->getMyGUIWidget()->getPosition().left, mHealthHUD[0]->getMyGUIWidget()->getPosition().top - mHealthHUD[0]->getMyGUIWidget()->
         getSize().height - gap_v_small / 2);
-
-	mPickUpCrystalBar->setSize(400,15);
-	mPickUpCrystalBar->setPosition(int(coordination.width * 0.5 - 200), int(coordination.height * 0.9) );
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
