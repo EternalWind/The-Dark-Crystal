@@ -2,15 +2,11 @@
 #define THE_DARK_CRYSTAL_ENTITY
 
 #include "Weapon.h"
-
 #include <Scene/Node.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
 #include <Graphics/MeshComponent.hpp>
-
 #include <OgreVector3.h>
-
 #include <QString>
-
 #include <cstdint>
 
 /**
