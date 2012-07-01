@@ -759,10 +759,11 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + "_walk",
                                   alien_name + "_jump",
                                   alien_name + "_run");
+
         pAlien->setMaxHealth(900);
         pAlien->setCurHealth(800);
         
-		
+
         if (dt_parent)
             node = dt_parent->addChildNode(pAlien);
         else 
@@ -875,6 +876,38 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 				auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
 				FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
 
+				//add by liujack
+				auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
+				FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+				auto EmissionRate = FireBack.firstChildElement("EmissionRate");
+				FireBack_num.EmissionRate = EmissionRate.text().toUInt();
+
+				auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
+				FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+				auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
+				FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+				auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
+				FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+				auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
+				FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+				auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
+				FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+				auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
+				FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+				auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
+				FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+				auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
+				FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+				//end
+
 				auto time0 = FireBack.firstChildElement("time0");
 				FireBack_num.time0 = time0.text().toFloat();
 
@@ -924,6 +957,38 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
 				TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
 				Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+				//add by liujack
+				ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
+				Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+				EmissionRate = Bomb.firstChildElement("EmissionRate");
+				Bomb_num.EmissionRate = EmissionRate.text().toUInt();
+
+				DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
+				Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+				DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
+				Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+				EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
+				Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+				EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
+				Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+				EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
+				Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+				EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
+				Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+				EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
+				Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+				EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
+				Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+				//end
 
 				time0 = Bomb.firstChildElement("time0");
 				Bomb_num.time0 = time0.text().toFloat();
@@ -1037,6 +1102,38 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 				auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
 				FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
 
+				//add by liujack
+				auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
+				FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+				auto EmissionRate = FireBack.firstChildElement("EmissionRate");
+				FireBack_num.EmissionRate = EmissionRate.text().toUInt();
+
+				auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
+				FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+				auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
+				FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+				auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
+				FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+				auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
+				FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+				auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
+				FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+				auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
+				FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+				auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
+				FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+				auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
+				FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+				//end
+
 				auto time0 = FireBack.firstChildElement("time0");
 				FireBack_num.time0 = time0.text().toFloat();
 
@@ -1086,6 +1183,38 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
 				TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
 				Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+				//add by liujack
+				ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
+				Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+				EmissionRate = Bomb.firstChildElement("EmissionRate");
+				Bomb_num.EmissionRate = EmissionRate.text().toUInt();
+
+				DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
+				Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+				DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
+				Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+				EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
+				Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+				EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
+				Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+				EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
+				Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+				EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
+				Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+				EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
+				Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+				EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
+				Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+				//end
 
 				time0 = Bomb.firstChildElement("time0");
 				Bomb_num.time0 = time0.text().toFloat();
@@ -1191,13 +1320,45 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 float mass_num = mass.text().toFloat();
 
                 ParticleInfo FireBack_num, Bomb_num;
-        auto FireBack = w_node.firstChildElement("FireBack");
+            auto FireBack = w_node.firstChildElement("FireBack");
 			
 			auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
 			FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
 
 			auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
 			FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+				//add by liujack
+				auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
+				FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+				auto EmissionRate = FireBack.firstChildElement("EmissionRate");
+				FireBack_num.EmissionRate = EmissionRate.text().toUInt();
+
+				auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
+				FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+				auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
+				FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+				auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
+				FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+				auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
+				FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+				auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
+				FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+				auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
+				FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+				auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
+				FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+				auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
+				FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+				//end
 
 			auto time0 = FireBack.firstChildElement("time0");
 			FireBack_num.time0 = time0.text().toFloat();
@@ -1248,6 +1409,38 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
 			TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
 			Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+			//add by liujack
+			ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
+			Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+			EmissionRate = Bomb.firstChildElement("EmissionRate");
+			Bomb_num.EmissionRate = EmissionRate.text().toUInt();
+
+			DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
+			Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+			DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
+			Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+			EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
+			Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+			EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
+			Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+			EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
+			Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+			EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
+			Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+			EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
+			Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+			EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
+			Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+			//end
 
 			time0 = Bomb.firstChildElement("time0");
 			Bomb_num.time0 = time0.text().toFloat();
@@ -1647,6 +1840,38 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 			auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
 			FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
 
+			//add by liujack
+			auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
+			FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+			auto EmissionRate = FireBack.firstChildElement("EmissionRate");
+			FireBack_num.EmissionRate = EmissionRate.text().toUInt();
+
+			auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
+			FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+			auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
+			FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+			auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
+			FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+			auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
+			FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+			auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
+			FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+			auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
+			FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+			auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
+			FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+			auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
+			FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+			//end
+
 			auto time0 = FireBack.firstChildElement("time0");
 			FireBack_num.time0 = time0.text().toFloat();
 
@@ -1689,6 +1914,8 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 			auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
 			FireBack_num.MaterialHandle = MaterialHandle.text();
 
+
+
         auto Bomb = w_node.firstChildElement("Bomb");
 			
 			TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
@@ -1696,6 +1923,38 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
 			TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
 			Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+			//add by liujack
+			ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
+			Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+			EmissionRate = Bomb.firstChildElement("EmissionRate");
+			Bomb_num.EmissionRate = EmissionRate.text().toUInt();
+
+			DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
+			Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+			DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
+			Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+			EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
+			Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+			EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
+			Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+			EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
+			Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+			EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
+			Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+			
+			EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
+			Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+			EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
+			Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+			//end
 
 			time0 = Bomb.firstChildElement("time0");
 			Bomb_num.time0 = time0.text().toFloat();

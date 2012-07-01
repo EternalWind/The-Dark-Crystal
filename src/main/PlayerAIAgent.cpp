@@ -3,6 +3,8 @@
 #include "EntityManager.h"
 #include "Monster.h"
 #include <Logic/RaycastComponent.hpp>
+#include "AttackDetectComponent.h"
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 const QString PlayerAIAgent::INTERACTOR_COMPONENT = "Player_AI_Agent_Interactor";
 const QString PlayerAIAgent::TRIGGER_AREA_COMPONENT = "Player_AI_TRIGGER_AREA_COMPONENT";
@@ -133,7 +135,8 @@ void PlayerAIAgent::walk(double time_diff) {
 void PlayerAIAgent::guard(double time_diff) {
     //瞧瞧前面有没有异类，有就统统消灭！
     this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
-
+    //dt::PhysicsBodyComponent* pbc = test();
+   
     if (!mHasEnemy) {        
        fixDegree(mPreDegree);
        double d_degree = mExpectDegree - mPreDegree;
@@ -186,10 +189,14 @@ void PlayerAIAgent::onUpdate(double time_diff) {
     if (time_diff == 0.0)  {
         return; 
     }
+     dt::Node::onUpdate(time_diff);
+     vector<Character*> vc = EntityManager::get()->searchEntityByRange(mBody, 20.0);
+     for (uint16_t i = 0; i < vc.size(); i ++) __onTrigger(vc[i]);
 
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
     if (mThreat) {
+          guard(time_diff); 
         mThreatTime -= time_diff; 
         if (mThreatTime <= eps) {
              if (mAttack) {
@@ -199,12 +206,12 @@ void PlayerAIAgent::onUpdate(double time_diff) {
             mThreat = false; 
 
         }
-        guard(time_diff); 
+      
     } else if (mOnWay) { //在行走，则走之。
         walk(time_diff); 
     } else decision(time_diff);  // 否则，决策之。
 
-    dt::Node::onUpdate(time_diff);
+   
 }
 
 void PlayerAIAgent::onInitialize() {
@@ -212,46 +219,41 @@ void PlayerAIAgent::onInitialize() {
     setBody(dynamic_cast<Alien *>(this->getParent()));
 
     mIteractor = this->addComponent<dt::InteractionComponent>(
-        new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();
+        new AttackDetectComponent(INTERACTOR_COMPONENT)).get();
     
-    mIteractor->setRange(3000.0f);    
+    mIteractor->setRange(3000.0f);  
+    mIteractor->setOffset(4.0);
     connect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
-
-    mTrigger = this->addComponent<dt::TriggerAreaComponent>(new dt::TriggerAreaComponent(
-        new btBoxShape(btVector3(10.0f, 10.0f, 10.0f)), TRIGGER_AREA_COMPONENT)).get();
-    connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
-
-
 }
 void PlayerAIAgent::onDeinitialize() {
      disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFire(dt::PhysicsBodyComponent*)));
-     disconnect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(__onTrigger(dt::TriggerAreaComponent*, dt::Component*)));
 }
 
 void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {
+    
     if (pbc != nullptr) {
         Monster* enemy = dynamic_cast<Monster*>(pbc->getNode());
+        
         if (enemy != nullptr) {
-            if (!mAttack)
+            if (!mAttack) {
                 emit(sAttack(true));
-            mHasEnemy = true; 
-            // std::cout << "mHasEnemy " << mHasEnemy << endl; 
+                mAttack = true; 
+            }
+            mHasEnemy = true;             
         } else {
             if (mAttack) {
                 emit(sAttack(false)); 
-                mAttack = false;
+                mAttack = false;               
             }
         }
     }
 }
 
-void PlayerAIAgent::__onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c) {
+void PlayerAIAgent::__onTrigger(Character * c) {
     //敌人
-    Monster* enemy = dynamic_cast<Monster*>(c->getNode());
+    Monster* enemy = dynamic_cast<Monster*>(c);
     if (enemy != nullptr) {
         mThreat = true; 
         mThreatTime = THREAT_COOL_TIME; 
@@ -260,31 +262,8 @@ void PlayerAIAgent::__onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c)
         if (mOnMovePress) {
             mOnMovePress = 0; 
             emit(sMove(Entity::STOP, true));
-        }
-       /* Ogre::Vector3 ep = enemy->getPosition(); 
-        Ogre::Vector3 ap = mBody->getPosition();
-        std::cout << "enemy " << ep.x << ' ' << ep.z << endl; 
-        std::cout << "alien " << ap.x << ' ' << ap.z << endl; 
-        std::cout << "degree " << mExpectDegree << endl; */
+        }      
         return; 
-    }
-    //炮友!
-    Alien * gun_friend = dynamic_cast<Alien*>(c->getNode());
-  //  dt::Logger().get().debug(c->getNode()->getName());
-    
-    if (gun_friend != nullptr) {
-       // gun_friend->get
-       // std::cout << "RJ" << mThreat << endl; 
-       //if (!mThreat)
-       // {
-       //     mThreat = true; 
-       //     if (mOnMovePress) {
-       //         mOnMovePress = 0; 
-       //         emit(sMove(Entity::STOP, true)); 
-       //         mExpectDegree = mPreDegree + 180;
-       //     }
-       //     //遇到队友就随机冷却时间防止互撞。
-       //     mThreatTime = (rand()) % 10;
-       // }
     }    
 }
+

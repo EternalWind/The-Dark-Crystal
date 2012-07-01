@@ -11,7 +11,7 @@ Prop::~Prop() {
 }
 
 void Prop::onInitialize() {
-	this->addComponent(new dt::MeshComponent(mPropName + ".mesh", mPropName, "prop_mesh"));
+	this->addComponent(new dt::MeshComponent(mPropName + ".mesh", "", "prop_mesh"));
 	auto PhysicsBody = this->addComponent(new dt::PhysicsBodyComponent("prop_mesh", "physics_body",
         dt::PhysicsBodyComponent::BOX, 0)).get();
 	PhysicsBody->setGravity(0.0f, 0.0f, 0.0f);

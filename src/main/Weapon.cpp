@@ -4,6 +4,7 @@
 #include <Logic/RaycastComponent.hpp>
 #include <OgreProcedural.h>
 #include "AdvanceCollisionComponent.h"
+#include "Monster.h"
 Weapon::Weapon(){
 }
 
@@ -151,7 +152,7 @@ float Weapon::getHittingRange() const {
 void Weapon::onInitialize() {
     Prop::onInitialize();
     auto node = this->addChildNode(new Node("ammo_node"));
-    OgreProcedural::SphereGenerator().setRadius(0.2f).setUTile(.5f).realizeMesh("Bullet");
+    OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
     if (mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
     } else {
@@ -237,7 +238,7 @@ void Weapon::reload() {
 }
 
 void Weapon::_onHit(dt::PhysicsBodyComponent* hit) {
-    Entity* obj = dynamic_cast<Entity*>(hit->getNode());
+    Monster* obj = dynamic_cast<Monster*>(hit->getNode());
 
     if (obj != nullptr)
     {

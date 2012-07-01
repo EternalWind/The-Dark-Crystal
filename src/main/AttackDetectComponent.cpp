@@ -4,6 +4,11 @@
 #include <Scene/Scene.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
 
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
+
+#include "Agent.h"
+
+
 // 没想到YD这个类这么给力啊！！！ >_<
 class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
 public:
@@ -22,6 +27,13 @@ public:
             return btScalar(1.0);
         }
 
+		// 如果是Ghost的话，比如说那个神马TriggerAreaComponent的话就直接把他无视掉啦！！！！
+		// 话说为什么过滤会返回1.0啊！！！尼玛！！！
+		btGhostObject* ghost = dynamic_cast<btGhostObject*>(convexResult.m_hitCollisionObject);
+		if (ghost != nullptr) {
+			return btScalar(1.0);
+		}
+
         return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
     }
 
@@ -38,8 +50,14 @@ void AttackDetectComponent::onCheck(const Ogre::Vector3& start, const Ogre::Vect
 
 	// 擦！！！It's useless！！！
 	//btCollisionWorld::ClosestConvexResultCallback callback(bt_start, bt_end);
-
-	auto rigid_body = getNode()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
+    Agent * agent = dynamic_cast<Agent *>(getNode());
+    btRigidBody* rigid_body;
+    if (agent != nullptr) {
+        rigid_body = agent->getParent()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
+    } else if (getNode()->getName() == "getProp")
+        rigid_body = getNode()->getParent()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
+    else 
+	rigid_body = getNode()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
 
 	ClosestNotMeNotDynamicObjectConvexResultCallback callback(rigid_body);
 
@@ -51,11 +69,14 @@ void AttackDetectComponent::onCheck(const Ogre::Vector3& start, const Ogre::Vect
 
 	getNode()->getScene()->getPhysicsWorld()->getBulletWorld()->convexSweepTest(dynamic_cast<btConvexShape*>(rigid_body->getCollisionShape()), start_trans, end_trans, callback);
 
-	if (callback.hasHit()) {
-		btCollisionObject* collision_object = callback.m_hitCollisionObject;
+	btCollisionObject* collision_object = callback.m_hitCollisionObject;
+
+	if (callback.hasHit() && collision_object != nullptr) {
 		dt::PhysicsBodyComponent* hit_object = static_cast<dt::PhysicsBodyComponent*>(collision_object->getUserPointer());
 
-		emit sHit(hit_object);
+		if (hit_object != nullptr) {
+			emit sHit(hit_object);
+		}
 	}
 
 }

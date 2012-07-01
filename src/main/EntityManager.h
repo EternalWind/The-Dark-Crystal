@@ -8,7 +8,9 @@
 #include "Alien.h"
 #include "Monster.h"
 #include "MonsterAIAgent.h"
-#include <map>
+#include "Character.h"
+
+#include <set>
 #include <string>
 #include <vector>
 
@@ -26,22 +28,28 @@ public:
 	   *AIDivideAreaManager单例化。
 	   */
 	 static EntityManager* get();
+     vector<Character*> searchEntityByRange(Character * entity, double range);
      void afterLoad(dt::Scene * scene);
      void setHuman(Alien * human);
-     void addPlayer(Alien * playerAI) {}
-     void addMonster(Monster * monster) {}
+     void addPlayer(Alien * playerAI);
+     void addMonster(Monster * monster);
      Alien* getHuman(); 
-     void addMonsterInScene(Monster * monster, MonsterAIAgent * agent, double x, double y, double z);
+     void addEntityInScene(Character * monster, Agent * agent, double x, double y, double z, double scale);
 private:
 
     Alien * mHuman; 
-    vector<Alien*> mAI;
+    set<Character*> mAlien;
+    set<Character*> mMonster;
     dt::Scene * mCurScene;
     uint16_t mMonsterNum;
      //单例化，把构造，复制构造都设成私有。
 	EntityManager(){}
     EntityManager & operator = (const EntityManager &){}
     EntityManager(const EntityManager &){}
+    double _dis(Ogre::Vector3 a, Ogre::Vector3 b);
+public slots:
+    void __isMonsterDead(Character * monster);
+    void __isAlienDead(Character * alien);
 
 };
 

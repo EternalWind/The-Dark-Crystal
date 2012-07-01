@@ -7,6 +7,8 @@
 #include "Agent.h"
 #include "Vehicle.h"
 #include "stateManager.h"
+#include "EntityManager.h"
+#include "AttackDetectComponent.h"
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
 #include "HumanAgent.h"
@@ -68,12 +70,19 @@ void Alien::addWeapon(Weapon* weapon) {
 			removeWeapon(weapon->getWeaponType());
 
 			mWeapons[weapon->getWeaponType()] = weapon;
+
 			weapon->removeComponent(PHYSICS_BODY_COMPONENT);
 			weapon->setParent(this);
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
 			weapon->setPosition(1.0f, 0.0f, -4.0f);
 			weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
 
+            weapon->setParent(this);
+			weapon->setRotation(Ogre::Quaternion::IDENTITY);
+			weapon->setPosition(0.5f, -1.5f, -1.0f);
+            
+            //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
+            //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 			mCurWeapon = weapon;
 			connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
 			connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
@@ -130,6 +139,9 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
         disconnect(weapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
         this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(weapon);
 
+        // death signal
+        connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isAlienDead(Character*)));
+
         this->setCurSpeed(this->getOrigSpeed());
         if (mHasSpeededUp) {
             __onSpeedUp(true);
@@ -145,9 +157,11 @@ void Alien::onInitialize() {
 
     auto node = this->addChildNode(new Node("getProp"));
 
-    auto iteractor = node->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERACTOR_COMPONENT));
+    auto iteractor = node->addComponent<dt::InteractionComponent>(new AttackDetectComponent(INTERACTOR_COMPONENT));
     iteractor->setRange(20.0f);
+
     iteractor->setOffset(5.0f);
+
     node->setPosition(this->getEyePosition());
 
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
