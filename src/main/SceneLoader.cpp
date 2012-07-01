@@ -759,9 +759,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + "_walk",
                                   alien_name + "_jump",
                                   alien_name + "_run");
-        pAlien->setMaxHealth(100);
-        pAlien->setCurHealth(50);
-        pAlien->setEyePosition(Ogre::Vector3(0, 3, 3));
+        pAlien->setMaxHealth(900);
+        pAlien->setCurHealth(800);
+        
 		
         if (dt_parent)
             node = dt_parent->addChildNode(pAlien);
@@ -793,16 +793,18 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         pAlien->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));
 
-        if (agent.toInt() == 0)
+        if (agent.toStdString() == "HumanAgent")
         {
+            pAlien->setEyePosition(Ogre::Vector3(0, 5, 5));
             HumanAgent* human_agent = new HumanAgent("Player");
             human_agent->attachTo(pAlien);
             EntityManager::get()->setHuman(pAlien);
         }
-        if (agent.toInt() == 1)
+        if (agent.toStdString() == "AiAgent")
         {
-            PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
-            Ai_agent->attachTo(pAlien);
+            pAlien->setEyePosition(Ogre::Vector3(0, 5, 5));
+          //  PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
+         //   Ai_agent->attachTo(pAlien);
             EntityManager::get()->addPlayer(pAlien);
 
         }
@@ -827,8 +829,8 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         QDomElement throwable = og_node.firstChildElement(SL_ALIEN_THROWABLE);
 
         if (!primary.isNull()) {
-            weapon_id = throwable.nodeValue();
-
+            weapon_id = primary.nodeValue();
+            weapon_id = "RailGun";
             QDomElement w_node = root.firstChildElement(weapon_id);
 
             auto type = w_node.firstChildElement("type");
