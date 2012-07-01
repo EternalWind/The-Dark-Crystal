@@ -97,6 +97,8 @@ protected slots:
 
 	void __onHit(dt::PhysicsBodyComponent* hit);
 
+signals:
+    void sIsDead(Character* monster);
 
 protected:
 	uint16_t mAttackValue;      //!< ½ÐÊÞ¹¥»÷Á¦

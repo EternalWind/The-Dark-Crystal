@@ -2,6 +2,7 @@
 #include "Agent.h"
 #include "Alien.h"
 #include "BattleState.h"
+#include "EntityManager.h"
 
 #include "ConfigurationManager.h"
 
@@ -36,6 +37,10 @@ void Monster::onKilled() {
         mHasKilled = true;
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
         Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
+         
+        emit sIsDead(this);
+        disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
+        
 
         if (agent != nullptr) {
             agent->disable();
@@ -84,6 +89,8 @@ void Monster::onInitialize() {
 
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
 		this, SLOT(__onHit(dt::PhysicsBodyComponent*)));
+
+    connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
 
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 
@@ -147,6 +154,7 @@ void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_r
 }
 
 void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
+    if (hit == nullptr) return;
 	// Ö»ÄÜ¹¥»÷Alien
 	Alien* obj = dynamic_cast<Alien*>(hit->getNode());
 

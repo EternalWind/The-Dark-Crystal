@@ -37,8 +37,9 @@ public:
      void onUpdate(double time_diff);
      void walk(double time_diff); 
      void decision(double time_diff);
+     void test();
+     void onTriggerr(Character * c);     
 private slots:
-     void onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Component* component);
      void __onFind(dt::PhysicsBodyComponent* pbc);
 private:
     bool mSpeedUpPress;

@@ -2,11 +2,14 @@
 #include "AIDivideAreaManager.h"
 #include "Monster.h"
 #include "EntityManager.h"
-
+#include "AttackDetectComponent.h"
 #include <Logic/RaycastComponent.hpp>
-#include <Logic/TriggerAreaComponent.hpp>
 #include "Alien.h"
 #include <Utils/Utils.hpp>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include "Character.h"
+#include "EntityManager.h"
+
 const double MonsterAIAgent::ENTER_SCOPE = 6.0;
 const double  MonsterAIAgent::THREAT_COOL_TIME = 0.3;
 const QString MonsterAIAgent::INTERACTOR_COMPONENT = "Monster_INTERACTOR_COMPONENT";
@@ -16,6 +19,9 @@ const double  MonsterAIAgent::MOVE_ROTATE_SPEED = 180;
 const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 60;
 const double  MonsterAIAgent::PI = acos(-1.0);
 const double  MonsterAIAgent::ROTATE_FLOAT = 6.0; 
+
+
+
 
 MonsterAIAgent::MonsterAIAgent(QString name, MonsterAIAgent::MonsterType type) : mType(type), Agent(name){
     this->mHasEnemy = this->mThreat = this->mOnWay = false;   
@@ -38,26 +44,17 @@ void MonsterAIAgent::setBody(Monster* body) {
 void MonsterAIAgent::onInitialize() {        
     setBody(dynamic_cast<Monster *>(this->getParent()));        
     mIteractor = this->addComponent(
-        new dt::RaycastComponent(INTERACTOR_COMPONENT)).get();    
+        new AttackDetectComponent(INTERACTOR_COMPONENT)).get();    
     mIteractor->setRange(mBody->getAttackRange());    
     if (!QObject::connect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFind(dt::PhysicsBodyComponent*))) ) {
                 dt::Logger::get().error("can't connect interactionComponent to MonsterAIAgent's __Onfind");
-    }    
-    mTrigger = this->addComponent(new dt::TriggerAreaComponent(
-        new btBoxShape(btVector3(AIDivideAreaManager::get()->getRadius()
-        , AIDivideAreaManager::get()->getRadius(), AIDivideAreaManager::get()->getRadius())), TRIGGER_AREA_COMPONENT)).get();   
-    if (!QObject::connect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(onTriggerr(dt::TriggerAreaComponent*, dt::Component*))) ) {
-             dt::Logger::get().error("can't connect triggerAreaComponent to MonsterAIAgent's __onTrigger");
-    }
+    }      
 }
 
 void MonsterAIAgent::onDeinitialize() {
     disconnect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
-            this, SLOT(__onFind(dt::PhysicsBodyComponent*)));    
-    disconnect(mTrigger, SIGNAL(triggered(dt::TriggerAreaComponent*, dt::Component*)), 
-            this, SLOT(onTriggerr(dt::TriggerAreaComponent*, dt::Component*)));
+            this, SLOT(__onFind(dt::PhysicsBodyComponent*)));     
 }
 
 void MonsterAIAgent::findAndAttack(double time_diff) {
@@ -112,10 +109,12 @@ void MonsterAIAgent::walk(double time_diff) {
           lookAround(d_degree, time_diff, MOVE_ROTATE_SPEED);      
     }
 }
-void MonsterAIAgent::onUpdate(double time_diff) {    
+void MonsterAIAgent::onUpdate(double time_diff) {  
+    if (this->getParent() == nullptr) return; 
      //update调用子节点的update和它的component。    
     dt::Node::onUpdate(time_diff);  
-    
+    vector<Character *> vc = EntityManager::get()->searchEntityByRange(mBody, 20.0);
+    for (uint16_t i = 0; i < vc.size(); i ++) onTriggerr(vc[i]);
     if (time_diff == 0.0) return; 
     
     //if (mColli) {
@@ -171,17 +170,18 @@ void MonsterAIAgent::decision(double time_diff) {
 }
 
 
-void MonsterAIAgent::onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Component* component) {
-    if(component == nullptr) {
+void MonsterAIAgent::onTriggerr(Character * c) {
+    if (c == nullptr) {
        return;
     }
-    Alien* enemy = dynamic_cast<Alien*>(component->getNode());    
+    Alien* enemy = dynamic_cast<Alien*>(c);    
     if (enemy != nullptr) {
         ////若不在同一个区域，还需要寻路系统找到同一个区域才可以攻击，以免被障碍物卡住。
         //if (!AIDivideAreaManager::get()->isSameArea(enemy->getPosition(), mBody->getPosition()))
         //    return;
         mThreat = true; 
         mThreatTime = THREAT_COOL_TIME;
+        AIDivideAreaManager::get()->destroy(mNxtArea);
         mOnWay = 0; 
         if (mOnMovePress) {
             mOnMovePress = 0; 
@@ -189,9 +189,7 @@ void MonsterAIAgent::onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Comp
         }
         mExpectDegree = clacDegree(enemy->getPosition(), mBody->getPosition());
         return; 
-    }
-    Monster * my_friend = dynamic_cast<Monster*>(component->getNode());
-    mColli = 0;
+    }    
    /*
     if (my_friend != nullptr) {         
          if (mThreat) return;
@@ -209,6 +207,9 @@ void MonsterAIAgent::onTriggerr(dt::TriggerAreaComponent* trigger_area, dt::Comp
     }
     */
 }
+
+
+
 void MonsterAIAgent::__onFind(dt::PhysicsBodyComponent* pbc) {
     //操蛋的居然会传入空指针！！！
     if (pbc == nullptr) {
