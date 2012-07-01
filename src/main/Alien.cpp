@@ -151,7 +151,9 @@ void Alien::onInitialize() {
 
     auto iteractor = node->addComponent<dt::InteractionComponent>(new AttackDetectComponent(INTERACTOR_COMPONENT));
     iteractor->setRange(20.0f);
-    iteractor->setOffset(1.0);
+
+    iteractor->setOffset(2.0f);
+
     node->setPosition(this->getEyePosition());
 
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));

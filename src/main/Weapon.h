@@ -7,6 +7,7 @@
 #include <Physics\PhysicsBodyComponent.hpp>
 #include <Audio\SoundComponent.hpp>
 #include <Utils\Timer.hpp>
+#include "ParticlesEffect.h"
 
 /**
   * 武器类
@@ -39,7 +40,9 @@ public:
             const QString &firing_sound_handle, 
             const QString &reloading_begin_sound_handle, 
             const QString &reloading_done_sound_handle, 
-            float hitting_range);
+            float hitting_range,
+            const ParticleInfo &ammo_fire_back,
+            const ParticleInfo &ammo_part_parm);
 
 	~Weapon();
 
@@ -149,6 +152,9 @@ private:
 	dt::SoundComponent* mFiringSound;               //!< 枪声指针
 	dt::SoundComponent* mReloadingBeginSound;       //!< 重装弹药开始声音指针
 	dt::SoundComponent* mReloadingDoneSound;        //!< 重装弹药完成声音指针
+
+	ParticleInfo mAmmoFireBack;
+	ParticleInfo mAmmoBomb;
 };
 
 #endif

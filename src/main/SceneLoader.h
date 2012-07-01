@@ -129,6 +129,9 @@ using namespace dt;
 
 #define SL_ALIEN "Alien"
 #define SL_ALIEN_NAME "AlienName"
+#define SL_ALIEN_PRIMARY "primary_weapon"
+#define SL_ALIEN_SECONDARY "secondary_weapon"
+#define SL_ALIEN_THROWABLE "throwable_weapon"
 #define SL_AGENT_TYPE "AgentType"
 
 #define SL_AMMO "Ammo"

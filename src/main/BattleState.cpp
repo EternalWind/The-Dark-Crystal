@@ -27,6 +27,7 @@
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
       mDialogLabel(nullptr),
+	  mPickUpCrystalBar(nullptr),
       mTotalEnemyNum(0),
       mRemainEnemyNum(0),
       mTotalCrystalNum(0),
@@ -34,7 +35,8 @@ BattleState::BattleState(const QString stage_name)
       mStage(stage_name),
       mNextStage(""),
       mSceneParam1(0.0),
-      mSceneParam2(0.0) {}
+      mSceneParam2(0.0),
+      mCrystalBarPosition(0.0){}
 
 void BattleState::onInitialize() {
    
@@ -88,6 +90,19 @@ void BattleState::onInitialize() {
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
+
+    __onHealthChanged(pAlien->getCurHealth());
+    __onAmmoChanged(0);
+    __onClipNumChanged(0);
+
+    Weapon* weapon = pAlien->getCurWeapon();
+
+    if (weapon != nullptr) {
+        __onAmmoChanged(weapon->getCurAmmo());
+        __onClipNumChanged(weapon->getCurClip());
+    }
+
+
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
     }
@@ -107,10 +122,6 @@ void BattleState::onInitialize() {
     MyGUI::TextBox* text_box = dynamic_cast<MyGUI::TextBox*>(mDialogLabel->getMyGUIWidget());
     text_box->setTextAlign(MyGUI::Align::Left);
 
-    __onHealthChanged(50);
-    __onAmmoChanged(0);
-    __onClipNumChanged(0);
-
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
@@ -119,7 +130,21 @@ void BattleState::onInitialize() {
 
 void BattleState::onDeinitialize() {}
 
-void BattleState::updateStateFrame(double simulation_frame_time) {}
+
+void BattleState::updateStateFrame(double simulation_frame_time) {
+	//拾起水晶进度条过程
+	if(mCrystalBarPosition != 0.0) {
+		mCrystalBarPosition += simulation_frame_time;
+		mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition * 20);
+		if(mCrystalBarPosition > 5.0) {
+			mCrystalBarPosition = 0.0;
+			mPickUpCrystalBar->setVisible(false);
+			++mObtainedCrystalNum;
+			setObtainedCrystalNum(mObtainedCrystalNum);
+		}
+	}
+}
+
 
 BattleState::BattleState(uint16_t tot_enemy_num, uint16_t tot_crystal_num):
 		mQuestionLabel(nullptr),

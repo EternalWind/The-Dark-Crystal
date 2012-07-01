@@ -3,17 +3,16 @@
 #define THE_DARK_CRYSTAL_AGENT_ADVANCECOLLISIONCOMPONENT
 
 #include <Config.hpp>
-
+#include <btBulletCollisionCommon.h>
 #include <Scene/Component.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
 #include <Logic/InteractionComponent.hpp>
-
+#include <OgreParticleAffector.h>
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
-
+#include "ParticlesEffect.h"
 #include <QString>
-
-
-
+#include "stateManager.h"
+#include "AdvanceTriggerAreaComponent.h"
 /**
   * A component using collision detection by shooting bullets for interacting with other objects in the scene.
   */
@@ -27,7 +26,7 @@ public:
       * @param name The name of the Component.
       * @see Component
       */
-    AdvanceCollisionComponent(const QString bullet_handle, const QString name = "");
+    AdvanceCollisionComponent(const QString bullet_handle, const ParticleInfo &fire_back, const ParticleInfo &bomb, bool is_throwable, QString name = "");
 
     /**
       * Sets the handle of the bullet's mesh.
@@ -60,9 +59,19 @@ protected slots:
       */
     void onHit(dt::PhysicsBodyComponent* hit, dt::PhysicsBodyComponent* bullet);
 
+	/**
+      * 当目标爆炸时，对区域内的所有component进行操作
+      * @param AdvanceTriggerAreaComponent
+      * @param 区域内的component
+      */
+    void onTrigger(AdvanceTriggerAreaComponent* trigger_area, dt::Component* component);
+
 private:
-	static uint32_t autoid;
+    static uint32_t autoid;
     QString mBulletMeshHandle;                              //!< The handle to the bullet's mesh.
+    ParticleInfo mFireBack;                                 //!< 尾焰效果
+    ParticleInfo mBomb;                                     //!< 爆炸效果
+    bool mIsThrowable;                                      //!< 是否是范围攻击
 };
 
 
