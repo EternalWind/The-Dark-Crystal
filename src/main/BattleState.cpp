@@ -34,6 +34,7 @@
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
       mDialogLabel(nullptr),
+	  mPickUpCrystalBar(nullptr),
       mTotalEnemyNum(0),
       mRemainEnemyNum(0),
       mTotalCrystalNum(0),
@@ -41,7 +42,8 @@ BattleState::BattleState(const QString stage_name)
       mStage(stage_name),
       mNextStage(""),
       mSceneParam1(0.0),
-      mSceneParam2(0.0) {}
+      mSceneParam2(0.0),
+      mCrystalBarPosition(0.0){}
 
 void BattleState::onInitialize() {
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
