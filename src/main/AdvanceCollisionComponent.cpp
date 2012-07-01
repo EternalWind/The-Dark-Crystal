@@ -38,17 +38,17 @@ void AdvanceCollisionComponent::onCheck(const Ogre::Vector3& start, const Ogre::
 	// create the particle system
     auto p_sys = bullet->addComponent(new dt::ParticleSystemComponent("p_sys" + dt::Utils::toString(id)));
     p_sys->setMaterialName(mFireBack.MaterialHandle);
-    p_sys->setParticleCountLimit(1000);
-    p_sys->getOgreParticleSystem()->setDefaultDimensions(0.9, 0.9);
+	p_sys->setParticleCountLimit(mFireBack.ParticleCountLimit);
+	p_sys->getOgreParticleSystem()->setDefaultDimensions(mFireBack.DefaultDimensionsWidth, mFireBack.DefaultDimensionsHeight);
 
     Ogre::ParticleEmitter* e = p_sys->addEmitter("emit1", "Point");
     e->setAngle(Ogre::Degree(mFireBack.degree));
-    e->setColour(Ogre::ColourValue(0, 0.3f, 1), Ogre::ColourValue(0.2f, 0.8f, 0.2f));
-    e->setEmissionRate(100);
+	e->setColour(mFireBack.EmitterColorStart, mFireBack.EmitterColorEnd);
+	e->setEmissionRate(mFireBack.EmissionRate);
     e->setParticleVelocity(4.0f, 5.f);
     e->setTimeToLive(mFireBack.TimeToLiveL, mFireBack.TimeToLiveR);
 
-    p_sys->addScalerAffector("scaler", 3.05);
+	p_sys->addScalerAffector("scaler", mFireBack.ScalerAffector);
     p_sys->addLinearForceAffector("force", Ogre::Vector3(0, 0, 0));
 
     Ogre::ParticleAffector* a = p_sys->addAffector("colour_interpolator", "ColourInterpolator");

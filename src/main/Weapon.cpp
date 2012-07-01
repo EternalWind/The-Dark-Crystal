@@ -151,7 +151,7 @@ float Weapon::getHittingRange() const {
 void Weapon::onInitialize() {
     Prop::onInitialize();
     auto node = this->addChildNode(new Node("ammo_node"));
-    OgreProcedural::SphereGenerator().setRadius(0.2f).setUTile(.5f).realizeMesh("Bullet");
+    OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
     if (mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
     } else {

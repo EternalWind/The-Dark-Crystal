@@ -6,10 +6,18 @@
 #include <QString>
 #include <cstdint>
 #include <OgreParticleAffector.h>
+#include <OgreColourValue.h>
 
 struct ParticleInfo {
 	float TimeToLiveL;
 	float TimeToLiveR;
+	uint32_t ParticleCountLimit;
+	uint32_t EmissionRate;
+	float DefaultDimensionsWidth;
+	float DefaultDimensionsHeight;
+	Ogre::ColourValue EmitterColorStart;
+	Ogre::ColourValue EmitterColorEnd;
+	float ScalerAffector;
 	float time0;
 	Ogre::Vector3 colour0;
 	float time1;
