@@ -33,9 +33,11 @@ public:
     void onUpdate(double time_diff);
     void onInitialize();
     void onDeinitialize();
+    dt::PhysicsBodyComponent*  test();
+    void __onTrigger(Character * c);
 private slots:
     void __onFire(dt::PhysicsBodyComponent* pbc); 
-    void __onTrigger(dt::TriggerAreaComponent* tac, dt::Component* c);
+    
 private:
 
     double mPreDegree;                                       //<! 存储上一帧身体的朝向。
