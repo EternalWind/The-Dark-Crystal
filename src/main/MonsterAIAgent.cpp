@@ -16,7 +16,7 @@ const QString MonsterAIAgent::INTERACTOR_COMPONENT = "Monster_INTERACTOR_COMPONE
 const QString MonsterAIAgent::TRIGGER_AREA_COMPONENT = "Monster_TRIGGER_AREA_COMPONENT";
 const double  MonsterAIAgent::eps = 1e-4;
 const double  MonsterAIAgent::MOVE_ROTATE_SPEED = 180;
-const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 130;
+const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 180;
 const double  MonsterAIAgent::PI = acos(-1.0);
 const double  MonsterAIAgent::ROTATE_FLOAT = 6.0; 
 const double  MonsterAIAgent::GUARD_RANGE = 30.0;
@@ -45,7 +45,7 @@ void MonsterAIAgent::onInitialize() {
     setBody(dynamic_cast<Monster *>(this->getParent()));        
     mIteractor = this->addComponent(
         new AttackDetectComponent(INTERACTOR_COMPONENT)).get();    
-    mIteractor->setRange(mBody->getAttackRange());    
+    mIteractor->setRange(3000);    
     if (!QObject::connect(mIteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)),
             this, SLOT(__onFind(dt::PhysicsBodyComponent*))) ) {
                 dt::Logger::get().error("can't connect interactionComponent to MonsterAIAgent's __Onfind");
