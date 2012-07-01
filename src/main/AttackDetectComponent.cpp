@@ -4,6 +4,8 @@
 #include <Scene/Scene.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
 
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
+
 // 没想到YD这个类这么给力啊！！！ >_<
 class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
 public:
@@ -21,6 +23,13 @@ public:
             // 神马？动态物体？！不用管，T飞它！
             return btScalar(1.0);
         }
+
+		// 如果是Ghost的话，比如说那个神马TriggerAreaComponent的话就直接把他无视掉啦！！！！
+		// 话说为什么过滤会返回1.0啊！！！尼玛！！！
+		btGhostObject* ghost = dynamic_cast<btGhostObject*>(convexResult.m_hitCollisionObject);
+		if (ghost != nullptr) {
+			return btScalar(1.0);
+		}
 
         return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
     }
@@ -51,11 +60,14 @@ void AttackDetectComponent::onCheck(const Ogre::Vector3& start, const Ogre::Vect
 
 	getNode()->getScene()->getPhysicsWorld()->getBulletWorld()->convexSweepTest(dynamic_cast<btConvexShape*>(rigid_body->getCollisionShape()), start_trans, end_trans, callback);
 
-	if (callback.hasHit()) {
-		btCollisionObject* collision_object = callback.m_hitCollisionObject;
+	btCollisionObject* collision_object = callback.m_hitCollisionObject;
+
+	if (callback.hasHit() && collision_object != nullptr) {
 		dt::PhysicsBodyComponent* hit_object = static_cast<dt::PhysicsBodyComponent*>(collision_object->getUserPointer());
 
-		emit sHit(hit_object);
+		if (hit_object != nullptr) {
+			emit sHit(hit_object);
+		}
 	}
 
 }
