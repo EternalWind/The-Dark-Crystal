@@ -1,7 +1,7 @@
 #include "EntityManager.h"
 #include "Monster.h"
 #include "Alien.h"
-
+#include "ParticlesEffect.h"
 #include "MonsterAIAgent.h"
 #include "PlayerAIAgent.h"
 #include "Character.h"
@@ -58,7 +58,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene) {
             AIDivideAreaManager::get()->destroy(vpuu[j]);
     }*/
 
-    for (uint16_t i = 0; i < 10; i ++) {
+    for (uint16_t i = 0; i < 1; i ++) {
         mMonsterNum ++;
         Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(i);
          Monster * monster = new Monster("monster" + dt::Utils::toString(mMonsterNum), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);      
@@ -66,21 +66,21 @@ void EntityManager::afterLoadScene(dt::Scene * scene) {
          addEntityInScene(monster, maa, monster_pos.x, 10, monster_pos.z, 0.03);
          addMonster(monster);
          monster->setAttackInterval(1.0);
-         monster->setAttackRange(40);
+         monster->setAttackRange(80);
          std::cout << monster->getAttackRange() << endl; 
          std::cout << monster->findComponent<dt::InteractionComponent>("interator")->getIntervalTime() << std::endl;
     }
 
-    /*for (uint16_t i = 50; i < 54; i ++) {
+    for (uint16_t i = 50; i < 51; i ++) {
         mMonsterNum ++;
         Ogre::Vector3 alien_pos = AIDivideAreaManager::get()->getArea(i);
           Alien* alien = new Alien("alien" + dt::Utils::toString(i), "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
         PlayerAIAgent * pa = new PlayerAIAgent("pa" + dt::Utils::toString(mMonsterNum));           
          addEntityInScene(alien, pa, alien_pos.x, 10, alien_pos.z, 0.03); 
           EntityManager::get()->addPlayer(alien);    
-        Weapon * weapon = new Weapon("RailGun","w" + dt::Utils::toString(i), Weapon::PRIMARY, 100, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 50);
-        alien->addWeapon(weapon);    
-    }*/
+         /* Weapon * weapon = new Weapon("RailGun","w" + dt::Utils::toString(i), Weapon::PRIMARY, 100, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 50, ParticlesInfo);
+        alien->addWeapon(weapon);    */
+    }
 }
 void EntityManager::addEntityInScene(Character * entity, Agent * agent, double x, double y, double z, double scale) {
     mCurScene->addChildNode(entity);
@@ -135,7 +135,7 @@ void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
 
      mMonsterNum ++;
-        Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(rand() % 60);
+        Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(mMonsterNum % 60);
          Monster * monster1 = new Monster("monster" + dt::Utils::toString(mMonsterNum), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);      
          MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(mMonsterNum));           
          addEntityInScene(monster1, maa, monster_pos.x, 10, monster_pos.z, 0.03);
