@@ -3,11 +3,16 @@
 #include "ConfigurationManager.h"
 
 #include <Scene/Scene.hpp>
+
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
+
 #include <cstdio>
 
 const QString Character::WALK_SOUND_COMPONENT = "walk_sound";
 const QString Character::JUMP_SOUND_COMPONENT = "jump_sound";
 const QString Character::RUN_SOUND_COMPONENT = "run_sound";
+
+//class CloestRaycastNotGhostCallback : public btCollisionWorld::CloestRaycastCallback
 
 // 我也来玩玩长得恶心的命名方式。 XD
 class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
@@ -16,7 +21,14 @@ public:
         : ClosestConvexResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0)),
           mMe(me) {}
 
+
     btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace) {
+        btGhostObject* ghost = dynamic_cast<btGhostObject*>(convexResult.m_hitCollisionObject);
+
+        if (ghost != nullptr) {
+            return btScalar(1.0);
+        }
+        
         if (convexResult.m_hitCollisionObject == mMe) {
             // 卧槽！这不是我自己么！
             return btScalar(1.0);
@@ -355,27 +367,7 @@ bool Character::__canMoveTo(const btTransform& position, btTransform& closest_po
     btRigidBody* rigid_body = dynamic_cast<btRigidBody*>(callback.m_hitCollisionObject);
 
     if (callback.hasHit() && rigid_body != nullptr) {
-        /*btTransform character_trans;
-        btTransform collided_obj_trans;
 
-        physics_body->getRigidBody()->getMotionState()->getWorldTransform(character_trans);
-        rigid_body->getMotionState()->getWorldTransform(collided_obj_trans);
-
-        btVector3 direction = character_trans.getOrigin() - collided_obj_trans.getOrigin();
-        float value = direction.length();
-        direction.normalize();
-
-        btVector3 center;
-        btScalar radius;
-
-        physics_body->getRigidBody()->getCollisionShape()->getBoundingSphere(center, radius);
-        value -= radius;
-
-        rigid_body->getCollisionShape()->getBoundingSphere(center, radius);
-        value -= radius;
-
-        closest_position.setOrigin(character_trans.getOrigin() + direction * value);
-*/
         return false;
     }
     

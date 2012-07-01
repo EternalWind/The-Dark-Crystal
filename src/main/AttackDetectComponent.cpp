@@ -6,6 +6,9 @@
 
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
+#include "Agent.h"
+
+
 // 没想到YD这个类这么给力啊！！！ >_<
 class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
 public:
@@ -47,8 +50,14 @@ void AttackDetectComponent::onCheck(const Ogre::Vector3& start, const Ogre::Vect
 
 	// 擦！！！It's useless！！！
 	//btCollisionWorld::ClosestConvexResultCallback callback(bt_start, bt_end);
-
-	auto rigid_body = getNode()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
+    Agent * agent = dynamic_cast<Agent *>(getNode());
+    btRigidBody* rigid_body;
+    if (agent != nullptr) {
+        rigid_body = agent->getParent()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
+    } else if (getNode()->getName() == "getProp")
+        rigid_body = getNode()->getParent()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
+    else 
+	rigid_body = getNode()->findComponent<dt::PhysicsBodyComponent>(Entity::PHYSICS_BODY_COMPONENT)->getRigidBody();
 
 	ClosestNotMeNotDynamicObjectConvexResultCallback callback(rigid_body);
 
