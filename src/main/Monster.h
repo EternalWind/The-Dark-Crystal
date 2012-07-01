@@ -34,6 +34,18 @@ public:
 	  */
 	void setAttackRange(float attack_range);
 
+    /**
+      * 返回怪兽攻击间隔时间
+      * @returns 怪兽攻击间隔时间
+      */
+    float getAttackInterval();
+
+    /**
+      * 设置怪兽攻击间隔时间
+      * @param attack_interval 怪兽攻击间隔时间
+      */
+    void setAttackInterval(float attack_interva);
+
 	virtual void onInitialize();
 
 	virtual void onDeinitialize();

@@ -58,14 +58,19 @@ void EntityManager::afterLoadScene(dt::Scene * scene) {
             AIDivideAreaManager::get()->destroy(vpuu[j]);
     }*/
 
-    for (uint16_t i = 0; i < 40; i ++) {
+    for (uint16_t i = 0; i < 10; i ++) {
         mMonsterNum ++;
         Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(i);
          Monster * monster = new Monster("monster" + dt::Utils::toString(mMonsterNum), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);      
          MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(mMonsterNum));           
          addEntityInScene(monster, maa, monster_pos.x, 10, monster_pos.z, 0.03);
          addMonster(monster);
+         monster->setAttackInterval(1.0);
+         monster->setAttackRange(40);
+         std::cout << monster->getAttackRange() << endl; 
+         std::cout << monster->findComponent<dt::InteractionComponent>("interator")->getIntervalTime() << std::endl;
     }
+
     /*for (uint16_t i = 50; i < 54; i ++) {
         mMonsterNum ++;
         Ogre::Vector3 alien_pos = AIDivideAreaManager::get()->getArea(i);
@@ -128,7 +133,18 @@ double EntityManager::_dis(Ogre::Vector3 a, Ogre::Vector3 b) {
 }
 void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
+
+     mMonsterNum ++;
+        Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(rand() % 60);
+         Monster * monster1 = new Monster("monster" + dt::Utils::toString(mMonsterNum), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);      
+         MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(mMonsterNum));           
+         addEntityInScene(monster1, maa, monster_pos.x, 10, monster_pos.z, 0.03);
+         addMonster(monster1);
+         monster1->setAttackInterval(1.0);
+         monster1->setAttackRange(40);
+         addMonster(monster1);
     mMonster.erase(mMonster.find(monster));    
+
 }
 void EntityManager::__isAlienDead(Character * alien) {
     if (alien == nullptr) return; 

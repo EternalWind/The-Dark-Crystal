@@ -33,6 +33,17 @@ void Monster::setAttackRange(float attack_range) {
 	}
 }
 
+float Monster::getAttackInterval() {
+    return mAttackInterval;
+}
+
+void Monster::setAttackInterval(float attack_interval) {
+    if (attack_interval > 0.0f) {
+        mAttackInterval = attack_interval;
+        this->findComponent<AttackDetectComponent>(INTERACTOR_COMPONENT)->setIntervalTime(mAttackInterval);
+    }
+}
+
 void Monster::onKilled() {
     if (!mHasKilled) {
         mHasKilled = true;

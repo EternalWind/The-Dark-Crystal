@@ -16,10 +16,10 @@ const QString MonsterAIAgent::INTERACTOR_COMPONENT = "Monster_INTERACTOR_COMPONE
 const QString MonsterAIAgent::TRIGGER_AREA_COMPONENT = "Monster_TRIGGER_AREA_COMPONENT";
 const double  MonsterAIAgent::eps = 1e-4;
 const double  MonsterAIAgent::MOVE_ROTATE_SPEED = 180;
-const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 60;
+const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 130;
 const double  MonsterAIAgent::PI = acos(-1.0);
 const double  MonsterAIAgent::ROTATE_FLOAT = 6.0; 
-
+const double  MonsterAIAgent::GUARD_RANGE = 30.0;
 
 
 
@@ -113,7 +113,7 @@ void MonsterAIAgent::onUpdate(double time_diff) {
     if (this->getParent() == nullptr) return; 
      //update调用子节点的update和它的component。    
     dt::Node::onUpdate(time_diff);  
-    vector<Character *> vc = EntityManager::get()->searchEntityByRange(mBody, 20.0);
+    vector<Character *> vc = EntityManager::get()->searchEntityByRange(mBody, GUARD_RANGE);
     for (uint16_t i = 0; i < vc.size(); i ++) onTriggerr(vc[i]);
     if (time_diff == 0.0) return; 
     
