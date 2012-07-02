@@ -3,6 +3,7 @@
 #include "CreaditState.h"
 #include "BattleStateTest.h"
 #include "BattleState.h"
+#include "ConfigurationManager.h"
 
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
@@ -10,14 +11,40 @@
 #include <Graphics/DisplayManager.hpp>
 #include <Graphics/CameraComponent.hpp>
 #include <Gui/GuiManager.hpp>
+#include <Audio/SoundComponent.hpp>
+#include <Audio/MusicComponent.hpp>
 
 void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
 
+	dt::ResourceManager::get()->addDataPath(QDir("data"));
+    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("gui/buttons", "FileSystem");
+    //Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
+	dt::ResourceManager::get()->addResourceLocation("models/particle", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("particle", "FileSystem");
+	dt::ResourceManager::get()->addResourceLocation("musics", "FileSystem");
+    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+//    dt::DisplayManager::get()->setWindowSize(800, 600);
+	scene->getPhysicsWorld()->setShowDebug(true);
 
     auto camnode = scene->addChildNode(new dt::Node("camera_node"));
     camnode->setPosition(Ogre::Vector3(0, 5, 10));
     camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));
+
+	//music
+	auto conf_mgr = ConfigurationManager::getInstance() ;
+    SoundSetting sound_setting = conf_mgr->getSoundSetting();
+	auto bg_menu = camnode->addComponent<dt::MusicComponent>(new dt::MusicComponent("musics/bg_menu.wav", "bg_munu"));
+//	bg_menu->setVolume((float)sound_setting.getSoundEffect());
+	bg_menu->setVolume(100);
+//	bg_menu->getm
+	bg_menu->playMusic();
 
     // GUI
     dt::GuiRootWindow& win = dt::GuiManager::get()->getRootWindow();
@@ -58,6 +85,7 @@ void MenuState::onInitialize() {
 }
 
 void MenuState::onClick(MyGUI::Widget* sender) {
+
     if (sender->getName() == "Gui.multi_player_button") {
         //
     } else if (sender->getName() == "Gui.settings_button") {

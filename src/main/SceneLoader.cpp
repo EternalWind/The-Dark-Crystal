@@ -761,7 +761,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + "_run");
         pAlien->setMaxHealth(100);
         pAlien->setCurHealth(100);
-        pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
+        pAlien->setEyePosition(Ogre::Vector3(0, 0.1, -0.5));
 		
         if (dt_parent)
             node = dt_parent->addChildNode(pAlien);
@@ -795,7 +795,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
         if (agent.toStdString() == "HumanAgent")
         {
-            pAlien->setEyePosition(Ogre::Vector3(0, 5, 5));
+            pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
             HumanAgent* human_agent = new HumanAgent("Player");
             human_agent->attachTo(pAlien);
             EntityManager::get()->setHuman(pAlien);
@@ -2009,9 +2009,9 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
                                      is_one_shot_num,
                                      interval_num,
 									 reload_time_num,
-                                     weapon_id + "_fire",
-                                     weapon_id + "_reload_begin",
-                                     weapon_id + "_reload_done",
+                                     weapon_id + "_fire.wav",
+                                     weapon_id + "_reload_begin.wav",
+                                     weapon_id + "_reload_done.wav",
                                      range_num,
 									 FireBack_num,
 									 Bomb_num);

@@ -156,7 +156,7 @@ void Weapon::onInitialize() {
 		OgreProcedural::SphereGenerator().setRadius(0.1f).setUTile(.5f).realizeMesh("Bullet1");
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet1", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
     } else if(mWeaponType == SECONDARY){
-		OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet2");
+		OgreProcedural::SphereGenerator().setRadius(0.05f).setUTile(.5f).realizeMesh("Bullet2");
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet2", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
 	} else {
 		OgreProcedural::SphereGenerator().setRadius(0.2f).setUTile(.5f).realizeMesh("Bullet3");
