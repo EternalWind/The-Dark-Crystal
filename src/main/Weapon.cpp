@@ -152,14 +152,17 @@ float Weapon::getHittingRange() const {
 void Weapon::onInitialize() {
     Prop::onInitialize();
     auto node = this->addChildNode(new Node("ammo_node"));
-    OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
-    if (mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
+    if (mWeaponType == PRIMARY) {
+		OgreProcedural::SphereGenerator().setRadius(1).setUTile(.5f).realizeMesh("Bullet");
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
-    } else {
+    } else if (mWeaponType == SECONDARY){
 		//mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();
-        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
+        OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
+		mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
+    } else {
+		mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
         node->setRotation(Ogre::Quaternion(0.9f, 0.35f, 0, 0));
-    }
+	}
     mInteractor->setIntervalTime(mInterval);
     mInteractor->setRange(mHittingRange);
     mInteractor->setOffset(5.0);

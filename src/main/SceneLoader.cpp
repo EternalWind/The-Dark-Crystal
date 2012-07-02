@@ -796,7 +796,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
         if (agent.toStdString() == "HumanAgent")
         {
-            pAlien->setEyePosition(Ogre::Vector3(0, 5, 5));
+            pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
             HumanAgent* human_agent = new HumanAgent("Player");
             human_agent->attachTo(pAlien);
             EntityManager::get()->setHuman(pAlien);
