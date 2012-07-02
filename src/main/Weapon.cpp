@@ -163,7 +163,7 @@ void Weapon::onInitialize() {
 		//mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet3", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
         node->setRotation(Ogre::Quaternion(0.9f, 0.35f, 0, 0));
-    }
+	}
     mInteractor->setIntervalTime(mInterval);
     mInteractor->setRange(mHittingRange);
     mInteractor->setOffset(5.0);
