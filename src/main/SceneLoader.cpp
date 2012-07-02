@@ -759,11 +759,10 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + "_walk",
                                   alien_name + "_jump",
                                   alien_name + "_run");
-
-        pAlien->setMaxHealth(900);
-        pAlien->setCurHealth(800);
-        
-
+        pAlien->setMaxHealth(100);
+        pAlien->setCurHealth(100);
+        pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
+		
         if (dt_parent)
             node = dt_parent->addChildNode(pAlien);
         else 
