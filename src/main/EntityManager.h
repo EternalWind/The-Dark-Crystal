@@ -9,7 +9,7 @@
 #include "Monster.h"
 #include "MonsterAIAgent.h"
 #include "Character.h"
-
+#include "Agent.h"
 #include <set>
 #include <string>
 #include <vector>
@@ -21,13 +21,18 @@ class EntityManager : public dt::Manager {
 
     Q_OBJECT
 public:
-    void initialize() {}
+     void initialize() {}
      void afterLoadScene(dt::Scene * scene);
      void deinitialize(){}
 	 /**
 	   *AIDivideAreaManager单例化。
 	   */
 	 static EntityManager* get();
+     /**
+       *判断前方扇形区域是否有威胁。
+       */
+     bool isForwardThreaten(Agent * agent);
+     vector<Character*> searchThreatEntity(Character * entity);
      vector<Character*> searchEntityByRange(Character * entity, double range);
      void afterLoad(dt::Scene * scene);
      void setHuman(Alien * human);
@@ -35,11 +40,16 @@ public:
      void addMonster(Monster * monster);
      Alien* getHuman(); 
      void addEntityInScene(Character * monster, Agent * agent, double x, double y, double z, double scale);
+     void fixTurn(double & d_degree);
+     void fixDegree(double & degree);
+     double clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre); 
+     const static double PI; 
+     const static double THREAT_RANGE;
+     const static double THREAT_HALF_DEGREE;
 private:
-
     Alien * mHuman; 
-    set<Character*> mAlien;
-    set<Character*> mMonster;
+    vector<Character*> mAlien;
+    vector<Character*> mMonster;
     dt::Scene * mCurScene;
     uint16_t mMonsterNum;
      //单例化，把构造，复制构造都设成私有。

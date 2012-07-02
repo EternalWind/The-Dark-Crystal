@@ -118,13 +118,18 @@ void Monster::onUpdate(double time_diff) {
     if (mHasKilled) {
 		//std::cout << "has_kill" << std::endl;
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        if (!this->isEnabled()) return;
         if (mesh->isAnimationStopped()) {
             this->disable(); 
             this->kill(); 
+            std::cout << "dead!!!!!" << std::endl;
             return; 
         }
+        //std::cout << "I'm dead!" << std::endl;
     }
     this->mIsUpdatingAfterChange = (time_diff == 0);
+
+    ///std::cout << this->getCurHealth() << std::endl;
 
 	if (mIsAttacking) {
 		auto interator = this->findComponent<AttackDetectComponent>(INTERACTOR_COMPONENT);
