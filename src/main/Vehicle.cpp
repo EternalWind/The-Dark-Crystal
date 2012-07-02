@@ -7,7 +7,7 @@
 #include <Logic/RaycastComponent.hpp>
 
 const QString Vehicle::ATTACK_SOUND_COMPONENT = "attack_sound"; 
-const QString Vehicle::INTERATOR_COMPONENT = "interator";
+//const QString Vehicle::INTERATOR_COMPONENT = "interactor";
 
 
 uint16_t Vehicle::getAttackValue() const {
@@ -39,7 +39,8 @@ Vehicle::Vehicle(const QString node_name,
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
 	mAttackInterval(attack_interval),
-	mAttackSoundHandle(attack_sound_handle) {
+	mAttackSoundHandle(attack_sound_handle),
+	mIsAttacking(false) {
 }
 
 
@@ -51,12 +52,7 @@ void Vehicle::onInitialize() {
 
 	auto attack_sound = this->addComponent<dt::SoundComponent>(new dt::SoundComponent(mAttackSoundHandle, ATTACK_SOUND_COMPONENT));
 	attack_sound->setVolume((float)sound_setting.getSoundEffect());
-
-	auto interator = this->addComponent<dt::InteractionComponent>(new dt::RaycastComponent(INTERATOR_COMPONENT));
-	interator->setIntervalTime(mAttackInterval);
-
-	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
-		this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
+	attack_sound->getSound().setLoop(true);
 
 	//设置载具长宽
 	btBoxShape* box = dynamic_cast<btBoxShape*>(this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)
@@ -69,20 +65,17 @@ void Vehicle::onInitialize() {
 }
 
 void Vehicle::onDeinitialize() {
+	Entity::onDeinitialize();
 }
 
 // -------- slots --------- //
 
-
 void Vehicle::__onAttack(bool is_pressed) {
-	if (is_pressed) {
-		auto interator = this->findComponent<dt::RaycastComponent>(INTERATOR_COMPONENT);
-		auto attack_sound = this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT);
+	mIsAttacking = is_pressed;
 
-		if (interator->isReady()) {
-			attack_sound->playSound();
-			interator->check();
-		}
+	auto sound = this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT);
+	if (sound != nullptr) {
+		is_pressed ? sound->playSound() : sound->stopSound();
 	}
 }
 
@@ -95,6 +88,11 @@ void Vehicle::__onHit(dt::PhysicsBodyComponent* hit) {
 	if (obj != nullptr) {
 		uint16_t cur_health = obj->getCurHealth();
 		obj->setCurHealth(getAttackValue() > cur_health ? 0 : cur_health - getAttackValue());
+
+		// 如果他挂了>_<
+		if (obj->getCurHealth() == 0) {
+			obj->onKilled();
+		}
 	}
 }
 
