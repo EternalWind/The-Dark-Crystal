@@ -8,10 +8,13 @@
 #include "Vehicle.h"
 #include "stateManager.h"
 #include "EntityManager.h"
-#include "AttackDetectComponent.h"
+#include "HumanAgent.h"
+#include "RaycastNotMeComponent.h"
+
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
-#include "HumanAgent.h"
+#include <Physics/PhysicsBodyComponent.hpp>
+
 const QString Alien::INTERACTOR_COMPONENT = "interactor";
 
 Alien::Alien(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, const btScalar mass,
@@ -153,10 +156,11 @@ void Alien::onInitialize() {
 
     auto node = this->addChildNode(new Node("getProp"));
 
-    auto iteractor = node->addComponent<dt::InteractionComponent>(new AttackDetectComponent(INTERACTOR_COMPONENT));
+    auto iteractor = node->addComponent<dt::InteractionComponent>(new RaycastNotMeComponent(this->
+        findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody(), INTERACTOR_COMPONENT));
     iteractor->setRange(20.0f);
 
-    iteractor->setOffset(5.0f);
+    iteractor->setOffset(3.0f);
 
     node->setPosition(this->getEyePosition());
 
