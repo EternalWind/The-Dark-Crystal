@@ -47,12 +47,12 @@ void ParticlesEffect::onInitialize() {
 
 	//设置颜色变化效果
     Ogre::ParticleAffector* a = p_sys->addAffector("colour_interpolator", "ColourInterpolator");
-    a->setParameter("time0", dt::Utils::toString(mPartParm.time0).toStdString());
-    a->setParameter("colour0", dt::Utils::toString(mPartParm.colour0.x).toStdString() + " " + dt::Utils::toString(mPartParm.colour0.y).toStdString() + " " + dt::Utils::toString(mPartParm.colour0.z).toStdString() + " 1");
-    a->setParameter("time1", dt::Utils::toString(mPartParm.time1).toStdString());
-    a->setParameter("colour1", dt::Utils::toString(mPartParm.colour1.x).toStdString() + " " + dt::Utils::toString(mPartParm.colour1.y).toStdString() + " " + dt::Utils::toString(mPartParm.colour1.z).toStdString() + " 1");
-    a->setParameter("time2", dt::Utils::toString(mPartParm.time2).toStdString());
-    a->setParameter("colour2", dt::Utils::toString(mPartParm.colour2.x).toStdString() + " " + dt::Utils::toString(mPartParm.colour2.y).toStdString() + " " + dt::Utils::toString(mPartParm.colour2.z).toStdString() + " 0");
+    a->setParameter("time0", dt::Utils::toStdString(dt::Utils::toString(mPartParm.time0)));
+    a->setParameter("colour0", dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour0.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour0.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour0.z)) + " 1");
+    a->setParameter("time1", dt::Utils::toStdString(dt::Utils::toString(mPartParm.time1)));
+    a->setParameter("colour1", dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour1.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour1.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour1.z)) + " 1");
+    a->setParameter("time2", dt::Utils::toStdString(dt::Utils::toString(mPartParm.time2)));
+    a->setParameter("colour2", dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour2.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour2.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(mPartParm.colour2.z)) + " 0");
 
 
 }

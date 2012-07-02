@@ -90,10 +90,11 @@ protected:
 	QString mAttackSoundHandle;                  //!< 载具攻击声音句柄
 	float mWidth;                                //!< 载具宽度
 	float mLength;                               //!< 载具长度
+	bool mIsAttacking;                           //!< 载具是否正在攻击
 
 public:
 	static const QString ATTACK_SOUND_COMPONENT; //!< 载具攻击声音Component的名字
-	static const QString INTERATOR_COMPONENT;    //!< 载具攻击交互Component的名字
+	//static const QString INTERATOR_COMPONENT;    //!< 载具攻击交互Component的名字
 };
 
 #endif

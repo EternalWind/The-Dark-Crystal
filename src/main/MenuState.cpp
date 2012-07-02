@@ -17,22 +17,6 @@
 void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
 
-	dt::ResourceManager::get()->addDataPath(QDir("data"));
-    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("gui/buttons", "FileSystem");
-    //Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-    dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("models/sinbad.zip", "Zip", true);
-	dt::ResourceManager::get()->addResourceLocation("models/particle", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("Mesh", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("particle", "FileSystem");
-	dt::ResourceManager::get()->addResourceLocation("musics", "FileSystem");
-    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-//    dt::DisplayManager::get()->setWindowSize(800, 600);
-	scene->getPhysicsWorld()->setShowDebug(true);
-
     auto camnode = scene->addChildNode(new dt::Node("camera_node"));
     camnode->setPosition(Ogre::Vector3(0, 5, 10));
     camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));
@@ -89,16 +73,16 @@ void MenuState::onClick(MyGUI::Widget* sender) {
     if (sender->getName() == "Gui.multi_player_button") {
         //
     } else if (sender->getName() == "Gui.settings_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new OptionState());
     } else if (sender->getName() == "Gui.new_game_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new BattleState("01"));
     } else if (sender->getName() == "Gui.load_record_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new BattleStateTest());
     } else if (sender->getName() == "Gui.credit_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
         exit(0);

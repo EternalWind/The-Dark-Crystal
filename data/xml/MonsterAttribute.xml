@@ -1,0 +1,8 @@
+<Monster>
+	<yangmu>
+		<mass>100</mass>
+		<power>10</power>
+		<interval>2.1</interval>
+		<range>4.4</range>
+	</yangmu>
+</Monster>

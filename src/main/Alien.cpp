@@ -76,10 +76,6 @@ void Alien::addWeapon(Weapon* weapon) {
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
 			weapon->setPosition(1.0f, 0.0f, -4.0f);
 			weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
-
-            weapon->setParent(this);
-			weapon->setRotation(Ogre::Quaternion::IDENTITY);
-			weapon->setPosition(0.5f, -1.5f, -1.0f);
             
             //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
             //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();

@@ -237,15 +237,6 @@ Node::NodeSP SceneLoader::__loadMesh(const QDomElement& og_component, Node::Node
                 new MeshComponent(entity.attribute(SL_MESH_HANDLE), entity.firstChildElement().attribute(SL_MESH_ENTITY_MATERIAL_NAME), entity.attribute(SL_NAME))
                 );
 
-            //set entity attributes
-            /*for ( QDomElement mat = entity.firstChildElement(); !mat.isNull(); mat = mat.nextSiblingElement() )
-            {
-            QString material_handle = mat.attribute(SL_MESH_ENTITY_MATERIAL_NAME);
-            uint32_t index = mat.attribute(SL_MESH_ENTITY_INDEX).toUInt();
-
-            mesh->getOgreEntity()->getSubEntity(index)->setMaterialName(material_handle.toStdString());
-            }*/
-
             QString cast_shadows = entity.attribute(SL_CAST_SHADOWS);
             if ( cast_shadows == SL_TRUE )
             {
@@ -276,7 +267,7 @@ Node::NodeSP SceneLoader::__loadMesh(const QDomElement& og_component, Node::Node
                     .setNormal(Ogre::Vector3( plane.firstChildElement(SL_MESH_PLANE_NORMAL).attribute(SL_X).toFloat(),
                     plane.firstChildElement(SL_MESH_PLANE_NORMAL).attribute(SL_Y).toFloat(),
                     plane.firstChildElement(SL_MESH_PLANE_NORMAL).attribute(SL_Z).toFloat()))
-                    .realizeMesh(plane.attribute(SL_NAME).toStdString());
+                    .realizeMesh(dt::Utils::toStdString(plane.attribute(SL_NAME)));
 
                 //add mesh component
                 auto mesh = node->addComponent<MeshComponent>(
@@ -742,6 +733,90 @@ Node::NodeSP SceneLoader::__loadTriggerArea(const QDomElement& og_component, Nod
     return node;
 }
 
+ParticleInfo load_ParticleInfo(const QDomElement &par_info) {
+	ParticleInfo FireBack_num;
+	auto TimeToLiveL = par_info.firstChildElement("TimeToLiveL");
+	FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+
+	auto TimeToLiveR = par_info.firstChildElement("TimeToLiveR");
+	FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+
+	//add by liujack
+	auto ParticleCountLimit = par_info.firstChildElement("ParticleCountLimit");
+	FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+
+	auto EmissionRate = par_info.firstChildElement("EmissionRate");
+	FireBack_num.EmissionRate = EmissionRate.text().toUInt();
+
+	auto DefaultDimensionsWidth = par_info.firstChildElement("DefaultDimensionsWidth");
+	FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+
+	auto DefaultDimensionsHeight = par_info.firstChildElement("DefaultDimensionsHeight");
+	FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+
+	auto EmitterColorStart_r = par_info.firstChildElement("EmitterColorStart_r");
+	FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+
+	auto EmitterColorStart_g = par_info.firstChildElement("EmitterColorStart_g");
+	FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+
+	auto EmitterColorStart_b = par_info.firstChildElement("EmitterColorStart_b");
+	FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+
+	auto EmitterColorEnd_r = par_info.firstChildElement("EmitterColorEnd_r");
+	FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+
+	auto EmitterColorEnd_g = par_info.firstChildElement("EmitterColorEnd_g");
+	FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+
+	auto EmitterColorEnd_b = par_info.firstChildElement("EmitterColorEnd_b");
+	FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+	//end
+
+	auto time0 = par_info.firstChildElement("time0");
+	FireBack_num.time0 = time0.text().toFloat();
+
+	auto colour0r = par_info.firstChildElement("colour0r");
+	FireBack_num.colour0.x = colour0r.text().toFloat();
+
+	auto colour0g = par_info.firstChildElement("colour0g");
+	FireBack_num.colour0.y = colour0g.text().toFloat();
+
+	auto colour0b = par_info.firstChildElement("colour0b");
+	FireBack_num.colour0.z = colour0b.text().toFloat();
+
+	auto time1 = par_info.firstChildElement("time1");
+	FireBack_num.time1 = time1.text().toFloat();
+
+	auto colour1r = par_info.firstChildElement("colour1r");
+	FireBack_num.colour1.x = colour1r.text().toFloat();
+
+	auto colour1g = par_info.firstChildElement("colour1g");
+	FireBack_num.colour1.y = colour1g.text().toFloat();
+
+	auto colour1b = par_info.firstChildElement("colour1b");
+	FireBack_num.colour1.z = colour1b.text().toFloat();
+
+	auto time2 = par_info.firstChildElement("time2");
+	FireBack_num.time2 = time2.text().toFloat();
+
+	auto colour2r = par_info.firstChildElement("colour2r");
+	FireBack_num.colour2.x = colour2r.text().toFloat();
+
+	auto colour2g = par_info.firstChildElement("colour2g");
+	FireBack_num.colour2.y = colour2g.text().toFloat();
+
+	auto colour2b = par_info.firstChildElement("colour2b");
+	FireBack_num.colour2.z = colour2b.text().toFloat();
+
+	auto degree = par_info.firstChildElement("degree");
+	FireBack_num.degree = degree.text().toFloat();
+
+	auto MaterialHandle = par_info.firstChildElement("MaterialHandle");
+	FireBack_num.MaterialHandle = MaterialHandle.text();
+
+	return FireBack_num;
+}
 
 Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP dt_parent) 
 {
@@ -793,18 +868,18 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         pAlien->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));
 
-        if (agent.toStdString() == "HumanAgent")
+        if (agent == "HumanAgent")
         {
             pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
             HumanAgent* human_agent = new HumanAgent("Player");
             human_agent->attachTo(pAlien);
             EntityManager::get()->setHuman(pAlien);
         }
-        if (agent.toStdString() == "AiAgent")
+        if (agent == "AiAgent")
         {
             pAlien->setEyePosition(Ogre::Vector3(0, 5, 5));
-          //  PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
-         //   Ai_agent->attachTo(pAlien);
+            PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
+            Ai_agent->attachTo(pAlien);
             EntityManager::get()->addPlayer(pAlien);
 
         }
@@ -829,8 +904,8 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         QDomElement throwable = og_node.firstChildElement(SL_ALIEN_THROWABLE);
 
         if (!primary.isNull()) {
-            weapon_id = primary.nodeValue();
-            weapon_id = "RailGun";
+            weapon_id = primary.attribute("content");
+			
             QDomElement w_node = root.firstChildElement(weapon_id);
 
             auto type = w_node.firstChildElement("type");
@@ -849,7 +924,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
                 auto is_one_shot = w_node.firstChildElement("is_one_shot");
                 bool is_one_shot_num;
-                if (is_one_shot.text().toStdString() == "true")
+                if (is_one_shot.text() == "true")
                     is_one_shot_num = 1;
                 else
                     is_one_shot_num = 0;
@@ -867,169 +942,10 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 float mass_num = mass.text().toFloat();
 
                 ParticleInfo FireBack_num, Bomb_num;
-				auto FireBack = w_node.firstChildElement("FireBack");
 
-				auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
-				FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+				FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-				auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
-				FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
-
-				//add by liujack
-				auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
-				FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
-
-				auto EmissionRate = FireBack.firstChildElement("EmissionRate");
-				FireBack_num.EmissionRate = EmissionRate.text().toUInt();
-
-				auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
-				FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-				auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
-				FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-				auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
-				FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-				auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
-				FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-				auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
-				FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-				auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
-				FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-				auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
-				FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-				auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
-				FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-				//end
-
-				auto time0 = FireBack.firstChildElement("time0");
-				FireBack_num.time0 = time0.text().toFloat();
-
-				auto colour0r = FireBack.firstChildElement("colour0r");
-				FireBack_num.colour0.x = colour0r.text().toFloat();
-
-				auto colour0g = FireBack.firstChildElement("colour0g");
-				FireBack_num.colour0.y = colour0g.text().toFloat();
-
-				auto colour0b = FireBack.firstChildElement("colour0b");
-				FireBack_num.colour0.z = colour0b.text().toFloat();
-
-				auto time1 = FireBack.firstChildElement("time1");
-				FireBack_num.time1 = time1.text().toFloat();
-
-				auto colour1r = FireBack.firstChildElement("colour1r");
-				FireBack_num.colour1.x = colour1r.text().toFloat();
-
-				auto colour1g = FireBack.firstChildElement("colour1g");
-				FireBack_num.colour1.y = colour1g.text().toFloat();
-
-				auto colour1b = FireBack.firstChildElement("colour1b");
-				FireBack_num.colour1.z = colour1b.text().toFloat();
-
-				auto time2 = FireBack.firstChildElement("time2");
-				FireBack_num.time2 = time2.text().toFloat();
-
-				auto colour2r = FireBack.firstChildElement("colour2r");
-				FireBack_num.colour2.x = colour2r.text().toFloat();
-
-				auto colour2g = FireBack.firstChildElement("colour2g");
-				FireBack_num.colour2.y = colour2g.text().toFloat();
-
-				auto colour2b = FireBack.firstChildElement("colour2b");
-				FireBack_num.colour2.z = colour2b.text().toFloat();
-
-				auto degree = FireBack.firstChildElement("degree");
-				FireBack_num.degree = degree.text().toFloat();
-
-				auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
-				FireBack_num.MaterialHandle = MaterialHandle.text();
-
-				auto Bomb = w_node.firstChildElement("Bomb");
-
-				TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
-				Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
-
-				TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
-				Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
-
-				//add by liujack
-				ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
-				Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
-
-				EmissionRate = Bomb.firstChildElement("EmissionRate");
-				Bomb_num.EmissionRate = EmissionRate.text().toUInt();
-
-				DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
-				Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-				DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
-				Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-				EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
-				Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-				EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
-				Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-				EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
-				Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-				EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
-				Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-				EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
-				Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-				EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
-				Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-				//end
-
-				time0 = Bomb.firstChildElement("time0");
-				Bomb_num.time0 = time0.text().toFloat();
-
-				colour0r = Bomb.firstChildElement("colour0r");
-				Bomb_num.colour0.x = colour0r.text().toFloat();
-
-				colour0g = Bomb.firstChildElement("colour0g");
-				Bomb_num.colour0.y = colour0g.text().toFloat();
-
-				colour0b = Bomb.firstChildElement("colour0b");
-				Bomb_num.colour0.z = colour0b.text().toFloat();
-
-				time1 = Bomb.firstChildElement("time1");
-				Bomb_num.time1 = time1.text().toFloat();
-
-				colour1r = Bomb.firstChildElement("colour1r");
-				Bomb_num.colour1.x = colour1r.text().toFloat();
-
-				colour1g = Bomb.firstChildElement("colour1g");
-				Bomb_num.colour1.y = colour1g.text().toFloat();
-
-				colour1b = Bomb.firstChildElement("colour1b");
-				Bomb_num.colour1.z = colour1b.text().toFloat();
-
-				time2 = Bomb.firstChildElement("time2");
-				Bomb_num.time2 = time2.text().toFloat();
-
-				colour2r = Bomb.firstChildElement("colour2r");
-				Bomb_num.colour2.x = colour2r.text().toFloat();
-
-				colour2g = Bomb.firstChildElement("colour2g");
-				Bomb_num.colour2.y = colour2g.text().toFloat();
-
-				colour2b = Bomb.firstChildElement("colour2b");
-				Bomb_num.colour2.z = colour2b.text().toFloat();
-
-				degree = Bomb.firstChildElement("degree");
-				Bomb_num.degree = degree.text().toFloat();
-
-				MaterialHandle = Bomb.firstChildElement("MaterialHandle");
-				Bomb_num.MaterialHandle = MaterialHandle.text();
+				Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
 				Weapon *pWeapon = new Weapon(weapon_id, 
 					node_name,
@@ -1049,13 +965,15 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 					range_num,
 					FireBack_num,
 					Bomb_num);
-
+				
+				pAlien->addChildNode(pWeapon);
+				
                 pAlien->addWeapon(pWeapon);
             }
         }
 
         if (!secondary.isNull()) {
-            weapon_id = secondary.nodeValue();
+            weapon_id = secondary.attribute("content");;
 
             QDomElement w_node = root.firstChildElement(weapon_id);
 
@@ -1075,7 +993,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
                 auto is_one_shot = w_node.firstChildElement("is_one_shot");
                 bool is_one_shot_num;
-                if (is_one_shot.text().toStdString() == "true")
+                if (is_one_shot.text() == "true")
                     is_one_shot_num = 1;
                 else
                     is_one_shot_num = 0;
@@ -1093,169 +1011,10 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 float mass_num = mass.text().toFloat();
 
 				ParticleInfo FireBack_num, Bomb_num;
-				auto FireBack = w_node.firstChildElement("FireBack");
 
-				auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
-				FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+				FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-				auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
-				FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
-
-				//add by liujack
-				auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
-				FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
-
-				auto EmissionRate = FireBack.firstChildElement("EmissionRate");
-				FireBack_num.EmissionRate = EmissionRate.text().toUInt();
-
-				auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
-				FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-				auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
-				FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-				auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
-				FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-				auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
-				FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-				auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
-				FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-				auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
-				FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-				auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
-				FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-				auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
-				FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-				//end
-
-				auto time0 = FireBack.firstChildElement("time0");
-				FireBack_num.time0 = time0.text().toFloat();
-
-				auto colour0r = FireBack.firstChildElement("colour0r");
-				FireBack_num.colour0.x = colour0r.text().toFloat();
-
-				auto colour0g = FireBack.firstChildElement("colour0g");
-				FireBack_num.colour0.y = colour0g.text().toFloat();
-
-				auto colour0b = FireBack.firstChildElement("colour0b");
-				FireBack_num.colour0.z = colour0b.text().toFloat();
-
-				auto time1 = FireBack.firstChildElement("time1");
-				FireBack_num.time1 = time1.text().toFloat();
-
-				auto colour1r = FireBack.firstChildElement("colour1r");
-				FireBack_num.colour1.x = colour1r.text().toFloat();
-
-				auto colour1g = FireBack.firstChildElement("colour1g");
-				FireBack_num.colour1.y = colour1g.text().toFloat();
-
-				auto colour1b = FireBack.firstChildElement("colour1b");
-				FireBack_num.colour1.z = colour1b.text().toFloat();
-
-				auto time2 = FireBack.firstChildElement("time2");
-				FireBack_num.time2 = time2.text().toFloat();
-
-				auto colour2r = FireBack.firstChildElement("colour2r");
-				FireBack_num.colour2.x = colour2r.text().toFloat();
-
-				auto colour2g = FireBack.firstChildElement("colour2g");
-				FireBack_num.colour2.y = colour2g.text().toFloat();
-
-				auto colour2b = FireBack.firstChildElement("colour2b");
-				FireBack_num.colour2.z = colour2b.text().toFloat();
-
-				auto degree = FireBack.firstChildElement("degree");
-				FireBack_num.degree = degree.text().toFloat();
-
-				auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
-				FireBack_num.MaterialHandle = MaterialHandle.text();
-
-				auto Bomb = w_node.firstChildElement("Bomb");
-
-				TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
-				Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
-
-				TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
-				Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
-
-				//add by liujack
-				ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
-				Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
-
-				EmissionRate = Bomb.firstChildElement("EmissionRate");
-				Bomb_num.EmissionRate = EmissionRate.text().toUInt();
-
-				DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
-				Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-				DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
-				Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-				EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
-				Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-				EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
-				Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-				EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
-				Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-				EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
-				Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-				EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
-				Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-				EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
-				Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-				//end
-
-				time0 = Bomb.firstChildElement("time0");
-				Bomb_num.time0 = time0.text().toFloat();
-
-				colour0r = Bomb.firstChildElement("colour0r");
-				Bomb_num.colour0.x = colour0r.text().toFloat();
-
-				colour0g = Bomb.firstChildElement("colour0g");
-				Bomb_num.colour0.y = colour0g.text().toFloat();
-
-				colour0b = Bomb.firstChildElement("colour0b");
-				Bomb_num.colour0.z = colour0b.text().toFloat();
-
-				time1 = Bomb.firstChildElement("time1");
-				Bomb_num.time1 = time1.text().toFloat();
-
-				colour1r = Bomb.firstChildElement("colour1r");
-				Bomb_num.colour1.x = colour1r.text().toFloat();
-
-				colour1g = Bomb.firstChildElement("colour1g");
-				Bomb_num.colour1.y = colour1g.text().toFloat();
-
-				colour1b = Bomb.firstChildElement("colour1b");
-				Bomb_num.colour1.z = colour1b.text().toFloat();
-
-				time2 = Bomb.firstChildElement("time2");
-				Bomb_num.time2 = time2.text().toFloat();
-
-				colour2r = Bomb.firstChildElement("colour2r");
-				Bomb_num.colour2.x = colour2r.text().toFloat();
-
-				colour2g = Bomb.firstChildElement("colour2g");
-				Bomb_num.colour2.y = colour2g.text().toFloat();
-
-				colour2b = Bomb.firstChildElement("colour2b");
-				Bomb_num.colour2.z = colour2b.text().toFloat();
-
-				degree = Bomb.firstChildElement("degree");
-				Bomb_num.degree = degree.text().toFloat();
-
-				MaterialHandle = Bomb.firstChildElement("MaterialHandle");
-				Bomb_num.MaterialHandle = MaterialHandle.text();
+				Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
 				Weapon *pWeapon = new Weapon(weapon_id, 
 					node_name,
@@ -1281,7 +1040,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         }
 
         if (!throwable.isNull()) {
-            weapon_id = throwable.nodeValue();
+            weapon_id = throwable.attribute("content");
 
             QDomElement w_node = root.firstChildElement(weapon_id);
 
@@ -1301,7 +1060,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
                 auto is_one_shot = w_node.firstChildElement("is_one_shot");
                 bool is_one_shot_num;
-                if (is_one_shot.text().toStdString() == "true")
+                if (is_one_shot.text() == "true")
                     is_one_shot_num = 1;
                 else
                     is_one_shot_num = 0;
@@ -1319,171 +1078,12 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 float mass_num = mass.text().toFloat();
 
                 ParticleInfo FireBack_num, Bomb_num;
-            auto FireBack = w_node.firstChildElement("FireBack");
-			
-			auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
-			FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
 
-			auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
-			FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+				FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-				//add by liujack
-				auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
-				FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+				Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
-				auto EmissionRate = FireBack.firstChildElement("EmissionRate");
-				FireBack_num.EmissionRate = EmissionRate.text().toUInt();
-
-				auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
-				FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-				auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
-				FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-				auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
-				FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-				auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
-				FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-				auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
-				FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-				auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
-				FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-				auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
-				FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-				auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
-				FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-				//end
-
-			auto time0 = FireBack.firstChildElement("time0");
-			FireBack_num.time0 = time0.text().toFloat();
-
-			auto colour0r = FireBack.firstChildElement("colour0r");
-			FireBack_num.colour0.x = colour0r.text().toFloat();
-
-			auto colour0g = FireBack.firstChildElement("colour0g");
-			FireBack_num.colour0.y = colour0g.text().toFloat();
-
-			auto colour0b = FireBack.firstChildElement("colour0b");
-			FireBack_num.colour0.z = colour0b.text().toFloat();
-
-			auto time1 = FireBack.firstChildElement("time1");
-			FireBack_num.time1 = time1.text().toFloat();
-
-			auto colour1r = FireBack.firstChildElement("colour1r");
-			FireBack_num.colour1.x = colour1r.text().toFloat();
-
-			auto colour1g = FireBack.firstChildElement("colour1g");
-			FireBack_num.colour1.y = colour1g.text().toFloat();
-
-			auto colour1b = FireBack.firstChildElement("colour1b");
-			FireBack_num.colour1.z = colour1b.text().toFloat();
-
-			auto time2 = FireBack.firstChildElement("time2");
-			FireBack_num.time2 = time2.text().toFloat();
-
-			auto colour2r = FireBack.firstChildElement("colour2r");
-			FireBack_num.colour2.x = colour2r.text().toFloat();
-
-			auto colour2g = FireBack.firstChildElement("colour2g");
-			FireBack_num.colour2.y = colour2g.text().toFloat();
-
-			auto colour2b = FireBack.firstChildElement("colour2b");
-			FireBack_num.colour2.z = colour2b.text().toFloat();
-
-			auto degree = FireBack.firstChildElement("degree");
-			FireBack_num.degree = degree.text().toFloat();
-
-			auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
-			FireBack_num.MaterialHandle = MaterialHandle.text();
-
-        auto Bomb = w_node.firstChildElement("Bomb");
-			
-			TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
-			Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
-
-			TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
-			Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
-
-			//add by liujack
-			ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
-			Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
-
-			EmissionRate = Bomb.firstChildElement("EmissionRate");
-			Bomb_num.EmissionRate = EmissionRate.text().toUInt();
-
-			DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
-			Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-			DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
-			Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-			EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
-			Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-			EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
-			Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-			EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
-			Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-			EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
-			Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-			EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
-			Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-			EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
-			Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-			//end
-
-			time0 = Bomb.firstChildElement("time0");
-			Bomb_num.time0 = time0.text().toFloat();
-
-			colour0r = Bomb.firstChildElement("colour0r");
-			Bomb_num.colour0.x = colour0r.text().toFloat();
-
-			colour0g = Bomb.firstChildElement("colour0g");
-			Bomb_num.colour0.y = colour0g.text().toFloat();
-
-			colour0b = Bomb.firstChildElement("colour0b");
-			Bomb_num.colour0.z = colour0b.text().toFloat();
-
-			time1 = Bomb.firstChildElement("time1");
-			Bomb_num.time1 = time1.text().toFloat();
-
-			colour1r = Bomb.firstChildElement("colour1r");
-			Bomb_num.colour1.x = colour1r.text().toFloat();
-
-			colour1g = Bomb.firstChildElement("colour1g");
-			Bomb_num.colour1.y = colour1g.text().toFloat();
-
-			colour1b = Bomb.firstChildElement("colour1b");
-			Bomb_num.colour1.z = colour1b.text().toFloat();
-
-			time2 = Bomb.firstChildElement("time2");
-			Bomb_num.time2 = time2.text().toFloat();
-
-			colour2r = Bomb.firstChildElement("colour2r");
-			Bomb_num.colour2.x = colour2r.text().toFloat();
-
-			colour2g = Bomb.firstChildElement("colour2g");
-			Bomb_num.colour2.y = colour2g.text().toFloat();
-
-			colour2b = Bomb.firstChildElement("colour2b");
-			Bomb_num.colour2.z = colour2b.text().toFloat();
-
-			degree = Bomb.firstChildElement("degree");
-			Bomb_num.degree = degree.text().toFloat();
-
-			MaterialHandle = Bomb.firstChildElement("MaterialHandle");
-			Bomb_num.MaterialHandle = MaterialHandle.text();
-
-        Weapon *pWeapon = new Weapon(weapon_id, 
+                Weapon *pWeapon = new Weapon(weapon_id, 
                                      node_name,
                                      Weapon::WeaponType(weapon_type),
                                      power_num,
@@ -1795,9 +1395,9 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 		
         auto type = w_node.firstChildElement("type");
         uint16_t weapon_type;
-        if (type.text().toStdString() == "Primary")
+        if (type.text() == "Primary")
             weapon_type = 0;
-        else if (type.text().toStdString() == "Secondery")
+        else if (type.text() == "Secondery")
             weapon_type = 1;
         else
             weapon_type = 2;
@@ -1813,7 +1413,7 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
         auto is_one_shot = w_node.firstChildElement("is_one_shot");
         bool is_one_shot_num;
-        if (is_one_shot.text().toStdString() == "true")
+        if (is_one_shot.text() == "true")
             is_one_shot_num = 1;
         else
             is_one_shot_num = 0;
@@ -1831,171 +1431,10 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
         float mass_num = mass.text().toFloat();
 
         ParticleInfo FireBack_num, Bomb_num;
-        auto FireBack = w_node.firstChildElement("FireBack");
-			
-			auto TimeToLiveL = FireBack.firstChildElement("TimeToLiveL");
-			FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
 
-			auto TimeToLiveR = FireBack.firstChildElement("TimeToLiveR");
-			FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+		FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-			//add by liujack
-			auto ParticleCountLimit = FireBack.firstChildElement("ParticleCountLimit");
-			FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
-
-			auto EmissionRate = FireBack.firstChildElement("EmissionRate");
-			FireBack_num.EmissionRate = EmissionRate.text().toUInt();
-
-			auto DefaultDimensionsWidth = FireBack.firstChildElement("DefaultDimensionsWidth");
-			FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-			auto DefaultDimensionsHeight = FireBack.firstChildElement("DefaultDimensionsHeight");
-			FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-			auto EmitterColorStart_r = FireBack.firstChildElement("EmitterColorStart_r");
-			FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-			auto EmitterColorStart_g = FireBack.firstChildElement("EmitterColorStart_g");
-			FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-			auto EmitterColorStart_b = FireBack.firstChildElement("EmitterColorStart_b");
-			FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-			auto EmitterColorEnd_r = FireBack.firstChildElement("EmitterColorEnd_r");
-			FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-			auto EmitterColorEnd_g = FireBack.firstChildElement("EmitterColorEnd_g");
-			FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-			auto EmitterColorEnd_b = FireBack.firstChildElement("EmitterColorEnd_b");
-			FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-			//end
-
-			auto time0 = FireBack.firstChildElement("time0");
-			FireBack_num.time0 = time0.text().toFloat();
-
-			auto colour0r = FireBack.firstChildElement("colour0r");
-			FireBack_num.colour0.x = colour0r.text().toFloat();
-
-			auto colour0g = FireBack.firstChildElement("colour0g");
-			FireBack_num.colour0.y = colour0g.text().toFloat();
-
-			auto colour0b = FireBack.firstChildElement("colour0b");
-			FireBack_num.colour0.z = colour0b.text().toFloat();
-
-			auto time1 = FireBack.firstChildElement("time1");
-			FireBack_num.time1 = time1.text().toFloat();
-
-			auto colour1r = FireBack.firstChildElement("colour1r");
-			FireBack_num.colour1.x = colour1r.text().toFloat();
-
-			auto colour1g = FireBack.firstChildElement("colour1g");
-			FireBack_num.colour1.y = colour1g.text().toFloat();
-
-			auto colour1b = FireBack.firstChildElement("colour1b");
-			FireBack_num.colour1.z = colour1b.text().toFloat();
-
-			auto time2 = FireBack.firstChildElement("time2");
-			FireBack_num.time2 = time2.text().toFloat();
-
-			auto colour2r = FireBack.firstChildElement("colour2r");
-			FireBack_num.colour2.x = colour2r.text().toFloat();
-
-			auto colour2g = FireBack.firstChildElement("colour2g");
-			FireBack_num.colour2.y = colour2g.text().toFloat();
-
-			auto colour2b = FireBack.firstChildElement("colour2b");
-			FireBack_num.colour2.z = colour2b.text().toFloat();
-
-			auto degree = FireBack.firstChildElement("degree");
-			FireBack_num.degree = degree.text().toFloat();
-
-			auto MaterialHandle = FireBack.firstChildElement("MaterialHandle");
-			FireBack_num.MaterialHandle = MaterialHandle.text();
-
-
-
-        auto Bomb = w_node.firstChildElement("Bomb");
-			
-			TimeToLiveL = Bomb.firstChildElement("TimeToLiveL");
-			Bomb_num.TimeToLiveL = TimeToLiveL.text().toFloat();
-
-			TimeToLiveR = Bomb.firstChildElement("TimeToLiveR");
-			Bomb_num.TimeToLiveR = TimeToLiveR.text().toFloat();
-
-			//add by liujack
-			ParticleCountLimit = Bomb.firstChildElement("ParticleCountLimit");
-			Bomb_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
-
-			EmissionRate = Bomb.firstChildElement("EmissionRate");
-			Bomb_num.EmissionRate = EmissionRate.text().toUInt();
-
-			DefaultDimensionsWidth = Bomb.firstChildElement("DefaultDimensionsWidth");
-			Bomb_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
-
-			DefaultDimensionsHeight = Bomb.firstChildElement("DefaultDimensionsHeight");
-			Bomb_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
-
-			EmitterColorStart_r = Bomb.firstChildElement("EmitterColorStart_r");
-			Bomb_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
-
-			EmitterColorStart_g = Bomb.firstChildElement("EmitterColorStart_g");
-			Bomb_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
-
-			EmitterColorStart_b = Bomb.firstChildElement("EmitterColorStart_b");
-			Bomb_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
-
-			EmitterColorEnd_r = Bomb.firstChildElement("EmitterColorEnd_r");
-			Bomb_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
-			
-			EmitterColorEnd_g = Bomb.firstChildElement("EmitterColorEnd_g");
-			Bomb_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
-
-			EmitterColorEnd_b = Bomb.firstChildElement("EmitterColorEnd_b");
-			Bomb_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-			//end
-
-			time0 = Bomb.firstChildElement("time0");
-			Bomb_num.time0 = time0.text().toFloat();
-
-			colour0r = Bomb.firstChildElement("colour0r");
-			Bomb_num.colour0.x = colour0r.text().toFloat();
-
-			colour0g = Bomb.firstChildElement("colour0g");
-			Bomb_num.colour0.y = colour0g.text().toFloat();
-
-			colour0b = Bomb.firstChildElement("colour0b");
-			Bomb_num.colour0.z = colour0b.text().toFloat();
-
-			time1 = Bomb.firstChildElement("time1");
-			Bomb_num.time1 = time1.text().toFloat();
-
-			colour1r = Bomb.firstChildElement("colour1r");
-			Bomb_num.colour1.x = colour1r.text().toFloat();
-
-			colour1g = Bomb.firstChildElement("colour1g");
-			Bomb_num.colour1.y = colour1g.text().toFloat();
-
-			colour1b = Bomb.firstChildElement("colour1b");
-			Bomb_num.colour1.z = colour1b.text().toFloat();
-
-			time2 = Bomb.firstChildElement("time2");
-			Bomb_num.time2 = time2.text().toFloat();
-
-			colour2r = Bomb.firstChildElement("colour2r");
-			Bomb_num.colour2.x = colour2r.text().toFloat();
-
-			colour2g = Bomb.firstChildElement("colour2g");
-			Bomb_num.colour2.y = colour2g.text().toFloat();
-
-			colour2b = Bomb.firstChildElement("colour2b");
-			Bomb_num.colour2.z = colour2b.text().toFloat();
-
-			degree = Bomb.firstChildElement("degree");
-			Bomb_num.degree = degree.text().toFloat();
-
-			MaterialHandle = Bomb.firstChildElement("MaterialHandle");
-			Bomb_num.MaterialHandle = MaterialHandle.text();
+		Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
         Weapon *pWeapon = new Weapon(weapon_id, 
                                      node_name,
@@ -2039,38 +1478,143 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
     return node;
 }
 
+
+FlameInfo load_FlameInfo(const QDomElement& frame_info) {
+	FlameInfo ans;
+
+	auto mName = frame_info.firstChildElement("mName");
+	ans.mName = mName.text();
+
+	auto mPosition = frame_info.firstChildElement("mPosition");
+		auto x = mPosition.firstChildElement("x");
+		float x_num = x.text().toFloat();
+
+		auto y = mPosition.firstChildElement("y");
+		float y_num = y.text().toFloat();
+
+		auto z = mPosition.firstChildElement("z");
+		float z_num = z.text().toFloat();
+	ans.mPosition = Ogre::Vector3(x_num, y_num, z_num);
+
+	auto mDirection = frame_info.firstChildElement("mDirection");
+		x = mDirection.firstChildElement("x");
+		x_num = x.text().toFloat();
+
+		y = mDirection.firstChildElement("y");
+		y_num = y.text().toFloat();
+
+		z = mDirection.firstChildElement("z");
+		z_num = z.text().toFloat();
+	ans.mDirection = Ogre::Vector3(x_num, y_num, z_num);
+
+	auto mParticle = frame_info.firstChildElement("mParticle");
+	ans.mParticle = load_ParticleInfo(mParticle);
+	return ans;
+}
+
 Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::NodeSP dt_parent) 
 {
     Node::NodeSP node = nullptr;
     if (!og_node.isNull())
     {
         QString node_name = og_node.attribute(SL_NAME);
-        QString Spaceship_name = og_node.attribute(SL_SPACESHIP_NAME);
-        QString attack_val = og_node.attribute(SL_SPACESHIP_ATTACKVAL);
-        QString range = og_node.attribute(SL_SPACESHIP_RANGE);
-        QString interval = og_node.attribute(SL_SPACESHIP_INTERVAL);
-        QString mass = og_node.attribute(SL_SPACESHIP_MASS);
-        QString max_speed = og_node.attribute(SL_SPACESHIP_MAX_SPEED);
-        QString speed_per_frame = og_node.attribute(SL_SPACESHIP_SPEED_PER_FRAME);
-        QString parallel_move_speed = og_node.attribute(SL_SPACESHIP_PARALLEL_MOVE_SPEED);
-        QString up_down_speed = og_node.attribute(SL_SPACESHIP_UP_DOWN_SPEED);
+        QString Spaceship_ID = og_node.attribute(SL_SPACESHIP_ID);
+       
+	    QFile file("SpaceshipAttribute.xml");
+        QDomDocument doc;
+        if ( !file.open(QIODevice::ReadOnly) )
+        {
+            dt::Logger::get().error("Couldn't open file SpaceshipAttribute.xml");
+            return nullptr;
+        }
 
-        Spaceship *pSpaceship = new Spaceship(node_name, 
-            Spaceship_name + ".mesh",
-            dt::PhysicsBodyComponent::BOX,
-            mass.toInt(),
-            attack_val.toInt(),
-            range.toFloat(),
-            interval.toFloat(),
-            Spaceship_name + "_attack",
-            Spaceship_name + "_flying",
-            Spaceship_name + "_rise",
-            Spaceship_name + "_fall",
-            max_speed.toFloat(),
-            speed_per_frame.toFloat(),
-            parallel_move_speed.toFloat(),
-            up_down_speed.toFloat()
-            );
+        if (!doc.setContent(&file))
+            return nullptr;
+		
+        QDomElement root = doc.documentElement();
+        QDomElement w_node = root.firstChildElement(Spaceship_ID);
+		
+
+		auto mesh_handle = w_node.firstChildElement("mesh_handle").text();
+
+		auto mass = w_node.firstChildElement("mass");
+		float mass_num = mass.text().toFloat();
+
+		auto attack_value = w_node.firstChildElement("attack_value");
+		uint16_t attack_value_num = attack_value.text().toInt();
+
+		auto attack_range = w_node.firstChildElement("attack_range");
+		float attack_range_num = attack_range.text().toFloat();
+
+		auto attack_interval = w_node.firstChildElement("attack_interval");
+		float attack_interval_num = attack_interval.text().toFloat();
+
+		auto attack_sound_handle = w_node.firstChildElement("attack_sound_handle").text();
+
+		auto flying_sound_handle = w_node.firstChildElement("flying_sound_handle").text();
+
+		auto rise_sound_handle = w_node.firstChildElement("rise_sound_handle").text();
+
+		auto fall_sound_handle = w_node.firstChildElement("fall_sound_handle").text();
+
+		auto max_speed = w_node.firstChildElement("max_speed");
+		float max_speed_num = max_speed.text().toFloat();
+
+		auto speed_per_frame = w_node.firstChildElement("speed_per_frame");
+		float speed_per_frame_num = speed_per_frame.text().toFloat();
+
+		auto max_lean_angle = w_node.firstChildElement("max_lean_angle");
+		float max_lean_angle_num = max_lean_angle.text().toFloat();
+
+		auto angle_per_frame = w_node.firstChildElement("angle_per_frame");
+		float angle_per_frame_num = angle_per_frame.text().toFloat();
+
+		auto parallel_move_speed = w_node.firstChildElement("parallel_move_speed");
+		float parallel_move_speed_num = parallel_move_speed.text().toFloat();
+
+		auto up_down_speed = w_node.firstChildElement("up_down_speed");
+		float up_down_speed_num = up_down_speed.text().toFloat();
+
+		auto ammo_fire_back = w_node.firstChildElement("ammo_fire_back");
+		ParticleInfo ammo_fire_back_num = load_ParticleInfo(ammo_fire_back);
+
+		auto ammo_bomb = w_node.firstChildElement("ammo_bomb");
+		ParticleInfo ammo_bomb_num = load_ParticleInfo(ammo_bomb);
+
+		auto flame_effect0 = w_node.firstChildElement("flame_effect0");
+		auto flame_effect0_num = load_FlameInfo(flame_effect0);
+
+		auto flame_effect1 = w_node.firstChildElement("flame_effect1");
+		auto flame_effect1_num = load_FlameInfo(flame_effect1); 
+
+		auto bullet_handle = w_node.firstChildElement("bullet_handle").text();
+
+		std::vector<FlameInfo> temp;
+
+		temp.push_back(flame_effect0_num);
+		temp.push_back(flame_effect1_num);
+
+		Spaceship *pSpaceship = new Spaceship(node_name, 
+			mesh_handle, 
+			dt::PhysicsBodyComponent::BOX, 
+			mass_num,
+			attack_value_num,
+			attack_range_num,
+			attack_interval_num,
+			attack_sound_handle,
+			flying_sound_handle,
+			rise_sound_handle,
+			fall_sound_handle,
+			max_speed_num,
+			speed_per_frame_num,
+			max_lean_angle_num,
+			angle_per_frame_num,
+			parallel_move_speed_num, 
+			up_down_speed_num,
+		    ammo_fire_back_num,
+			ammo_bomb_num,
+			temp,
+			bullet_handle);
         //256.0f,
         //256.0f / 8192,
         //32.0f,
