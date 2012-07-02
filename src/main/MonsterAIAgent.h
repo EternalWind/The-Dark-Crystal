@@ -38,7 +38,8 @@ public:
      void walk(double time_diff); 
      void decision(double time_diff);
      void test();
-     void onTriggerr(Character * c);     
+     void onTriggerr(Character * c);   
+     double getPreDegree();
 private slots:
      void __onFind(dt::PhysicsBodyComponent* pbc);
 private:
@@ -68,6 +69,7 @@ private:
     const static double ROTATE_FLOAT;                        //!< 只要在旋转浮动之内则可以向前走。
     const static double ENTER_SCOPE;                         //!< 当当前位置离目标位置的距离小于该值，则可以认为已经走进了该区域。
     const static double GUARD_RANGE;
+    const static double AVOID_COLLI_RANGE;
 };
 	
 
