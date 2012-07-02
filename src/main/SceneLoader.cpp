@@ -1605,7 +1605,7 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 
 		Spaceship *pSpaceship = new Spaceship(node_name, 
 			mesh_handle, 
-			dt::PhysicsBodyComponent::CollisionShapeType::BOX, 
+			dt::PhysicsBodyComponent::BOX, 
 			mass_num,
 			attack_value_num,
 			attack_range_num,
