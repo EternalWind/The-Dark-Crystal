@@ -10,6 +10,7 @@
 #include <Scene/Scene.hpp>
 #include <Audio/SoundComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
+#include <Utils/Random.hpp>
 
 const QString Monster::ATTACK_SOUND_COMPONENT = "attack_sound";
 const QString Monster::INTERACTOR_COMPONENT = "interator";
@@ -46,13 +47,13 @@ void Monster::setAttackInterval(float attack_interval) {
 
 void Monster::onKilled() {
     if (!mHasKilled) {
+		std::cout << "Die!!!!!!!!!!!!!Name = " << dt::Utils::toStdString(this->getName()) << std::endl;
         mHasKilled = true;
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
         Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
          
         emit sIsDead(this);
-        disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
-        
+        disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));        
 
         if (agent != nullptr) {
             agent->disable();
@@ -83,7 +84,8 @@ Monster::Monster(const QString node_name,
 	mAttackValue(attack_value),
 	mAttackRange(attack_range),
 	mAttackInterval(attack_interval),
-	mIsAttacking(false) {}
+	mIsAttacking(false) {
+}
 
 void Monster::onInitialize() {
 	Character::onInitialize();
@@ -91,13 +93,16 @@ void Monster::onInitialize() {
 	auto conf_mgr = ConfigurationManager::getInstance() ;
 	SoundSetting sound_setting = conf_mgr->getSoundSetting();
 
+	// 邪恶的硬编码=_=
+	mAttackSoundHandle = "monster_attack.wav";
+
 	auto attack_sound = this->addComponent<dt::SoundComponent>(new SoundComponent(mAttackSoundHandle, ATTACK_SOUND_COMPONENT));
 
 	attack_sound->setVolume((float)sound_setting.getSoundEffect());
 	attack_sound->getSound().setLoop(true);
 
 	auto interator = this->addComponent<dt::InteractionComponent>(new AttackDetectComponent(INTERACTOR_COMPONENT));
-	interator->setRange(this->getAttackRange());
+	interator->setRange(mAttackRange);
 	interator->setIntervalTime(mAttackInterval);
 
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
@@ -105,9 +110,20 @@ void Monster::onInitialize() {
 
     connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
 
+	// 行走的时候忽略摩擦力
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 
 	this->setCurSpeed(15.0f);
+
+	// 攻击效果
+	mFlashNode = this->addChildNode(new dt::Node(this->getName() + "_flash_node"));
+	mFlashNode->addComponent(new dt::MeshComponent("lightning.mesh", "", "FlashMesh"));
+	mFlashNode->setScale(5.0);
+	mFlashNode->setPosition(mFlashNode->getPosition() + Ogre::Vector3(0, 0, -7));	
+	mFlashNode->disable();
+
+	// 初始化随机值
+	dt::Random::initialize();
 }
 
 void Monster::onDeinitialize() {
@@ -115,46 +131,56 @@ void Monster::onDeinitialize() {
 }
 
 void Monster::onUpdate(double time_diff) {
-    if (mHasKilled) {
-		//std::cout << "has_kill" << std::endl;
-        auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-        if (!this->isEnabled()) return;
-        if (mesh->isAnimationStopped()) {
-            this->disable(); 
+	this->mIsUpdatingAfterChange = (time_diff == 0);
+
+	if (mHasKilled) {
+        if (this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->isAnimationStopped()) {
             this->kill(); 
-            std::cout << "dead!!!!!" << std::endl;
             return; 
         }
-        //std::cout << "I'm dead!" << std::endl;
-    }
-    this->mIsUpdatingAfterChange = (time_diff == 0);
 
-    ///std::cout << this->getCurHealth() << std::endl;
+		//既然已经死了，那么往下的更新都没用了，全部cut掉！！！
+		mFlashNode->disable();
+		this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT)->stopSound();
+		this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setLinearVelocity(BtOgre::Convert::toBullet(Ogre::Vector3(0, 0, 0)));
+
+		dt::Node::onUpdate(time_diff);
+
+		return;
+    }
 
 	if (mIsAttacking) {
 		auto interator = this->findComponent<AttackDetectComponent>(INTERACTOR_COMPONENT);
-		
+
 		if (interator->isReady()) {
-			auto attack_sound = this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT);
-			attack_sound->stopSound();
-			attack_sound->playSound();
 			interator->check();
 			
 			// 播放攻击动画
 			auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-            mesh->stopAnimation();
+            //把Stop去掉只是为了让它播放的更顺畅而已>_<
 			mesh->setAnimation("attack");
 			mesh->setLoopAnimation(true);
 			mesh->playAnimation();
+
+			float random_degree = dt::Random::get((float)0.0, (float)360.0);
+			mFlashNode->setRotation(mFlashNode->getRotation() * Ogre::Quaternion(Ogre::Degree(random_degree), Ogre::Vector3(0, 0, 1)));
 		}
 	}
-	Character::onUpdate(time_diff);
 
+	Character::onUpdate(time_diff);
 }
 // --------------- slots -------------------//
 
-void Monster::__onAttack(bool is_pressed) {
-	mIsAttacking = is_pressed;
+void Monster::__onAttack(bool is_pressed) {	
+	if (is_pressed) {
+		mIsAttacking = true;
+		mFlashNode->enable();
+		this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT)->playSound();
+	} else {
+		mIsAttacking = false;
+		mFlashNode->disable();
+		this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT)->stopSound();
+	}
 }
 
 void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
