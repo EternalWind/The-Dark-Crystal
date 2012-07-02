@@ -11,7 +11,6 @@
 #include "MonsterAIAgent.h"
 #include "EntityManager.h"
 #include <iostream>
-
 #include <Graphics/CameraComponent.hpp>
 #include <Graphics/LightComponent.hpp>
 #include <Graphics/MeshComponent.hpp>
@@ -24,13 +23,7 @@
 #include <Scene/StateManager.hpp>
 #include <Logic/ScriptComponent.hpp>
 #include <Logic/ScriptManager.hpp>
-
 #include <OgreProcedural.h>
-
-
-
-
-
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
       mDialogLabel(nullptr),
@@ -46,6 +39,7 @@ BattleState::BattleState(const QString stage_name)
       mCrystalBarPosition(0.0){}
 
 void BattleState::onInitialize() {
+   
     dt::ScriptManager::get()->loadScript("scripts/" + mStage + ".js");
     dt::Node* script_node = new dt::Node("script_node");
     script_node->addComponent(new dt::ScriptComponent(mStage + ".js", "state_script", true));
@@ -53,7 +47,7 @@ void BattleState::onInitialize() {
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-
+    //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();

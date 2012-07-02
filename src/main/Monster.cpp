@@ -2,6 +2,7 @@
 #include "Agent.h"
 #include "Alien.h"
 #include "BattleState.h"
+#include "EntityManager.h"
 
 #include "ConfigurationManager.h"
 #include "AttackDetectComponent.h"
@@ -32,11 +33,26 @@ void Monster::setAttackRange(float attack_range) {
 	}
 }
 
+float Monster::getAttackInterval() {
+    return mAttackInterval;
+}
+
+void Monster::setAttackInterval(float attack_interval) {
+    if (attack_interval > 0.0f) {
+        mAttackInterval = attack_interval;
+        this->findComponent<AttackDetectComponent>(INTERACTOR_COMPONENT)->setIntervalTime(mAttackInterval);
+    }
+}
+
 void Monster::onKilled() {
     if (!mHasKilled) {
         mHasKilled = true;
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
         Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
+         
+        emit sIsDead(this);
+        disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
+        
 
         if (agent != nullptr) {
             agent->disable();
@@ -87,6 +103,8 @@ void Monster::onInitialize() {
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
 		this, SLOT(__onHit(dt::PhysicsBodyComponent*)));
 
+    connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
+
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 
 	this->setCurSpeed(15.0f);
@@ -100,13 +118,18 @@ void Monster::onUpdate(double time_diff) {
     if (mHasKilled) {
 		//std::cout << "has_kill" << std::endl;
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
+        if (!this->isEnabled()) return;
         if (mesh->isAnimationStopped()) {
             this->disable(); 
             this->kill(); 
+            std::cout << "dead!!!!!" << std::endl;
             return; 
         }
+        //std::cout << "I'm dead!" << std::endl;
     }
     this->mIsUpdatingAfterChange = (time_diff == 0);
+
+    ///std::cout << this->getCurHealth() << std::endl;
 
 	if (mIsAttacking) {
 		auto interator = this->findComponent<AttackDetectComponent>(INTERACTOR_COMPONENT);
@@ -139,6 +162,7 @@ void Monster::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_r
 }
 
 void Monster::__onHit(dt::PhysicsBodyComponent* hit) {
+
 	// 邪恶的万恶的空指针啊！！！
 	if (hit == nullptr) return;
 

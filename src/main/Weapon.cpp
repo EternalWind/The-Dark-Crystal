@@ -4,6 +4,7 @@
 #include <Logic/RaycastComponent.hpp>
 #include <OgreProcedural.h>
 #include "AdvanceCollisionComponent.h"
+#include "Monster.h"
 Weapon::Weapon(){
 }
 
@@ -241,7 +242,7 @@ void Weapon::reload() {
 }
 
 void Weapon::_onHit(dt::PhysicsBodyComponent* hit) {
-    Entity* obj = dynamic_cast<Entity*>(hit->getNode());
+    Monster* obj = dynamic_cast<Monster*>(hit->getNode());
 
     if (obj != nullptr)
     {
