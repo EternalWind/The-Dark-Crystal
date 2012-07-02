@@ -30,7 +30,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene) {
     vector<uint16_t> area = AIDivideAreaManager::get()->getClosestArea(human_area);
     for (uint16_t i = 0; i < area.size(); i ++) {
         vector<std::pair<uint16_t, uint16_t> > vpuu;
-        for (uint16_t j = 0; j < 4; j ++) {
+        for (uint16_t j = 0; j < 5; j ++) {
             mMonsterNum ++;
             std::pair<uint16_t, uint16_t> puu = AIDivideAreaManager::get()->randomPosition(area[i]);
             Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getPositionById(puu);

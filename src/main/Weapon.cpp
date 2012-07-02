@@ -151,12 +151,16 @@ float Weapon::getHittingRange() const {
 void Weapon::onInitialize() {
     Prop::onInitialize();
     auto node = this->addChildNode(new Node("ammo_node"));
-    OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
-    if (mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
-        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
-    } else {
+    if (mWeaponType == PRIMARY) {
+		OgreProcedural::SphereGenerator().setRadius(0.1f).setUTile(.5f).realizeMesh("Bullet1");
+        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet1", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
+    } else if(mWeaponType == SECONDARY){
+		OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet2");
+        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet2", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
+	} else {
+		OgreProcedural::SphereGenerator().setRadius(0.2f).setUTile(.5f).realizeMesh("Bullet3");
 		//mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();
-        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
+        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet3", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
         node->setRotation(Ogre::Quaternion(0.9f, 0.35f, 0, 0));
     }
     mInteractor->setIntervalTime(mInterval);
