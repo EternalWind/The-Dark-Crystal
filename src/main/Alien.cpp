@@ -162,8 +162,8 @@ void Alien::onInitialize() {
 
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
-    this->setOrigSpeed(10.0f);
-    this->setCurSpeed(10.0f);
+    this->setOrigSpeed(20.0f);
+    this->setCurSpeed(20.0f);
 
 }
 
