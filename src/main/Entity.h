@@ -2,15 +2,11 @@
 #define THE_DARK_CRYSTAL_ENTITY
 
 #include "Weapon.h"
-
 #include <Scene/Node.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
 #include <Graphics/MeshComponent.hpp>
-
 #include <OgreVector3.h>
-
 #include <QString>
-
 #include <cstdint>
 
 /**
@@ -224,7 +220,8 @@ protected:
     bool mIsMoving;                                                   //!< 标记该实体是否正在移动。
 	bool mIsJumping;                                                  //!< 标记该实体是否正在跳跃中
     bool mHasSpeededUp;                                               //!< 标记该实体是否处于提升了速度的状态。
-	const static float LENGTH_BEYOND_ONGROUND_DETECTING_RADIUS;       //!< 检测实体是否着地的半径超出量
+	bool mHasKilled;                                                  //!< 标记该实体是否已被杀掉。
+    const static float LENGTH_BEYOND_ONGROUND_DETECTING_RADIUS;       //!< 检测实体是否着地的半径超出量
 	
 public:
     const static QString MESH_COMPONENT;                              //!< 所有实体类的MeshComponent的名字。

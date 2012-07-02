@@ -85,6 +85,9 @@ protected slots:
 
     void __onReload();
 
+signals:
+    void sIsDead(Character * alien);
+
 protected:
     //QString mWalkSoundHandle;                       //!< ÐÐ×ßÒôÐ§¾ä±ú¡£
     //QString mJumpSoundHandle;                       //!< ÌøÔ¾ÒôÐ§¾ä±ú¡£

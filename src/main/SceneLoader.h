@@ -129,6 +129,9 @@ using namespace dt;
 
 #define SL_ALIEN "Alien"
 #define SL_ALIEN_NAME "AlienName"
+#define SL_ALIEN_PRIMARY "primary_weapon"
+#define SL_ALIEN_SECONDARY "secondary_weapon"
+#define SL_ALIEN_THROWABLE "throwable_weapon"
 #define SL_AGENT_TYPE "AgentType"
 
 #define SL_AMMO "Ammo"
@@ -156,6 +159,10 @@ using namespace dt;
 #define SL_SPACESHIP_RANGE "Range"
 #define SL_SPACESHIP_INTERVAL "Interval"
 #define SL_SPACESHIP_MASS "Mass"
+#define SL_SPACESHIP_MAX_SPEED "MaxSpeed"
+#define SL_SPACESHIP_SPEED_PER_FRAME "SpeedPerFrame"
+#define SL_SPACESHIP_PARALLEL_MOVE_SPEED "ParallelMoveSpeed"
+#define SL_SPACESHIP_UP_DOWN_SPEED "UpDownSpeed"
 
 #define SL_POINT "Point"
 #define SL_POINT_ID "PointID"

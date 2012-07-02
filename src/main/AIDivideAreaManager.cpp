@@ -2,10 +2,14 @@
 #include "Utils/Utils.hpp"
 #include <fstream>
 #include <string>
+#include <vector>
 using namespace std; 
 
 Ogre::Vector3 AIDivideAreaManager::getArea(uint16_t id) {
     return mPosition[id];
+}
+double AIDivideAreaManager::getRadius() {
+    return mRadius;
 }
 void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
     mNxtArea[a].push_back(b); 
@@ -20,7 +24,11 @@ void AIDivideAreaManager::addArea(Ogre::Vector3 p, uint16_t id) {
 uint16_t AIDivideAreaManager::getAreaNum() {
     return mAreaNum; 
 }
-
+bool AIDivideAreaManager::isSameArea(Ogre::Vector3 a, Ogre::Vector3 b) {
+    int a_id = getIdByPosition(a); 
+    int b_id = getIdByPosition(b); 
+    return a_id == b_id;
+}
 void AIDivideAreaManager::loadMapInfo(string fileName) {
 	ifstream fin(fileName);    
 	// read //
@@ -169,4 +177,8 @@ std::pair<uint16_t, uint16_t> AIDivideAreaManager::randomPosition(uint16_t area)
 
 void AIDivideAreaManager::destroy(std::pair<uint16_t, uint16_t> cur_id) {
     mPositionMark[cur_id.first][cur_id.second] = 0; 
+}
+
+vector<uint16_t> AIDivideAreaManager::getClosestArea(uint16_t cur) {
+    return mNxtArea[cur];
 }

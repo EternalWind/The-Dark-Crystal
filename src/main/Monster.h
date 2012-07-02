@@ -34,6 +34,18 @@ public:
 	  */
 	void setAttackRange(float attack_range);
 
+    /**
+      * 返回怪兽攻击间隔时间
+      * @returns 怪兽攻击间隔时间
+      */
+    float getAttackInterval();
+
+    /**
+      * 设置怪兽攻击间隔时间
+      * @param attack_interval 怪兽攻击间隔时间
+      */
+    void setAttackInterval(float attack_interva);
+
 	virtual void onInitialize();
 
 	virtual void onDeinitialize();
@@ -97,13 +109,15 @@ protected slots:
 
 	void __onHit(dt::PhysicsBodyComponent* hit);
 
+signals:
+    void sIsDead(Character* monster);
 
 protected:
 	uint16_t mAttackValue;      //!< 叫兽攻击力
 	float mAttackRange;         //!< 叫兽攻击范围
 	float mAttackInterval;      //!< 叫兽攻击间隔时间
 	QString mAttackSoundHandle; //!< 怪物攻击声音句柄
-
+	bool mIsAttacking;          //!< 怪兽是否正在攻击
 public:
 	const static QString ATTACK_SOUND_COMPONENT; //!< 播放怪兽攻击音效的SoundComponent的名字
 	const static QString INTERACTOR_COMPONENT;   //!< 怪兽攻击交互的Component名字

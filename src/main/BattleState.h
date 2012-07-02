@@ -6,6 +6,7 @@
 #include <Gui/GuiLabel.hpp>
 #include <Gui/GuiEditBox.hpp>
 #include <Gui/GuiImageBox.hpp>
+#include <Gui/GuiProgressBar.hpp>
 #include <cstdint>
 #include <QString>
 #include <vector>
@@ -21,6 +22,8 @@ public:
     BattleState(const QString stage_name);
 
     void onInitialize();
+
+    void onDeinitialize();
 	
     void updateStateFrame(double simulation_frame_time);
 
@@ -61,13 +64,10 @@ public:
 	  */
 	void setQuestionLabel(dt::GuiEditBox* edit_box);
 
-public slots:
-    /**
-	  * 判断玩家当前是否已经取得胜利
-	  * @returns 胜利与否
-	  */
-	//bool isVictory();
+signals:
+    void sVictory();
 
+public slots:
 	/**
 	  * 玩家取胜的情况下，下一步动作
 	  */
@@ -164,11 +164,11 @@ protected slots:
 
 	void __onTriggerText(uint16_t text_id);
 
-	void __onHealthChanged(uint16_t pre_health, uint16_t cur_health);
+	void __onHealthChanged(uint16_t cur_health);
 
-	void __onAmmoChanged(uint16_t pre_ammo, uint16_t cur_ammo);
+	void __onAmmoChanged(uint16_t cur_ammo);
 
-	void __onClipNumChanged(uint16_t pre_num, uint16_t cur_num);
+	void __onClipNumChanged(uint16_t cur_num);
 
 	void __onGetCrystal(); 
 
@@ -188,6 +188,7 @@ protected:
 	std::vector<dt::GuiButton*> mAnswerButtons;	//!< 答案选项
 	dt::GuiEditBox* mQuestionLabel;				//!< 问题显示窗口
 	dt::GuiLabel* mDialogLabel;					//!< 对话显示窗口
+	dt::GuiProgressBar* mPickUpCrystalBar;      //!< 捡起水晶进度条
 	uint16_t mTotalEnemyNum;					//!< 地图中怪兽数量
 	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量
 	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
@@ -196,6 +197,9 @@ protected:
     QString mNextStage;                         //!< 下一关卡
     double mSceneParam1;
     double mSceneParam2;
+
+private:
+	double mCrystalBarPosition;                  //!< 进度条position
 };
 
 #endif

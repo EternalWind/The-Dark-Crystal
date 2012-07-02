@@ -30,6 +30,7 @@ public:
 	  * @param max_speed 飞船最大的直线速度 (注意用2-Base以避免精度损失)
 	  * @param speed_per_frame 飞机加速时每一帧的速度的增量(加速度)
 	  * @param parallel_move_speed 飞机平移时的速度
+	  * @param up_down_speed 飞机上升下降的速度
 	  */
 	Spaceship(const QString node_name, 
 		  const QString mesh_handle, 
@@ -44,7 +45,8 @@ public:
 		  const QString fall_sound_handle,
 		  const float max_speed,
 		  const float speed_per_frame,
-		  const float parallel_move_speed
+		  const float parallel_move_speed,
+		  const float up_down_speed
 		  );
 
 	void onInitialize();
@@ -106,6 +108,7 @@ private:
 	float mMaxSpeed;                               //!< 飞机飞行最大速度
 	float mSpeedPerFrame;                          //!< 飞机加速时每一帧的速度的增量(加速度)
 	float mParallelMoveSpeed;                      //!< 飞机平移时的速度
+	float mUpDownSpeed;                            //!< 飞机上升下降的速度
 };
 
 #endif
