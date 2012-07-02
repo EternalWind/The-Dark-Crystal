@@ -14,7 +14,6 @@
 void MenuState::onInitialize() {
     auto scene = addScene(new dt::Scene("menu_state_scene"));
 
-
     auto camnode = scene->addChildNode(new dt::Node("camera_node"));
     camnode->setPosition(Ogre::Vector3(0, 5, 10));
     camnode->addComponent(new dt::CameraComponent("cam"))->lookAt(Ogre::Vector3(0, 0, 0));
@@ -61,16 +60,16 @@ void MenuState::onClick(MyGUI::Widget* sender) {
     if (sender->getName() == "Gui.multi_player_button") {
         //
     } else if (sender->getName() == "Gui.settings_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new OptionState());
     } else if (sender->getName() == "Gui.new_game_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new BattleState("01"));
     } else if (sender->getName() == "Gui.load_record_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new BattleStateTest());
     } else if (sender->getName() == "Gui.credit_button") {
-        dt::StateManager::get()->pop();
+        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
         exit(0);

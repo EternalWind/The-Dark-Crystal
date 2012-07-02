@@ -79,7 +79,7 @@ void OptionState::onInitialize() {
     //功能设置============================================================================
     mQASettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("QASettingCheckBox")).get();
     mQASettingCheckBox->setSize(size_h_large, size_v_large);
-    mQASettingCheckBox->setPosition(position_h_func, position_v_func);
+    mQASettingCheckBox->setPosition(position_h_func, position_v_func - gap_v_small);
     mQASettingCheckBox->setCaption(QString::fromLocal8Bit("开启问答系统"));
     mQASettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
     mQASettingCheckBox->setStateSelected(mQASettings.getIsQAEnable());
@@ -87,7 +87,7 @@ void OptionState::onInitialize() {
 
     mDisplaySettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("DisplaySettingsCheckBox")).get();
     mDisplaySettingCheckBox->setSize(size_h_medium, size_v_medium);
-    mDisplaySettingCheckBox->setPosition(position_h_func, position_v_func + gap_v_large);
+    mDisplaySettingCheckBox->setPosition(position_h_func, position_v_func + gap_v_small);
     mDisplaySettingCheckBox->setCaption(QString::fromLocal8Bit("全屏"));
     mDisplaySettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
     mDisplaySettingCheckBox->setStateSelected(mScreenSettings.getFullScreen());
@@ -192,17 +192,20 @@ void OptionState::onClick(MyGUI::Widget* sender) {
     if (sender->getName() == "Gui.confirm_button") {
         ConfigurationManager* cfg = ConfigurationManager::getInstance();
 
-        //mSoundSettings.setMainVolume(mMasterVolumeScrollBar->getScrollPosition());
+        mSoundSettings.setMainVolume(mMasterVolumeScrollBar->getScrollPosition());
         mSoundSettings.setMusic(mMusicVolumeScrollBar->getScrollPosition());
         mSoundSettings.setSoundEffect(mSoundVolumeScrollBar->getScrollPosition());
 
         mQASettings.setIsQAEnable(mQASettingCheckBox->getStateSelected());
         
-        //sf::Listener::setGlobalVolume((float)mMasterVolumeScrollBar->getScrollPosition());
+        sf::Listener::setGlobalVolume((float)mMasterVolumeScrollBar->getScrollPosition());
         if (mScreenSettings.getFullScreen() != mDisplaySettingCheckBox->getStateSelected()) {
-            dt::DisplayManager::get()->setWindowSize(640, 400);
             mScreenSettings.setFullScreen(mDisplaySettingCheckBox->getStateSelected());
             dt::DisplayManager::get()->setFullscreen(mDisplaySettingCheckBox->getStateSelected());
+
+            if (!mScreenSettings.getFullScreen()) {
+                dt::DisplayManager::get()->setWindowSize(640, 400);
+            }
         }
 
         dt::GuiRootWindow& root = dt::GuiManager::get()->getRootWindow();
