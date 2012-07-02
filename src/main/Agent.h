@@ -55,5 +55,4 @@ protected:
 public:
     const static QString AGENT;    //!< Agent_Name
 };
-
 #endif
