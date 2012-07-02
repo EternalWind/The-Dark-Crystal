@@ -47,7 +47,7 @@ void BattleState::onInitialize() {
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-     this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
+    //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();

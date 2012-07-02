@@ -8,10 +8,13 @@
 #include "Agent.h"
 #include "AIDivideAreaManager.h"
 #include <Scene/Scene.hpp>
-
+#include "Agent.h"
 #include <vector>
 
 
+const double  EntityManager::PI = acos(-1.0);
+const double  EntityManager::THREAT_RANGE = 40.0;
+const double  EntityManager::THREAT_HALF_DEGREE = 15.0;
 EntityManager* EntityManager::get() {
 	static EntityManager * singleton = new EntityManager(); 
 	return singleton;
@@ -21,11 +24,12 @@ Alien * EntityManager::getHuman() {
     return mHuman; 
 }
 void EntityManager::setHuman(Alien * human) {
-    mHuman = human;
+    mHuman = human;    
 }
 void EntityManager::afterLoadScene(dt::Scene * scene) {
     mMonster.clear(); 
     mAlien.clear();
+    mAlien.push_back(mHuman);
     mMonsterNum = 0;
     mCurScene = scene;
     Ogre::Vector3 human_pos = getHuman()->getPosition(); 
@@ -58,28 +62,17 @@ void EntityManager::afterLoadScene(dt::Scene * scene) {
             AIDivideAreaManager::get()->destroy(vpuu[j]);
     }*/
 
-    for (uint16_t i = 0; i < 1; i ++) {
+    for (uint16_t i = 0; i < 60; i ++) {
         mMonsterNum ++;
-        Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(i);
+        Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(i % 60);
          Monster * monster = new Monster("monster" + dt::Utils::toString(mMonsterNum), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);      
          MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(mMonsterNum));           
          addEntityInScene(monster, maa, monster_pos.x, 10, monster_pos.z, 0.03);
          addMonster(monster);
          monster->setAttackInterval(1.0);
-         monster->setAttackRange(80);
-         std::cout << monster->getAttackRange() << endl; 
-         std::cout << monster->findComponent<dt::InteractionComponent>("interator")->getIntervalTime() << std::endl;
-    }
-
-    for (uint16_t i = 50; i < 51; i ++) {
-        mMonsterNum ++;
-        Ogre::Vector3 alien_pos = AIDivideAreaManager::get()->getArea(i);
-          Alien* alien = new Alien("alien" + dt::Utils::toString(i), "alien.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "");
-        PlayerAIAgent * pa = new PlayerAIAgent("pa" + dt::Utils::toString(mMonsterNum));           
-         addEntityInScene(alien, pa, alien_pos.x, 10, alien_pos.z, 0.03); 
-          EntityManager::get()->addPlayer(alien);    
-         /* Weapon * weapon = new Weapon("RailGun","w" + dt::Utils::toString(i), Weapon::PRIMARY, 100, 60000, 60000, 1, 60000, 60000, 0, 1.0, 0, "", "", "", 50, ParticlesInfo);
-        alien->addWeapon(weapon);    */
+         monster->setCurHealth(10);
+         monster->setMaxHealth(10);
+         monster->setAttackRange(80);        
     }
 }
 void EntityManager::addEntityInScene(Character * entity, Agent * agent, double x, double y, double z, double scale) {
@@ -101,13 +94,8 @@ vector<Character*> EntityManager::searchEntityByRange(Character * entity, double
     Ogre::Vector3 cur_pos = entity->getPosition();
     vector<Character*> res;
     Alien * alien = dynamic_cast<Alien*>(entity);
-    if (alien == nullptr) {
-        Ogre::Vector3 human_pos = getHuman()->getPosition();
-        if (_dis(human_pos, cur_pos) < range) {
-            res.push_back(getHuman());
-            return res;
-        }
-        for (set<Character*>::iterator itr = mAlien.begin(); 
+    if (alien == nullptr) {       
+        for (vector<Character*>::iterator itr = mAlien.begin(); 
             itr != mAlien.end(); itr ++)  {
             Ogre::Vector3 alien_pos = (*itr)->getPosition();
             if (_dis(alien_pos, cur_pos) < range) {
@@ -115,14 +103,30 @@ vector<Character*> EntityManager::searchEntityByRange(Character * entity, double
                 return res;
             }
         }
-    } else {
-        for (set<Character*>::iterator itr = mMonster.begin(); 
+         for (vector<Character*>::iterator itr = mMonster.begin(); 
             itr != mMonster.end(); itr ++)  {
                 Ogre::Vector3 monster_pos = (*itr)->getPosition(); 
                 if (_dis(monster_pos, cur_pos) < range) {
                     res.push_back(*itr);
                     return res;
                 }
+        }
+    } else {
+        for (vector<Character*>::iterator itr = mMonster.begin(); 
+            itr != mMonster.end(); itr ++)  {
+                Ogre::Vector3 monster_pos = (*itr)->getPosition(); 
+                if (_dis(monster_pos, cur_pos) < range) {
+                    res.push_back(*itr);
+                    return res;
+                }
+        }
+         for (vector<Character*>::iterator itr = mAlien.begin(); 
+            itr != mAlien.end(); itr ++)  {
+            Ogre::Vector3 alien_pos = (*itr)->getPosition();
+            if (_dis(alien_pos, cur_pos) < range) {
+                res.push_back(*itr);
+                return res;
+            }
         }
     }
     return res;
@@ -133,7 +137,7 @@ double EntityManager::_dis(Ogre::Vector3 a, Ogre::Vector3 b) {
 }
 void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
-
+/*
      mMonsterNum ++;
         Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(mMonsterNum % 60);
          Monster * monster1 = new Monster("monster" + dt::Utils::toString(mMonsterNum), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);      
@@ -143,21 +147,107 @@ void  EntityManager::__isMonsterDead(Character * monster) {
          monster1->setAttackInterval(1.0);
          monster1->setAttackRange(40);
          addMonster(monster1);
-    mMonster.erase(mMonster.find(monster));    
-
+         */
+    for (vector<Character*>::iterator itr = mMonster.begin(); 
+        itr != mMonster.end(); itr ++) {
+        if (*itr == monster) {
+            mMonster.erase(itr);
+            return;
+        }
+    }
 }
 void EntityManager::__isAlienDead(Character * alien) {
     if (alien == nullptr) return; 
-    mAlien.erase(mAlien.find(alien));
+    for (vector<Character*>::iterator itr = mAlien.begin(); 
+        itr != mAlien.end(); itr ++) {
+        if (*itr == alien) {
+            mAlien.erase(itr);
+            return;
+        }
+    }        
 }
 
 void EntityManager::addPlayer(Alien * playerAI) {
-    if (playerAI != nullptr)
-    mAlien.insert(playerAI);
+    if (playerAI != nullptr) {
+        for (vector<Character*>::iterator itr = mAlien.begin(); 
+            itr != mAlien.end(); itr ++) 
+            if (*itr == playerAI) return; 
+        mAlien.push_back(playerAI);
+    }
 }
 
 void EntityManager::addMonster(Monster * monster) {
     if (monster != nullptr){
-        mMonster.insert(monster);
+        for (vector<Character*>::iterator itr = mMonster.begin(); 
+            itr != mMonster.end(); itr ++)
+            if (*itr == monster) return; 
+        mMonster.push_back(monster);
     }
+}
+
+double EntityManager::clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre) {
+    nxt.y = pre.y = 0;
+    Ogre::Vector3 dy = Ogre::Vector3(0, 0, 1); 
+    //由目标位置和当前位置算出期望方向的向量。
+    Ogre::Vector3 dv = pre - nxt; 
+    dv.y = 0; 
+    double res = asin((double) ( dy.crossProduct(dv).y / (dy.length() * dv.length()) )) * 180 / PI;
+       if (dy.dotProduct(dv) < 0)
+            res = res > 0 ? 180.0 - res : -180.0 - res;
+    return res;
+}
+
+void EntityManager::fixDegree(double & degree) {
+    while (degree < -180.0) degree += 360.0; 
+    while (degree > 180.0)  degree -= 360.0; 
+}
+
+void EntityManager::fixTurn(double & d_degree) {
+    if (fabs(d_degree) > 180.0) {       
+            if (d_degree < 0) d_degree = 360.0 + d_degree;
+            else d_degree = d_degree - 360.0;
+    }    
+}
+
+bool EntityManager::isForwardThreaten(Agent * agent) {
+    if (agent == nullptr) {
+        throw exception("null pointer!");
+    }
+    MonsterAIAgent * monsterAI = dynamic_cast<MonsterAIAgent *>(agent);
+    if (monsterAI != nullptr) {
+        for (vector<Character*>::iterator itr = mAlien.begin(); 
+            itr != mAlien.end(); itr ++) {                
+                Ogre::Vector3  threat_pos = (*itr)->getPosition();
+                Ogre::Vector3  cur_pos = monsterAI->getParent()->getPosition();
+                if (_dis(threat_pos, cur_pos) > THREAT_RANGE) continue;
+                double threat_degree = clacDegree(threat_pos, cur_pos);
+                double d_degree = threat_degree - monsterAI->getPreDegree();
+                fixTurn(d_degree);
+                if (fabs(d_degree) < THREAT_HALF_DEGREE) return true; 
+        }
+    }
+    return false; 
+}
+
+vector<Character*> EntityManager::searchThreatEntity(Character * entity) {
+     if (entity == nullptr) {
+        throw exception("null pointer!");
+     }
+     Monster * monster = dynamic_cast<Monster*>(entity);
+     vector<Character*> res;
+    if (monster != nullptr) {
+        for (vector<Character*>::iterator itr = mAlien.begin(); 
+            itr != mAlien.end(); itr ++) {                
+                Ogre::Vector3  threat_pos = (*itr)->getPosition();
+                Ogre::Vector3  cur_pos = monster->getPosition();
+                if (_dis(threat_pos, cur_pos) > THREAT_RANGE) continue;
+                double threat_degree = clacDegree(threat_pos, cur_pos);
+                double d_degree = threat_degree - dynamic_cast<MonsterAIAgent*>(monster->findChildNode("agent").get())->getPreDegree();
+                fixTurn(d_degree);
+                if (fabs(d_degree) < THREAT_HALF_DEGREE) {
+                    res.push_back(*itr);
+                }
+        }
+    }
+    return res;
 }

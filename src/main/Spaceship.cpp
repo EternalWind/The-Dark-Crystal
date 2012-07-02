@@ -3,7 +3,9 @@
 #include "Alien.h"
 
 #include "ConfigurationManager.h"
+#include "AdvanceCollisionComponent.h"
 
+#include <OgreProcedural.h>
 #include <Logic/RaycastComponent.hpp>
 #include <Graphics/CameraComponent.hpp>
 #include <Graphics/ParticleSystemComponent.hpp>
@@ -11,8 +13,6 @@
 const QString Spaceship::FLYING_SOUND_COMPONENT = "flying_sound";
 const QString Spaceship::RISE_SOUND_COMPONENT = "rise_sound";
 const QString Spaceship::FALL_SOUND_COMPONENT = "fall_sound";
-const float Spaceship::MAX_LEAN_ANGLE = 16.0f;
-const float Spaceship::ANGLE_PER_MOVE = Spaceship::MAX_LEAN_ANGLE / 8192;
 
 Spaceship::Spaceship(const QString node_name, 
 	const QString mesh_handle, 
@@ -27,8 +27,14 @@ Spaceship::Spaceship(const QString node_name,
 	const QString fall_sound_handle,
 	const float max_speed,
 	const float speed_per_frame,
+	const float max_lean_angle,
+	const float angle_per_frame,
 	const float parallel_move_speed, 
-	const float up_down_speed)
+	const float up_down_speed,
+	const ParticleInfo& ammo_fire_back,
+	const ParticleInfo& ammo_bomb,
+	const std::vector<FlameInfo>& flame_effect,
+	const QString& bullet_handle)
 	: Vehicle(node_name, mesh_handle, collision_shape_type, mass, 
 	attack_value, attack_range, attack_interval, attack_sound_handle),
 	mFlyingSoundHandle(flying_sound_handle),
@@ -37,8 +43,15 @@ Spaceship::Spaceship(const QString node_name,
 	mCurAngle(0),
 	mMaxSpeed(max_speed),
 	mSpeedPerFrame(speed_per_frame),
+	mMaxLeanAngle(max_lean_angle),
+	mAnglePerFrame(angle_per_frame),
 	mParallelMoveSpeed(parallel_move_speed),
-	mUpDownSpeed(up_down_speed) {
+	mUpDownSpeed(up_down_speed),
+	mAmmoFireBack(ammo_fire_back),
+	mAmmoBomb(ammo_fire_back),
+	mFlameEffect(flame_effect),
+	mBulletHandle(bullet_handle) {
+		Entity::mEyePosition = Ogre::Vector3(0, 2, 0);
 }
 
 void Spaceship::onInitialize() {
@@ -64,28 +77,27 @@ void Spaceship::onInitialize() {
 	//设置摄像头位置
 	this->setEyePosition(Ogre::Vector3(0, 2, 0));	
 
-	//添加尾焰
-	//this->addFlame(
-	//	"back_left_flame", 
-	//	"Test/Particle",
-	//	Ogre::Vector3(-2.5, -0.9, 8.6),
-	//	Ogre::Vector3(0, 0, 1)
-	//	);
+	//添加攻击效果
+	if (mBulletHandle == "") {
+		OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
+		mBulletHandle = "Bullet";
+	}
 
-	//this->addFlame(
-	//	"back_right_flame",
-	//	"Test/Particle",
-	//	Ogre::Vector3(2.5, -0.9, 8.6),
-	//	Ogre::Vector3(0, 0, 1)
-	//	);
+	auto fire_node = this->addChildNode(new dt::Node("fire_node"));
+	fire_node->setPosition(this->getEyePosition());
+	
+	// 这里的interator必须作为成员变量了啊！！！
+	mInteractor = fire_node->addComponent(new AdvanceCollisionComponent(mBulletHandle, mAmmoFireBack, mAmmoBomb, false, "interactor"));
+	mInteractor->setOffset(20.0f);
 
+	if (!connect(mInteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onHit(dt::PhysicsBodyComponent*)))) {
+		dt::Logger::get().error("Cannot connect the sHit signal with the OnHit slot.");
+	}
 
-	//auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-
-	//mesh->setAnimation("takeOff");
-	//mesh->setLoopAnimation(true);
-	//mesh->playAnimation();
-	//
+	// 初始化尾焰
+	for (auto iter = mFlameEffect.begin(); iter != mFlameEffect.end(); ++iter) {
+		this->addFlame(*iter);
+	}
 }
 
 void Spaceship::__onGetOffVehicle() {
@@ -117,6 +129,9 @@ void Spaceship::__onGetOffVehicle() {
 }
 
 void Spaceship::onDeinitialize() {
+	disconnect(mInteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onHit(dt::PhysicsBodyComponent*)));
+
+	Vehicle::onDeinitialize();
 }
 
 void Spaceship::onUpdate(double time_diff) {	
@@ -127,22 +142,22 @@ void Spaceship::onUpdate(double time_diff) {
 	float moving = 0.0f;
 	//处理旋转
 	if (mMoveVector.x > 0) {
-		if (mCurAngle < MAX_LEAN_ANGLE) {
-			mCurAngle += ANGLE_PER_MOVE;
-			moving += ANGLE_PER_MOVE;
+		if (mCurAngle < mMaxLeanAngle) {
+			mCurAngle += mAnglePerFrame;
+			moving += mAnglePerFrame;
 		}
 	} else if (mMoveVector.x < 0) {
-		if (mCurAngle > -MAX_LEAN_ANGLE) {
-			mCurAngle -= ANGLE_PER_MOVE;
-			moving -= ANGLE_PER_MOVE;
+		if (mCurAngle > -mMaxLeanAngle) {
+			mCurAngle -= mAnglePerFrame;
+			moving -= mAnglePerFrame;
 		}
 	} else {
 		if (mCurAngle > 0) {
-			mCurAngle -= ANGLE_PER_MOVE;
-			moving -= ANGLE_PER_MOVE;
+			mCurAngle -= mAnglePerFrame;
+			moving -= mAnglePerFrame;
 		} else if (mCurAngle < 0) {
-			mCurAngle += ANGLE_PER_MOVE;
-			moving += ANGLE_PER_MOVE;
+			mCurAngle += mAnglePerFrame;
+			moving += mAnglePerFrame;
 		}
 	}
 
@@ -178,27 +193,45 @@ void Spaceship::onUpdate(double time_diff) {
 		p->getRigidBody()->setLinearVelocity(velocity);
 	}
 
+	// 处理飞船的攻击
+	if (mIsAttacking) {
+		if (mInteractor->isReady()) {
+			mInteractor->check();
+		}
+	}
+
 	dt::Node::onUpdate(time_diff);
 }
 
-void Spaceship::addFlame(const QString& name, const QString& flame_name, Ogre::Vector3 position, Ogre::Vector3 direction) {
+void Spaceship::addFlame(const FlameInfo& flame) {
+	QString name = flame.mName;
+	ParticleInfo particle = flame.mParticle;
+
 	auto node = this->addChildNode(new dt::Node(name));
-	node->setPosition(position);	
+	node->setPosition(flame.mPosition);	
 
-	auto flame = node->addComponent(new dt::ParticleSystemComponent(name));
-	flame->setMaterialName(flame_name);
-	flame->setParticleCountLimit(500);
-	flame->getOgreParticleSystem()->setDefaultDimensions(0.03, 0.03);
+	auto p_sys = node->addComponent(new dt::ParticleSystemComponent(name + QUuid::createUuid().toString()));
+	p_sys->setMaterialName(particle.MaterialHandle);
+	p_sys->setParticleCountLimit(particle.ParticleCountLimit);
+	p_sys->getOgreParticleSystem()->setDefaultDimensions(particle.DefaultDimensionsWidth, particle.DefaultDimensionsHeight);
 
-	auto emitter = flame->addEmitter(name + "emitter", "Point");
-	emitter->setDirection(direction);
-	emitter->setAngle(Ogre::Degree(10.0f)); 
-	emitter->setColour(Ogre::ColourValue(1.00, 0.83, 0.00, 0.2), Ogre::ColourValue(1.00, 0.99, 0.97, 0.4));
-	emitter->setEmissionRate(100);
-	emitter->setParticleVelocity(2.0f, 3.0f);
-	emitter->setTimeToLive(0.2f, 0.5f);	
+	auto e = p_sys->addEmitter(name + "emitter", "Point");
+	e->setDirection(flame.mDirection);
+	e->setAngle(Ogre::Degree(particle.degree));
+	e->setColour(particle.EmitterColorStart, particle.EmitterColorEnd);
+	e->setEmissionRate(particle.EmissionRate);
+	e->setParticleVelocity(2.0f, 3.0f);	
+	e->setTimeToLive(particle.TimeToLiveL, particle.TimeToLiveR);	
 	
-	flame->addScalerAffector("scaler", 7.0);
+	p_sys->addScalerAffector("scaler", particle.ScalerAffector);
+	Ogre::ParticleAffector* a = p_sys->addAffector("colour_interpolator", "ColourInterpolator");
+
+    a->setParameter("time0", dt::Utils::toString(particle.time0).toStdString());
+    a->setParameter("colour0", dt::Utils::toString(particle.colour0.x).toStdString() + " " + dt::Utils::toString(particle.colour0.y).toStdString() + " " + dt::Utils::toString(particle.colour0.z).toStdString() + " 1");
+    a->setParameter("time1", dt::Utils::toString(particle.time1).toStdString());
+    a->setParameter("colour1", dt::Utils::toString(particle.colour1.x).toStdString() + " " + dt::Utils::toString(particle.colour1.y).toStdString() + " " + dt::Utils::toString(particle.colour1.z).toStdString() + " 1");
+    a->setParameter("time2", dt::Utils::toString(particle.time2).toStdString());
+    a->setParameter("colour2", dt::Utils::toString(particle.colour2.x).toStdString() + " " + dt::Utils::toString(particle.colour2.y).toStdString() + " " + dt::Utils::toString(particle.colour2.z).toStdString() + " 0");
 }
 
 void Spaceship::playFlame(const QString& name) {
@@ -305,4 +338,13 @@ void Spaceship::__onJump(bool is_pressed) {
 		this->findComponent<dt::SoundComponent>(RISE_SOUND_COMPONENT)->stopSound();
 		this->findComponent<dt::SoundComponent>(FLYING_SOUND_COMPONENT)->playSound();
 	}
+}
+
+
+void Spaceship::setAttackOffset(const float& offset) {
+	mInteractor->setOffset(offset);
+}
+
+float Spaceship::getAttackOffset() const {
+	return mInteractor->getOffset();
 }
