@@ -40,6 +40,17 @@ void OptionState::onInitialize() {
     mSoundSettings = config_mgr->getSoundSetting();
     mQASettings = config_mgr->getQASetting();
 
+	//music
+    SoundSetting sound_setting = config_mgr->getSoundSetting();
+	auto bg_menu = camnode->addComponent<dt::SoundComponent>(new dt::SoundComponent("musics/bg_menu.wav", "bg_optionstate"));
+	bg_menu->setVolume((float)sound_setting.getMusic());
+	bg_menu->getSound().setLoop(true);
+	bg_menu->playSound();
+
+	mButtonClickSound = camnode->addComponent<dt::SoundComponent>(new dt::SoundComponent("musics/bg_mouse_click.wav", "optionstate_button_sound")).get();
+	mButtonClickSound->setVolume((float)sound_setting.getSoundEffect());
+	mButtonClickSound->getSound().setLoop(false);
+
     // GUI
     dt::GuiRootWindow& win = dt::GuiManager::get()->getRootWindow();
 
@@ -189,6 +200,7 @@ void OptionState::addNewFuncButton(const QString name, const QString font_text, 
 }
 
 void OptionState::onClick(MyGUI::Widget* sender) {
+	mButtonClickSound->playSound();
     if (sender->getName() == "Gui.confirm_button") {
         ConfigurationManager* cfg = ConfigurationManager::getInstance();
 

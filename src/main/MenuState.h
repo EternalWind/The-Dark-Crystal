@@ -4,6 +4,7 @@
 #include <Scene/State.hpp>
 #include <Gui/GuiButton.hpp>
 #include <Gui/GuiImageBox.hpp>
+#include <Audio/SoundComponent.hpp>
 #include "GuiImageButton.h"
 
 /**
@@ -37,6 +38,7 @@ private:
     GuiImageButton* mSettingButton;
     GuiImageButton* mCreditButton;
     GuiImageButton* mExitButton;
+	dt::SoundComponent* mButtonClickSound;
 
 };
 

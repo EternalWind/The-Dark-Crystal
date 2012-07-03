@@ -1,5 +1,6 @@
 #include "Weapon.h"
 #include "Alien.h"
+#include "ConfigurationManager.h"
 #include <Logic/CollisionComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
 #include <OgreProcedural.h>
@@ -170,6 +171,9 @@ void Weapon::onInitialize() {
 
     mIsPhysicsBodyEnabled = true;
 
+	auto conf_mgr = ConfigurationManager::getInstance() ;
+    SoundSetting sound_setting = conf_mgr->getSoundSetting();
+
     if (!QObject::connect(mInteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
                          this,        SLOT(_onHit(dt::PhysicsBodyComponent*)))) {
         dt::Logger::get().error("Cannot connect the sHit signal with the OnHit slot.");
@@ -178,19 +182,19 @@ void Weapon::onInitialize() {
     if (mFiringSoundHandle != "") {
         mFiringSound = this->addComponent(new dt::SoundComponent(mFiringSoundHandle,
             this->getName() + "_firing_sound")).get();
-        mFiringSound->setVolume(100.0f);
+        mFiringSound->setVolume((float)sound_setting.getSoundEffect());
     }
 
     if (mReloadingBeginSoundHandle != "") {
         mReloadingBeginSound = this->addComponent(new dt::SoundComponent(mReloadingBeginSoundHandle,
             this->getName() + "_reloading_begin_sound")).get();
-        mReloadingBeginSound->setVolume(100.0f);
+        mReloadingBeginSound->setVolume((float)sound_setting.getSoundEffect());
     }
 
     if (mReloadingDoneSoundHandle != "") {
         mReloadingDoneSound = this->addComponent(new dt::SoundComponent(mReloadingDoneSoundHandle,
             this->getName() + "_reloading_done_sound")).get();
-        mReloadingDoneSound->setVolume(100.0f);
+        mReloadingDoneSound->setVolume((float)sound_setting.getSoundEffect());
     }
 }
 

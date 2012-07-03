@@ -11,7 +11,6 @@
 #include <Graphics/DisplayManager.hpp>
 #include <Graphics/CameraComponent.hpp>
 #include <Gui/GuiManager.hpp>
-#include <Audio/SoundComponent.hpp>
 #include <Audio/MusicComponent.hpp>
 
 void MenuState::onInitialize() {
@@ -24,11 +23,14 @@ void MenuState::onInitialize() {
 	//music
 	auto conf_mgr = ConfigurationManager::getInstance() ;
     SoundSetting sound_setting = conf_mgr->getSoundSetting();
-	auto bg_menu = camnode->addComponent<dt::MusicComponent>(new dt::MusicComponent("musics/bg_menu.wav", "bg_munu"));
-//	bg_menu->setVolume((float)sound_setting.getSoundEffect());
-	bg_menu->setVolume(100);
-//	bg_menu->getm
-	bg_menu->playMusic();
+	auto bg_menu = camnode->addComponent<dt::SoundComponent>(new dt::SoundComponent("musics/bg_menu.wav", "bg_munu"));
+	bg_menu->setVolume((float)sound_setting.getMusic());
+	bg_menu->getSound().setLoop(true);
+	bg_menu->playSound();
+
+	mButtonClickSound = camnode->addComponent<dt::SoundComponent>(new dt::SoundComponent("musics/bg_mouse_click.wav", "munu_button_sound")).get();
+	mButtonClickSound->setVolume((float)sound_setting.getSoundEffect());
+	mButtonClickSound->getSound().setLoop(false);
 
     // GUI
     dt::GuiRootWindow& win = dt::GuiManager::get()->getRootWindow();
@@ -69,7 +71,7 @@ void MenuState::onInitialize() {
 }
 
 void MenuState::onClick(MyGUI::Widget* sender) {
-
+	mButtonClickSound->playSound();
     if (sender->getName() == "Gui.multi_player_button") {
         //
     } else if (sender->getName() == "Gui.settings_button") {

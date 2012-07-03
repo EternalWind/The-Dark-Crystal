@@ -831,9 +831,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + ".mesh",
                                   dt::PhysicsBodyComponent::BOX,
                                   100, 
-                                  alien_name + "_walk",
-                                  alien_name + "_jump",
-                                  alien_name + "_run");
+                                  "sounds/" + alien_name + "_walk.wav",
+                                  "sounds/" + alien_name + "_jump.wav",
+                                  "sounds/" + alien_name + "_run.wav");
         pAlien->setMaxHealth(100);
         pAlien->setCurHealth(100);
         pAlien->setEyePosition(Ogre::Vector3(0, 0.1, -0.5));
@@ -959,9 +959,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 					is_one_shot_num,
 					interval_num,
 					reload_time_num,
-					weapon_id + "_fire",
-					weapon_id + "_reload_begin",
-					weapon_id + "_reload_done",
+					"sounds/" + weapon_id + "_fire.wav",
+					"sounds/" + weapon_id + "_reload_begin.wav",
+					"sounds/" + weapon_id + "_reload_done.wav",
 					range_num,
 					FireBack_num,
 					Bomb_num);
@@ -1028,9 +1028,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 					is_one_shot_num,
 					interval_num,
 					reload_time_num,
-					weapon_id + "_fire",
-					weapon_id + "_reload_begin",
-					weapon_id + "_reload_done",
+					"sounds/" + weapon_id + "_fire.wav",
+					"sounds/" + weapon_id + "_reload_begin.wav",
+					"sounds/" + weapon_id + "_reload_done.wav",
 					range_num,
 					FireBack_num,
 					Bomb_num);
@@ -1095,9 +1095,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                      is_one_shot_num,
                                      interval_num,
 									 reload_time_num,
-                                     weapon_id + "_fire",
-                                     weapon_id + "_reload_begin",
-                                     weapon_id + "_reload_done",
+                                     "sounds/" + weapon_id + "_fire.wav",
+                                     "sounds/" + weapon_id + "_reload_begin.wav",
+                                     "sounds/" + weapon_id + "_reload_done.wav",
                                      range_num,
 									 FireBack_num,
 									 Bomb_num);
@@ -1324,10 +1324,10 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
             monster_id + ".mesh",
             dt::PhysicsBodyComponent::BOX,
             1,
-            monster_id + "_walk",
-            monster_id + "_jump",
-            monster_id + "_run",
-            monster_id + "_attack",
+            "sounds" + monster_id + "_walk.wav",
+            "sounds" + monster_id + "_jump.wav",
+            "sounds" + monster_id + "_run.wav",
+            "sounds" + monster_id + "_attack.wav",
             power_num,
             range_num,
             interval_num);
@@ -1448,9 +1448,9 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
                                      is_one_shot_num,
                                      interval_num,
 									 reload_time_num,
-                                     weapon_id + "_fire.wav",
-                                     weapon_id + "_reload_begin.wav",
-                                     weapon_id + "_reload_done.wav",
+                                     "sounds/" + weapon_id + "_fire.wav",
+                                     "sounds/" + weapon_id + "_reload_begin.wav",
+                                     "sounds/" + weapon_id + "_reload_done.wav",
                                      range_num,
 									 FireBack_num,
 									 Bomb_num);
