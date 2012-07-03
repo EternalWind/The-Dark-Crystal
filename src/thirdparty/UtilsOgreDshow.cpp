@@ -100,11 +100,13 @@ namespace OgreUtils
 
     DirectShowMovieTexture::~DirectShowMovieTexture()
     {
+		//stopMovie();
         // 1) DEINITIALIZE DIRECT SHOW
         unloadMovie();
         CoUninitialize();
 
         // 2) DESTROY TEXTURE
+	//	cleanTextureContents();
         Ogre::TextureManager::getSingleton().remove(mTexture->getName());
 
         // 3) DELETE DSDATA
@@ -198,7 +200,8 @@ namespace OgreUtils
             Ogre::PF_BYTE_BGRA,// pixel format
             Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE// usage
             );
- 
+
+
         // microsoft's help version of free media type
         if (mtt.cbFormat != 0)
         {
@@ -239,7 +242,11 @@ namespace OgreUtils
     {
         if (dsdata->pGraph==0)
             return;
-
+		if (dsdata->pGraph != 0)
+		{
+			dsdata->pGraph->Release();
+			dsdata->pGraph = 0;
+		}
         if (dsdata->pGrabber!=0)
         {
             dsdata->pGrabber->Release();
@@ -537,7 +544,12 @@ namespace OgreUtils
 
     DirectShowControl::~DirectShowControl()
     {
-
+		if (mDirectshowTexture != nullptr)
+		{
+			delete mDirectshowTexture;
+			mDirectshowTexture = nullptr;
+		}
+		Ogre::OverlayManager::getSingleton().destroy(mName);
     }
     void DirectShowControl::createOverlay()
     {
@@ -606,7 +618,7 @@ namespace OgreUtils
     }
     DirectShowManager::~DirectShowManager()
     {
-
+		
     }
      
 

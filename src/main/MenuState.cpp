@@ -3,8 +3,8 @@
 #include "CreaditState.h"
 #include "BattleStateTest.h"
 #include "BattleState.h"
+#include "AnimationState.h"
 #include "ConfigurationManager.h"
-
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
 #include <Core/ResourceManager.hpp>
@@ -73,18 +73,14 @@ void MenuState::onInitialize() {
 void MenuState::onClick(MyGUI::Widget* sender) {
 	mButtonClickSound->playSound();
     if (sender->getName() == "Gui.multi_player_button") {
-        //
+       
     } else if (sender->getName() == "Gui.settings_button") {
-        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new OptionState());
     } else if (sender->getName() == "Gui.new_game_button") {
-        //dt::StateManager::get()->pop();
-        dt::StateManager::get()->setNewState(new BattleState("01"));
+		dt::StateManager::get()->setNewState(new AnimationState("begin.mp4", 35));
     } else if (sender->getName() == "Gui.load_record_button") {
-        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new BattleStateTest());
     } else if (sender->getName() == "Gui.credit_button") {
-        //dt::StateManager::get()->pop();
         dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
         exit(0);
