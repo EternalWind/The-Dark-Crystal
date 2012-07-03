@@ -26,6 +26,7 @@ struct ParticleInfo {
 	Ogre::Vector3 colour2;
 	float degree;
 	QString MaterialHandle;
+	QString EmitterType;
 };
 
 /**
