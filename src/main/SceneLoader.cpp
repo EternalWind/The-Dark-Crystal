@@ -904,9 +904,11 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         QDomElement secondary = og_node.firstChildElement(SL_ALIEN_SECONDARY);
         QDomElement throwable = og_node.firstChildElement(SL_ALIEN_THROWABLE);
 
-        if (!primary.isNull()) {
+        if (!primary.isNull() && primary.attribute("content").length() != 0) {
             weapon_id = primary.attribute("content");
 			
+
+
             QDomElement w_node = root.firstChildElement(weapon_id);
 
             auto type = w_node.firstChildElement("type");
@@ -973,7 +975,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
             }
         }
 
-        if (!secondary.isNull()) {
+        if (!secondary.isNull() && primary.attribute("content").length() != 0) {
             weapon_id = secondary.attribute("content");;
 
             QDomElement w_node = root.firstChildElement(weapon_id);
@@ -1040,7 +1042,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
             }
         }
 
-        if (!throwable.isNull()) {
+        if (!throwable.isNull() && primary.attribute("content").length() != 0) {
             weapon_id = throwable.attribute("content");
 
             QDomElement w_node = root.firstChildElement(weapon_id);
