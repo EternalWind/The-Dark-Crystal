@@ -237,15 +237,6 @@ Node::NodeSP SceneLoader::__loadMesh(const QDomElement& og_component, Node::Node
                 new MeshComponent(entity.attribute(SL_MESH_HANDLE), entity.firstChildElement().attribute(SL_MESH_ENTITY_MATERIAL_NAME), entity.attribute(SL_NAME))
                 );
 
-            //set entity attributes
-            /*for ( QDomElement mat = entity.firstChildElement(); !mat.isNull(); mat = mat.nextSiblingElement() )
-            {
-            QString material_handle = mat.attribute(SL_MESH_ENTITY_MATERIAL_NAME);
-            uint32_t index = mat.attribute(SL_MESH_ENTITY_INDEX).toUInt();
-
-            mesh->getOgreEntity()->getSubEntity(index)->setMaterialName(material_handle.toStdString());
-            }*/
-
             QString cast_shadows = entity.attribute(SL_CAST_SHADOWS);
             if ( cast_shadows == SL_TRUE )
             {
@@ -276,7 +267,7 @@ Node::NodeSP SceneLoader::__loadMesh(const QDomElement& og_component, Node::Node
                     .setNormal(Ogre::Vector3( plane.firstChildElement(SL_MESH_PLANE_NORMAL).attribute(SL_X).toFloat(),
                     plane.firstChildElement(SL_MESH_PLANE_NORMAL).attribute(SL_Y).toFloat(),
                     plane.firstChildElement(SL_MESH_PLANE_NORMAL).attribute(SL_Z).toFloat()))
-                    .realizeMesh(plane.attribute(SL_NAME).toStdString());
+                    .realizeMesh(dt::Utils::toStdString(plane.attribute(SL_NAME)));
 
                 //add mesh component
                 auto mesh = node->addComponent<MeshComponent>(
@@ -840,11 +831,12 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   alien_name + ".mesh",
                                   dt::PhysicsBodyComponent::BOX,
                                   100, 
-                                  alien_name + "_walk",
-                                  alien_name + "_jump",
-                                  alien_name + "_run");
+                                  "sounds/" + alien_name + "_walk.wav",
+                                  "sounds/" + alien_name + "_jump.wav",
+                                  "sounds/" + alien_name + "_run.wav");
         pAlien->setMaxHealth(100);
         pAlien->setCurHealth(100);
+        //pAlien->setEyePosition(Ogre::Vector3(0, 0.1, -0.5));
         pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
 		
         if (dt_parent)
@@ -877,18 +869,18 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         pAlien->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
             scale.attribute(SL_Z).toFloat()));
 
-        if (agent.toStdString() == "HumanAgent")
+        if (agent == "HumanAgent")
         {
-            pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
+            pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -1.0));
             HumanAgent* human_agent = new HumanAgent("Player");
             human_agent->attachTo(pAlien);
             EntityManager::get()->setHuman(pAlien);
         }
-        if (agent.toStdString() == "AiAgent")
+        if (agent == "AiAgent")
         {
             pAlien->setEyePosition(Ogre::Vector3(0, 5, 5));
-          //  PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
-         //   Ai_agent->attachTo(pAlien);
+            PlayerAIAgent *Ai_agent = new PlayerAIAgent("AiPlayer");
+            Ai_agent->attachTo(pAlien);
             EntityManager::get()->addPlayer(pAlien);
 
         }
@@ -933,7 +925,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
                 auto is_one_shot = w_node.firstChildElement("is_one_shot");
                 bool is_one_shot_num;
-                if (is_one_shot.text().toStdString() == "true")
+                if (is_one_shot.text() == "true")
                     is_one_shot_num = 1;
                 else
                     is_one_shot_num = 0;
@@ -968,9 +960,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 					is_one_shot_num,
 					interval_num,
 					reload_time_num,
-					weapon_id + "_fire",
-					weapon_id + "_reload_begin",
-					weapon_id + "_reload_done",
+					"sounds/" + weapon_id + "_fire.wav",
+					"sounds/" + weapon_id + "_reload_begin.wav",
+					"sounds/" + weapon_id + "_reload_done.wav",
 					range_num,
 					FireBack_num,
 					Bomb_num);
@@ -1002,7 +994,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
                 auto is_one_shot = w_node.firstChildElement("is_one_shot");
                 bool is_one_shot_num;
-                if (is_one_shot.text().toStdString() == "true")
+                if (is_one_shot.text() == "true")
                     is_one_shot_num = 1;
                 else
                     is_one_shot_num = 0;
@@ -1037,9 +1029,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 					is_one_shot_num,
 					interval_num,
 					reload_time_num,
-					weapon_id + "_fire",
-					weapon_id + "_reload_begin",
-					weapon_id + "_reload_done",
+					"sounds/" + weapon_id + "_fire.wav",
+					"sounds/" + weapon_id + "_reload_begin.wav",
+					"sounds/" + weapon_id + "_reload_done.wav",
 					range_num,
 					FireBack_num,
 					Bomb_num);
@@ -1069,7 +1061,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
                 auto is_one_shot = w_node.firstChildElement("is_one_shot");
                 bool is_one_shot_num;
-                if (is_one_shot.text().toStdString() == "true")
+                if (is_one_shot.text() == "true")
                     is_one_shot_num = 1;
                 else
                     is_one_shot_num = 0;
@@ -1104,9 +1096,9 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                      is_one_shot_num,
                                      interval_num,
 									 reload_time_num,
-                                     weapon_id + "_fire",
-                                     weapon_id + "_reload_begin",
-                                     weapon_id + "_reload_done",
+                                     "sounds/" + weapon_id + "_fire.wav",
+                                     "sounds/" + weapon_id + "_reload_begin.wav",
+                                     "sounds/" + weapon_id + "_reload_done.wav",
                                      range_num,
 									 FireBack_num,
 									 Bomb_num);
@@ -1333,10 +1325,10 @@ Node::NodeSP SceneLoader::__loadMonster(const QDomElement& og_node, Node::NodeSP
             monster_id + ".mesh",
             dt::PhysicsBodyComponent::BOX,
             1,
-            monster_id + "_walk",
-            monster_id + "_jump",
-            monster_id + "_run",
-            monster_id + "_attack",
+            "sounds" + monster_id + "_walk.wav",
+            "sounds" + monster_id + "_jump.wav",
+            "sounds" + monster_id + "_run.wav",
+            "sounds" + monster_id + "_attack.wav",
             power_num,
             range_num,
             interval_num);
@@ -1404,9 +1396,9 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 		
         auto type = w_node.firstChildElement("type");
         uint16_t weapon_type;
-        if (type.text().toStdString() == "Primary")
+        if (type.text() == "Primary")
             weapon_type = 0;
-        else if (type.text().toStdString() == "Secondery")
+        else if (type.text() == "Secondery")
             weapon_type = 1;
         else
             weapon_type = 2;
@@ -1422,7 +1414,7 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
         auto is_one_shot = w_node.firstChildElement("is_one_shot");
         bool is_one_shot_num;
-        if (is_one_shot.text().toStdString() == "true")
+        if (is_one_shot.text() == "true")
             is_one_shot_num = 1;
         else
             is_one_shot_num = 0;
@@ -1457,9 +1449,9 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
                                      is_one_shot_num,
                                      interval_num,
 									 reload_time_num,
-                                     weapon_id + "_fire",
-                                     weapon_id + "_reload_begin",
-                                     weapon_id + "_reload_done",
+                                     "sounds/" + weapon_id + "_fire.wav",
+                                     "sounds/" + weapon_id + "_reload_begin.wav",
+                                     "sounds/" + weapon_id + "_reload_done.wav",
                                      range_num,
 									 FireBack_num,
 									 Bomb_num);
@@ -1605,7 +1597,7 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 
 		Spaceship *pSpaceship = new Spaceship(node_name, 
 			mesh_handle, 
-			dt::PhysicsBodyComponent::CollisionShapeType::BOX, 
+			dt::PhysicsBodyComponent::BOX, 
 			mass_num,
 			attack_value_num,
 			attack_range_num,

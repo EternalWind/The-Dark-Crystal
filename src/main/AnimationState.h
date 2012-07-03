@@ -17,6 +17,8 @@ public:
 
 	~AnimationState();
 
+	void onInitialize();
+
 	void updateStateFrame(double simulation_frame_time);
 
 	/**
@@ -29,6 +31,7 @@ private:
 	Animation *mAnimationPtr;   //!< 待播放动画指针
 	double mTime;               //!< 动画播放时间
 	double mCurTime;            //!< 动画已播放时间
+	QString mFileName;           //!< 动画文件名
 };
 
 #endif

@@ -113,15 +113,18 @@ signals:
     void sIsDead(Character* monster);
 
 protected:
-	uint16_t mAttackValue;      //!< ½ÐÊÞ¹¥»÷Á¦
-	float mAttackRange;         //!< ½ÐÊÞ¹¥»÷·¶Î§
-	float mAttackInterval;      //!< ½ÐÊÞ¹¥»÷¼ä¸ôÊ±¼ä
-	QString mAttackSoundHandle; //!< ¹ÖÎï¹¥»÷ÉùÒô¾ä±ú
-	bool mIsAttacking;          //!< ¹ÖÊÞÊÇ·ñÕýÔÚ¹¥»÷
-public:
-	const static QString ATTACK_SOUND_COMPONENT; //!< ²¥·Å¹ÖÊÞ¹¥»÷ÒôÐ§µÄSoundComponentµÄÃû×Ö
-	const static QString INTERACTOR_COMPONENT;   //!< ¹ÖÊÞ¹¥»÷½»»¥µÄComponentÃû×Ö
+	uint16_t mAttackValue;                            //!< ½ÐÊÞ¹¥»÷Á¦
+	float mAttackRange;                               //!< ½ÐÊÞ¹¥»÷·¶Î§
+	float mAttackInterval;                            //!< ½ÐÊÞ¹¥»÷¼ä¸ôÊ±¼ä
+	QString mAttackSoundHandle;                       //!< ¹ÖÎï¹¥»÷ÉùÒô¾ä±ú
+	bool mIsAttacking;                                //!< ¹ÖÊÞÊÇ·ñÕýÔÚ¹¥»÷
 
+public:
+	const static QString ATTACK_SOUND_COMPONENT;      //!< ²¥·Å¹ÖÊÞ¹¥»÷ÒôÐ§µÄSoundComponentµÄÃû×Ö
+	const static QString INTERACTOR_COMPONENT;        //!< ¹ÖÊÞ¹¥»÷½»»¥µÄComponentÃû×Ö
+
+private:
+	dt::Node::NodeSP mFlashNode;                      //!< ¹ÖÊÞ¹¥»÷Ê±·¢³öµÄÉÁµç½Úµã
 };
 
 #endif
