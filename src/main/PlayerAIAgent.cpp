@@ -100,34 +100,27 @@ void PlayerAIAgent::walk(double time_diff) {
             return;
     }
 
-    mExpectDegree = clacDegree(nxt_area_position, pre_position);
-   
+    mExpectDegree = clacDegree(nxt_area_position, pre_position);  
     
-    /*std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
-    std::cout << nxt_area_position.x << ' ' << nxt_area_position.y << ' ' << nxt_area_position.z << endl; 
-    std::cout << mExpectDegree << endl; 
-    std::cout << mPreDegree << endl; */
+
     double d_degree = mExpectDegree - mPreDegree;
 
    
 
     fixTurn(d_degree);
   
-  /*  std::cout << mExpectDegree << endl; 
-    std::cout << mPreDegree << endl; 
-    std::cout << d_degree << endl; */
+
 
     //当前帧如果已经在角度幅度内，则开始走动。
     if (fabs(d_degree) < ROTATE_FLOAT) { 
         if (!mOnMovePress) { 
-            //emit(sMove(Entity::STOP, true));
-           // emit(sSpeedUp(true));
+
             mBody->setCurSpeed(12.0);
             emit(sMove(Entity::FORWARD, true)); 
             mOnMovePress = 1; 
         }
       } else{        
-      //  emit(sMove(Entity::STOP, true));   
+  
           lookAround(d_degree, time_diff, MOVE_ROTATE_SPEED);      
     }
 }
@@ -142,9 +135,7 @@ void PlayerAIAgent::guard(double time_diff) {
        double d_degree = mExpectDegree - mPreDegree;
        fixTurn(d_degree);      
        lookAround(d_degree, time_diff, GUARD_ROTATE_SPEED);   
-       /*std::cout << d_degree << endl; 
-       std::cout << mPreDegree << endl; 
-       std::cout << mExpectDegree << endl; */
+     
     }
     mHasEnemy = false; 
 }
@@ -164,7 +155,7 @@ void PlayerAIAgent::decision(double time_diff) {
                 
             std::pair<uint16_t, uint16_t> tmp = AIDivideAreaManager::get()->randomPosition(nxt_id);
        
-            dt::Logger().get().debug(this->getBody()->getName());
+           
             if (tmp.first != -1) {     
                     AIDivideAreaManager::get()->destroy(mNxtArea);
                     mNxtArea = tmp;
