@@ -815,6 +815,9 @@ ParticleInfo load_ParticleInfo(const QDomElement &par_info) {
 	auto MaterialHandle = par_info.firstChildElement("MaterialHandle");
 	FireBack_num.MaterialHandle = MaterialHandle.text();
 
+	auto EmitterType = par_info.firstChildElement("EmitterType");
+	FireBack_num.EmitterType = EmitterType.text();
+
 	return FireBack_num;
 }
 
