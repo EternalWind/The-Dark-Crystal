@@ -125,6 +125,13 @@ void OptionState::onInitialize() {
     mMasterVolumeScrollBar->setScrollPosition(mSoundSettings.getMainVolume());
     dynamic_cast<MyGUI::ScrollBar*>(mMasterVolumeScrollBar->getMyGUIWidget())->eventScrollChangePosition += MyGUI::newDelegate(this, &OptionState::onScrollChangePosition);
 
+    mMouseSensitivityScrollBar = win.addChildWidget(new dt::GuiScrollBar("MouseSensitivityScrollBar")).get();
+    mMouseSensitivityScrollBar->setSize(size_h_large * 2, 15);
+    mMouseSensitivityScrollBar->setPosition(position_h_func, size_v_large * 9.5);
+    mMouseSensitivityScrollBar->setScrollRange(101);
+    mMouseSensitivityScrollBar->setScrollPosition((size_t)(mControlSettings.getSensitivity() * 100.0f));
+    dynamic_cast<MyGUI::ScrollBar*>(mMouseSensitivityScrollBar->getMyGUIWidget())->eventScrollChangePosition += MyGUI::newDelegate(this, &OptionState::onScrollChangePosition);
+
     mMasterVolumeLabel = win.addChildWidget(new dt::GuiLabel("MasterVolumeLabel")).get();
     mMasterVolumeLabel->setSize(size_h_medium, size_v_small * 0.6);
     mMasterVolumeLabel->setPosition(position_h_func, position_v_func + gap_v_large * 2 - gap_v_small);
@@ -143,9 +150,15 @@ void OptionState::onInitialize() {
     mMusicVolumeLabel->setCaption(QString::fromLocal8Bit("背景音乐："));
     mMusicVolumeLabel->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
 
+    mMouseSensitivityLabel = win.addChildWidget(new dt::GuiLabel("MouseSensitivityLabel")).get();
+    mMouseSensitivityLabel->setSize(size_h_medium, size_v_small * 0.6);
+    mMouseSensitivityLabel->setPosition(position_h_func, size_v_large * 9.0);
+    mMouseSensitivityLabel->setCaption(QString::fromLocal8Bit("鼠标灵敏度："));
+    mMouseSensitivityLabel->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
+
     mMessageLabel = win.addChildWidget(new dt::GuiLabel("MessageLabel")).get();
     mMessageLabel->setSize(size_h_large * 2, size_v_small * 0.6);
-    mMessageLabel->setPosition(size_h_large,size_v_large * 9.5);
+    mMessageLabel->setPosition(0.9f, 0.9f);
     mMessageLabel->setCaption(QString::fromLocal8Bit("你可以设置音视频和控制方式"));
 
     auto confirm_button = win.addChildWidget(new dt::GuiButton("confirm_button"));
@@ -189,11 +202,11 @@ void OptionState::addNewFuncButton(const QString name, const QString font_text, 
 
     auto coordination = win.getMyGUIWidget()->getAbsoluteCoord();
     int size_h = (float)coordination.width / 15.0f;
-    int size_v = (float)coordination.height / 30.0f;
+    int size_v = (float)coordination.height / 35.0f;
     int position_h = (float)coordination.width * 0.1f;  //key position
-    int position_v = (float)coordination.height *0.6f;
-    int gap_h = (float)coordination.width / 12.0f;
-    int gap_v = (float)coordination.height / 20.0f;
+    int position_v = (float)coordination.height * 0.6f;
+    int gap_h = (float)coordination.width / 9.0f;
+    int gap_v = (float)coordination.height / 25.0f;
 
     new_button->setSize(size_h, size_v);
     new_button->setPosition(position_h + gap_h * x, position_v + gap_v * y);
@@ -219,6 +232,8 @@ void OptionState::onClick(MyGUI::Widget* sender) {
                 dt::DisplayManager::get()->setWindowSize(640, 400);
             }
         }
+
+        mControlSettings.setSensitivity((float)mMouseSensitivityScrollBar->getScrollPosition() / 100.0f);
 
         dt::GuiRootWindow& root = dt::GuiManager::get()->getRootWindow();
         auto win = dt::DisplayManager::get()->getRenderWindow();
