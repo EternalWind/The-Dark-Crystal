@@ -12,8 +12,6 @@ const QString Character::WALK_SOUND_COMPONENT = "walk_sound";
 const QString Character::JUMP_SOUND_COMPONENT = "jump_sound";
 const QString Character::RUN_SOUND_COMPONENT = "run_sound";
 
-//class CloestRaycastNotGhostCallback : public btCollisionWorld::CloestRaycastCallback
-
 // 我也来玩玩长得恶心的命名方式。 XD
 class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
 public:
