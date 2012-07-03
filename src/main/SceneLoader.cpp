@@ -815,7 +815,10 @@ ParticleInfo load_ParticleInfo(const QDomElement &par_info) {
     auto MaterialHandle = par_info.firstChildElement("MaterialHandle");
     FireBack_num.MaterialHandle = MaterialHandle.text();
 
-    return FireBack_num;
+    auto EmitterType = par_info.firstChildElement("EmitterType");
+    FireBack_num.EmitterType = EmitterType.text();
+
+	return FireBack_num;
 }
 
 Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP dt_parent) 

@@ -1,10 +1,10 @@
 <Spaceship>
-	<TestshipID>
+	<TestSpaceship>
 		<mesh_handle>flyingObject.mesh</mesh_handle>
 		<mass>100.0</mass>
 		<attack_value>14</attack_value>
 		<attack_range>500.0</attack_range>
-		<attack_interval>0.2</attack_interval>
+		<attack_interval>0.5</attack_interval>
 		<attack_sound>spaceship_attack.wav</attack_sound>
 		<flying_sound></flying_sound>
 		<rise_sound_handle></rise_sound_handle>
@@ -16,8 +16,8 @@
 		<parallel_move_speed>32.0</parallel_move_speed>
 		<up_down_speed>8.0</up_down_speed>
 		<ammo_fire_back>
-			<TimeToLiveL>0.0</TimeToLiveL>
-			<TimeToLiveR>0.0</TimeToLiveR>
+			<TimeToLiveL>1.0</TimeToLiveL>
+			<TimeToLiveR>2.0</TimeToLiveR>
 			<ParticleCountLimit>1000</ParticleCountLimit>
 			<EmissionRate>1000</EmissionRate>
 			<DefaultDimensionsWidth>0.3</DefaultDimensionsWidth>
@@ -33,11 +33,11 @@
 			<colour0r>1.0</colour0r>
 			<colour0g>1.0</colour0g>
 			<colour0b>1.0</colour0b>
-			<time1>0.0</time1>
+			<time1>0.2</time1>
 			<colour1r>1.0</colour1r>
 			<colour1g>1.0</colour1g>
 			<colour1b>1.0</colour1b>
-			<time2>0.0</time2>
+			<time2>0.2</time2>
 			<colour2r>1.0</colour2r>
 			<colour2g>1.0</colour2g>
 			<colour2b>1.0</colour2b>
@@ -76,7 +76,7 @@
 		<flame_effect0>
 			<mName>back_left</mName>
 			<mPosition>
-				<x>-9</x>
+				<x>-5</x>
 				<y>-3</y>
 				<z>4</z>
 			</mPosition>
@@ -118,7 +118,7 @@
 		<flame_effect1>
 			<mName>back_right</mName>
 			<mPosition>
-				<x>0</x>
+				<x>5</x>
 				<y>-3</y>
 				<z>4</z>
 			</mPosition>
@@ -158,5 +158,5 @@
 			</mParticle>
 		</flame_effect1>
 		<bullet_handle></bullet_handle>
-	</TestshipID>
+	</TestSpaceship>
 </Spaceship>

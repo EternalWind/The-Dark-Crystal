@@ -70,8 +70,8 @@ void EntityManager::afterLoadScene(dt::Scene * scene) {
          addEntityInScene(monster, maa, monster_pos.x, 10, monster_pos.z, 0.03);
          addMonster(monster);
          monster->setAttackInterval(1.0);
-         monster->setCurHealth(10);
-         monster->setMaxHealth(10);
+         monster->setCurHealth(100);
+         monster->setMaxHealth(100);
          monster->setAttackRange(80);        
     }
 }
