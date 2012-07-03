@@ -79,16 +79,19 @@ void Spaceship::onInitialize() {
 
 	//添加攻击效果
 	if (mBulletHandle == "") {
-		OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
+		OgreProcedural::SphereGenerator().setRadius(0.01f).setUTile(.5f).realizeMesh("Bullet");
 		mBulletHandle = "Bullet";
 	}
 
 	auto fire_node = this->addChildNode(new dt::Node("fire_node"));
 	fire_node->setPosition(this->getEyePosition());
+    //fire_node->setRotation(this->getRotation() * Ogre::Quaternion(Ogre::Degree(-30), Ogre::Vector3(0, 1, 0)));
 	
 	// 这里的interator必须作为成员变量了啊！！！
 	mInteractor = fire_node->addComponent(new AdvanceCollisionComponent(mBulletHandle, mAmmoFireBack, mAmmoBomb, false, "interactor"));
 	mInteractor->setOffset(20.0f);
+    mInteractor->setRange(mAttackRange);
+    mInteractor->setIntervalTime(mAttackInterval);
 
 	if (!connect(mInteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onHit(dt::PhysicsBodyComponent*)))) {
 		dt::Logger::get().error("Cannot connect the sHit signal with the OnHit slot.");
@@ -98,6 +101,7 @@ void Spaceship::onInitialize() {
 	for (auto iter = mFlameEffect.begin(); iter != mFlameEffect.end(); ++iter) {
 		this->addFlame(*iter);
 	}
+
 }
 
 void Spaceship::__onGetOffVehicle() {
@@ -159,6 +163,10 @@ void Spaceship::onUpdate(double time_diff) {
 			mCurAngle += mAnglePerFrame;
 			moving += mAnglePerFrame;
 		}
+
+        if (std::fabs(mCurAngle) < 1e-3) {
+            mCurAngle = 0.0f;
+        }
 	}
 
 	Ogre::Quaternion pre_rot = this->getRotation(dt::Node::SCENE);
@@ -173,6 +181,9 @@ void Spaceship::onUpdate(double time_diff) {
 	}
 
 	mCurSpeed += mMoveVector.z * mSpeedPerFrame;
+    if (std::fabs(mCurSpeed) < 1e-3) {
+        mCurSpeed = 0.0f;
+    }
 	if (mCurSpeed > mMaxSpeed) {
 		mCurSpeed = mMaxSpeed;
 	}
@@ -226,12 +237,12 @@ void Spaceship::addFlame(const FlameInfo& flame) {
 	p_sys->addScalerAffector("scaler", particle.ScalerAffector);
 	Ogre::ParticleAffector* a = p_sys->addAffector("colour_interpolator", "ColourInterpolator");
 
-    a->setParameter("time0", dt::Utils::toString(particle.time0).toStdString());
-    a->setParameter("colour0", dt::Utils::toString(particle.colour0.x).toStdString() + " " + dt::Utils::toString(particle.colour0.y).toStdString() + " " + dt::Utils::toString(particle.colour0.z).toStdString() + " 1");
-    a->setParameter("time1", dt::Utils::toString(particle.time1).toStdString());
-    a->setParameter("colour1", dt::Utils::toString(particle.colour1.x).toStdString() + " " + dt::Utils::toString(particle.colour1.y).toStdString() + " " + dt::Utils::toString(particle.colour1.z).toStdString() + " 1");
-    a->setParameter("time2", dt::Utils::toString(particle.time2).toStdString());
-    a->setParameter("colour2", dt::Utils::toString(particle.colour2.x).toStdString() + " " + dt::Utils::toString(particle.colour2.y).toStdString() + " " + dt::Utils::toString(particle.colour2.z).toStdString() + " 0");
+    a->setParameter("time0", dt::Utils::toStdString(dt::Utils::toString(particle.time0)));
+    a->setParameter("colour0", dt::Utils::toStdString(dt::Utils::toString(particle.colour0.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(particle.colour0.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(particle.colour0.z)) + " 1");
+    a->setParameter("time1", dt::Utils::toStdString(dt::Utils::toString(particle.time1)));
+    a->setParameter("colour1", dt::Utils::toStdString(dt::Utils::toString(particle.colour1.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(particle.colour1.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(particle.colour1.z)) + " 1");
+    a->setParameter("time2", dt::Utils::toStdString(dt::Utils::toString(particle.time2)));
+    a->setParameter("colour2", dt::Utils::toString(particle.colour2.x).toStdString() + " " + dt::Utils::toStdString(dt::Utils::toString(particle.colour2.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(particle.colour2.z)) + " 0");
 }
 
 void Spaceship::playFlame(const QString& name) {
@@ -253,7 +264,7 @@ void Spaceship::__onMove(MoveType type, bool is_pressed) {
 	case FORWARD:
 		if (is_pressed)
 			mMoveVector.z += 1.0f; 
-		else
+		else 
 			mMoveVector.z -= 1.0f;
 
 		break;
@@ -317,13 +328,33 @@ void Spaceship::__onSpeedUp(bool is_pressed) {
 }
 
 void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot) {
-	auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+	//auto p = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
 
-	p->activate();
+	//btTransform trans = p->getRigidBody()->getWorldTransform();
+	//trans.setRotation(BtOgre::Convert::toBullet(this->getRotation() * body_rot * agent_rot));
+	//p->getRigidBody()->setWorldTransform(trans);
+	//auto agent = this->findChildNode(Agent::AGENT);
 
-	btTransform trans = p->getRigidBody()->getWorldTransform();
-	trans.setRotation(BtOgre::Convert::toBullet(this->getRotation() * body_rot * agent_rot));
-	p->getRigidBody()->setWorldTransform(trans);
+    // 第二版的LookAround
+	Ogre::Matrix3 orientMatrix;
+    this->getRotation(dt::Node::SCENE).ToRotationMatrix(orientMatrix);
+
+	Ogre::Radian yaw, pitch, roll;
+	orientMatrix.ToEulerAnglesYXZ(yaw, pitch, roll);
+
+	yaw += Ogre::Radian(body_rot.getYaw());
+	pitch += Ogre::Radian(agent_rot.getPitch());	
+
+	orientMatrix.FromEulerAnglesYXZ(yaw, pitch, roll);
+
+	Ogre::Quaternion rotation;
+	rotation.FromRotationMatrix(orientMatrix);
+
+	auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+
+	btTransform trans = physics_body->getRigidBody()->getWorldTransform();
+	trans.setRotation(BtOgre::Convert::toBullet(rotation));
+	physics_body->getRigidBody()->setWorldTransform(trans);
 }
 
 void Spaceship::__onJump(bool is_pressed) {
@@ -347,4 +378,14 @@ void Spaceship::setAttackOffset(const float& offset) {
 
 float Spaceship::getAttackOffset() const {
 	return mInteractor->getOffset();
+}
+
+void Spaceship::__onAttack(bool is_pressed) {
+    if (is_pressed) {
+        mIsAttacking = true;
+        this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT)->playSound();
+    } else {
+        mIsAttacking = false;
+        this->findComponent<dt::SoundComponent>(ATTACK_SOUND_COMPONENT)->stopSound();
+    }
 }
