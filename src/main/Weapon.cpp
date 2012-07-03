@@ -1,5 +1,6 @@
 #include "Weapon.h"
 #include "Alien.h"
+#include "ConfigurationManager.h"
 #include <Logic/CollisionComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
 #include <OgreProcedural.h>
@@ -152,19 +153,26 @@ float Weapon::getHittingRange() const {
 void Weapon::onInitialize() {
     Prop::onInitialize();
     auto node = this->addChildNode(new Node("ammo_node"));
-    OgreProcedural::SphereGenerator().setRadius(0.02f).setUTile(.5f).realizeMesh("Bullet");
-    if (mWeaponType == PRIMARY || mWeaponType == SECONDARY) {
-        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
-    } else {
+    if (mWeaponType == PRIMARY) {
+		OgreProcedural::SphereGenerator().setRadius(0.01f).setUTile(.5f).realizeMesh("Bullet1");
+        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet1", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
+    } else if(mWeaponType == SECONDARY){
+		OgreProcedural::SphereGenerator().setRadius(0.01f).setUTile(.5f).realizeMesh("Bullet2");
+        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet2", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
+	} else {
+		OgreProcedural::SphereGenerator().setRadius(0.2f).setUTile(.5f).realizeMesh("Bullet3");
 		//mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();
-        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
+        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet3", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
         node->setRotation(Ogre::Quaternion(0.9f, 0.35f, 0, 0));
-    }
+	}
     mInteractor->setIntervalTime(mInterval);
     mInteractor->setRange(mHittingRange);
     mInteractor->setOffset(5.0);
 
     mIsPhysicsBodyEnabled = true;
+
+	auto conf_mgr = ConfigurationManager::getInstance() ;
+    SoundSetting sound_setting = conf_mgr->getSoundSetting();
 
     if (!QObject::connect(mInteractor, SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
                          this,        SLOT(_onHit(dt::PhysicsBodyComponent*)))) {
@@ -174,19 +182,19 @@ void Weapon::onInitialize() {
     if (mFiringSoundHandle != "") {
         mFiringSound = this->addComponent(new dt::SoundComponent(mFiringSoundHandle,
             this->getName() + "_firing_sound")).get();
-        mFiringSound->setVolume(100.0f);
+        mFiringSound->setVolume((float)sound_setting.getSoundEffect());
     }
 
     if (mReloadingBeginSoundHandle != "") {
         mReloadingBeginSound = this->addComponent(new dt::SoundComponent(mReloadingBeginSoundHandle,
             this->getName() + "_reloading_begin_sound")).get();
-        mReloadingBeginSound->setVolume(100.0f);
+        mReloadingBeginSound->setVolume((float)sound_setting.getSoundEffect());
     }
 
     if (mReloadingDoneSoundHandle != "") {
         mReloadingDoneSound = this->addComponent(new dt::SoundComponent(mReloadingDoneSoundHandle,
             this->getName() + "_reloading_done_sound")).get();
-        mReloadingDoneSound->setVolume(100.0f);
+        mReloadingDoneSound->setVolume((float)sound_setting.getSoundEffect());
     }
 }
 

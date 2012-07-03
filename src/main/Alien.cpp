@@ -8,9 +8,12 @@
 #include "Vehicle.h"
 #include "stateManager.h"
 #include "EntityManager.h"
-#include "AttackDetectComponent.h"
+#include "HumanAgent.h"
+#include "RaycastNotMeComponent.h"
+
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
+#include <Physics/PhysicsBodyComponent.hpp>
 
 const QString Alien::INTERACTOR_COMPONENT = "interactor";
 
@@ -70,13 +73,12 @@ void Alien::addWeapon(Weapon* weapon) {
 			removeWeapon(weapon->getWeaponType());
 
 			mWeapons[weapon->getWeaponType()] = weapon;
-            
-			//weapon->removeComponent("physics_body");  
-            weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 
-            weapon->setParent(this);
+			weapon->removeComponent(PHYSICS_BODY_COMPONENT);
+			weapon->setParent(this);
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
-			weapon->setPosition(0.5f, -1.5f, -1.0f);
+			weapon->setPosition(1.0f, 0.0f, -4.0f);
+			weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
             
             //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
             //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
@@ -87,6 +89,8 @@ void Alien::addWeapon(Weapon* weapon) {
 			
 			if (!is_enabled)
 				weapon->disable();
+
+			emit sAmmoClipChange(weapon->getCurAmmo(), weapon->getCurClip());
 		}
 		else {
 			mWeapons[weapon->getWeaponType()] = weapon;
@@ -96,14 +100,17 @@ void Alien::addWeapon(Weapon* weapon) {
 			weapon->setRotation(Ogre::Quaternion::IDENTITY);
 			weapon->setPosition(1.0f, 0.0f, -4.0f);
 			weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
-						
+			
+			auto human = dynamic_cast<HumanAgent*>(this->findChildNode("agent").get());	
 			mCurWeapon = weapon;
-			connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
-			connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
+			if (human) {
+			    connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
+			    connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));  
+				emit sAmmoClipChange(weapon->getCurAmmo(), weapon->getCurClip());
+			}
 			mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
-			//std::cout << this->mCurWeapon->getName().toStdString() << std::endl;
 		}
-		emit sAmmoClipChange(weapon->getCurAmmo(), weapon->getCurClip());
+		
 		//emit sAmmoChange(weapon->getCurAmmo());
 		//emit sClipNumChange(weapon->getCurClip());
 	}
@@ -149,17 +156,18 @@ void Alien::onInitialize() {
 
     auto node = this->addChildNode(new Node("getProp"));
 
-    auto iteractor = node->addComponent<dt::InteractionComponent>(new AttackDetectComponent(INTERACTOR_COMPONENT));
+    auto iteractor = node->addComponent<dt::InteractionComponent>(new RaycastNotMeComponent(this->
+        findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody(), INTERACTOR_COMPONENT));
     iteractor->setRange(20.0f);
 
-    iteractor->setOffset(2.0f);
+    iteractor->setOffset(3.0f);
 
     node->setPosition(this->getEyePosition());
 
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
-    this->setOrigSpeed(10.0f);
-    this->setCurSpeed(10.0f);
+    this->setOrigSpeed(20.0f);
+    this->setCurSpeed(20.0f);
 
 }
 

@@ -109,19 +109,31 @@ protected slots:
 
 	void __onHit(dt::PhysicsBodyComponent* hit);
 
+protected:
+    /**
+      * 检查能否移动到一个给定的位置，若不能，则输出一个该方向上能移动到的一个离原目标位置最近的位置。
+      * @param position 要检查的目标位置
+      * @param closest_position 离原目标位置最近的位置，仅在无法移动到目标位置的时候有效
+      * @returns 是否能移动到目标位置
+      */
+    bool __canMoveTo(const btTransform& position, btTransform& closest_position);
+
 signals:
     void sIsDead(Character* monster);
 
 protected:
-	uint16_t mAttackValue;      //!< 叫兽攻击力
-	float mAttackRange;         //!< 叫兽攻击范围
-	float mAttackInterval;      //!< 叫兽攻击间隔时间
-	QString mAttackSoundHandle; //!< 怪物攻击声音句柄
-	bool mIsAttacking;          //!< 怪兽是否正在攻击
-public:
-	const static QString ATTACK_SOUND_COMPONENT; //!< 播放怪兽攻击音效的SoundComponent的名字
-	const static QString INTERACTOR_COMPONENT;   //!< 怪兽攻击交互的Component名字
+	uint16_t mAttackValue;                            //!< 叫兽攻击力
+	float mAttackRange;                               //!< 叫兽攻击范围
+	float mAttackInterval;                            //!< 叫兽攻击间隔时间
+	QString mAttackSoundHandle;                       //!< 怪物攻击声音句柄
+	bool mIsAttacking;                                //!< 怪兽是否正在攻击
 
+public:
+	const static QString ATTACK_SOUND_COMPONENT;      //!< 播放怪兽攻击音效的SoundComponent的名字
+	const static QString INTERACTOR_COMPONENT;        //!< 怪兽攻击交互的Component名字
+
+private:
+	dt::Node::NodeSP mFlashNode;                      //!< 怪兽攻击时发出的闪电节点
 };
 
 #endif

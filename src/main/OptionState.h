@@ -13,6 +13,7 @@
 #include <Gui/GuiImageBox.hpp>
 #include <Gui/GuiCheckBox.hpp>
 #include <Gui/GuiScrollBar.hpp>
+#include <Audio/SoundComponent.hpp>
 
 /**
   * 游戏设置菜单
@@ -64,22 +65,25 @@ private:
 
 
 private:
-    dt::GuiCheckBox* mQASettingCheckBox;        //!< 问答系统开关
-    dt::GuiCheckBox* mDisplaySettingCheckBox;  //!< 分辨率设置
-    dt::GuiScrollBar* mSoundVolumeScrollBar;    //!< 音效大小滚动条
-    dt::GuiScrollBar* mMasterVolumeScrollBar;   //!< 主音量大小滚动条
-    dt::GuiScrollBar* mMusicVolumeScrollBar;    //!< 背景音乐大小滚动条
-    dt::GuiLabel* mDisplaySettingsLabel;        //!< 显示是否开启全屏
-    dt::GuiLabel* mMasterVolumeLabel;           //!< 显示主音量大小
-    dt::GuiLabel* mSoundVolumeLabel;            //!< 显示音效大小
-    dt::GuiLabel* mMusicVolumeLabel;            //!< 显示背景音乐大小
-    dt::GuiLabel* mMessageLabel;                //!< 显示消息j
-    MyGUI::Widget* mActionButton;               //!< 记录功能设置按键
-    ControlSetting::KeyFunction mActionToChange;//!< 记录当前要设置的功能
-    ControlSetting mControlSettings;            //!< 记录当前的按键设定
-    SoundSetting mSoundSettings;                //!< 记录当前的音量设定
-    ScreenSetting mScreenSettings;              //!< 记录当前的显示设定
-    QASetting mQASettings;                      //!< 记录当前的QA设定
+    dt::GuiCheckBox* mQASettingCheckBox;          //!< 问答系统开关
+    dt::GuiCheckBox* mDisplaySettingCheckBox;     //!< 分辨率设置
+    dt::GuiScrollBar* mSoundVolumeScrollBar;      //!< 音效大小滚动条
+    dt::GuiScrollBar* mMasterVolumeScrollBar;     //!< 主音量大小滚动条
+    dt::GuiScrollBar* mMusicVolumeScrollBar;      //!< 背景音乐大小滚动条
+    dt::GuiScrollBar* mMouseSensitivityScrollBar; //!< 鼠标灵敏度滚动条
+    dt::GuiLabel* mDisplaySettingsLabel;          //!< 显示是否开启全屏
+    dt::GuiLabel* mMasterVolumeLabel;             //!< 显示主音量大小
+    dt::GuiLabel* mSoundVolumeLabel;              //!< 显示音效大小
+    dt::GuiLabel* mMusicVolumeLabel;              //!< 显示背景音乐大小
+    dt::GuiLabel* mMessageLabel;                  //!< 显示消息
+    dt::GuiLabel* mMouseSensitivityLabel;         //!< 显示鼠标灵敏度
+    MyGUI::Widget* mActionButton;                 //!< 记录功能设置按键
+    ControlSetting::KeyFunction mActionToChange;  //!< 记录当前要设置的功能
+    ControlSetting mControlSettings;              //!< 记录当前的按键设定
+    SoundSetting mSoundSettings;                  //!< 记录当前的音量设定
+    ScreenSetting mScreenSettings;                //!< 记录当前的显示设定
+    QASetting mQASettings;                        //!< 记录当前的QA设定
+	dt::SoundComponent* mButtonClickSound;        //!< 按键音效
 };
 
 #endif

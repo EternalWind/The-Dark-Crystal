@@ -8,21 +8,34 @@ Animation::~Animation() {
 }
 
 void Animation::onInitialize() {
+	//Node::onInitialize();
 	auto camnode = this->addChildNode(new dt::Node("camnode"));
 	auto cc = camnode->addComponent(new dt::CameraComponent("cam"));
 	cc->lookAt(Ogre::Vector3(0, 0, 0));
 	Ogre::Viewport *vp = cc->getCamera()->getViewport();
-	Ogre::Root::getSingletonPtr()->addFrameListener(new OgreUtils::DirectShowManager(vp));
+	Ogre::Root::getSingletonPtr()->addFrameListener(mDShow = new OgreUtils::DirectShowManager(vp));
 
 	QFileInfo info = dt::ResourceManager::get()->findFile(mAnimationHandle);
 	QString tmp = info.absoluteFilePath();
 	
-	mDshowPtr = OgreUtils::DirectShowManager::getSingleton().createDirectshowControl("videotest",tmp.toStdString(),640,480);
+/*	Ogre::Root::getSingletonPtr()->addFrameListener(new MyFrameListener());
+*/
+	
+	mDshowPtr = OgreUtils::DirectShowManager::getSingleton().createDirectshowControl("videotest",dt::Utils::toStdString(tmp),640,480);
 }
 
 void Animation::onDeinitialize() {
-	if (mDshowPtr != nullptr)
+	//Node::onDeinitialize();
+	//mDshowPtr->Destroy();
+	
+	Ogre::Root::getSingleton().removeFrameListener(mDShow);
+	this->kill();
+	if (mDshowPtr != nullptr) {
 		delete mDshowPtr;
+		mDshowPtr = nullptr;
+	}
+	
+  
 }
 
 void Animation::setAnimationHandle(QString animation_handle) {

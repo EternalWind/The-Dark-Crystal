@@ -40,6 +40,17 @@ void OptionState::onInitialize() {
     mSoundSettings = config_mgr->getSoundSetting();
     mQASettings = config_mgr->getQASetting();
 
+	//music
+    SoundSetting sound_setting = config_mgr->getSoundSetting();
+	auto bg_menu = camnode->addComponent<dt::SoundComponent>(new dt::SoundComponent("musics/bg_menu.wav", "bg_optionstate"));
+	bg_menu->setVolume((float)sound_setting.getMusic());
+	bg_menu->getSound().setLoop(true);
+	bg_menu->playSound();
+
+	mButtonClickSound = camnode->addComponent<dt::SoundComponent>(new dt::SoundComponent("musics/bg_mouse_click.wav", "optionstate_button_sound")).get();
+	mButtonClickSound->setVolume((float)sound_setting.getSoundEffect());
+	mButtonClickSound->getSound().setLoop(false);
+
     // GUI
     dt::GuiRootWindow& win = dt::GuiManager::get()->getRootWindow();
 
@@ -79,7 +90,7 @@ void OptionState::onInitialize() {
     //功能设置============================================================================
     mQASettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("QASettingCheckBox")).get();
     mQASettingCheckBox->setSize(size_h_large, size_v_large);
-    mQASettingCheckBox->setPosition(position_h_func, position_v_func);
+    mQASettingCheckBox->setPosition(position_h_func, position_v_func - gap_v_small);
     mQASettingCheckBox->setCaption(QString::fromLocal8Bit("开启问答系统"));
     mQASettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
     mQASettingCheckBox->setStateSelected(mQASettings.getIsQAEnable());
@@ -87,7 +98,7 @@ void OptionState::onInitialize() {
 
     mDisplaySettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("DisplaySettingsCheckBox")).get();
     mDisplaySettingCheckBox->setSize(size_h_medium, size_v_medium);
-    mDisplaySettingCheckBox->setPosition(position_h_func, position_v_func + gap_v_large);
+    mDisplaySettingCheckBox->setPosition(position_h_func, position_v_func + gap_v_small);
     mDisplaySettingCheckBox->setCaption(QString::fromLocal8Bit("全屏"));
     mDisplaySettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
     mDisplaySettingCheckBox->setStateSelected(mScreenSettings.getFullScreen());
@@ -114,6 +125,13 @@ void OptionState::onInitialize() {
     mMasterVolumeScrollBar->setScrollPosition(mSoundSettings.getMainVolume());
     dynamic_cast<MyGUI::ScrollBar*>(mMasterVolumeScrollBar->getMyGUIWidget())->eventScrollChangePosition += MyGUI::newDelegate(this, &OptionState::onScrollChangePosition);
 
+    mMouseSensitivityScrollBar = win.addChildWidget(new dt::GuiScrollBar("MouseSensitivityScrollBar")).get();
+    mMouseSensitivityScrollBar->setSize(size_h_large * 2, 15);
+    mMouseSensitivityScrollBar->setPosition(position_h_func, size_v_large * 9.5);
+    mMouseSensitivityScrollBar->setScrollRange(101);
+    mMouseSensitivityScrollBar->setScrollPosition((size_t)(mControlSettings.getSensitivity() * 100.0f));
+    dynamic_cast<MyGUI::ScrollBar*>(mMouseSensitivityScrollBar->getMyGUIWidget())->eventScrollChangePosition += MyGUI::newDelegate(this, &OptionState::onScrollChangePosition);
+
     mMasterVolumeLabel = win.addChildWidget(new dt::GuiLabel("MasterVolumeLabel")).get();
     mMasterVolumeLabel->setSize(size_h_medium, size_v_small * 0.6);
     mMasterVolumeLabel->setPosition(position_h_func, position_v_func + gap_v_large * 2 - gap_v_small);
@@ -132,9 +150,15 @@ void OptionState::onInitialize() {
     mMusicVolumeLabel->setCaption(QString::fromLocal8Bit("背景音乐："));
     mMusicVolumeLabel->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
 
+    mMouseSensitivityLabel = win.addChildWidget(new dt::GuiLabel("MouseSensitivityLabel")).get();
+    mMouseSensitivityLabel->setSize(size_h_medium, size_v_small * 0.6);
+    mMouseSensitivityLabel->setPosition(position_h_func, size_v_large * 9.0);
+    mMouseSensitivityLabel->setCaption(QString::fromLocal8Bit("鼠标灵敏度："));
+    mMouseSensitivityLabel->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
+
     mMessageLabel = win.addChildWidget(new dt::GuiLabel("MessageLabel")).get();
     mMessageLabel->setSize(size_h_large * 2, size_v_small * 0.6);
-    mMessageLabel->setPosition(size_h_large,size_v_large * 9.5);
+    mMessageLabel->setPosition(0.9f, 0.9f);
     mMessageLabel->setCaption(QString::fromLocal8Bit("你可以设置音视频和控制方式"));
 
     auto confirm_button = win.addChildWidget(new dt::GuiButton("confirm_button"));
@@ -178,32 +202,38 @@ void OptionState::addNewFuncButton(const QString name, const QString font_text, 
 
     auto coordination = win.getMyGUIWidget()->getAbsoluteCoord();
     int size_h = (float)coordination.width / 15.0f;
-    int size_v = (float)coordination.height / 30.0f;
+    int size_v = (float)coordination.height / 35.0f;
     int position_h = (float)coordination.width * 0.1f;  //key position
-    int position_v = (float)coordination.height *0.6f;
-    int gap_h = (float)coordination.width / 12.0f;
-    int gap_v = (float)coordination.height / 20.0f;
+    int position_v = (float)coordination.height * 0.6f;
+    int gap_h = (float)coordination.width / 9.0f;
+    int gap_v = (float)coordination.height / 25.0f;
 
     new_button->setSize(size_h, size_v);
     new_button->setPosition(position_h + gap_h * x, position_v + gap_v * y);
 }
 
 void OptionState::onClick(MyGUI::Widget* sender) {
+	mButtonClickSound->playSound();
     if (sender->getName() == "Gui.confirm_button") {
         ConfigurationManager* cfg = ConfigurationManager::getInstance();
 
-        //mSoundSettings.setMainVolume(mMasterVolumeScrollBar->getScrollPosition());
+        mSoundSettings.setMainVolume(mMasterVolumeScrollBar->getScrollPosition());
         mSoundSettings.setMusic(mMusicVolumeScrollBar->getScrollPosition());
         mSoundSettings.setSoundEffect(mSoundVolumeScrollBar->getScrollPosition());
 
         mQASettings.setIsQAEnable(mQASettingCheckBox->getStateSelected());
         
-        //sf::Listener::setGlobalVolume((float)mMasterVolumeScrollBar->getScrollPosition());
+        sf::Listener::setGlobalVolume((float)mMasterVolumeScrollBar->getScrollPosition());
         if (mScreenSettings.getFullScreen() != mDisplaySettingCheckBox->getStateSelected()) {
-            dt::DisplayManager::get()->setWindowSize(640, 400);
             mScreenSettings.setFullScreen(mDisplaySettingCheckBox->getStateSelected());
             dt::DisplayManager::get()->setFullscreen(mDisplaySettingCheckBox->getStateSelected());
+
+            if (!mScreenSettings.getFullScreen()) {
+                dt::DisplayManager::get()->setWindowSize(640, 400);
+            }
         }
+
+        mControlSettings.setSensitivity((float)mMouseSensitivityScrollBar->getScrollPosition() / 100.0f);
 
         dt::GuiRootWindow& root = dt::GuiManager::get()->getRootWindow();
         auto win = dt::DisplayManager::get()->getRenderWindow();
