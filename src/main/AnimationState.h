@@ -19,13 +19,16 @@ public:
 
 	void onInitialize();
 
+	void onDeinitialize();
+
 	void updateStateFrame(double simulation_frame_time);
 
+public slots:
 	/**
 	  * 按下ESC键时直接跳过动画
 	  * @param code 输入的按键
 	  */
-	void onKeyDown(dt::InputManager::InputCode code, OIS::EventArg &event);
+	void onKeyDown(dt::InputManager::InputCode code, const OIS::EventArg &event);
 
 private:
 	Animation *mAnimationPtr;   //!< 待播放动画指针
