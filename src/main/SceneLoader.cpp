@@ -836,8 +836,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                                   "sounds/" + alien_name + "_run.wav");
         pAlien->setMaxHealth(100);
         pAlien->setCurHealth(100);
-        //pAlien->setEyePosition(Ogre::Vector3(0, 0.1, -0.5));
-        pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
+        pAlien->setEyePosition(Ogre::Vector3(0, 0.1, -0.5));
 		
         if (dt_parent)
             node = dt_parent->addChildNode(pAlien);
