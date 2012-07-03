@@ -21,7 +21,7 @@ void Animation::onInitialize() {
 /*	Ogre::Root::getSingletonPtr()->addFrameListener(new MyFrameListener());
 */
 	
-	mDshowPtr = OgreUtils::DirectShowManager::getSingleton().createDirectshowControl("videotest",tmp.toStdString(),640,480);
+	mDshowPtr = OgreUtils::DirectShowManager::getSingleton().createDirectshowControl("videotest",dt::Utils::toStdString(tmp),640,480);
 }
 
 void Animation::onDeinitialize() {
