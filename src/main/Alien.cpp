@@ -298,7 +298,7 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
         }
 
 		// 如果是载具
-	/*	Vehicle* vehicle; 
+		Vehicle* vehicle; 
 		vehicle = dynamic_cast<Vehicle*>(object->getNode());
 
 		if (vehicle != nullptr) {
@@ -314,7 +314,7 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 			vehicle->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->setMass(vehicle->getMass());
 			vehicle->resetPhysicsBody();
 			
-		}		*/
+		}		
     }
 }
 
