@@ -907,7 +907,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         QDomElement secondary = og_node.firstChildElement(SL_ALIEN_SECONDARY);
         QDomElement throwable = og_node.firstChildElement(SL_ALIEN_THROWABLE);
 
-        if (!primary.isNull() && primary.attribute("content").length() != 0) {
+        if (!primary.isNull()) {
             weapon_id = primary.attribute("content");
 
             if (weapon_id != "") {
@@ -1041,7 +1041,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         range_num,
                         FireBack_num,
                         Bomb_num);
-
+                    pAlien->addChildNode(pWeapon);
                     pAlien->addWeapon(pWeapon);
                 }
             }
@@ -1110,7 +1110,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         range_num,
                         FireBack_num,
                         Bomb_num);
-
+                    pAlien->addChildNode(pWeapon);
                     pAlien->addWeapon(pWeapon);
                 }
             }
@@ -1416,7 +1416,7 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
         uint16_t weapon_type;
         if (type.text() == "Primary")
             weapon_type = 0;
-        else if (type.text() == "Secondery")
+        else if (type.text() == "Secondary")
             weapon_type = 1;
         else
             weapon_type = 2;
