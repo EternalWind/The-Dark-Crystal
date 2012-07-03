@@ -62,7 +62,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene) {
             AIDivideAreaManager::get()->destroy(vpuu[j]);
     }*/
 
-    for (uint16_t i = 0; i < 60; i ++) {
+    for (uint16_t i = 0; i < 30; i ++) {
         mMonsterNum ++;
         Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getArea(i % 60);
          Monster * monster = new Monster("monster" + dt::Utils::toString(mMonsterNum), "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 3, 20, 3);      
