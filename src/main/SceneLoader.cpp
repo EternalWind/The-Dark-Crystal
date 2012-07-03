@@ -734,89 +734,89 @@ Node::NodeSP SceneLoader::__loadTriggerArea(const QDomElement& og_component, Nod
 }
 
 ParticleInfo load_ParticleInfo(const QDomElement &par_info) {
-	ParticleInfo FireBack_num;
-	auto TimeToLiveL = par_info.firstChildElement("TimeToLiveL");
-	FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
+    ParticleInfo FireBack_num;
+    auto TimeToLiveL = par_info.firstChildElement("TimeToLiveL");
+    FireBack_num.TimeToLiveL = TimeToLiveL.text().toFloat();
 
-	auto TimeToLiveR = par_info.firstChildElement("TimeToLiveR");
-	FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
+    auto TimeToLiveR = par_info.firstChildElement("TimeToLiveR");
+    FireBack_num.TimeToLiveR = TimeToLiveR.text().toFloat();
 
-	//add by liujack
-	auto ParticleCountLimit = par_info.firstChildElement("ParticleCountLimit");
-	FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
+    //add by liujack
+    auto ParticleCountLimit = par_info.firstChildElement("ParticleCountLimit");
+    FireBack_num.ParticleCountLimit = ParticleCountLimit.text().toUInt();
 
-	auto EmissionRate = par_info.firstChildElement("EmissionRate");
-	FireBack_num.EmissionRate = EmissionRate.text().toUInt();
+    auto EmissionRate = par_info.firstChildElement("EmissionRate");
+    FireBack_num.EmissionRate = EmissionRate.text().toUInt();
 
-	auto DefaultDimensionsWidth = par_info.firstChildElement("DefaultDimensionsWidth");
-	FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
+    auto DefaultDimensionsWidth = par_info.firstChildElement("DefaultDimensionsWidth");
+    FireBack_num.DefaultDimensionsWidth = DefaultDimensionsWidth.text().toFloat();
 
-	auto DefaultDimensionsHeight = par_info.firstChildElement("DefaultDimensionsHeight");
-	FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
+    auto DefaultDimensionsHeight = par_info.firstChildElement("DefaultDimensionsHeight");
+    FireBack_num.DefaultDimensionsHeight = DefaultDimensionsHeight.text().toFloat();
 
-	auto EmitterColorStart_r = par_info.firstChildElement("EmitterColorStart_r");
-	FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
+    auto EmitterColorStart_r = par_info.firstChildElement("EmitterColorStart_r");
+    FireBack_num.EmitterColorStart.r = EmitterColorStart_r.text().toFloat();
 
-	auto EmitterColorStart_g = par_info.firstChildElement("EmitterColorStart_g");
-	FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
+    auto EmitterColorStart_g = par_info.firstChildElement("EmitterColorStart_g");
+    FireBack_num.EmitterColorStart.g = EmitterColorStart_g.text().toFloat();
 
-	auto EmitterColorStart_b = par_info.firstChildElement("EmitterColorStart_b");
-	FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
+    auto EmitterColorStart_b = par_info.firstChildElement("EmitterColorStart_b");
+    FireBack_num.EmitterColorStart.b = EmitterColorStart_b.text().toFloat();
 
-	auto EmitterColorEnd_r = par_info.firstChildElement("EmitterColorEnd_r");
-	FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
+    auto EmitterColorEnd_r = par_info.firstChildElement("EmitterColorEnd_r");
+    FireBack_num.EmitterColorEnd.r = EmitterColorEnd_r.text().toFloat();
 
-	auto EmitterColorEnd_g = par_info.firstChildElement("EmitterColorEnd_g");
-	FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
+    auto EmitterColorEnd_g = par_info.firstChildElement("EmitterColorEnd_g");
+    FireBack_num.EmitterColorEnd.g = EmitterColorEnd_g.text().toFloat();
 
-	auto EmitterColorEnd_b = par_info.firstChildElement("EmitterColorEnd_b");
-	FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
-	//end
+    auto EmitterColorEnd_b = par_info.firstChildElement("EmitterColorEnd_b");
+    FireBack_num.EmitterColorEnd.b = EmitterColorEnd_b.text().toFloat();
+    //end
 
-	auto time0 = par_info.firstChildElement("time0");
-	FireBack_num.time0 = time0.text().toFloat();
+    auto time0 = par_info.firstChildElement("time0");
+    FireBack_num.time0 = time0.text().toFloat();
 
-	auto colour0r = par_info.firstChildElement("colour0r");
-	FireBack_num.colour0.x = colour0r.text().toFloat();
+    auto colour0r = par_info.firstChildElement("colour0r");
+    FireBack_num.colour0.x = colour0r.text().toFloat();
 
-	auto colour0g = par_info.firstChildElement("colour0g");
-	FireBack_num.colour0.y = colour0g.text().toFloat();
+    auto colour0g = par_info.firstChildElement("colour0g");
+    FireBack_num.colour0.y = colour0g.text().toFloat();
 
-	auto colour0b = par_info.firstChildElement("colour0b");
-	FireBack_num.colour0.z = colour0b.text().toFloat();
+    auto colour0b = par_info.firstChildElement("colour0b");
+    FireBack_num.colour0.z = colour0b.text().toFloat();
 
-	auto time1 = par_info.firstChildElement("time1");
-	FireBack_num.time1 = time1.text().toFloat();
+    auto time1 = par_info.firstChildElement("time1");
+    FireBack_num.time1 = time1.text().toFloat();
 
-	auto colour1r = par_info.firstChildElement("colour1r");
-	FireBack_num.colour1.x = colour1r.text().toFloat();
+    auto colour1r = par_info.firstChildElement("colour1r");
+    FireBack_num.colour1.x = colour1r.text().toFloat();
 
-	auto colour1g = par_info.firstChildElement("colour1g");
-	FireBack_num.colour1.y = colour1g.text().toFloat();
+    auto colour1g = par_info.firstChildElement("colour1g");
+    FireBack_num.colour1.y = colour1g.text().toFloat();
 
-	auto colour1b = par_info.firstChildElement("colour1b");
-	FireBack_num.colour1.z = colour1b.text().toFloat();
+    auto colour1b = par_info.firstChildElement("colour1b");
+    FireBack_num.colour1.z = colour1b.text().toFloat();
 
-	auto time2 = par_info.firstChildElement("time2");
-	FireBack_num.time2 = time2.text().toFloat();
+    auto time2 = par_info.firstChildElement("time2");
+    FireBack_num.time2 = time2.text().toFloat();
 
-	auto colour2r = par_info.firstChildElement("colour2r");
-	FireBack_num.colour2.x = colour2r.text().toFloat();
+    auto colour2r = par_info.firstChildElement("colour2r");
+    FireBack_num.colour2.x = colour2r.text().toFloat();
 
-	auto colour2g = par_info.firstChildElement("colour2g");
-	FireBack_num.colour2.y = colour2g.text().toFloat();
+    auto colour2g = par_info.firstChildElement("colour2g");
+    FireBack_num.colour2.y = colour2g.text().toFloat();
 
-	auto colour2b = par_info.firstChildElement("colour2b");
-	FireBack_num.colour2.z = colour2b.text().toFloat();
+    auto colour2b = par_info.firstChildElement("colour2b");
+    FireBack_num.colour2.z = colour2b.text().toFloat();
 
-	auto degree = par_info.firstChildElement("degree");
-	FireBack_num.degree = degree.text().toFloat();
+    auto degree = par_info.firstChildElement("degree");
+    FireBack_num.degree = degree.text().toFloat();
 
-	auto MaterialHandle = par_info.firstChildElement("MaterialHandle");
-	FireBack_num.MaterialHandle = MaterialHandle.text();
+    auto MaterialHandle = par_info.firstChildElement("MaterialHandle");
+    FireBack_num.MaterialHandle = MaterialHandle.text();
 
-	auto EmitterType = par_info.firstChildElement("EmitterType");
-	FireBack_num.EmitterType = EmitterType.text();
+    auto EmitterType = par_info.firstChildElement("EmitterType");
+    FireBack_num.EmitterType = EmitterType.text();
 
 	return FireBack_num;
 }
@@ -831,17 +831,17 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
         QString alien_name = og_node.attribute(SL_ALIEN_NAME);
         QString agent = og_node.attribute(SL_AGENT_TYPE);
         Alien *pAlien = new Alien(node_name, 
-                                  alien_name + ".mesh",
-                                  dt::PhysicsBodyComponent::BOX,
-                                  100, 
-                                  "sounds/" + alien_name + "_walk.wav",
-                                  "sounds/" + alien_name + "_jump.wav",
-                                  "sounds/" + alien_name + "_run.wav");
+            alien_name + ".mesh",
+            dt::PhysicsBodyComponent::BOX,
+            100, 
+            "sounds/" + alien_name + "_walk.wav",
+            "sounds/" + alien_name + "_jump.wav",
+            "sounds/" + alien_name + "_run.wav");
         pAlien->setMaxHealth(100);
         pAlien->setCurHealth(100);
         //pAlien->setEyePosition(Ogre::Vector3(0, 0.1, -0.5));
         pAlien->setEyePosition(Ogre::Vector3(0, 1.8, -0.5));
-		
+
         if (dt_parent)
             node = dt_parent->addChildNode(pAlien);
         else 
@@ -849,7 +849,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
         QDomElement pos = og_node.firstChildElement(SL_POS);
         QDomElement scale = og_node.firstChildElement(SL_SCALE);
-		
+
         QDomElement rot = og_node.firstChildElement(SL_ORI);
 
         auto physics = pAlien->findComponent<dt::PhysicsBodyComponent>("physics_body");
@@ -909,204 +909,210 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
 
         if (!primary.isNull()) {
             weapon_id = primary.attribute("content");
-			
-            QDomElement w_node = root.firstChildElement(weapon_id);
 
-            auto type = w_node.firstChildElement("type");
+            if (weapon_id != "") {
+                QDomElement w_node = root.firstChildElement(weapon_id);
 
-            if (type.text() == "Primary") {
-                uint16_t weapon_type = 0;
+                auto type = w_node.firstChildElement("type");
 
-                auto power = w_node.firstChildElement("power");
-                uint16_t power_num = power.text().toUInt();
+                if (type.text() == "Primary") {
+                    uint16_t weapon_type = 0;
 
-                auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
-                uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
+                    auto power = w_node.firstChildElement("power");
+                    uint16_t power_num = power.text().toUInt();
 
-                auto maximum_clip = w_node.firstChildElement("maximum_clip");
-                uint16_t maximum_clip_num = maximum_clip.text().toUInt();
+                    auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
+                    uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
 
-                auto is_one_shot = w_node.firstChildElement("is_one_shot");
-                bool is_one_shot_num;
-                if (is_one_shot.text() == "true")
-                    is_one_shot_num = 1;
-                else
-                    is_one_shot_num = 0;
+                    auto maximum_clip = w_node.firstChildElement("maximum_clip");
+                    uint16_t maximum_clip_num = maximum_clip.text().toUInt();
 
-                auto interval = w_node.firstChildElement("interval");
-                float interval_num = interval.text().toFloat();
+                    auto is_one_shot = w_node.firstChildElement("is_one_shot");
+                    bool is_one_shot_num;
+                    if (is_one_shot.text() == "true")
+                        is_one_shot_num = 1;
+                    else
+                        is_one_shot_num = 0;
 
-                auto reload_time = w_node.firstChildElement("reload_time");
-                float reload_time_num = reload_time.text().toFloat();
+                    auto interval = w_node.firstChildElement("interval");
+                    float interval_num = interval.text().toFloat();
 
-                auto range = w_node.firstChildElement("range");
-                float range_num = range.text().toFloat();
+                    auto reload_time = w_node.firstChildElement("reload_time");
+                    float reload_time_num = reload_time.text().toFloat();
 
-                auto mass = w_node.firstChildElement("mass");
-                float mass_num = mass.text().toFloat();
+                    auto range = w_node.firstChildElement("range");
+                    float range_num = range.text().toFloat();
 
-                ParticleInfo FireBack_num, Bomb_num;
+                    auto mass = w_node.firstChildElement("mass");
+                    float mass_num = mass.text().toFloat();
 
-				FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
+                    ParticleInfo FireBack_num, Bomb_num;
 
-				Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
+                    FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-				Weapon *pWeapon = new Weapon(weapon_id, 
-					node_name,
-					Weapon::WeaponType(weapon_type),
-					power_num,
-					maximum_clip_num,
-					maximum_clip_num, 
-					mass_num,
-					ammo_per_clip_num,
-					ammo_per_clip_num,
-					is_one_shot_num,
-					interval_num,
-					reload_time_num,
-					"sounds/" + weapon_id + "_fire.wav",
-					"sounds/" + weapon_id + "_reload_begin.wav",
-					"sounds/" + weapon_id + "_reload_done.wav",
-					range_num,
-					FireBack_num,
-					Bomb_num);
-				
-				pAlien->addChildNode(pWeapon);
-				
-                pAlien->addWeapon(pWeapon);
+                    Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
+
+                    Weapon *pWeapon = new Weapon(weapon_id, 
+                        node_name,
+                        Weapon::WeaponType(weapon_type),
+                        power_num,
+                        maximum_clip_num,
+                        maximum_clip_num, 
+                        mass_num,
+                        ammo_per_clip_num,
+                        ammo_per_clip_num,
+                        is_one_shot_num,
+                        interval_num,
+                        reload_time_num,
+                        "sounds/" + weapon_id + "_fire.wav",
+                        "sounds/" + weapon_id + "_reload_begin.wav",
+                        "sounds/" + weapon_id + "_reload_done.wav",
+                        range_num,
+                        FireBack_num,
+                        Bomb_num);
+
+                    pAlien->addChildNode(pWeapon);
+
+                    pAlien->addWeapon(pWeapon);
+                }
             }
         }
 
         if (!secondary.isNull()) {
-            weapon_id = secondary.attribute("content");;
+            weapon_id = secondary.attribute("content");
 
-            QDomElement w_node = root.firstChildElement(weapon_id);
+            if (weapon_id != "") {
+                QDomElement w_node = root.firstChildElement(weapon_id);
 
-            auto type = w_node.firstChildElement("type");
+                auto type = w_node.firstChildElement("type");
 
-            if (type.text() == "Secondary") {
-                uint16_t weapon_type = 1;
+                if (type.text() == "Secondary") {
+                    uint16_t weapon_type = 1;
 
-                auto power = w_node.firstChildElement("power");
-                uint16_t power_num = power.text().toUInt();
+                    auto power = w_node.firstChildElement("power");
+                    uint16_t power_num = power.text().toUInt();
 
-                auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
-                uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
+                    auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
+                    uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
 
-                auto maximum_clip = w_node.firstChildElement("maximum_clip");
-                uint16_t maximum_clip_num = maximum_clip.text().toUInt();
+                    auto maximum_clip = w_node.firstChildElement("maximum_clip");
+                    uint16_t maximum_clip_num = maximum_clip.text().toUInt();
 
-                auto is_one_shot = w_node.firstChildElement("is_one_shot");
-                bool is_one_shot_num;
-                if (is_one_shot.text() == "true")
-                    is_one_shot_num = 1;
-                else
-                    is_one_shot_num = 0;
+                    auto is_one_shot = w_node.firstChildElement("is_one_shot");
+                    bool is_one_shot_num;
+                    if (is_one_shot.text() == "true")
+                        is_one_shot_num = 1;
+                    else
+                        is_one_shot_num = 0;
 
-                auto interval = w_node.firstChildElement("interval");
-                float interval_num = interval.text().toFloat();
+                    auto interval = w_node.firstChildElement("interval");
+                    float interval_num = interval.text().toFloat();
 
-                auto reload_time = w_node.firstChildElement("reload_time");
-                float reload_time_num = reload_time.text().toFloat();
+                    auto reload_time = w_node.firstChildElement("reload_time");
+                    float reload_time_num = reload_time.text().toFloat();
 
-                auto range = w_node.firstChildElement("range");
-                float range_num = range.text().toFloat();
+                    auto range = w_node.firstChildElement("range");
+                    float range_num = range.text().toFloat();
 
-                auto mass = w_node.firstChildElement("mass");
-                float mass_num = mass.text().toFloat();
+                    auto mass = w_node.firstChildElement("mass");
+                    float mass_num = mass.text().toFloat();
 
-				ParticleInfo FireBack_num, Bomb_num;
+                    ParticleInfo FireBack_num, Bomb_num;
 
-				FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
+                    FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-				Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
+                    Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
-				Weapon *pWeapon = new Weapon(weapon_id, 
-					node_name,
-					Weapon::WeaponType(weapon_type),
-					power_num,
-					maximum_clip_num,
-					maximum_clip_num, 
-					mass_num,
-					ammo_per_clip_num,
-					ammo_per_clip_num,
-					is_one_shot_num,
-					interval_num,
-					reload_time_num,
-					"sounds/" + weapon_id + "_fire.wav",
-					"sounds/" + weapon_id + "_reload_begin.wav",
-					"sounds/" + weapon_id + "_reload_done.wav",
-					range_num,
-					FireBack_num,
-					Bomb_num);
+                    Weapon *pWeapon = new Weapon(weapon_id, 
+                        node_name,
+                        Weapon::WeaponType(weapon_type),
+                        power_num,
+                        maximum_clip_num,
+                        maximum_clip_num, 
+                        mass_num,
+                        ammo_per_clip_num,
+                        ammo_per_clip_num,
+                        is_one_shot_num,
+                        interval_num,
+                        reload_time_num,
+                        "sounds/" + weapon_id + "_fire.wav",
+                        "sounds/" + weapon_id + "_reload_begin.wav",
+                        "sounds/" + weapon_id + "_reload_done.wav",
+                        range_num,
+                        FireBack_num,
+                        Bomb_num);
 
-                pAlien->addWeapon(pWeapon);
+                    pAlien->addWeapon(pWeapon);
+                }
             }
         }
 
         if (!throwable.isNull()) {
             weapon_id = throwable.attribute("content");
 
-            QDomElement w_node = root.firstChildElement(weapon_id);
+            if (weapon_id != "") {
+                QDomElement w_node = root.firstChildElement(weapon_id);
 
-            auto type = w_node.firstChildElement("type");
+                auto type = w_node.firstChildElement("type");
 
-            if (type.text() == "Throwable") {
-                uint16_t weapon_type = 1;
+                if (type.text() == "Throwable") {
+                    uint16_t weapon_type = 1;
 
-                auto power = w_node.firstChildElement("power");
-                uint16_t power_num = power.text().toUInt();
+                    auto power = w_node.firstChildElement("power");
+                    uint16_t power_num = power.text().toUInt();
 
-                auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
-                uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
+                    auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
+                    uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
 
-                auto maximum_clip = w_node.firstChildElement("maximum_clip");
-                uint16_t maximum_clip_num = maximum_clip.text().toUInt();
+                    auto maximum_clip = w_node.firstChildElement("maximum_clip");
+                    uint16_t maximum_clip_num = maximum_clip.text().toUInt();
 
-                auto is_one_shot = w_node.firstChildElement("is_one_shot");
-                bool is_one_shot_num;
-                if (is_one_shot.text() == "true")
-                    is_one_shot_num = 1;
-                else
-                    is_one_shot_num = 0;
+                    auto is_one_shot = w_node.firstChildElement("is_one_shot");
+                    bool is_one_shot_num;
+                    if (is_one_shot.text() == "true")
+                        is_one_shot_num = 1;
+                    else
+                        is_one_shot_num = 0;
 
-                auto interval = w_node.firstChildElement("interval");
-                float interval_num = interval.text().toFloat();
+                    auto interval = w_node.firstChildElement("interval");
+                    float interval_num = interval.text().toFloat();
 
-                auto reload_time = w_node.firstChildElement("reload_time");
-                float reload_time_num = reload_time.text().toFloat();
+                    auto reload_time = w_node.firstChildElement("reload_time");
+                    float reload_time_num = reload_time.text().toFloat();
 
-                auto range = w_node.firstChildElement("range");
-                float range_num = range.text().toFloat();
+                    auto range = w_node.firstChildElement("range");
+                    float range_num = range.text().toFloat();
 
-                auto mass = w_node.firstChildElement("mass");
-                float mass_num = mass.text().toFloat();
+                    auto mass = w_node.firstChildElement("mass");
+                    float mass_num = mass.text().toFloat();
 
-                ParticleInfo FireBack_num, Bomb_num;
+                    ParticleInfo FireBack_num, Bomb_num;
 
-				FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
+                    FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-				Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
+                    Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
-                Weapon *pWeapon = new Weapon(weapon_id, 
-                                     node_name,
-                                     Weapon::WeaponType(weapon_type),
-                                     power_num,
-                                     maximum_clip_num,
-                                     maximum_clip_num, 
-                                     mass_num,
-                                     ammo_per_clip_num,
-                                     ammo_per_clip_num,
-                                     is_one_shot_num,
-                                     interval_num,
-									 reload_time_num,
-                                     "sounds/" + weapon_id + "_fire.wav",
-                                     "sounds/" + weapon_id + "_reload_begin.wav",
-                                     "sounds/" + weapon_id + "_reload_done.wav",
-                                     range_num,
-									 FireBack_num,
-									 Bomb_num);
+                    Weapon *pWeapon = new Weapon(weapon_id, 
+                        node_name,
+                        Weapon::WeaponType(weapon_type),
+                        power_num,
+                        maximum_clip_num,
+                        maximum_clip_num, 
+                        mass_num,
+                        ammo_per_clip_num,
+                        ammo_per_clip_num,
+                        is_one_shot_num,
+                        interval_num,
+                        reload_time_num,
+                        "sounds/" + weapon_id + "_fire.wav",
+                        "sounds/" + weapon_id + "_reload_begin.wav",
+                        "sounds/" + weapon_id + "_reload_done.wav",
+                        range_num,
+                        FireBack_num,
+                        Bomb_num);
 
-                pAlien->addWeapon(pWeapon);
+                    pAlien->addWeapon(pWeapon);
+                }
             }
         }
     }
@@ -1124,11 +1130,20 @@ Node::NodeSP SceneLoader::__loadAmmo(const QDomElement& og_node, Node::NodeSP dt
         QString ammo_name = og_node.attribute(SL_AMMO_NAME);
         QString num_clip = og_node.attribute(SL_AMMO_NUM_CLIP);
         QString weapon_type = og_node.attribute(SL_AMMO_TYPE);
+        Weapon::WeaponType weapon_type_id;
+
+        if (weapon_type == "Primary") {
+            weapon_type_id = Weapon::PRIMARY;
+        } else if (weapon_type == "Secondary") {
+            weapon_type_id = Weapon::SECONDARY;
+        } else if (weapon_type == "Throwable") {
+            weapon_type_id = Weapon::THROWABLE;
+        }
 
         Ammo *pAmmo = new Ammo(ammo_name, 
             node_name,
             num_clip.toInt(),
-            Weapon::WeaponType(weapon_type.toInt()));
+            weapon_type_id);
 
         if (dt_parent)
             node = dt_parent->addChildNode(pAmmo);
@@ -1166,12 +1181,12 @@ Node::NodeSP SceneLoader::__loadAmmo(const QDomElement& og_node, Node::NodeSP dt
         node->setPosition(pos.attribute(SL_X).toFloat(), pos.attribute(SL_Y).toFloat(),
             pos.attribute(SL_Z).toFloat());
         node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-        /*	node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
-        rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
+        node->setRotation(Ogre::Quaternion(rot.attribute(SL_OW).toFloat(),
+            rot.attribute(SL_OX).toFloat(), rot.attribute(SL_OY).toFloat(), rot.attribute(SL_OZ).toFloat()));
         node->setScale(Ogre::Vector3(scale.attribute(SL_X).toFloat(), scale.attribute(SL_Y).toFloat(),
-        scale.attribute(SL_Z).toFloat()));		*/
-        //node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-        //node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();	
+            scale.attribute(SL_Z).toFloat()));		
+        node->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
+        node->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();		
 
     }
     return node;
@@ -1393,10 +1408,10 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
         if (!doc.setContent(&file))
             return nullptr;
-		
+
         QDomElement root = doc.documentElement();
         QDomElement w_node = root.firstChildElement(weapon_id);
-		
+
         auto type = w_node.firstChildElement("type");
         uint16_t weapon_type;
         if (type.text() == "Primary")
@@ -1408,10 +1423,10 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
         auto power = w_node.firstChildElement("power");
         uint16_t power_num = power.text().toUInt();
-		
+
         auto ammo_per_clip = w_node.firstChildElement("ammo_per_clip");
         uint16_t ammo_per_clip_num = ammo_per_clip.text().toUInt();		
-		
+
         auto maximum_clip = w_node.firstChildElement("maximum_clip");
         uint16_t maximum_clip_num = maximum_clip.text().toUInt();
 
@@ -1436,29 +1451,29 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
         ParticleInfo FireBack_num, Bomb_num;
 
-		FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
+        FireBack_num = load_ParticleInfo(w_node.firstChildElement("FireBack"));
 
-		Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
+        Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
         Weapon *pWeapon = new Weapon(weapon_id, 
-                                     node_name,
-                                     Weapon::WeaponType(weapon_type),
-                                     power_num,
-                                     maximum_clip_num,
-                                     maximum_clip_num, 
-                                     mass_num,
-                                     ammo_per_clip_num,
-                                     ammo_per_clip_num,
-                                     is_one_shot_num,
-                                     interval_num,
-									 reload_time_num,
-                                     "sounds/" + weapon_id + "_fire.wav",
-                                     "sounds/" + weapon_id + "_reload_begin.wav",
-                                     "sounds/" + weapon_id + "_reload_done.wav",
-                                     range_num,
-									 FireBack_num,
-									 Bomb_num);
-										  								
+            node_name,
+            Weapon::WeaponType(weapon_type),
+            power_num,
+            maximum_clip_num,
+            maximum_clip_num, 
+            mass_num,
+            ammo_per_clip_num,
+            ammo_per_clip_num,
+            is_one_shot_num,
+            interval_num,
+            reload_time_num,
+            "sounds/" + weapon_id + "_fire.wav",
+            "sounds/" + weapon_id + "_reload_begin.wav",
+            "sounds/" + weapon_id + "_reload_done.wav",
+            range_num,
+            FireBack_num,
+            Bomb_num);
+
         if (dt_parent)
             node = dt_parent->addChildNode(pWeapon);
         else  
@@ -1484,36 +1499,36 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
 
 
 FlameInfo load_FlameInfo(const QDomElement& frame_info) {
-	FlameInfo ans;
+    FlameInfo ans;
 
-	auto mName = frame_info.firstChildElement("mName");
-	ans.mName = mName.text();
+    auto mName = frame_info.firstChildElement("mName");
+    ans.mName = mName.text();
 
-	auto mPosition = frame_info.firstChildElement("mPosition");
-		auto x = mPosition.firstChildElement("x");
-		float x_num = x.text().toFloat();
+    auto mPosition = frame_info.firstChildElement("mPosition");
+    auto x = mPosition.firstChildElement("x");
+    float x_num = x.text().toFloat();
 
-		auto y = mPosition.firstChildElement("y");
-		float y_num = y.text().toFloat();
+    auto y = mPosition.firstChildElement("y");
+    float y_num = y.text().toFloat();
 
-		auto z = mPosition.firstChildElement("z");
-		float z_num = z.text().toFloat();
-	ans.mPosition = Ogre::Vector3(x_num, y_num, z_num);
+    auto z = mPosition.firstChildElement("z");
+    float z_num = z.text().toFloat();
+    ans.mPosition = Ogre::Vector3(x_num, y_num, z_num);
 
-	auto mDirection = frame_info.firstChildElement("mDirection");
-		x = mDirection.firstChildElement("x");
-		x_num = x.text().toFloat();
+    auto mDirection = frame_info.firstChildElement("mDirection");
+    x = mDirection.firstChildElement("x");
+    x_num = x.text().toFloat();
 
-		y = mDirection.firstChildElement("y");
-		y_num = y.text().toFloat();
+    y = mDirection.firstChildElement("y");
+    y_num = y.text().toFloat();
 
-		z = mDirection.firstChildElement("z");
-		z_num = z.text().toFloat();
-	ans.mDirection = Ogre::Vector3(x_num, y_num, z_num);
+    z = mDirection.firstChildElement("z");
+    z_num = z.text().toFloat();
+    ans.mDirection = Ogre::Vector3(x_num, y_num, z_num);
 
-	auto mParticle = frame_info.firstChildElement("mParticle");
-	ans.mParticle = load_ParticleInfo(mParticle);
-	return ans;
+    auto mParticle = frame_info.firstChildElement("mParticle");
+    ans.mParticle = load_ParticleInfo(mParticle);
+    return ans;
 }
 
 Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::NodeSP dt_parent) 
@@ -1523,8 +1538,8 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
     {
         QString node_name = og_node.attribute(SL_NAME);
         QString Spaceship_ID = og_node.attribute(SL_SPACESHIP_ID);
-       
-	    QFile file("SpaceshipAttribute.xml");
+
+        QFile file("SpaceshipAttribute.xml");
         QDomDocument doc;
         if ( !file.open(QIODevice::ReadOnly) )
         {
@@ -1534,91 +1549,91 @@ Node::NodeSP SceneLoader::__loadSpaceship(const QDomElement& og_node, Node::Node
 
         if (!doc.setContent(&file))
             return nullptr;
-		
+
         QDomElement root = doc.documentElement();
         QDomElement w_node = root.firstChildElement(Spaceship_ID);
-		
 
-		auto mesh_handle = w_node.firstChildElement("mesh_handle").text();
 
-		auto mass = w_node.firstChildElement("mass");
-		float mass_num = mass.text().toFloat();
+        auto mesh_handle = w_node.firstChildElement("mesh_handle").text();
 
-		auto attack_value = w_node.firstChildElement("attack_value");
-		uint16_t attack_value_num = attack_value.text().toInt();
+        auto mass = w_node.firstChildElement("mass");
+        float mass_num = mass.text().toFloat();
 
-		auto attack_range = w_node.firstChildElement("attack_range");
-		float attack_range_num = attack_range.text().toFloat();
+        auto attack_value = w_node.firstChildElement("attack_value");
+        uint16_t attack_value_num = attack_value.text().toInt();
 
-		auto attack_interval = w_node.firstChildElement("attack_interval");
-		float attack_interval_num = attack_interval.text().toFloat();
+        auto attack_range = w_node.firstChildElement("attack_range");
+        float attack_range_num = attack_range.text().toFloat();
 
-		auto attack_sound_handle = w_node.firstChildElement("attack_sound_handle").text();
+        auto attack_interval = w_node.firstChildElement("attack_interval");
+        float attack_interval_num = attack_interval.text().toFloat();
 
-		auto flying_sound_handle = w_node.firstChildElement("flying_sound_handle").text();
+        auto attack_sound_handle = w_node.firstChildElement("attack_sound_handle").text();
 
-		auto rise_sound_handle = w_node.firstChildElement("rise_sound_handle").text();
+        auto flying_sound_handle = w_node.firstChildElement("flying_sound_handle").text();
 
-		auto fall_sound_handle = w_node.firstChildElement("fall_sound_handle").text();
+        auto rise_sound_handle = w_node.firstChildElement("rise_sound_handle").text();
 
-		auto max_speed = w_node.firstChildElement("max_speed");
-		float max_speed_num = max_speed.text().toFloat();
+        auto fall_sound_handle = w_node.firstChildElement("fall_sound_handle").text();
 
-		auto speed_per_frame = w_node.firstChildElement("speed_per_frame");
-		float speed_per_frame_num = speed_per_frame.text().toFloat();
+        auto max_speed = w_node.firstChildElement("max_speed");
+        float max_speed_num = max_speed.text().toFloat();
 
-		auto max_lean_angle = w_node.firstChildElement("max_lean_angle");
-		float max_lean_angle_num = max_lean_angle.text().toFloat();
+        auto speed_per_frame = w_node.firstChildElement("speed_per_frame");
+        float speed_per_frame_num = speed_per_frame.text().toFloat();
 
-		auto angle_per_frame = w_node.firstChildElement("angle_per_frame");
-		float angle_per_frame_num = angle_per_frame.text().toFloat();
+        auto max_lean_angle = w_node.firstChildElement("max_lean_angle");
+        float max_lean_angle_num = max_lean_angle.text().toFloat();
 
-		auto parallel_move_speed = w_node.firstChildElement("parallel_move_speed");
-		float parallel_move_speed_num = parallel_move_speed.text().toFloat();
+        auto angle_per_frame = w_node.firstChildElement("angle_per_frame");
+        float angle_per_frame_num = angle_per_frame.text().toFloat();
 
-		auto up_down_speed = w_node.firstChildElement("up_down_speed");
-		float up_down_speed_num = up_down_speed.text().toFloat();
+        auto parallel_move_speed = w_node.firstChildElement("parallel_move_speed");
+        float parallel_move_speed_num = parallel_move_speed.text().toFloat();
 
-		auto ammo_fire_back = w_node.firstChildElement("ammo_fire_back");
-		ParticleInfo ammo_fire_back_num = load_ParticleInfo(ammo_fire_back);
+        auto up_down_speed = w_node.firstChildElement("up_down_speed");
+        float up_down_speed_num = up_down_speed.text().toFloat();
 
-		auto ammo_bomb = w_node.firstChildElement("ammo_bomb");
-		ParticleInfo ammo_bomb_num = load_ParticleInfo(ammo_bomb);
+        auto ammo_fire_back = w_node.firstChildElement("ammo_fire_back");
+        ParticleInfo ammo_fire_back_num = load_ParticleInfo(ammo_fire_back);
 
-		auto flame_effect0 = w_node.firstChildElement("flame_effect0");
-		auto flame_effect0_num = load_FlameInfo(flame_effect0);
+        auto ammo_bomb = w_node.firstChildElement("ammo_bomb");
+        ParticleInfo ammo_bomb_num = load_ParticleInfo(ammo_bomb);
 
-		auto flame_effect1 = w_node.firstChildElement("flame_effect1");
-		auto flame_effect1_num = load_FlameInfo(flame_effect1); 
+        auto flame_effect0 = w_node.firstChildElement("flame_effect0");
+        auto flame_effect0_num = load_FlameInfo(flame_effect0);
 
-		auto bullet_handle = w_node.firstChildElement("bullet_handle").text();
+        auto flame_effect1 = w_node.firstChildElement("flame_effect1");
+        auto flame_effect1_num = load_FlameInfo(flame_effect1); 
 
-		std::vector<FlameInfo> temp;
+        auto bullet_handle = w_node.firstChildElement("bullet_handle").text();
 
-		temp.push_back(flame_effect0_num);
-		temp.push_back(flame_effect1_num);
+        std::vector<FlameInfo> temp;
 
-		Spaceship *pSpaceship = new Spaceship(node_name, 
-			mesh_handle, 
-			dt::PhysicsBodyComponent::BOX, 
-			mass_num,
-			attack_value_num,
-			attack_range_num,
-			attack_interval_num,
-			attack_sound_handle,
-			flying_sound_handle,
-			rise_sound_handle,
-			fall_sound_handle,
-			max_speed_num,
-			speed_per_frame_num,
-			max_lean_angle_num,
-			angle_per_frame_num,
-			parallel_move_speed_num, 
-			up_down_speed_num,
-		    ammo_fire_back_num,
-			ammo_bomb_num,
-			temp,
-			bullet_handle);
+        temp.push_back(flame_effect0_num);
+        temp.push_back(flame_effect1_num);
+
+        Spaceship *pSpaceship = new Spaceship(node_name, 
+            mesh_handle, 
+            dt::PhysicsBodyComponent::BOX, 
+            mass_num,
+            attack_value_num,
+            attack_range_num,
+            attack_interval_num,
+            attack_sound_handle,
+            flying_sound_handle,
+            rise_sound_handle,
+            fall_sound_handle,
+            max_speed_num,
+            speed_per_frame_num,
+            max_lean_angle_num,
+            angle_per_frame_num,
+            parallel_move_speed_num, 
+            up_down_speed_num,
+            ammo_fire_back_num,
+            ammo_bomb_num,
+            temp,
+            bullet_handle);
         //256.0f,
         //256.0f / 8192,
         //32.0f,

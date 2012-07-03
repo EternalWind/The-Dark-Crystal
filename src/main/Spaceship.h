@@ -38,10 +38,15 @@ public:
 	  * @param flying_sound_handle 飞船飞行声音句柄
 	  * @param rise_sound_handle 飞船上升声音句柄
 	  * @param fall_sound_handle 飞船下降声音句柄
-	  * @param max_speed 飞船最大的直线速度 (注意用2-Base以避免精度损失)
+	  * @param max_speed 飞船最大的直线速度 
 	  * @param speed_per_frame 飞船加速时每一帧的速度的增量(加速度)
+      * @param max_lean_angle 飞船平移时最大倾斜角
+      * @param angle_per_frame 飞船平移时每一帧角度的增量
 	  * @param parallel_move_speed 飞船平移时的速度
 	  * @param up_down_speed 飞船上升下降的速度
+      * @param ammo_fire_back 飞船攻击效果
+      * @param ammo_bomb 飞船攻击爆炸效果
+      * @param bullet_handle 飞船子弹句柄
 	  */
 	Spaceship(const QString node_name, 
 		  const QString mesh_handle, 
@@ -120,6 +125,8 @@ protected slots:
 	void __onJump(bool is_pressed);
 
 	void __onGetOffVehicle();
+
+    void __onAttack(bool is_pressed); 
 
 protected:
 	QString mFlyingSoundHandle;                    //!< 飞船飞行声音句柄
