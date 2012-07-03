@@ -3,7 +3,7 @@
 #include "Alien.h"
 #include "BattleState.h"
 #include "EntityManager.h"
-
+#include "ClosestNotMeNotDynamicObjectConvexResultCallback.h"
 #include "ConfigurationManager.h"
 #include "AttackDetectComponent.h"
 
@@ -11,6 +11,8 @@
 #include <Audio/SoundComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
 #include <Utils/Random.hpp>
+
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 
 const QString Monster::ATTACK_SOUND_COMPONENT = "attack_sound";
 const QString Monster::INTERACTOR_COMPONENT = "interator";
@@ -225,4 +227,33 @@ void Monster::__onGetOffVehicle() {
 }
 
 void Monster::__onReload() {
+}
+
+bool Monster::__canMoveTo(const btTransform& position, btTransform& closest_position) {
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    ClosestNotMeNotDynamicObjectConvexResultCallback callback(physics_body->getRigidBody());
+    
+    btTransform target = position;
+    btVector3 origin = target.getOrigin();
+    origin.setY(origin.y() + 0.01f);
+    target.setOrigin(origin);
+
+    this->getScene()->getPhysicsWorld()->getBulletWorld()->convexSweepTest(dynamic_cast<btConvexShape*>(physics_body->getRigidBody()->getCollisionShape()), 
+        physics_body->getRigidBody()->getWorldTransform(), target, callback);
+
+    btRigidBody* rigid_body = dynamic_cast<btRigidBody*>(callback.m_hitCollisionObject);
+
+    if (callback.hasHit() && rigid_body != nullptr) {
+        dt::PhysicsBodyComponent* other_physics_body = static_cast<dt::PhysicsBodyComponent*>(rigid_body->getUserPointer());
+
+        if (other_physics_body != nullptr) {
+            Alien* alien = dynamic_cast<Alien*>(other_physics_body->getNode());
+
+            if (alien != nullptr) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }

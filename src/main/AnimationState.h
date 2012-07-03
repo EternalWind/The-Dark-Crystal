@@ -1,10 +1,11 @@
 #ifndef THE_DARK_CRYSTAL_ANIMATIONSTATE
 #define THE_DARK_CRYSTAL_ANIMATIONSTATE
 
+#include "Animation.h"
+
 #include <QString>
 #include <Scene/State.hpp>
 #include <Scene/StateManager.hpp>
-#include "Animation.h"
 #include <Input/InputManager.hpp>
 
 /**

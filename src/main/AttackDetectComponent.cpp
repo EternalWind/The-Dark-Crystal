@@ -1,5 +1,6 @@
 #include "AttackDetectComponent.h"
 #include "Entity.h"
+#include "ClosestNotMeNotDynamicObjectConvexResultCallback.h"
 
 #include <Scene/Scene.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
@@ -10,36 +11,36 @@
 
 
 // 没想到YD这个类这么给力啊！！！ >_<
-class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
-public:
-    ClosestNotMeNotDynamicObjectConvexResultCallback(btCollisionObject* me) 
-        : ClosestConvexResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0)),
-          mMe(me) {}
-
-    btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace) {
-        if (convexResult.m_hitCollisionObject == mMe) {
-            // 卧槽！这不是我自己么！
-            return btScalar(1.0);
-        }
-
-        if (!convexResult.m_hitCollisionObject->isStaticOrKinematicObject()) {
-            // 神马？动态物体？！不用管，T飞它！
-            return btScalar(1.0);
-        }
-
-		// 如果是Ghost的话，比如说那个神马TriggerAreaComponent的话就直接把他无视掉啦！！！！
-		// 话说为什么过滤会返回1.0啊！！！尼玛！！！
-		btGhostObject* ghost = dynamic_cast<btGhostObject*>(convexResult.m_hitCollisionObject);
-		if (ghost != nullptr) {
-			return btScalar(1.0);
-		}
-
-        return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
-    }
-
-private:
-    btCollisionObject* mMe;
-};
+//class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
+//public:
+//    ClosestNotMeNotDynamicObjectConvexResultCallback(btCollisionObject* me) 
+//        : ClosestConvexResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0)),
+//          mMe(me) {}
+//
+//    btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace) {
+//        if (convexResult.m_hitCollisionObject == mMe) {
+//            // 卧槽！这不是我自己么！
+//            return btScalar(1.0);
+//        }
+//
+//        if (!convexResult.m_hitCollisionObject->isStaticOrKinematicObject()) {
+//            // 神马？动态物体？！不用管，T飞它！
+//            return btScalar(1.0);
+//        }
+//
+//		// 如果是Ghost的话，比如说那个神马TriggerAreaComponent的话就直接把他无视掉啦！！！！
+//		// 话说为什么过滤会返回1.0啊！！！尼玛！！！
+//		btGhostObject* ghost = dynamic_cast<btGhostObject*>(convexResult.m_hitCollisionObject);
+//		if (ghost != nullptr) {
+//			return btScalar(1.0);
+//		}
+//
+//        return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
+//    }
+//
+//private:
+//    btCollisionObject* mMe;
+//};
 
 AttackDetectComponent::AttackDetectComponent(const QString& name)
 	: dt::InteractionComponent(name) {}
