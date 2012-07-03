@@ -8,6 +8,7 @@ class Character : public Entity {
     Q_OBJECT
 
 public:
+
     /**
       * 构造函数。
       * @param node_name Node对象的名字
@@ -60,7 +61,7 @@ protected:
       * @param closest_position 离原目标位置最近的位置，仅在无法移动到目标位置的时候有效
       * @returns 是否能移动到目标位置
       */
-    bool __canMoveTo(const btTransform& position, btTransform& closest_position);
+    virtual bool __canMoveTo(const btTransform& position, btTransform& closest_position);
 
 protected:
     QString mWalkSoundHandle;                       //!< 行走音效句柄。

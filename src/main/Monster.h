@@ -109,6 +109,15 @@ protected slots:
 
 	void __onHit(dt::PhysicsBodyComponent* hit);
 
+protected:
+    /**
+      * 检查能否移动到一个给定的位置，若不能，则输出一个该方向上能移动到的一个离原目标位置最近的位置。
+      * @param position 要检查的目标位置
+      * @param closest_position 离原目标位置最近的位置，仅在无法移动到目标位置的时候有效
+      * @returns 是否能移动到目标位置
+      */
+    bool __canMoveTo(const btTransform& position, btTransform& closest_position);
+
 signals:
     void sIsDead(Character* monster);
 

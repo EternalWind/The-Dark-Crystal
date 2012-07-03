@@ -1,48 +1,15 @@
 #include "Character.h"
 #include "Agent.h"
 #include "ConfigurationManager.h"
+#include "ClosestNotMeNotDynamicObjectConvexResultCallback.h"
 
 #include <Scene/Scene.hpp>
-
-#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 #include <cstdio>
 
 const QString Character::WALK_SOUND_COMPONENT = "walk_sound";
 const QString Character::JUMP_SOUND_COMPONENT = "jump_sound";
 const QString Character::RUN_SOUND_COMPONENT = "run_sound";
-
-// 我也来玩玩长得恶心的命名方式。 XD
-class ClosestNotMeNotDynamicObjectConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
-public:
-    ClosestNotMeNotDynamicObjectConvexResultCallback(btCollisionObject* me) 
-        : ClosestConvexResultCallback(btVector3(0.0, 0.0, 0.0), btVector3(0.0, 0.0, 0.0)),
-          mMe(me) {}
-
-
-    btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace) {
-        btGhostObject* ghost = dynamic_cast<btGhostObject*>(convexResult.m_hitCollisionObject);
-
-        if (ghost != nullptr) {
-            return btScalar(1.0);
-        }
-        
-        if (convexResult.m_hitCollisionObject == mMe) {
-            // 卧槽！这不是我自己么！
-            return btScalar(1.0);
-        }
-
-        if (!convexResult.m_hitCollisionObject->isStaticOrKinematicObject()) {
-            // 神马？动态物体？！不用管，T飞它！
-            return btScalar(1.0);
-        }
-
-        return ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
-    }
-
-private:
-    btCollisionObject* mMe;
-};
 
 Character::Character(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
     const btScalar mass, const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle, const float jump_speed)

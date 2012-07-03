@@ -3,7 +3,7 @@
 #include "Alien.h"
 #include "BattleState.h"
 #include "EntityManager.h"
-
+#include "ClosestNotMeNotDynamicObjectConvexResultCallback.h"
 #include "ConfigurationManager.h"
 #include "AttackDetectComponent.h"
 
@@ -11,6 +11,8 @@
 #include <Audio/SoundComponent.hpp>
 #include <Logic/RaycastComponent.hpp>
 #include <Utils/Random.hpp>
+
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 
 const QString Monster::ATTACK_SOUND_COMPONENT = "attack_sound";
 const QString Monster::INTERACTOR_COMPONENT = "interator";
@@ -47,13 +49,9 @@ void Monster::setAttackInterval(float attack_interval) {
 
 void Monster::onKilled() {
     if (!mHasKilled) {
-		std::cout << "Die!!!!!!!!!!!!!Name = " << dt::Utils::toStdString(this->getName()) << std::endl;
         mHasKilled = true;
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
-        Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());
-         
-        emit sIsDead(this);
-        disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));        
+        Agent* agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT).get());       
 
         if (agent != nullptr) {
             agent->disable();
@@ -94,7 +92,10 @@ void Monster::onInitialize() {
 	SoundSetting sound_setting = conf_mgr->getSoundSetting();
 
 	// 邪恶的硬编码=_=
-	mAttackSoundHandle = "monster_attack.wav";
+	mAttackSoundHandle = "sounds/monster_attack.wav";
+    mJumpSoundHandle = "sounds/Monster_jump.wav";
+    mRunSoundHandle = "sounds/Monster_run.wav";
+    mWalkSoundHandle = "sounds/Monster_walk.wav";
 
 	auto attack_sound = this->addComponent<dt::SoundComponent>(new SoundComponent(mAttackSoundHandle, ATTACK_SOUND_COMPONENT));
 
@@ -117,9 +118,9 @@ void Monster::onInitialize() {
 
 	// 攻击效果
 	mFlashNode = this->addChildNode(new dt::Node(this->getName() + "_flash_node"));
-	mFlashNode->addComponent(new dt::MeshComponent("lightning.mesh", "", "FlashMesh"));
+	mFlashNode->addComponent(new dt::MeshComponent("real_lightning.mesh", "", "FlashMesh"));
 	mFlashNode->setScale(5.0);
-	mFlashNode->setPosition(mFlashNode->getPosition() + Ogre::Vector3(0, 0, -7));	
+	mFlashNode->setPosition(mFlashNode->getPosition() + Ogre::Vector3(0, 0, -8));	
 	mFlashNode->disable();
 
 	// 初始化随机值
@@ -127,6 +128,9 @@ void Monster::onInitialize() {
 }
 
 void Monster::onDeinitialize() {
+    emit sIsDead(this);
+    disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*))); 
+
     Character::onDeinitialize();
 }
 
@@ -225,4 +229,33 @@ void Monster::__onGetOffVehicle() {
 }
 
 void Monster::__onReload() {
+}
+
+bool Monster::__canMoveTo(const btTransform& position, btTransform& closest_position) {
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    ClosestNotMeNotDynamicObjectConvexResultCallback callback(physics_body->getRigidBody());
+    
+    btTransform target = position;
+    btVector3 origin = target.getOrigin();
+    origin.setY(origin.y() + 0.01f);
+    target.setOrigin(origin);
+
+    this->getScene()->getPhysicsWorld()->getBulletWorld()->convexSweepTest(dynamic_cast<btConvexShape*>(physics_body->getRigidBody()->getCollisionShape()), 
+        physics_body->getRigidBody()->getWorldTransform(), target, callback);
+
+    btRigidBody* rigid_body = dynamic_cast<btRigidBody*>(callback.m_hitCollisionObject);
+
+    if (callback.hasHit() && rigid_body != nullptr) {
+        dt::PhysicsBodyComponent* other_physics_body = static_cast<dt::PhysicsBodyComponent*>(rigid_body->getUserPointer());
+
+        if (other_physics_body != nullptr) {
+            Alien* alien = dynamic_cast<Alien*>(other_physics_body->getNode());
+
+            if (alien != nullptr) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
