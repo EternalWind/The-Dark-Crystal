@@ -34,7 +34,7 @@ void ParticlesEffect::onInitialize() {
     p_sys->getOgreParticleSystem()->setDefaultDimensions(mPartParm.DefaultDimensionsWidth, mPartParm.DefaultDimensionsHeight);
 
 	//Á£×Ó·¢ÉäÆ÷
-    Ogre::ParticleEmitter* e1 = p_sys->addEmitter("emit1", "Point");
+	Ogre::ParticleEmitter* e1 = p_sys->addEmitter("emit1", mPartParm.EmitterType);
     e1->setDirection(Ogre::Vector3(5, 0, 0));
     e1->setAngle(Ogre::Degree(360));
     e1->setColour(mPartParm.EmitterColorStart, mPartParm.EmitterColorEnd);
