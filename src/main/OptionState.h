@@ -13,6 +13,7 @@
 #include <Gui/GuiImageBox.hpp>
 #include <Gui/GuiCheckBox.hpp>
 #include <Gui/GuiScrollBar.hpp>
+#include <Audio/SoundComponent.hpp>
 
 /**
   * 游戏设置菜单
@@ -80,6 +81,7 @@ private:
     SoundSetting mSoundSettings;                //!< 记录当前的音量设定
     ScreenSetting mScreenSettings;              //!< 记录当前的显示设定
     QASetting mQASettings;                      //!< 记录当前的QA设定
+	dt::SoundComponent* mButtonClickSound;      //!< 按键音效
 };
 
 #endif
