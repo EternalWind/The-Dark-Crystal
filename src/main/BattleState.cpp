@@ -151,7 +151,7 @@ void BattleState::onInitialize() {
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
-    EntityManager::get()->afterLoadScene(scene.get());
+    EntityManager::get()->afterLoadScene(scene.get(), mStage);
 
     connect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
                                this, SLOT(__onKeyPressed(dt::InputManager::InputCode, const OIS::EventArg&)));
