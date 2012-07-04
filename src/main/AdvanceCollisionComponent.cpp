@@ -41,7 +41,7 @@ void AdvanceCollisionComponent::onCheck(const Ogre::Vector3& start, const Ogre::
 	p_sys->setParticleCountLimit(mFireBack.ParticleCountLimit);
 	p_sys->getOgreParticleSystem()->setDefaultDimensions(mFireBack.DefaultDimensionsWidth, mFireBack.DefaultDimensionsHeight);
 
-    Ogre::ParticleEmitter* e = p_sys->addEmitter("emit1", "Point");
+    Ogre::ParticleEmitter* e = p_sys->addEmitter("emit1", mFireBack.EmitterType);
     e->setAngle(Ogre::Degree(mFireBack.degree));
 	e->setColour(mFireBack.EmitterColorStart, mFireBack.EmitterColorEnd);
 	e->setEmissionRate(mFireBack.EmissionRate);
