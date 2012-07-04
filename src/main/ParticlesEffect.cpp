@@ -29,7 +29,7 @@ void ParticlesEffect::onInitialize() {
 	// create the particle system
 	
     auto p_sys = this->addComponent(new dt::ParticleSystemComponent(this->getName() + QUuid::createUuid().toString() + "_p_sys"));
-    p_sys->setMaterialName(mMaterialHandle);
+    p_sys->setMaterialName(mPartParm.MaterialHandle);
 	p_sys->setParticleCountLimit(mPartParm.ParticleCountLimit);
     p_sys->getOgreParticleSystem()->setDefaultDimensions(mPartParm.DefaultDimensionsWidth, mPartParm.DefaultDimensionsHeight);
 
