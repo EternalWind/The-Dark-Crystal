@@ -30,9 +30,9 @@ public:
 
 	void onInitialize();
 
-	QString getName() const;
+	QString getPropName() const;
 
-	void setName(QString name);
+	void setPropName(QString name);
 
 	void setPropType(PropType prop_type);
 	
