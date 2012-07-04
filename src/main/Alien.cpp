@@ -318,7 +318,6 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
                     this->setParent(vehicle);
                     vehicle->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->setMass(vehicle->getMass());
                     vehicle->resetPhysicsBody();
-
                 }
             }
         }
