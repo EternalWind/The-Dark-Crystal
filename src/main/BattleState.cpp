@@ -52,10 +52,8 @@ void BattleState::onInitialize() {
 
     EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-    this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
+    //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
-
-    //mCrystalBarPosition = 0.1f;
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
 
