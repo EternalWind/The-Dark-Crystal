@@ -182,11 +182,14 @@ void Alien::onInitialize() {
 
 }
 
-void Alien::onDeInitialize() {
+void Alien::onDeinitialize() {
     State* state = this->getState();
 
     disconnect(this, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), state, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
     disconnect(this, SIGNAL(sHealthChanged(uint16_t)), state, SLOT(__onHealthChanged(uint16_t)));
+
+    //EntityManager::get()->__isAlienDead(this);
+    emit sIsDead(this);
 
     Character::onDeinitialize();
 }

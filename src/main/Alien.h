@@ -56,7 +56,7 @@ public:
 
     void onInitialize();
 
-    void onDeInitialize();
+    void onDeinitialize();
 
     void onUpdate(double time_diff);
 

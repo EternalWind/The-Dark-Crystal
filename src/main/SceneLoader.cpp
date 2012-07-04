@@ -953,7 +953,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                     Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
                     Weapon *pWeapon = new Weapon(weapon_id, 
-                        node_name,
+                        node_name + "_primary",
                         Weapon::WeaponType(weapon_type),
                         power_num,
                         maximum_clip_num,
@@ -1039,7 +1039,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                     Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
                     Weapon *pWeapon = new Weapon(weapon_id, 
-                        node_name,
+                        node_name + "_secondary",
                         Weapon::WeaponType(weapon_type),
                         power_num,
                         maximum_clip_num,
@@ -1126,7 +1126,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                     Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
                     Weapon *pWeapon = new Weapon(weapon_id, 
-                        node_name,
+                        node_name + "_throwable",
                         Weapon::WeaponType(weapon_type),
                         power_num,
                         maximum_clip_num,

@@ -174,7 +174,7 @@ double EntityManager::_dis(Ogre::Vector3 a, Ogre::Vector3 b) {
 void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
 
-    MonsterAIAgent * ma = dynamic_cast<MonsterAIAgent*>(monster->findChildNode("agent").get());
+    //MonsterAIAgent * ma = dynamic_cast<MonsterAIAgent*>(monster->findChildNode("agent").get());
 
     uint16_t k; 
     if (monsterNum[mCurStage] > 0) k = 2; 
@@ -226,6 +226,7 @@ void  EntityManager::__isMonsterDead(Character * monster) {
 }
 void EntityManager::__isAlienDead(Character * alien) {
     if (alien == nullptr) return; 
+
     for (vector<Character*>::iterator itr = mAlien.begin(); 
         itr != mAlien.end(); itr ++) {
             if ((*itr) == alien) {
