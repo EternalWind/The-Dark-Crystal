@@ -192,14 +192,15 @@ void Weapon::onInitialize() {
 		OgreProcedural::SphereGenerator().setRadius(0.01f).setUTile(.5f).realizeMesh("Bullet1");
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet1", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
 	
-	auto muzzle_node = this->addChildNode(new Node(this->getName() + "_muzzle_node"));
-	muzzle_node->setPosition(mMuzzlePos);
+        auto muzzle_node = this->addChildNode(new Node(this->getName() + "_muzzle_node"));
+        muzzle_node->setPosition(mMuzzlePos);
 	//muzzle_node->setRotation(Ogre::Quaternion(1, 0, -0.44, 0));
-	
 
     } else if(mWeaponType == SECONDARY){
 		OgreProcedural::SphereGenerator().setRadius(0.01f).setUTile(.5f).realizeMesh("Bullet2");
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet2", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
+        auto muzzle_node = this->addChildNode(new Node(this->getName() + "_muzzle_node"));
+        muzzle_node->setPosition(mMuzzlePos);
 	} else {
 		OgreProcedural::SphereGenerator().setRadius(0.2f).setUTile(.5f).realizeMesh("Bullet3");
 		//mInteractor = node->addComponent(new dt::RaycastComponent("interactor")).get();

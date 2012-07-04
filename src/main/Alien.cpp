@@ -93,7 +93,7 @@ void Alien::addWeapon(Weapon* weapon) {
             connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
             connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
             mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
-
+            mCurWeapon->findChildNode(mCurWeapon->getName() +  "_muzzle_node")->setParent(this);
             if (!is_enabled)
                 weapon->disable();
 
@@ -116,6 +116,7 @@ void Alien::addWeapon(Weapon* weapon) {
                 emit sAmmoClipChange(weapon->getCurAmmo(), weapon->getCurClip());
             }
             mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
+            mCurWeapon->findChildNode(mCurWeapon->getName() +  "_muzzle_node")->setParent(this);
         }
 
         //emit sAmmoChange(weapon->getCurAmmo());

@@ -35,15 +35,14 @@ public:
        *sceneloader之前一定要调用afterLoadScene初始化AIDivideAreaManager。
        */
      void beforeLoadScene(double diameter, double part_dis);
-     void destroy(std::pair<uint16_t, uint16_t> cur_id);
+     void destroy(std::pair<uint16_t, uint16_t> cur_id){}
 	 void initialize();
      void deinitialize();
 	 /**
 	   *AIDivideAreaManager单例化。
 	   */
 	 static AIDivideAreaManager* get(); 
-	 void addArea(uint16_t pre, Ogre::Vector3 position);	 
-	 Ogre::Vector3 getPositionById(std::pair<uint16_t, uint16_t> id);
+	 void addArea(uint16_t pre, Ogre::Vector3 position);	 	
      /**
        *返回可以到达目标最近的一个邻接点
        *@return -1表示当前没有节点可以到达目标节点。或者返回节点标号。
@@ -59,13 +58,13 @@ public:
      uint16_t getAreaNumBetween(uint16_t a, uint16_t b); 
 
      std::pair<uint16_t, uint16_t> randomPosition(uint16_t area); 
-     
+     Ogre::Vector3 getPositionById(std::pair<uint16_t, uint16_t> id);
+
 private:
 	Ogre::Vector3 mPosition[1000];                   //<!每个area的中心点
 	uint16_t mAreaNum;                               //<!区域数量   	
     uint16_t mArea[1000][1000];                      //<!计算两个区域最少相邻多少个区域。
-    Ogre::Vector3 mAreaPosition[1000][50];
-    bool mPositionMark[1000][50];                              
+    Ogre::Vector3 mRandomPositon[18];           
     vector<uint16_t> mNxtArea[1000];                 //<!相邻的区域。   
     double mRadius;                                  //<!一个区域的半径长度。
     double mPartDis;                                 //<!队友之间应该保持距离以防相撞或过于集中。 
@@ -74,7 +73,7 @@ private:
     AIDivideAreaManager & operator = (const AIDivideAreaManager &){}
     AIDivideAreaManager(const AIDivideAreaManager &){}
 
-    
+    static const uint16_t mRandomNum; 
 };
 
 #endif

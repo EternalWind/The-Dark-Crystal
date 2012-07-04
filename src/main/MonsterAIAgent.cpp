@@ -19,7 +19,7 @@ const double  MonsterAIAgent::MOVE_ROTATE_SPEED = 180;
 const double  MonsterAIAgent::GUARD_ROTATE_SPEED = 180;
 const double  MonsterAIAgent::PI = acos(-1.0);
 const double  MonsterAIAgent::ROTATE_FLOAT = 6.0; 
-const double  MonsterAIAgent::GUARD_RANGE = 30.0;
+const double  MonsterAIAgent::GUARD_RANGE = 35.0;
 const double  MonsterAIAgent::AVOID_COLLI_RANGE = 10;
 
 
@@ -118,8 +118,9 @@ void MonsterAIAgent::onUpdate(double time_diff) {
     if (this->getParent() == nullptr) return; 
      //update调用子节点的update和它的component。    
     dt::Node::onUpdate(time_diff);  
-    vector<Character *> vc = EntityManager::get()->searchEntityByRange(mBody, GUARD_RANGE);
-    for (uint16_t i = 0; i < vc.size(); i ++) onTriggerr(vc[i]);
+    Character * c = EntityManager::get()->searchEntityByRange(mBody, GUARD_RANGE);
+    if (c != nullptr)
+    onTriggerr(c);
     
   /*  
     if (mColli) {
@@ -184,8 +185,7 @@ void MonsterAIAgent::onTriggerr(Character * c) {
     Alien* enemy = dynamic_cast<Alien*>(c);    
     if (enemy != nullptr) {        
         mThreat = true; 
-        mThreatTime = THREAT_COOL_TIME;
-        AIDivideAreaManager::get()->destroy(mNxtArea);
+        mThreatTime = THREAT_COOL_TIME;       
         mOnWay = 0; 
         if (mOnMovePress) {
             mOnMovePress = 0; 

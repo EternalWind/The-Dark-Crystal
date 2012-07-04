@@ -50,6 +50,7 @@ void BattleState::onInitialize() {
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
+    EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
     //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
@@ -157,10 +158,12 @@ void BattleState::onInitialize() {
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
+
     EntityManager::get()->afterLoadScene(scene.get(), mStage);
 
     connect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
                                this, SLOT(__onKeyPressed(dt::InputManager::InputCode, const OIS::EventArg&)));
+
 }
 
 void BattleState::onDeinitialize() {}
