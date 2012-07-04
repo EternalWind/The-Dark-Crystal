@@ -10,6 +10,7 @@
 #include "EntityManager.h"
 #include "HumanAgent.h"
 #include "RaycastNotMeComponent.h"
+#include "BattleState.h"
 
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
@@ -333,4 +334,27 @@ void Alien::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent_rot
 
 void Alien::__onReload() {
     getCurWeapon()->reload();
+}
+
+
+void Alien::onKilled() {
+    dt::Node* agent_node = this->findChildNode(Agent::AGENT).get();
+
+    if (agent_node != nullptr) {
+        HumanAgent* human_agent;
+
+        human_agent = dynamic_cast<HumanAgent*>(agent_node);
+
+        if (human_agent != nullptr) {
+            BattleState* battle_state;
+
+            battle_state = dynamic_cast<BattleState*>(this->getState());
+
+            if (battle_state != nullptr) {
+                battle_state->fail();
+            }
+        }
+
+        this->kill();
+    }
 }

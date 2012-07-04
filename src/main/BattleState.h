@@ -80,6 +80,11 @@ public slots:
 	void win();
 
     /**
+      * 失败函数
+      */
+    void fail();
+
+    /**
       * 设置当前关卡。
       * @param stage 要设置的关卡
       */

@@ -449,3 +449,7 @@ void BattleState::__onClick(MyGUI::Widget* sender) {
         exit(0);
     }
 }
+
+void BattleState::fail() {
+
+}

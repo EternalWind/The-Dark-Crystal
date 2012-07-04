@@ -60,6 +60,8 @@ public:
 
     void onUpdate(double time_diff);
 
+    void onKilled();
+
 protected slots:
     //void __onMove(Entity::MoveType type, bool is_pressed);
 
