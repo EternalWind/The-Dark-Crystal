@@ -18,43 +18,42 @@ public:
 
 	void setUnlockTime(double unlock_time);
 
+    void onInitialize();
+
+    void onDeinitialize();
+
     void onUpdate(double time_diff);
 
     double getUnlockProgress() const;
 
-    void setUnlockProgress(const double unlock_progress);
+    void setUnlockProgress(const double& unlock_progress);
 
     /**
       * 以百分比的形式获取解锁进度。
       * @returns 百分比形式表示的解锁进度
       */
-    double getUnlockProgressPercentage() const;
+    uint16_t getUnlockProgressPercentage() const;
 
     /**
-      * 以百分比的形式设置解锁进度。
-      * @param unlock_progress 以百分比形式表示的解锁进度
-      */
-    void setUnlockProgressPercentage(const double unlock_progress);
-
-    /**
-      * 检查该水晶是否已解锁（解锁进度与解锁时间相等）。
+      * 检查该水晶是否已解锁
       * @returns 该水晶是否已解锁
       */
-    bool isUnlocked() const;
+    bool hasUnlocked() const;
 
     /**
       * 开始解锁水晶。
       */
     void beginUnlock();
 
+    bool isUnlocking();
+
 signals:
     /**
       * 一个在水晶的解锁进度改变时发出的signal。
-      * @param crystal 发出该信号的水晶
-      * @param pre_progress 改变前的进度
       * @param cur_progress 改变后的进度
       */
-    void sUnlockProgressChanged(Crystal* crystal, double pre_progress, double cur_progress);
+    void sUnlockCrystalProgressChanged(uint16_t cur_percent); 
+    
 
 private:
 	double mUnlockTime;         //!< 水晶解锁时间

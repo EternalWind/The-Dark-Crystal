@@ -26,6 +26,7 @@ Alien::Alien(const QString node_name, const QString mesh_handle, const dt::Physi
         mWeapons[Weapon::PRIMARY] = nullptr;
         mWeapons[Weapon::SECONDARY] = nullptr;
         mWeapons[Weapon::THROWABLE] = nullptr;
+        mIsAddingEquipment = false;
 }
 
 Weapon* Alien::getCurWeapon() const {
@@ -165,14 +166,15 @@ void Alien::onInitialize() {
 
     auto node = this->addChildNode(new Node("getProp"));
 
-    auto iteractor = node->addComponent<dt::InteractionComponent>(new RaycastNotMeComponent(this->
+    auto interactor = node->addComponent<dt::InteractionComponent>(new RaycastNotMeComponent(this->
         findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody(), INTERACTOR_COMPONENT));
-    iteractor->setRange(20.0f);
-    iteractor->setOffset(3.0f);
+    interactor->setRange(15.0f);
+    interactor->setIntervalTime(0.019);
+    interactor->setOffset(3.0f);
 	
     node->setPosition(this->getEyePosition());
 	
-    connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
+    connect(interactor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
     this->setOrigSpeed(20.0f);
     this->setCurSpeed(20.0f);
@@ -201,7 +203,7 @@ void Alien::onUpdate(double time_diff) {
     //		std::cout << weapon->getPosition(dt::Node::SCENE).x << " " << weapon->getPosition(dt::Node::SCENE).y << " " << weapon->getPosition(dt::Node::SCENE).z << std::endl << std::endl;
     //}
     if (mIsAddingEquipment) {
-        mIsAddingEquipment = false;
+        //mIsAddingEquipment = false;
         this->findChildNode("getProp")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
@@ -256,6 +258,8 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
         Prop* prop = dynamic_cast<Prop*>(object->getNode());
         Weapon* weapon = nullptr;
 
+        mIsAddingEquipment = false;
+
         if (prop != nullptr) {
             switch (prop->getPropType()) {
             case Prop::WEAPON:
@@ -294,12 +298,15 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 
                 crystal = dynamic_cast<Crystal*>(prop);
 
-                if (crystal->isUnlocked()) {
+                if (crystal->hasUnlocked()) {
                     emit sGetCrystal(this);
+                    std::cout << "Get Crystal Successfully!!!!!!" << std::endl;
                     crystal->kill();
                 } else {
                     crystal->beginUnlock();
                 }
+
+                mIsAddingEquipment = true;
 
                 break;
 

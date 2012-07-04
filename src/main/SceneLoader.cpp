@@ -125,7 +125,7 @@ Node::NodeSP SceneLoader::__loadElement(const QDomElement& og_element, Node::Nod
     }
     else if (name == SL_CRYSTAL)
     {
-        node = __loadAmmo(og_element, dt_node);
+        node = __loadCrystal(og_element, dt_node);
     }
     else if (name == SL_FIRSTAIDKIT)
     {
