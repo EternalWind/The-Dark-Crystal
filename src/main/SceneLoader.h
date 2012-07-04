@@ -152,6 +152,7 @@ using namespace dt;
 
 #define SL_WEAPON "Weapon"
 #define SL_WEAPON_ID "WeaponID"
+#define SL_WEAPON_HASMUZZLE "HasMuzzleFire"
 
 #define SL_SPACESHIP "Spaceship"
 #define SL_SPACESHIP_ID "SpaceshipID"

@@ -108,6 +108,8 @@ public:
 	  * 单次发射
 	  */
 	void fire();
+
+	void loadMuzzleInfo(const ParticleInfo &muzzle_particle, const Ogre::Vector3& muzzle_pos);
 signals:
 	/**
 	  * 一个该武器当前弹夹的弹药数被改变时发出的signal
@@ -153,8 +155,12 @@ private:
 	dt::SoundComponent* mReloadingBeginSound;       //!< 重装弹药开始声音指针
 	dt::SoundComponent* mReloadingDoneSound;        //!< 重装弹药完成声音指针
 
-	ParticleInfo mAmmoFireBack;
-	ParticleInfo mAmmoBomb;
+	ParticleInfo mAmmoFireBack;                     //!< 子弹尾焰
+	ParticleInfo mAmmoBomb;                         //!< 子弹爆炸
+
+	bool mHasMuzzle;                                //!< 枪口是否有火焰
+	Ogre::Vector3 mMuzzlePos;                       //!< 枪口位置
+	ParticleInfo mMuzzleParticle;                   //!< 枪口火焰
 };
 
 #endif
