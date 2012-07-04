@@ -117,9 +117,9 @@ void Monster::onInitialize() {
 
 	// 攻击效果
 	mFlashNode = this->addChildNode(new dt::Node(this->getName() + "_flash_node"));
-	mFlashNode->addComponent(new dt::MeshComponent("real_lightning.mesh", "", "FlashMesh"));
-	mFlashNode->setScale(5.0);
-	mFlashNode->setPosition(mFlashNode->getPosition() + Ogre::Vector3(0, 0, -8));	
+	mFlashNode->addComponent(new dt::MeshComponent("lightning.mesh", "", "FlashMesh"));
+	mFlashNode->setScale(5.0);    
+    mFlashNode->setPosition(Ogre::Vector3(0, 0, -10));	
 	mFlashNode->disable();
 
 	// 初始化随机值
