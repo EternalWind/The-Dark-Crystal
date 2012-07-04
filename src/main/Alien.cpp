@@ -42,12 +42,16 @@ void Alien::changeCurWeapon(const Weapon::WeaponType type) {
             disconnect(cur_weapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
             disconnect(cur_weapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
             this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(cur_weapon);
+            this->findChildNode(cur_weapon->getName() + "_muzzle_node")->setParent(cur_weapon);
         }
         new_weapon->enable();
         mCurWeapon = new_weapon;
         connect(cur_weapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
         connect(cur_weapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
+
         mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
+        mCurWeapon->findChildNode(mCurWeapon->getName() +  "_muzzle_node")->setParent(this);
+
         emit sAmmoClipChange(mCurWeapon->getCurAmmo(), mCurWeapon->getCurClip());
 
         this->setCurSpeed(this->getOrigSpeed() - new_weapon->getWeight() * 0.1f);
@@ -66,6 +70,8 @@ void Alien::addWeapon(Weapon* weapon) {
             disconnect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
             disconnect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
             this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(mCurWeapon);
+
+            this->findChildNode(mCurWeapon->getName() + "_muzzle_node")->setParent(mCurWeapon);
         }
 		if (mWeapons[weapon->getWeaponType()] != nullptr) {
 
@@ -80,13 +86,13 @@ void Alien::addWeapon(Weapon* weapon) {
 			weapon->setPosition(1.0f, 0.0f, -4.0f);
 			weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
             
-            //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-            //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
 			mCurWeapon = weapon;
 			connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
 			connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
 			mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
-			
+
+			weapon->findChildNode(weapon->getName() +  "_muzzle_node")->setParent(this);
+
 			if (!is_enabled)
 				weapon->disable();
 
@@ -101,6 +107,8 @@ void Alien::addWeapon(Weapon* weapon) {
 			weapon->setPosition(1.0f, 0.0f, -4.0f);
 			weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
 			
+			weapon->findChildNode(weapon->getName() +  "_muzzle_node")->setParent(this);
+
 			auto human = dynamic_cast<HumanAgent*>(this->findChildNode("agent").get());	
 			mCurWeapon = weapon;
 			if (human) {
@@ -138,9 +146,9 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
         disconnect(weapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
         this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(weapon);
 
-        // death signal
-        connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isAlienDead(Character*)));
+        this->findChildNode(weapon->getName() + "_muzzle_node")->setParent(weapon);
 
+       
         this->setCurSpeed(this->getOrigSpeed());
         if (mHasSpeededUp) {
             __onSpeedUp(true);
@@ -159,15 +167,17 @@ void Alien::onInitialize() {
     auto iteractor = node->addComponent<dt::InteractionComponent>(new RaycastNotMeComponent(this->
         findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody(), INTERACTOR_COMPONENT));
     iteractor->setRange(20.0f);
-
     iteractor->setOffset(3.0f);
-
+	
     node->setPosition(this->getEyePosition());
-
+	
     connect(iteractor.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), this, SLOT(__onEquiped(dt::PhysicsBodyComponent*)));
 
     this->setOrigSpeed(20.0f);
     this->setCurSpeed(20.0f);
+
+    // death signal
+    connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isAlienDead(Character*)));
 
 }
 
