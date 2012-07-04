@@ -208,6 +208,8 @@ protected slots:
 
     void __onKeyPressed(dt::InputManager::InputCode code, const OIS::EventArg& event);
 
+    void __onUnlockCrystalProgressChanged(uint16_t percent); 
+
 protected:
 	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值
 	std::vector<dt::GuiImageBox*> mAmmoHUD;		//!< 弹药量 
@@ -227,7 +229,7 @@ protected:
     double mSceneParam2;
 
 private:
-	double mCrystalBarPosition;                 //!< 进度条position
+	uint16_t mCrystalBarPosition;               //!< 进度条position
     dt::GuiButton* mResumeButton;               //!< 返回游戏按钮
     dt::GuiButton* mSaveButton;                 //!< 保存游戏按钮
     dt::GuiButton* mLoadButton;                 //!< 读取游戏按钮
