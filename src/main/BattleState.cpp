@@ -125,7 +125,7 @@ void BattleState::onInitialize() {
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
-    EntityManager::get()->afterLoadScene(scene.get());    
+    EntityManager::get()->afterLoadScene(scene.get(), mStage);    
 }
 
 void BattleState::onDeinitialize() {}

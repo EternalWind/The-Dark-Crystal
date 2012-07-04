@@ -18,7 +18,7 @@ void AIDivideAreaManager::addEdge(uint16_t a, uint16_t b) {
 void AIDivideAreaManager::addArea(Ogre::Vector3 p, uint16_t id) {
 
     mPosition[id] = p;
-    mAreaNum ++; 
+    if (id + 1 > mAreaNum) mAreaNum = id + 1; 
 
 }
 uint16_t AIDivideAreaManager::getAreaNum() {

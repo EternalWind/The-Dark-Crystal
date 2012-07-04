@@ -77,8 +77,9 @@ void MenuState::onClick(MyGUI::Widget* sender) {
     } else if (sender->getName() == "Gui.settings_button") {
         dt::StateManager::get()->setNewState(new OptionState());
     } else if (sender->getName() == "Gui.new_game_button") {
+        dt::StateManager::get()->setNewState(new BattleState("01"));
 
-        dt::StateManager::get()->setNewState(new AnimationState("videos/begin.mp4", 35));
+        //dt::StateManager::get()->setNewState(new AnimationState("videos/begin.mp4", 35));
 
     } else if (sender->getName() == "Gui.load_record_button") {
         dt::StateManager::get()->setNewState(new BattleStateTest());

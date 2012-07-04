@@ -11,7 +11,7 @@ const QString PlayerAIAgent::TRIGGER_AREA_COMPONENT = "Player_AI_TRIGGER_AREA_CO
 const double  PlayerAIAgent::THREAT_COOL_TIME = 2.0;
 const double  PlayerAIAgent::eps = 1e-4;
 const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 270;
-const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 90;
+const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 180;
 const double  PlayerAIAgent::PI = acos(-1.0);
 const double  PlayerAIAgent::ROTATE_FLOAT = 3.0; 
 const double  PlayerAIAgent::ENTER_SCOPE = 3;
@@ -181,7 +181,7 @@ void PlayerAIAgent::onUpdate(double time_diff) {
         return; 
     }
      dt::Node::onUpdate(time_diff);
-     vector<Character*> vc = EntityManager::get()->searchEntityByRange(mBody, 20.0);
+     vector<Character*> vc = EntityManager::get()->searchEntityByRange(mBody, 50.0);
      for (uint16_t i = 0; i < vc.size(); i ++) __onTrigger(vc[i]);
 
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
