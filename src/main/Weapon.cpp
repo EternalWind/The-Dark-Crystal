@@ -6,6 +6,8 @@
 #include <OgreProcedural.h>
 #include "AdvanceCollisionComponent.h"
 #include "Monster.h"
+#include "ParticlesEffect.h"
+#include <Graphics/ParticleSystemComponent.hpp>
 Weapon::Weapon(){
 }
 
@@ -50,6 +52,8 @@ Weapon::Weapon( const QString &prop_name,
 				mHittingRange(hitting_range),
 				mAmmoFireBack(ammo_fire_back),
 				mAmmoBomb(ammo_part_parm),
+				mHasMuzzle(false),
+				mMuzzlePos(Ogre::Vector3(0, 0, 0)),
 				Prop(prop_name, node_name, WEAPON) { 
 }
 
@@ -150,12 +154,49 @@ float Weapon::getHittingRange() const {
 	return mHittingRange;
 }
 
+void Weapon::loadMuzzleInfo(const ParticleInfo &muzzle_particle, const Ogre::Vector3& muzzle_pos) {
+	mHasMuzzle = true;
+	mMuzzlePos = muzzle_pos;
+	auto muzzle_node = this->findChildNode(this->getName() + "_muzzle_node");
+	muzzle_node->setPosition(mMuzzlePos);
+	auto p_sys = muzzle_node->addComponent(new dt::ParticleSystemComponent(this->getName() + "_muzzle_p_sys"));
+    p_sys->setMaterialName(muzzle_particle.MaterialHandle);
+	p_sys->setParticleCountLimit(muzzle_particle.ParticleCountLimit);
+	p_sys->getOgreParticleSystem()->setDefaultDimensions(muzzle_particle.DefaultDimensionsWidth, muzzle_particle.DefaultDimensionsHeight);
+
+    Ogre::ParticleEmitter* e = p_sys->addEmitter("emit1", muzzle_particle.EmitterType);
+    e->setAngle(Ogre::Degree(muzzle_particle.degree));
+	e->setColour(muzzle_particle.EmitterColorStart, muzzle_particle.EmitterColorEnd);
+	e->setEmissionRate(muzzle_particle.EmissionRate);
+    e->setParticleVelocity(6.0f, 8.0f);
+    e->setTimeToLive(muzzle_particle.TimeToLiveL, muzzle_particle.TimeToLiveR);
+
+	p_sys->addScalerAffector("scaler", muzzle_particle.ScalerAffector);
+    p_sys->addLinearForceAffector("force", Ogre::Vector3(0, 0, 0));
+
+    Ogre::ParticleAffector* a = p_sys->addAffector("colour_interpolator", "ColourInterpolator");
+    a->setParameter("time0", dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.time0)));
+    a->setParameter("colour0", dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour0.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour0.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour0.z)) + " 1");
+    a->setParameter("time1", dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.time1)));
+    a->setParameter("colour1", dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour1.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour1.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour1.z)) + " 1");
+    a->setParameter("time2", dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.time2)));
+    a->setParameter("colour2", dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour2.x)) + " " + dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour2.y)) + " " + dt::Utils::toStdString(dt::Utils::toString(muzzle_particle.colour2.z)) + " 0");
+    
+	muzzle_node->disable();
+}
+
 void Weapon::onInitialize() {
     Prop::onInitialize();
     auto node = this->addChildNode(new Node("ammo_node"));
     if (mWeaponType == PRIMARY) {
 		OgreProcedural::SphereGenerator().setRadius(0.01f).setUTile(.5f).realizeMesh("Bullet1");
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet1", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
+	
+	auto muzzle_node = this->addChildNode(new Node(this->getName() + "_muzzle_node"));
+	muzzle_node->setPosition(mMuzzlePos);
+	//muzzle_node->setRotation(Ogre::Quaternion(1, 0, -0.44, 0));
+	
+
     } else if(mWeaponType == SECONDARY){
 		OgreProcedural::SphereGenerator().setRadius(0.01f).setUTile(.5f).realizeMesh("Bullet2");
         mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet2", mAmmoFireBack, mAmmoBomb, 0, "interactor")).get(); 
@@ -202,19 +243,27 @@ void Weapon::onDeinitialize() {
 }
 
 void Weapon::fire() {
+	auto node = this->getParent()->findChildNode(this->getName() + "_muzzle_node");
 	if (mCurAmmo > 0) {
 		if (mInteractor->isReady()) {
 			if(mFiringSound != nullptr) {
 				mFiringSound->stopSound();
 				mFiringSound->playSound();
 			}
-
+			if (node) {
+				node->enable();
+			}
 			this->mInteractor->check();
 			setCurAmmo(mCurAmmo - 1);
+			return ;
 		}
 	} else {
 		this->reload();
+		if (node) {
+			node->disable();
+		}
 	}
+	
 }
 
 void Weapon::attack(bool is_pressed) {
@@ -223,12 +272,18 @@ void Weapon::attack(bool is_pressed) {
 
 void Weapon::onUpdate(double time_diff) {
 	Node::onUpdate(time_diff);
+	auto node = this->getParent()->findChildNode(this->getName() + "_muzzle_node");
 	if (mIsPressed) {
 		if (mIsOneShot) {
 			fire();
 			mIsPressed = 0;
+			
 		} else {
 			fire();
+		}
+	} else {
+		if (node) {
+			node->disable();
 		}
 	}
 }
@@ -264,7 +319,7 @@ void Weapon::_onReloadCompleted() {
     if (mCurClip > 0 && mCurAmmo < mAmmoPerClip) {
         delete mReloadTimer;
         mReloadTimer = nullptr;
-
+		mReloadingBeginSound->stopSound();
         mReloadingDoneSound->playSound();
         this->setCurClip(mCurClip - 1);
         this->setCurAmmo(mAmmoPerClip);

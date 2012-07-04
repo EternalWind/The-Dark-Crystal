@@ -17,11 +17,11 @@ void Prop::onInitialize() {
 	PhysicsBody->setGravity(0.0f, 0.0f, 0.0f);
 }
 
-QString Prop::getName() const {
+QString Prop::getPropName() const {
 	return mPropName;
 }
 
-void Prop::setName(QString name) {
+void Prop::setPropName(QString name) {
 	mPropName = name;
 }
 
