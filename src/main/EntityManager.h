@@ -26,6 +26,7 @@ struct MonsterInfo {
     float mAttackValue;
     float mAttackRange;
     float mAttackInterval;
+    float mScale;
 };
 
 class EntityManager : public dt::Manager {
@@ -33,6 +34,7 @@ class EntityManager : public dt::Manager {
     Q_OBJECT
 public:
      void initialize() {}
+     void beforeLoadScene();
      void afterLoadScene(dt::Scene * scene, QString stage);
      void deinitialize(){}
 	 /**
@@ -44,7 +46,7 @@ public:
        */
      bool isForwardThreaten(Agent * agent);     
      vector<Character*> searchThreatEntity(Character * entity);
-     vector<Character*> searchEntityByRange(Character * entity, double range);
+     Character* searchEntityByRange(Character * entity, double range);
      void afterLoad(dt::Scene * scene);
      void setHuman(Alien * human);
      void addPlayer(Alien * playerAI);
@@ -60,15 +62,14 @@ public:
      const static double THREAT_HALF_DEGREE;
 private:
     uint16_t mg[3][6];
-    int32_t monsterNum[2];
-    //0:血量；1：速度；2：攻击力；3：攻击间隔。4:怪物大小。
-    double monsterValue[2][5];
+    int32_t monsterNum[3];
+  
     uint16_t mCurStage;
     Alien * mHuman; 
     vector<Character*> mAlien;
     vector<Character*> mMonster;
     dt::Scene * mCurScene;
-    uint16_t mMonsterNum;
+    int16_t mMonsterNum;
 
     MonsterInfo mMonsterInfo;
      //单例化，把构造，复制构造都设成私有。

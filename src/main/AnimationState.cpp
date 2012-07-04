@@ -1,5 +1,6 @@
 #include "AnimationState.h"
 
+
 #include "BattleState.h"
 
 AnimationState::AnimationState(const QString &filename, double time) 
