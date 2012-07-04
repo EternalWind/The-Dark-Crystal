@@ -1,16 +1,22 @@
 #ifndef THE_DARK_CRYSTAL_BATTLE_STATE
 #define THE_DARK_CRYSTAL_BATTLE_STATE
 
+#include "Weapon.h"
+#include "GuiImageButton.h"
+
+#include <Input/InputManager.hpp>
 #include <Scene/State.hpp>
 #include <Gui/GuiButton.hpp>
 #include <Gui/GuiLabel.hpp>
 #include <Gui/GuiEditBox.hpp>
 #include <Gui/GuiImageBox.hpp>
 #include <Gui/GuiProgressBar.hpp>
-#include <cstdint>
+
 #include <QString>
+
+#include <cstdint>
 #include <vector>
-#include "Weapon.h"
+
 /**
   * 游戏的战斗场景
   * 默认第一人称视角
@@ -158,7 +164,22 @@ public slots:
     void setSceneParam2(double param2);
 
 private:
+    /**
+      * 重置Gui元素的位置、大小
+      */
     void __resetGui();
+
+    void __onClick(MyGUI::Widget* sender);
+
+    /**
+      * 暂停玩家控制并呼出菜单
+      */
+    void __showMenu();
+
+    /**
+      * 恢复控制并隐藏菜单
+      */
+    void __hideMenu();
 
 protected slots:
 
@@ -180,6 +201,8 @@ protected slots:
 
 	void __onAmmoClipChange(uint16_t cur_ammo, uint16_t cur_clip);
 
+    void __onKeyPressed(dt::InputManager::InputCode code, const OIS::EventArg& event);
+
 protected:
 	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值
 	std::vector<dt::GuiImageBox*> mAmmoHUD;		//!< 弹药量 
@@ -199,7 +222,13 @@ protected:
     double mSceneParam2;
 
 private:
-	double mCrystalBarPosition;                  //!< 进度条position
+	double mCrystalBarPosition;                 //!< 进度条position
+    dt::GuiButton* mResumeButton;               //!< 返回游戏按钮
+    dt::GuiButton* mSaveButton;                 //!< 保存游戏按钮
+    dt::GuiButton* mLoadButton;                 //!< 读取游戏按钮
+    dt::GuiButton* mReturnMenuButton;           //!< 返回主菜单按钮
+    dt::GuiButton* mExitButton;                 //!< 退出游戏按钮
+    bool mHasPaused;                            //!< 是否已经暂停玩家控制
 };
 
 #endif

@@ -49,7 +49,6 @@ void AdvanceCollisionComponent::onCheck(const Ogre::Vector3& start, const Ogre::
     e->setTimeToLive(mFireBack.TimeToLiveL, mFireBack.TimeToLiveR);
 
 	p_sys->addScalerAffector("scaler", mFireBack.ScalerAffector);
-    p_sys->addLinearForceAffector("force", Ogre::Vector3(0, 0, 0));
 
     Ogre::ParticleAffector* a = p_sys->addAffector("colour_interpolator", "ColourInterpolator");
     a->setParameter("time0", dt::Utils::toStdString(dt::Utils::toString(mFireBack.time0)));

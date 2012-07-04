@@ -970,8 +970,23 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         range_num,
                         FireBack_num,
                         Bomb_num);
-
+                   
                     pAlien->addChildNode(pWeapon);
+					auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
+   					if (!has_muzzle.isNull()) {
+						ParticleInfo temp = load_ParticleInfo(has_muzzle);
+						auto mPosition = has_muzzle.firstChildElement("mPosition");
+						auto x = mPosition.firstChildElement("x");
+						float x_num = x.text().toFloat();
+
+						auto y = mPosition.firstChildElement("y");
+						float y_num = y.text().toFloat();
+
+						auto z = mPosition.firstChildElement("z");
+						float z_num = z.text().toFloat();
+
+						pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+					}
 
                     pAlien->addWeapon(pWeapon);
                 }
@@ -1041,7 +1056,25 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         range_num,
                         FireBack_num,
                         Bomb_num);
-                    pAlien->addChildNode(pWeapon);
+
+					pAlien->addChildNode(pWeapon);
+					auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
+   					if (!has_muzzle.isNull()) {
+						ParticleInfo temp = load_ParticleInfo(has_muzzle);
+						auto mPosition = has_muzzle.firstChildElement("mPosition");
+						auto x = mPosition.firstChildElement("x");
+						float x_num = x.text().toFloat();
+
+						auto y = mPosition.firstChildElement("y");
+						float y_num = y.text().toFloat();
+
+						auto z = mPosition.firstChildElement("z");
+						float z_num = z.text().toFloat();
+
+						pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+					}
+
+                    
                     pAlien->addWeapon(pWeapon);
                 }
             }
@@ -1110,7 +1143,25 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         range_num,
                         FireBack_num,
                         Bomb_num);
-                    pAlien->addChildNode(pWeapon);
+
+					pAlien->addChildNode(pWeapon);
+                    auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
+   					if (!has_muzzle.isNull()) {
+						ParticleInfo temp = load_ParticleInfo(has_muzzle);
+						auto mPosition = has_muzzle.firstChildElement("mPosition");
+						auto x = mPosition.firstChildElement("x");
+						float x_num = x.text().toFloat();
+
+						auto y = mPosition.firstChildElement("y");
+						float y_num = y.text().toFloat();
+
+						auto z = mPosition.firstChildElement("z");
+						float z_num = z.text().toFloat();
+
+						pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+					}
+
+                    
                     pAlien->addWeapon(pWeapon);
                 }
             }
@@ -1474,10 +1525,28 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
             FireBack_num,
             Bomb_num);
 
+		
+
         if (dt_parent)
             node = dt_parent->addChildNode(pWeapon);
         else  
             node = mScene->addChildNode(pWeapon);
+
+		auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
+   		if (!has_muzzle.isNull()) {
+			ParticleInfo temp = load_ParticleInfo(has_muzzle);
+			auto mPosition = has_muzzle.firstChildElement("mPosition");
+            auto x = mPosition.firstChildElement("x");
+            float x_num = x.text().toFloat();
+
+            auto y = mPosition.firstChildElement("y");
+            float y_num = y.text().toFloat();
+
+            auto z = mPosition.firstChildElement("z");
+            float z_num = z.text().toFloat();
+
+			pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+		}
 
         QDomElement pos = og_node.firstChildElement(SL_POS);
         QDomElement scale = og_node.firstChildElement(SL_SCALE);
