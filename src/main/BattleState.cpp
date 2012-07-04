@@ -39,7 +39,7 @@ BattleState::BattleState(const QString stage_name)
       mNextStage(""),
       mSceneParam1(0.0),
       mSceneParam2(0.0),
-      mCrystalBarPosition(0.0),
+      mCrystalBarPosition(0),
       mHasPaused(false) {}
 
 void BattleState::onInitialize() {
@@ -171,16 +171,20 @@ void BattleState::onDeinitialize() {}
 
 void BattleState::updateStateFrame(double simulation_frame_time) {
 	//拾起水晶进度条过程
-	if(mCrystalBarPosition != 0.0) {
-		mCrystalBarPosition += simulation_frame_time;
-		mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition * 20);
-		if(mCrystalBarPosition > 5.0) {
-			mCrystalBarPosition = 0.0;
-			mPickUpCrystalBar->setVisible(false);
+	if(mCrystalBarPosition > 0) {
+        mPickUpCrystalBar->setVisible(true);
+		mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition);
+		//if(mCrystalBarPosition > 5.0) {
+		//mCrystalBarPosition = 0.0;
+			
+        if (mCrystalBarPosition >= 100) {
 			++mObtainedCrystalNum;
 			setObtainedCrystalNum(mObtainedCrystalNum);
+            mCrystalBarPosition = 0;
 		}
-	}
+	} else {
+        mPickUpCrystalBar->setVisible(false);
+    }
 }
 
 
@@ -464,6 +468,12 @@ void BattleState::__onClick(MyGUI::Widget* sender) {
         dt::StateManager::get()->setNewState(new MenuState());
     } else if (sender->getName() == "Gui.exit_button") {
         exit(0);
+    }
+}
+
+void BattleState::__onUnlockCrystalProgressChanged(uint16_t percent) {
+    if (percent >= 0 && percent <= 100) {
+        mCrystalBarPosition = percent;
     }
 }
 
