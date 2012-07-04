@@ -24,6 +24,7 @@ PlayerAIAgent::PlayerAIAgent(QString name): Agent(name) {
     mOnMovePress = false; 
     mFollow = true; 
     mAttack = false; 
+    mSpeedUp = false; 
     
 }
 
@@ -115,6 +116,11 @@ void PlayerAIAgent::walk(double time_diff) {
     if (fabs(d_degree) < ROTATE_FLOAT) { 
         if (!mOnMovePress) { 
 
+            if (!mSpeedUp) {
+                emit(sSpeedUp(true));
+                mSpeedUp = 1;
+            }
+            
             mBody->setCurSpeed(12.0);
             emit(sMove(Entity::FORWARD, true)); 
             mOnMovePress = 1; 
@@ -181,8 +187,9 @@ void PlayerAIAgent::onUpdate(double time_diff) {
         return; 
     }
      dt::Node::onUpdate(time_diff);
-     vector<Character*> vc = EntityManager::get()->searchEntityByRange(mBody, 50.0);
-     for (uint16_t i = 0; i < vc.size(); i ++) __onTrigger(vc[i]);
+     Character* c = EntityManager::get()->searchEntityByRange(mBody, 50.0);
+     
+     if (c != nullptr)    __onTrigger(c);
 
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
@@ -243,6 +250,9 @@ void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {
 }
 
 void PlayerAIAgent::__onTrigger(Character * c) {
+    if (c == nullptr) {
+        return;
+    }
     //敌人
     Monster* enemy = dynamic_cast<Monster*>(c);
     if (enemy != nullptr) {

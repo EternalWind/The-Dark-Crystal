@@ -5,6 +5,8 @@
 #include <vector>
 using namespace std; 
 
+ const uint16_t AIDivideAreaManager::mRandomNum = 18; 
+
 Ogre::Vector3 AIDivideAreaManager::getArea(uint16_t id) {
     return mPosition[id];
 }
@@ -94,7 +96,29 @@ void AIDivideAreaManager::beforeLoadScene(double diameter, double part_dis) {
     mAreaNum = 0; 
     for (int i = 0; i < 1000; i ++) 
         mNxtArea[i].clear();
-    memset(mPositionMark, 0, sizeof(mPositionMark));
+   
+    double k = 0.6 * mRadius; 
+    mRandomPositon[0] = Ogre::Vector3(0, 0, 0); 
+    mRandomPositon[1] = Ogre::Vector3(k, 0, k);
+    mRandomPositon[2] = Ogre::Vector3(0, 0, k); 
+    mRandomPositon[3] = Ogre::Vector3(k, 0, 0); 
+    mRandomPositon[4] = Ogre::Vector3(-k, 0, 0); 
+    mRandomPositon[5] = Ogre::Vector3(0, 0, -k); 
+    mRandomPositon[6] = Ogre::Vector3(-k, 0, -k); 
+    mRandomPositon[7] = Ogre::Vector3(k, 0, -k); 
+    mRandomPositon[8] = Ogre::Vector3(-k, 0, k); 
+
+    double kk = 0.4 * mRadius; 
+
+    mRandomPositon[9] = Ogre::Vector3(0, 0, 0); 
+    mRandomPositon[10] = Ogre::Vector3(kk, 0, kk);
+    mRandomPositon[11] = Ogre::Vector3(0, 0, kk); 
+    mRandomPositon[12] = Ogre::Vector3(kk, 0, 0); 
+    mRandomPositon[13] = Ogre::Vector3(-kk, 0, 0); 
+    mRandomPositon[14] = Ogre::Vector3(0, 0, -kk); 
+    mRandomPositon[15] = Ogre::Vector3(-kk, 0, -kk); 
+    mRandomPositon[16] = Ogre::Vector3(kk, 0, -kk); 
+    mRandomPositon[17] = Ogre::Vector3(-kk, 0, kk); 
 }
 void AIDivideAreaManager::deinitialize() {
 }
@@ -136,49 +160,15 @@ AIDivideAreaManager* AIDivideAreaManager::get() {
 	return singleton;
 }
 
-Ogre::Vector3 AIDivideAreaManager::getPositionById(std::pair<uint16_t, uint16_t> id) {
-    return mAreaPosition[id.first][id.second]; 
-}
+
 
 std::pair<uint16_t, uint16_t> AIDivideAreaManager::randomPosition(uint16_t area) {
-    double tmp = mRadius * 2 / 100.0;
-    Ogre::Vector3 p;
-    p.y = 0; 
-    while (1) {
-        p.x = (rand() % 100 - 50) * tmp;
-        p.z = (rand() % 100 - 50)* tmp;
-        bool flag = 0; 
-        for (int i = 0; i < 50; i ++) 
-            if (mPositionMark[area][i]) {
-                if (mAreaPosition[area][i].distance(p) < mPartDis) {
-                    flag = 1; 
-                    break; 
-                }
-            }
-        if (flag) continue;        
-        if (p.x*p.x + p.z*p.z <= mRadius * mRadius) break; 
-    }   
-
-  
-    for (int i = 0; i < 50; i ++) 
-        if (!mPositionMark[area][i]) {
-            
-            p.x += mPosition[area].x; 
-            p.z += mPosition[area].z; 
-            mPositionMark[area][i] = 1; 
-            mAreaPosition[area][i] = p;
-
-            
-            return make_pair(area, i);
-        }    
-    //如果这个区域人太多，则不选择这个区域。
-    return make_pair(-1,-1);
+    return make_pair(area, rand() % mRandomNum);    
 }
-
-void AIDivideAreaManager::destroy(std::pair<uint16_t, uint16_t> cur_id) {
-    mPositionMark[cur_id.first][cur_id.second] = 0; 
-}
-
 vector<uint16_t> AIDivideAreaManager::getClosestArea(uint16_t cur) {
     return mNxtArea[cur];
+}
+
+Ogre::Vector3 AIDivideAreaManager::getPositionById(std::pair<uint16_t, uint16_t> id) {
+    return mRandomPositon[id.second] + mPosition[id.first];
 }

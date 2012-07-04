@@ -109,8 +109,7 @@ void Monster::onInitialize() {
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
 		this, SLOT(__onHit(dt::PhysicsBodyComponent*)));
 
-    connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
-
+    
 	// 行走的时候忽略摩擦力
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 
@@ -128,9 +127,7 @@ void Monster::onInitialize() {
 }
 
 void Monster::onDeinitialize() {
-    emit sIsDead(this);
-    disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*))); 
-
+    EntityManager::get()->__isMonsterDead(this);   
     Character::onDeinitialize();
 }
 

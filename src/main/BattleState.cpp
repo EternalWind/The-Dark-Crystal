@@ -49,6 +49,7 @@ void BattleState::onInitialize() {
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
+    EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
     //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
