@@ -10,6 +10,7 @@
 #include "Monster.h"
 #include "MonsterAIAgent.h"
 #include "EntityManager.h"
+#include "RecordManager.h"
 
 #include <iostream>
 #include <Graphics/CameraComponent.hpp>
@@ -77,6 +78,11 @@ void BattleState::onInitialize() {
     mLoadButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("load_button")).get();
     mReturnMenuButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("return_menu_button")).get();
     mExitButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("exit_button")).get();
+    mPickUpCrystalBar = root_win.addChildWidget<dt::GuiProgressBar>(new dt::GuiProgressBar("pick_up_crystal_bar")).get();
+
+    mPickUpCrystalBar->setProgressRange(101);
+    mPickUpCrystalBar->setProgressPosition(0);
+    mPickUpCrystalBar->setVisible(false);
 
     mHealthHUD.push_back(health_img3.get());
     mHealthHUD.push_back(health_img2.get());
@@ -370,6 +376,10 @@ void BattleState::__resetGui() {
         coordination.bottom() / 2 + 0.5 * mResumeButton->getMyGUIWidget()->getSize().height + 1 * gap_v_medium);
     mExitButton->setPosition(coordination.right() / 2 - mExitButton->getMyGUIWidget()->getSize().width / 2, 
         coordination.bottom() / 2 + 1.5 * mResumeButton->getMyGUIWidget()->getSize().height + 2 * gap_v_medium);
+
+    mPickUpCrystalBar->setSize(0.27f, 0.05f);
+    mPickUpCrystalBar->setPosition(coordination.right() /2 - mPickUpCrystalBar->getMyGUIWidget()->getSize().width / 2,
+        (int)(coordination.bottom() * 0.9f));
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -442,6 +452,10 @@ void BattleState::__onClick(MyGUI::Widget* sender) {
     if (sender->getName() == "Gui.resume_button") {
         __hideMenu();
     } else if (sender->getName() == "Gui.save_button") {
+        RecordManager* record_mgr = RecordManager::get();
+
+        record_mgr->save(this);
+        __hideMenu();
     } else if (sender->getName() == "Gui.load_button") {
     } else if (sender->getName() == "Gui.return_menu_button") {
         dt::StateManager::get()->setNewState(new MenuState());
