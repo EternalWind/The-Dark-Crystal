@@ -49,6 +49,10 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
 
     mg[1][0] = 81, mg[1][1] = 48, mg[1][2] = 83; 
     mg[1][3] = 12, mg[1][4] = 57, mg[1][5] = 70;
+
+      mg[2][0] = 83, mg[2][1] = 15, mg[2][2] = 65; 
+    mg[2][3] = 152, mg[2][4] = 42, mg[2][5] = 80;
+
     monsterNum[1] = 100;
 
     //0:血量；1：速度；2：攻击力；3：攻击间隔。4：体型

@@ -59,7 +59,7 @@ public:
      const static double THREAT_RANGE;
      const static double THREAT_HALF_DEGREE;
 private:
-    uint16_t mg[2][6];
+    uint16_t mg[3][6];
     int32_t monsterNum[2];
     //0:血量；1：速度；2：攻击力；3：攻击间隔。4:怪物大小。
     double monsterValue[2][5];
