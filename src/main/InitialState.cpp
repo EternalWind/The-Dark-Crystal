@@ -21,6 +21,7 @@ void InitialState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("texts", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("scripts", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("particles", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("movie", "FileSystem");
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
