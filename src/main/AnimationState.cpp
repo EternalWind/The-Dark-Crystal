@@ -2,6 +2,7 @@
 
 
 #include "BattleState.h"
+
 AnimationState::AnimationState(const QString &filename, double time) 
                   : mTime(time), mCurTime(0), mFileName(filename), mAnimationPtr(nullptr) {
 }

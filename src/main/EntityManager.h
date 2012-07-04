@@ -17,6 +17,17 @@
 
 using namespace std; 
 
+struct MonsterInfo {
+    QString mMeshHandle;
+    uint16_t mInitNum;
+    uint16_t mMaxHealth;
+    uint16_t mOrigSpeed;
+    float mMass;
+    float mAttackValue;
+    float mAttackRange;
+    float mAttackInterval;
+};
+
 class EntityManager : public dt::Manager {
 
     Q_OBJECT
@@ -48,8 +59,8 @@ public:
      const static double THREAT_RANGE;
      const static double THREAT_HALF_DEGREE;
 private:
-    uint16_t mg[2][6];
-    int16_t monsterNum[2];
+    uint16_t mg[3][6];
+    int32_t monsterNum[2];
     //0:血量；1：速度；2：攻击力；3：攻击间隔。4:怪物大小。
     double monsterValue[2][5];
     uint16_t mCurStage;
@@ -58,11 +69,16 @@ private:
     vector<Character*> mMonster;
     dt::Scene * mCurScene;
     uint16_t mMonsterNum;
+
+    MonsterInfo mMonsterInfo;
      //单例化，把构造，复制构造都设成私有。
 	EntityManager(){}
     EntityManager & operator = (const EntityManager &){}
     EntityManager(const EntityManager &){}
     double _dis(Ogre::Vector3 a, Ogre::Vector3 b);
+    
+    void __loadMonster(QString monster_name);
+
 public slots:
     void __isMonsterDead(Character * monster);
     void __isAlienDead(Character * alien);

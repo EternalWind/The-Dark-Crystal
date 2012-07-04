@@ -235,7 +235,7 @@ void ConfigurationManager::__loadControlSetting(const QDomElement& element)
     mControlSetting.setYInverted(y_inverted_value);
 
     auto sensitivity_setting = element.firstChildElement(SENSITIVITY);
-    unsigned sensitivity_value = sensitivity_setting.attribute(VALUE).toUInt();
+    float sensitivity_value = sensitivity_setting.attribute(VALUE).toFloat();
     mControlSetting.setSensitivity(sensitivity_value);
 
 }
