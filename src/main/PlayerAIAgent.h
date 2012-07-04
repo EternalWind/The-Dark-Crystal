@@ -39,7 +39,7 @@ private slots:
     void __onFire(dt::PhysicsBodyComponent* pbc); 
     
 private:
-
+    bool mSpeedUp; 
     double mPreDegree;                                       //<! 存储上一帧身体的朝向。
     double mExpectDegree;                                    //<! 期望的朝向。
     bool mAttack;                                            //<! 是否处于攻击状态。
