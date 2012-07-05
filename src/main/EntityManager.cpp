@@ -175,8 +175,8 @@ void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
 
     uint16_t k; 
-    if (monsterNum[mCurStage] > 0) k = 2; 
-    else k = 1; 
+    if (monsterNum[mCurStage] >= 2) k = 2; 
+    else k = monsterNum[mCurStage]; 
     for (uint16_t i = 0; i < k; i ++) {
         monsterNum[mCurStage] --;
                 
@@ -184,7 +184,8 @@ void  EntityManager::__isMonsterDead(Character * monster) {
                 AIDivideAreaManager::get()->randomPosition(mg[mCurStage][rand() % 6]));
             mMonsterNum ++;
             Monster *new_monster = new Monster(
-                "monster" + dt::Utils::toString(mMonsterNum),
+                //"monster" + dt::Utils::toString(mMonsterNum),
+                "monster" + QUuid::createUuid(),
                 mMonsterInfo.mMeshHandle,
                 dt::PhysicsBodyComponent::BOX,
                 mMonsterInfo.mMass,
