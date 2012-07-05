@@ -166,7 +166,15 @@ void BattleState::onInitialize() {
 
 }
 
-void BattleState::onDeinitialize() {}
+void BattleState::onDeinitialize() {
+    disconnect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
+                               this, SLOT(__onKeyPressed(dt::InputManager::InputCode, const OIS::EventArg&)));
+
+    /*Alien* pAlien = EntityManager::get()->getHuman();
+
+    disconnect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+	disconnect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));*/
+}
 
 
 void BattleState::updateStateFrame(double simulation_frame_time) {

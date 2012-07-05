@@ -966,7 +966,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         reload_time_num,
                         "sounds/" + weapon_id + "_fire.wav",
                         "sounds/" + weapon_id + "_reload_begin.wav",
-                        "sounds/" + weapon_id + "_reload_done.wav",
+                        "sounds/" + weapon_id + "_reload_end.wav",
                         range_num,
                         FireBack_num,
                         Bomb_num);
@@ -1052,7 +1052,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         reload_time_num,
                         "sounds/" + weapon_id + "_fire.wav",
                         "sounds/" + weapon_id + "_reload_begin.wav",
-                        "sounds/" + weapon_id + "_reload_done.wav",
+                        "sounds/" + weapon_id + "_reload_end.wav",
                         range_num,
                         FireBack_num,
                         Bomb_num);
@@ -1139,7 +1139,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         reload_time_num,
                         "sounds/" + weapon_id + "_fire.wav",
                         "sounds/" + weapon_id + "_reload_begin.wav",
-                        "sounds/" + weapon_id + "_reload_done.wav",
+                        "sounds/" + weapon_id + "_reload_end.wav",
                         range_num,
                         FireBack_num,
                         Bomb_num);
@@ -1520,7 +1520,7 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
             reload_time_num,
             "sounds/" + weapon_id + "_fire.wav",
             "sounds/" + weapon_id + "_reload_begin.wav",
-            "sounds/" + weapon_id + "_reload_done.wav",
+            "sounds/" + weapon_id + "_reload_end.wav",
             range_num,
             FireBack_num,
             Bomb_num);

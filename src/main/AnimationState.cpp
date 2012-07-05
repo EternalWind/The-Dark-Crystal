@@ -12,6 +12,7 @@ void AnimationState::onInitialize() {
 	scene->addChildNode(mAnimationPtr = new Animation(mFileName));
 	connect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
 			 this, SLOT(onKeyDown(dt::InputManager::InputCode, const OIS::EventArg &)));
+    mAnimationPtr->play();
 }
 
 void AnimationState::onDeinitialize() {
@@ -25,11 +26,14 @@ AnimationState::~AnimationState() {
 void AnimationState::updateStateFrame(double simulation_frame_time) {
 	mCurTime += simulation_frame_time;
 	if (mCurTime > mTime) {
+        mAnimationPtr->stop();
 		dt::StateManager::get()->setNewState(new BattleState("01"));
 	}
 }
 
 void AnimationState::onKeyDown(dt::InputManager::InputCode code, const OIS::EventArg &event) {
-	if (code == dt::InputManager::KC_ESCAPE)
+	if (code == dt::InputManager::KC_ESCAPE) {
+        mAnimationPtr->stop();
 		dt::StateManager::get()->setNewState(new BattleState("01"));
+    }
 }

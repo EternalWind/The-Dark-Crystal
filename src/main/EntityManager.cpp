@@ -174,26 +174,16 @@ double EntityManager::_dis(Ogre::Vector3 a, Ogre::Vector3 b) {
 void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
 
-    //MonsterAIAgent * ma = dynamic_cast<MonsterAIAgent*>(monster->findChildNode("agent").get());
-
     uint16_t k; 
     if (monsterNum[mCurStage] > 0) k = 2; 
-    else k = rand()% 1; 
+    else k = 1; 
     for (uint16_t i = 0; i < k; i ++) {
         monsterNum[mCurStage] --;
-        std::cout << "MonsterNUM" <<  monsterNum[mCurStage] << endl; 
                 
             Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getPositionById(
                 AIDivideAreaManager::get()->randomPosition(mg[mCurStage][rand() % 6]));
-                /*
-            Monster * monster = new Monster("monster" + dt::Utils::toString(monsterNum[mCurStage]),
-                "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 
-                monsterValue[monsterNum[mCurStage] % 2][2],  //攻击力
-                40,  //攻击range   
-                monsterValue[monsterNum[mCurStage] % 2][3]);      //攻击间隔
-                */
             mMonsterNum ++;
-            Monster *monster = new Monster(
+            Monster *new_monster = new Monster(
                 "monster" + dt::Utils::toString(mMonsterNum),
                 mMonsterInfo.mMeshHandle,
                 dt::PhysicsBodyComponent::BOX,
@@ -209,20 +199,15 @@ void  EntityManager::__isMonsterDead(Character * monster) {
             MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(monsterNum[mCurStage]));  
 
 
-            addEntityInScene(monster, maa, monster_pos.x, 10, monster_pos.z, mMonsterInfo.mScale);
-            addMonster(monster);
-
-            /*
-            monster->setMaxHealth(monsterValue[monsterNum[mCurStage] % 2][0]); //血量
-            monster->setCurSpeed(monsterValue[monsterNum[mCurStage] % 2][1]); //行走速度
-            monster->setCurHealth(monster->getMaxHealth());  
-            */
+            addEntityInScene(new_monster, maa, monster_pos.x, 10, monster_pos.z, mMonsterInfo.mScale);
+            addMonster(new_monster);
             monster->setMaxHealth(mMonsterInfo.mMaxHealth);
             monster->setCurHealth(mMonsterInfo.mMaxHealth);
             monster->setOrigSpeed(mMonsterInfo.mOrigSpeed);
             monster->setCurSpeed(mMonsterInfo.mOrigSpeed);
         
     }
+    monster->disable();
 }
 void EntityManager::__isAlienDead(Character * alien) {
     if (alien == nullptr) return; 

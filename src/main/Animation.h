@@ -44,7 +44,7 @@ public:
 	
 
 private:
-	OgreUtils::DirectShowManager *mDShow;
+	static OgreUtils::DirectShowManager *mDShow;
 	QString mAnimationHandle;                  //!< 动画文件名
 	OgreUtils::DirectShowControl *mDshowPtr;   //!< 动画播放控制指针
 };

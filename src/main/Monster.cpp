@@ -127,7 +127,6 @@ void Monster::onInitialize() {
 }
 
 void Monster::onDeinitialize() {
-    EntityManager::get()->__isMonsterDead(this);   
     Character::onDeinitialize();
 }
 
@@ -136,7 +135,9 @@ void Monster::onUpdate(double time_diff) {
 
 	if (mHasKilled) {
         if (this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->isAnimationStopped()) {
-            this->kill(); 
+            EntityManager::get()->__isMonsterDead(this);
+            mHasKilled = false;
+
             return; 
         }
 
