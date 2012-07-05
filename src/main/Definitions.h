@@ -34,6 +34,7 @@
 #define RECORD_DIR "records"
 #define RECORD_ROOT "Record"
 #define RECORD_LEVEL_INFO "Level"
+#define RECORD_LEVEL_ID "id"
 #define RECORD_SUB_FIX "record"
 //***************************************************************************************//
 

@@ -43,7 +43,7 @@ void RecordManager::initialize() {
 
             if (!level.isNull()) {
                 RecordInfo info;
-                info.mLevelID = level.nodeValue();
+                info.mLevelID = level.attribute(RECORD_LEVEL_ID);
                 info.mFileName = file.fileName();
 
                 mRecords[mCounter] = info;
@@ -95,7 +95,7 @@ void RecordManager::save(const BattleState* battle_state) {
         doc.appendChild(root);
 
         level = doc.createElement(RECORD_LEVEL_INFO);
-        level.setNodeValue(info.mLevelID);
+        level.setAttribute(RECORD_LEVEL_ID, info.mLevelID);
         root.appendChild(level);
 
         QTextStream out(&file);
