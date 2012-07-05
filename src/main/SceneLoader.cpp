@@ -972,20 +972,22 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         Bomb_num);
                    
                     pAlien->addChildNode(pWeapon);
-					auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
-   					if (!has_muzzle.isNull()) {
-						ParticleInfo temp = load_ParticleInfo(has_muzzle);
-						auto mPosition = has_muzzle.firstChildElement("mPosition");
-						auto x = mPosition.firstChildElement("x");
-						float x_num = x.text().toFloat();
+					if (agent == "HumanAgent") {		//只给humanagent添加枪口粒子效果
+						auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
+   						if (!has_muzzle.isNull()) {
+							ParticleInfo temp = load_ParticleInfo(has_muzzle);
+							auto mPosition = has_muzzle.firstChildElement("mPosition");
+							auto x = mPosition.firstChildElement("x");
+							float x_num = x.text().toFloat();
 
-						auto y = mPosition.firstChildElement("y");
-						float y_num = y.text().toFloat();
+							auto y = mPosition.firstChildElement("y");
+							float y_num = y.text().toFloat();
 
-						auto z = mPosition.firstChildElement("z");
-						float z_num = z.text().toFloat();
+							auto z = mPosition.firstChildElement("z");
+							float z_num = z.text().toFloat();
 
-						pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+							pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+						}
 					}
 
                     pAlien->addWeapon(pWeapon);
