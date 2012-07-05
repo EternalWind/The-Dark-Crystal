@@ -310,7 +310,8 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
                     Agent* agent;
                     agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT, false).get());
                     agent->detach();
-                    agent->attachTo(vehicle);		
+                    agent->attachTo(vehicle);	
+                    vehicle->setAlienRider(this);
 
                     this->setParent(vehicle);
                     vehicle->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->setMass(vehicle->getMass());
