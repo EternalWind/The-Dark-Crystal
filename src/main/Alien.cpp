@@ -34,22 +34,30 @@ Weapon* Alien::getCurWeapon() const {
 }
 
 void Alien::changeCurWeapon(const Weapon::WeaponType type) {
-    Weapon* cur_weapon = getCurWeapon();
     Weapon* new_weapon = mWeapons[type];
+    HumanAgent* agent;
+    agent = dynamic_cast<HumanAgent*>(this->findChildNode(Agent::AGENT).get());
 
-    if ((cur_weapon == nullptr || cur_weapon->getWeaponType() != type) && new_weapon != nullptr) {
-        if(cur_weapon != nullptr)
+    if ((mCurWeapon == nullptr || mCurWeapon->getWeaponType() != type) && new_weapon != nullptr) {
+        if(mCurWeapon != nullptr)
         {
-            cur_weapon->disable();
-            disconnect(cur_weapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
-            disconnect(cur_weapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
-            this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(cur_weapon);
-            this->findChildNode(cur_weapon->getName() + "_muzzle_node")->setParent(cur_weapon);
+            mCurWeapon->disable();
+            if (agent != nullptr) {
+                // 只有人类玩家有HUD连接。
+                disconnect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
+                disconnect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
+            }
+            this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(mCurWeapon);
+            this->findChildNode(mCurWeapon->getName() + "_muzzle_node")->setParent(mCurWeapon);
         }
         new_weapon->enable();
         mCurWeapon = new_weapon;
-        connect(cur_weapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
-        connect(cur_weapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
+
+        if (agent != nullptr) {
+            // 只有人类玩家有HUD连接。
+            connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
+            connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
+        }
 
         mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
         mCurWeapon->findChildNode(mCurWeapon->getName() +  "_muzzle_node")->setParent(this);
@@ -57,73 +65,50 @@ void Alien::changeCurWeapon(const Weapon::WeaponType type) {
         emit sAmmoClipChange(mCurWeapon->getCurAmmo(), mCurWeapon->getCurClip());
 
         this->setCurSpeed(this->getOrigSpeed() - new_weapon->getWeight() * 0.1f);
+
         if (mHasSpeededUp) {
             __onSpeedUp(true);
         }
 
-        emit sWeaponChanged(cur_weapon, new_weapon);
+        emit sWeaponChanged(mCurWeapon, new_weapon);
+    } else if (new_weapon == nullptr) {
+
+        if(mCurWeapon != nullptr)
+        {
+            if (mCurWeapon->getParent() == this) {
+                mCurWeapon->disable();
+            }
+
+            if (agent != nullptr) {
+                // 只有人类玩家有HUD连接。
+                disconnect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
+                disconnect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
+            }
+
+            this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(mCurWeapon);
+            this->findChildNode(mCurWeapon->getName() + "_muzzle_node")->setParent(mCurWeapon);
+        }
+
+        mCurWeapon = nullptr;
+        emit sAmmoClipChange(0, 0);
     }
 }
 
 void Alien::addWeapon(Weapon* weapon) {
     if (weapon != nullptr) {
-        if (mCurWeapon != nullptr && mCurWeapon->getWeaponType() != weapon->getWeaponType()) {
-            mCurWeapon->disable();
-            disconnect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
-            disconnect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
-            this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(mCurWeapon);
-
-            this->findChildNode(mCurWeapon->getName() + "_muzzle_node")->setParent(mCurWeapon);
-        }
         if (mWeapons[weapon->getWeaponType()] != nullptr) {
-
-            bool is_enabled = mWeapons[weapon->getWeaponType()]->isEnabled();
             removeWeapon(weapon->getWeaponType());
-
-            mWeapons[weapon->getWeaponType()] = weapon;
-
-            weapon->removeComponent(PHYSICS_BODY_COMPONENT);
-            weapon->setParent(this);
-            weapon->setRotation(Ogre::Quaternion::IDENTITY);
-            weapon->setPosition(1.0f, 0.0f, -4.0f);
-            weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
-
-            //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->enable();
-            //weapon->findComponent<dt::PhysicsBodyComponent>("physics_body")->disable();
-            mCurWeapon = weapon;
-            connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
-            connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
-            mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
-            mCurWeapon->findChildNode(mCurWeapon->getName() +  "_muzzle_node")->setParent(this);
-            if (!is_enabled)
-                weapon->disable();
-
-            emit sAmmoClipChange(weapon->getCurAmmo(), weapon->getCurClip());
-        }
-        else {
-            mWeapons[weapon->getWeaponType()] = weapon;
-            //weapon->setIsPhysicsBodyEnabled(0);
-            weapon->removeComponent(PHYSICS_BODY_COMPONENT);
-            weapon->setParent(this);
-            weapon->setRotation(Ogre::Quaternion::IDENTITY);
-            weapon->setPosition(1.0f, 0.0f, -4.0f);
-            weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
-
-            auto human = dynamic_cast<HumanAgent*>(this->findChildNode("agent").get());	
-            mCurWeapon = weapon;
-            if (human) {
-                connect(mCurWeapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
-                connect(mCurWeapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));  
-                emit sAmmoClipChange(weapon->getCurAmmo(), weapon->getCurClip());
-            }
-            mCurWeapon->findChildNode("ammo_node")->setParent(this->findChildNode("getProp").get());
-            mCurWeapon->findChildNode(mCurWeapon->getName() +  "_muzzle_node")->setParent(this);
         }
 
-        //emit sAmmoChange(weapon->getCurAmmo());
-        //emit sClipNumChange(weapon->getCurClip());
+        mWeapons[weapon->getWeaponType()] = weapon;
+
+        weapon->removeComponent(PHYSICS_BODY_COMPONENT);
+        weapon->setParent(this);
+        weapon->setRotation(Ogre::Quaternion::IDENTITY);
+        weapon->setPosition(1.0f, 0.0f, -4.0f);
+        weapon->setScale(Ogre::Vector3(20.0f, 20.0f, 20.0f));
+        changeCurWeapon(weapon->getWeaponType());
     }
-
 }
 
 void Alien::removeWeapon(const Weapon::WeaponType type) {
@@ -131,9 +116,6 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
 
     if (weapon != nullptr) {
         mWeapons[type] = nullptr;
-
-        if (mCurWeapon->getWeaponType() == type)
-            mCurWeapon = nullptr;
 
         weapon->enable();
         weapon->setParent((dt::Node*)(this->getScene()));
@@ -144,17 +126,12 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
         weapon->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->disable();
         weapon->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->enable();
 
-        disconnect(weapon, SIGNAL(sAmmoChanged(uint16_t)), this->getState(), SLOT(__onAmmoChanged(uint16_t)));
-        disconnect(weapon, SIGNAL(sClipNumChanged(uint16_t)), this->getState(), SLOT(__onClipNumChanged(uint16_t)));
-        this->findChildNode("getProp")->findChildNode("ammo_node")->setParent(weapon);
-
-        this->findChildNode(weapon->getName() + "_muzzle_node")->setParent(weapon);
-
-       
         this->setCurSpeed(this->getOrigSpeed());
         if (mHasSpeededUp) {
             __onSpeedUp(true);
         }
+
+        changeCurWeapon(type);
 
         emit sWeaponRemoved(weapon);
     }
@@ -186,11 +163,15 @@ void Alien::onInitialize() {
 
 void Alien::onDeinitialize() {
     State* state = this->getState();
+    HumanAgent* agent;
+    agent = dynamic_cast<HumanAgent*>(this->findChildNode(Agent::AGENT).get());
 
-    disconnect(this, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), state, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
-    disconnect(this, SIGNAL(sHealthChanged(uint16_t)), state, SLOT(__onHealthChanged(uint16_t)));
+    if (agent != nullptr) {
+        // 只有人类玩家有HUD连接。
+        disconnect(this, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), state, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+        disconnect(this, SIGNAL(sHealthChanged(uint16_t)), state, SLOT(__onHealthChanged(uint16_t)));
+    }
 
-    //EntityManager::get()->__isAlienDead(this);
     emit sIsDead(this);
 
     Character::onDeinitialize();
@@ -199,14 +180,7 @@ void Alien::onDeinitialize() {
 void Alien::onUpdate(double time_diff) {
     this->mIsUpdatingAfterChange = (time_diff == 0);
 
-    //if (hasweapon) {
-    //	std::cout << this->getPosition(dt::Node::SCENE).x << " " << this->getPosition(dt::Node::SCENE).y << " " << this->getPosition(dt::Node::SCENE).z << std::endl;
-    //	auto weapon = this->findChildNode("RailGun_node");
-    //	if (weapon)
-    //		std::cout << weapon->getPosition(dt::Node::SCENE).x << " " << weapon->getPosition(dt::Node::SCENE).y << " " << weapon->getPosition(dt::Node::SCENE).z << std::endl << std::endl;
-    //}
     if (mIsAddingEquipment) {
-        //mIsAddingEquipment = false;
         this->findChildNode("getProp")->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     }
 
@@ -215,8 +189,7 @@ void Alien::onUpdate(double time_diff) {
 
 void Alien::__onAttack(bool is_pressed) {
     Weapon* weapon = this->getCurWeapon();
-    //if(this->mCurWeapon != nullptr) 
-    //	std::cout << this->mCurWeapon->getName().toStdString() << std::endl;
+
     if (weapon != nullptr)
         weapon->attack(is_pressed);
 }
@@ -237,7 +210,6 @@ void Alien::__onRemoveWeapon() {
     }
     if (iter == mWeapons.end())
     {
-        //mCurWeapon = nullptr;
         emit sAmmoClipChange(0, 0);
     }
 }
