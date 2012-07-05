@@ -14,7 +14,7 @@
 class AnimationState : public dt::State {
 	Q_OBJECT
 public:
-	AnimationState(const QString &filename, double time);
+	AnimationState(const QString &filename, double time, dt::State* next_state);
 
 	~AnimationState();
 
@@ -35,7 +35,8 @@ private:
 	Animation *mAnimationPtr;   //!< 待播放动画指针
 	double mTime;               //!< 动画播放时间
 	double mCurTime;            //!< 动画已播放时间
-	QString mFileName;           //!< 动画文件名
+	QString mFileName;          //!< 动画文件名
+    dt::State* mNextState;      //!< 播完动画后要进入的State
 };
 
 #endif

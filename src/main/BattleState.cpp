@@ -11,21 +11,23 @@
 #include "MonsterAIAgent.h"
 #include "EntityManager.h"
 #include "RecordManager.h"
+#include "AnimationState.h"
 
-#include <iostream>
 #include <Graphics/CameraComponent.hpp>
 #include <Graphics/LightComponent.hpp>
 #include <Graphics/MeshComponent.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
 #include <Core/ResourceManager.hpp>
-#include <OgreProcedural.h>
 #include <Scene/Game.hpp>
 #include <Gui/GuiRootWindow.hpp>
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 #include <Logic/ScriptComponent.hpp>
 #include <Logic/ScriptManager.hpp>
+
 #include <OgreProcedural.h>
+
+#include <iostream>
 
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
@@ -486,5 +488,5 @@ void BattleState::__onUnlockCrystalProgressChanged(uint16_t percent) {
 }
 
 void BattleState::fail() {
-
+    dt::StateManager::get()->setNewState(new AnimationState("videos/fail.avi", 4, new MenuState()));
 }

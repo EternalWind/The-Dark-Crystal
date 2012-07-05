@@ -1,10 +1,11 @@
 #include "AnimationState.h"
 
-
-#include "BattleState.h"
-
-AnimationState::AnimationState(const QString &filename, double time) 
-                  : mTime(time), mCurTime(0), mFileName(filename), mAnimationPtr(nullptr) {
+AnimationState::AnimationState(const QString &filename, double time, dt::State* next_state) 
+                  : mTime(time), 
+                    mCurTime(0), 
+                    mFileName(filename), 
+                    mAnimationPtr(nullptr),
+                    mNextState(next_state) {
 }
 
 void AnimationState::onInitialize() {
@@ -27,13 +28,13 @@ void AnimationState::updateStateFrame(double simulation_frame_time) {
 	mCurTime += simulation_frame_time;
 	if (mCurTime > mTime) {
         mAnimationPtr->stop();
-		dt::StateManager::get()->setNewState(new BattleState("01"));
+		dt::StateManager::get()->setNewState(mNextState);
 	}
 }
 
 void AnimationState::onKeyDown(dt::InputManager::InputCode code, const OIS::EventArg &event) {
 	if (code == dt::InputManager::KC_ESCAPE) {
         mAnimationPtr->stop();
-		dt::StateManager::get()->setNewState(new BattleState("01"));
+		dt::StateManager::get()->setNewState(mNextState);
     }
 }
