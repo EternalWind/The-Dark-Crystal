@@ -52,6 +52,7 @@ Spaceship::Spaceship(const QString node_name,
 	mFlameEffect(flame_effect),
 	mBulletHandle(bullet_handle) {
 		Entity::mEyePosition = Ogre::Vector3(0, 2, 0);
+        mAlienRider = nullptr;
 }
 
 void Spaceship::onInitialize() {
@@ -73,9 +74,6 @@ void Spaceship::onInitialize() {
 	this->resetPhysicsBody();
 
 	this->setCurSpeed(0.0f);
-
-	//设置摄像头位置
-	this->setEyePosition(Ogre::Vector3(0, 2, 0));	
 
 	//添加攻击效果
 	if (mBulletHandle == "") {
@@ -111,20 +109,26 @@ void Spaceship::__onGetOffVehicle() {
 	if (physics_body != nullptr && 
 		physics_body->getRigidBody()->getWorldTransform().getOrigin().y() < 30.0f &&
 		physics_body->getRigidBody()->getLinearVelocity().length() < 20.0f) {
-		Alien* alien;
-		alien = dynamic_cast<Alien*>(this->findChildNode("alien", false).get());
+        // 无人驾驶飞船，直接返回
+        if (mAlienRider == nullptr) {
+            return;
+        }
+
+		Alien* alien = mAlienRider;
 
 		Agent* agent;
 		agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT, false).get());
 
 		agent->detach();
-
 		alien->setParent((dt::Node*)this->getScene());
-		alien->setPosition(this->getPosition() + Ogre::Vector3(mWidth * 2 + 0.5, 0, 0));
-		alien->findComponent<dt::MeshComponent>(Alien::MESH_COMPONENT)->enable();
-		alien->findComponent<dt::PhysicsBodyComponent>(Alien::PHYSICS_BODY_COMPONENT)->enable();
 
-		agent->attachTo(alien);
+		alien->setPosition(this->getPosition() + Ogre::Vector3(mWidth * 2 + 0.5, 0, 0));        
+		alien->findComponent<dt::MeshComponent>(Alien::MESH_COMPONENT)->enable();
+		alien->findComponent<dt::PhysicsBodyComponent>(Alien::PHYSICS_BODY_COMPONENT)->enable();        
+
+		agent->attachTo(alien);  
+
+        this->setAlienRider(nullptr);
 
 		// 下船之后船为静态物体
 		physics_body->setMass(0);
