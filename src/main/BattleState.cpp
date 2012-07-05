@@ -10,20 +10,25 @@
 #include "Monster.h"
 #include "MonsterAIAgent.h"
 #include "EntityManager.h"
-#include <iostream>
+#include "RecordManager.h"
+#include "AnimationState.h"
+
 #include <Graphics/CameraComponent.hpp>
 #include <Graphics/LightComponent.hpp>
 #include <Graphics/MeshComponent.hpp>
 #include <Physics/PhysicsBodyComponent.hpp>
 #include <Core/ResourceManager.hpp>
-#include <OgreProcedural.h>
 #include <Scene/Game.hpp>
 #include <Gui/GuiRootWindow.hpp>
 #include <Gui/GuiManager.hpp>
 #include <Scene/StateManager.hpp>
 #include <Logic/ScriptComponent.hpp>
 #include <Logic/ScriptManager.hpp>
+
 #include <OgreProcedural.h>
+
+#include <iostream>
+
 BattleState::BattleState(const QString stage_name) 
     : mQuestionLabel(nullptr),
       mDialogLabel(nullptr),
@@ -36,7 +41,8 @@ BattleState::BattleState(const QString stage_name)
       mNextStage(""),
       mSceneParam1(0.0),
       mSceneParam2(0.0),
-      mCrystalBarPosition(0.0){}
+      mCrystalBarPosition(0),
+      mHasPaused(false) {}
 
 void BattleState::onInitialize() {
    
@@ -46,6 +52,7 @@ void BattleState::onInitialize() {
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
+    EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
     //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
@@ -69,6 +76,17 @@ void BattleState::onInitialize() {
     auto question = root_win.addChildWidget<dt::GuiEditBox>(new dt::GuiEditBox("question"));
     auto dialog = root_win.addChildWidget<dt::GuiLabel>(new dt::GuiLabel("dialog"));
 
+    mResumeButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("resume_button")).get();
+    mSaveButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("save_button")).get();
+    mLoadButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("load_button")).get();
+    mReturnMenuButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("return_menu_button")).get();
+    mExitButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("exit_button")).get();
+    mPickUpCrystalBar = root_win.addChildWidget<dt::GuiProgressBar>(new dt::GuiProgressBar("pick_up_crystal_bar")).get();
+
+    mPickUpCrystalBar->setProgressRange(101);
+    mPickUpCrystalBar->setProgressPosition(0);
+    mPickUpCrystalBar->setVisible(false);
+
     mHealthHUD.push_back(health_img3.get());
     mHealthHUD.push_back(health_img2.get());
     mHealthHUD.push_back(health_img1.get());
@@ -90,7 +108,6 @@ void BattleState::onInitialize() {
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
-
     __onHealthChanged(pAlien->getCurHealth());
     __onAmmoChanged(0);
     __onClipNumChanged(0);
@@ -109,6 +126,24 @@ void BattleState::onInitialize() {
 
     mQuestionLabel->setVisible(false);
 
+    mResumeButton->setCaption(QString::fromLocal8Bit("返回游戏"));
+    mSaveButton->setCaption(QString::fromLocal8Bit("保存游戏"));
+    mLoadButton->setCaption(QString::fromLocal8Bit("读取游戏"));
+    mReturnMenuButton->setCaption(QString::fromLocal8Bit("返回主菜单"));
+    mExitButton->setCaption(QString::fromLocal8Bit("退出游戏"));
+
+    mResumeButton->setVisible(false);
+    mSaveButton->setVisible(false);
+    mLoadButton->setVisible(false);
+    mReturnMenuButton->setVisible(false);
+    mExitButton->setVisible(false);
+
+    mResumeButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
+    mSaveButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
+    mLoadButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
+    mReturnMenuButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
+    mExitButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
+
     mFrontSight->setImageTexture("FrontSight.png");
 
     mDialogLabel->getMyGUIWidget()->setAlign(MyGUI::Align::Left);
@@ -125,24 +160,41 @@ void BattleState::onInitialize() {
     __resetGui();
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
-    EntityManager::get()->afterLoadScene(scene.get());    
+
+    EntityManager::get()->afterLoadScene(scene.get(), mStage);
+
+    connect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
+                               this, SLOT(__onKeyPressed(dt::InputManager::InputCode, const OIS::EventArg&)));
+
 }
 
-void BattleState::onDeinitialize() {}
+void BattleState::onDeinitialize() {
+    disconnect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
+                               this, SLOT(__onKeyPressed(dt::InputManager::InputCode, const OIS::EventArg&)));
+
+    /*Alien* pAlien = EntityManager::get()->getHuman();
+
+    disconnect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
+	disconnect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));*/
+}
 
 
 void BattleState::updateStateFrame(double simulation_frame_time) {
 	//拾起水晶进度条过程
-	if(mCrystalBarPosition != 0.0) {
-		mCrystalBarPosition += simulation_frame_time;
-		mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition * 20);
-		if(mCrystalBarPosition > 5.0) {
-			mCrystalBarPosition = 0.0;
-			mPickUpCrystalBar->setVisible(false);
+	if(mCrystalBarPosition > 0) {
+        mPickUpCrystalBar->setVisible(true);
+		mPickUpCrystalBar->setProgressPosition(mCrystalBarPosition);
+		//if(mCrystalBarPosition > 5.0) {
+		//mCrystalBarPosition = 0.0;
+			
+        if (mCrystalBarPosition >= 100) {
 			++mObtainedCrystalNum;
 			setObtainedCrystalNum(mObtainedCrystalNum);
+            mCrystalBarPosition = 0;
 		}
-	}
+	} else {
+        mPickUpCrystalBar->setVisible(false);
+    }
 }
 
 
@@ -324,6 +376,27 @@ void BattleState::__resetGui() {
     mDialogLabel->setSize(300, size_v_small);
     mDialogLabel->setPosition(mHealthHUD[0]->getMyGUIWidget()->getPosition().left, mHealthHUD[0]->getMyGUIWidget()->getPosition().top - mHealthHUD[0]->getMyGUIWidget()->
         getSize().height - gap_v_small / 2);
+
+    mResumeButton->setSize(0.2f, 0.05f);
+    mSaveButton->setSize(0.2f, 0.05f);
+    mLoadButton->setSize(0.2f, 0.05f);
+    mReturnMenuButton->setSize(0.2f, 0.05f);
+    mExitButton->setSize(0.2f, 0.05f);
+
+    mResumeButton->setPosition(coordination.right() / 2 - mResumeButton->getMyGUIWidget()->getSize().width / 2, 
+        coordination.bottom() / 2 - 2.5 * mResumeButton->getMyGUIWidget()->getSize().height - 2 * gap_v_medium);
+    mSaveButton->setPosition(coordination.right() / 2 - mSaveButton->getMyGUIWidget()->getSize().width / 2, 
+        coordination.bottom() / 2 - 1.5 * mResumeButton->getMyGUIWidget()->getSize().height - 1 * gap_v_medium);
+    mLoadButton->setPosition(coordination.right() / 2 - mLoadButton->getMyGUIWidget()->getSize().width / 2, 
+        coordination.bottom() / 2 - 0.5 * mResumeButton->getMyGUIWidget()->getSize().height);
+    mReturnMenuButton->setPosition(coordination.right() / 2 - mReturnMenuButton->getMyGUIWidget()->getSize().width / 2, 
+        coordination.bottom() / 2 + 0.5 * mResumeButton->getMyGUIWidget()->getSize().height + 1 * gap_v_medium);
+    mExitButton->setPosition(coordination.right() / 2 - mExitButton->getMyGUIWidget()->getSize().width / 2, 
+        coordination.bottom() / 2 + 1.5 * mResumeButton->getMyGUIWidget()->getSize().height + 2 * gap_v_medium);
+
+    mPickUpCrystalBar->setSize(0.27f, 0.05f);
+    mPickUpCrystalBar->setPosition(coordination.right() /2 - mPickUpCrystalBar->getMyGUIWidget()->getSize().width / 2,
+        (int)(coordination.bottom() * 0.9f));
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -346,4 +419,74 @@ void BattleState::setSceneParam1(double param1) {
 
 void BattleState::setSceneParam2(double param2) {
     mSceneParam2 = param2;
+}
+
+void BattleState::__showMenu() {
+    if (!mHasPaused) {
+        mHasPaused = true;
+
+        mResumeButton->setVisible(true);
+        mSaveButton->setVisible(true);
+        mLoadButton->setVisible(true);
+        mReturnMenuButton->setVisible(true);
+        mExitButton->setVisible(true);
+        mFrontSight->setVisible(false);
+
+        dt::GuiManager::get()->setMouseCursorVisible(true);
+
+        EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->disable();
+    }
+}
+
+void BattleState::__hideMenu() {
+    if (mHasPaused) {
+        mHasPaused = false;
+
+        mResumeButton->setVisible(false);
+        mSaveButton->setVisible(false);
+        mLoadButton->setVisible(false);
+        mReturnMenuButton->setVisible(false);
+        mExitButton->setVisible(false);
+        mFrontSight->setVisible(true);
+
+        dt::GuiManager::get()->setMouseCursorVisible(false);
+
+        EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->enable();
+    }
+}
+
+void BattleState::__onKeyPressed(dt::InputManager::InputCode code, const OIS::EventArg& event) {
+    if (code == dt::InputManager::KC_ESCAPE) {
+        if (mHasPaused) {
+            __hideMenu();
+        } else {
+            __showMenu();
+        }
+    }
+}
+
+void BattleState::__onClick(MyGUI::Widget* sender) {
+    if (sender->getName() == "Gui.resume_button") {
+        __hideMenu();
+    } else if (sender->getName() == "Gui.save_button") {
+        RecordManager* record_mgr = RecordManager::get();
+
+        record_mgr->save(this);
+        __hideMenu();
+    } else if (sender->getName() == "Gui.load_button") {
+    } else if (sender->getName() == "Gui.return_menu_button") {
+        dt::StateManager::get()->setNewState(new MenuState());
+    } else if (sender->getName() == "Gui.exit_button") {
+        exit(0);
+    }
+}
+
+void BattleState::__onUnlockCrystalProgressChanged(uint16_t percent) {
+    if (percent >= 0 && percent <= 100) {
+        mCrystalBarPosition = percent;
+    }
+}
+
+void BattleState::fail() {
+    dt::StateManager::get()->setNewState(new AnimationState("videos/fail.avi", 4, new MenuState()));
 }

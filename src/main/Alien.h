@@ -56,9 +56,11 @@ public:
 
     void onInitialize();
 
-    void onDeInitialize();
+    void onDeinitialize();
 
     void onUpdate(double time_diff);
+
+    void onKilled();
 
 protected slots:
     //void __onMove(Entity::MoveType type, bool is_pressed);

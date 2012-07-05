@@ -135,6 +135,8 @@ public:
 
     virtual void onDeinitialize();
 
+    virtual void onUpdate(double time_diff);
+
 signals:
     /**
       * 一个当该实体的生命值被改变时会发送的signal。

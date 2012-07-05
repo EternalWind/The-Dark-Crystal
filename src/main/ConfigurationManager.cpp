@@ -44,8 +44,6 @@ bool ConfigurationManager::loadConfig()
     {
         QDomElement root = doc.documentElement();
 
-        // Only loads the key settings for now.
-        // TODO: Add other loading stuff here.
         for(QDomElement config_node = root.firstChildElement() ; !config_node.isNull() ; config_node = config_node.nextSiblingElement())
         {
             QString tag_name = config_node.tagName();

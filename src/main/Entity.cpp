@@ -147,3 +147,13 @@ void Entity::onInitialize() {
 
 void Entity::onDeinitialize() {
 }
+
+void Entity::onUpdate(double time_diff) {
+    this->mIsUpdatingAfterChange = (time_diff == 0);
+
+    if (this->getCurHealth() <= 0) {
+        onKilled();
+    }
+
+    dt::Node::onUpdate(time_diff);
+}

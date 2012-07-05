@@ -109,8 +109,7 @@ void Monster::onInitialize() {
 	connect(interator.get(), SIGNAL(sHit(dt::PhysicsBodyComponent*)), 
 		this, SLOT(__onHit(dt::PhysicsBodyComponent*)));
 
-    connect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*)));
-
+    
 	// 行走的时候忽略摩擦力
 	this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT)->getRigidBody()->setFriction(0.0);
 
@@ -118,9 +117,9 @@ void Monster::onInitialize() {
 
 	// 攻击效果
 	mFlashNode = this->addChildNode(new dt::Node(this->getName() + "_flash_node"));
-	mFlashNode->addComponent(new dt::MeshComponent("real_lightning.mesh", "", "FlashMesh"));
-	mFlashNode->setScale(5.0);
-	mFlashNode->setPosition(mFlashNode->getPosition() + Ogre::Vector3(0, 0, -8));	
+	mFlashNode->addComponent(new dt::MeshComponent("lightning.mesh", "", "FlashMesh"));
+	mFlashNode->setScale(5.0);    
+    mFlashNode->setPosition(Ogre::Vector3(0, 0, -10));	
 	mFlashNode->disable();
 
 	// 初始化随机值
@@ -128,9 +127,6 @@ void Monster::onInitialize() {
 }
 
 void Monster::onDeinitialize() {
-    emit sIsDead(this);
-    disconnect(this, SIGNAL(sIsDead(Character*)), EntityManager::get(), SLOT(__isMonsterDead(Character*))); 
-
     Character::onDeinitialize();
 }
 
@@ -139,7 +135,9 @@ void Monster::onUpdate(double time_diff) {
 
 	if (mHasKilled) {
         if (this->findComponent<dt::MeshComponent>(MESH_COMPONENT)->isAnimationStopped()) {
-            this->kill(); 
+            EntityManager::get()->__isMonsterDead(this);
+            mHasKilled = false;
+
             return; 
         }
 

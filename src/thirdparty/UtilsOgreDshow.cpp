@@ -283,6 +283,7 @@ namespace OgreUtils
             dsdata->pGraph=0;
         }
 
+        Ogre::TextureManager::getSingleton().destroyAllResourcePools();
     }
 
     void DirectShowMovieTexture::pauseMovie()
@@ -549,6 +550,8 @@ namespace OgreUtils
 			delete mDirectshowTexture;
 			mDirectshowTexture = nullptr;
 		}
+
+        Ogre::OverlayManager::getSingleton().destroyOverlayElement("Ogre/DebugTexPanel" +mName);
 		Ogre::OverlayManager::getSingleton().destroy(mName);
     }
     void DirectShowControl::createOverlay()
@@ -594,8 +597,14 @@ namespace OgreUtils
 
     void DirectShowControl::Destroy()
     {
-         
-        delete mDirectshowTexture;
+        if (mDirectshowTexture != nullptr)
+		{
+			delete mDirectshowTexture;
+			mDirectshowTexture = nullptr;
+		}
+
+        Ogre::OverlayManager::getSingleton().destroyOverlayElement("Ogre/DebugTexPanel" +mName);
+		Ogre::OverlayManager::getSingleton().destroy(mName);
     }
 
     void DirectShowControl::PlayMovie()

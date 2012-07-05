@@ -2,6 +2,7 @@
 
 #include "ConfigurationManager.h"
 #include "MenuState.h"
+#include "RecordManager.h"
 
 #include <Graphics/DisplayManager.hpp>
 #include <Core/ResourceManager.hpp>
@@ -12,6 +13,9 @@
 InitialState::InitialState() {}
 
 void InitialState::onInitialize() {
+    RecordManager* mgr = RecordManager::get();
+    mgr->initialize();
+
     dt::ResourceManager::get()->addResourceLocation("", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");
@@ -21,7 +25,9 @@ void InitialState::onInitialize() {
     dt::ResourceManager::get()->addResourceLocation("texts", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("models", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("scripts", "FileSystem");
-    dt::ResourceManager::get()->addResourceLocation("movie", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("videos", "FileSystem");
+    dt::ResourceManager::get()->addResourceLocation("particles", "FileSystem");
+
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     dt::Scene::SceneSP scene = addScene(new dt::Scene("initial_scene"));

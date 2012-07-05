@@ -1,5 +1,7 @@
 #include "Crystal.h"
 
+#include "BattleState.h"
+
 Crystal::Crystal() {
 }
 	
@@ -10,6 +12,27 @@ Crystal::Crystal(const QString &prop_name, const QString &node_name, double unlo
               mIsUnlocking(false) {}
 	
 Crystal::~Crystal() {
+}
+
+void Crystal::onInitialize() {
+    Prop::onInitialize();
+
+    this->removeComponent("physics_body");
+    auto physics_body = this->addComponent(new dt::PhysicsBodyComponent("prop_mesh", "physics_body", dt::PhysicsBodyComponent::CONVEX, 0.0));
+
+    dt::State* state = this->getState();
+
+    connect(this, SIGNAL(sUnlockCrystalProgressChanged(uint16_t)),
+        state, SLOT(__onUnlockCrystalProgressChanged(uint16_t)));
+}
+
+void Crystal::onDeinitialize() {
+    dt::State* state = this->getState();
+
+    disconnect(this, SIGNAL(sUnlockCrystalProgressChanged(uint16_t)), 
+        state, SLOT(__onUnlockCrystalProgressChanged(uint16_t)));
+
+    Prop::onDeinitialize();
 }
 
 double Crystal::getUnlockTime() const {
@@ -24,30 +47,26 @@ double Crystal::getUnlockProgress() const {
     return mUnlockProgress;
 }
 
-void Crystal::setUnlockProgress(const double unlock_progress) {
-    if (mUnlockProgress != unlock_progress && mUnlockProgress < mUnlockTime) {
-        double pre_progress = mUnlockProgress / mUnlockTime;
-
-        if (unlock_progress <= mUnlockTime) {
-            mUnlockProgress = unlock_progress;
-        } else {
-            mUnlockProgress = mUnlockTime;
-        }
-
-        emit sUnlockProgressChanged(this, pre_progress, mUnlockProgress / mUnlockTime);
+void Crystal::setUnlockProgress(const double& unlock_progress) {
+    mUnlockProgress = unlock_progress;
+    if (mUnlockProgress < 0.0) {
+        mUnlockProgress = 0.0;
     }
+
+    emit sUnlockCrystalProgressChanged(getUnlockProgressPercentage());
 }
 
-double Crystal::getUnlockProgressPercentage() const {
-    return (float)mUnlockProgress / mUnlockTime;
+uint16_t Crystal::getUnlockProgressPercentage() const {
+    uint16_t ret = (uint16_t)(100 * (mUnlockProgress / mUnlockTime + 0.001f));
+
+    if (ret > 100) {
+        ret = 100;
+    }
+    return ret;
 }
 
-void Crystal::setUnlockProgressPercentage(const double unlock_progress) {
-    setUnlockProgress(unlock_progress * mUnlockTime);
-}
-
-bool Crystal::isUnlocked() const {
-    return getUnlockProgress() == getUnlockTime();
+bool Crystal::hasUnlocked() const {
+    return getUnlockProgressPercentage() >= 100;
 }
 
 void Crystal::beginUnlock() {
@@ -55,17 +74,20 @@ void Crystal::beginUnlock() {
 }
 
 void Crystal::onUpdate(double time_diff) {
+    mIsUpdatingAfterChange = (time_diff == 0);
+
     if (mIsUnlocking) {
         mIsUnlocking = false;
-        
-        if (mUnlockProgress != mUnlockTime) {
-            setUnlockProgress(mUnlockProgress + time_diff);
-        }
+        setUnlockProgress(mUnlockProgress + time_diff);      
     } else {
-        if (mUnlockProgress != 0.0) {
-            setUnlockProgress(mUnlockProgress - time_diff);
-        }
+        // 解锁到一半遇到什么问题了？突然中断了？大丈夫？
+        setUnlockProgress(mUnlockProgress - 2 * time_diff);
     }
 
     Node::onUpdate(time_diff);
+}
+
+
+bool Crystal::isUnlocking() {
+    return mIsUnlocking;
 }

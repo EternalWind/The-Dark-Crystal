@@ -30,4 +30,11 @@
 #define IS_ENABLE "Is_Enable"
 //***************************************************************************************//
 
+//*********************** For the records. ***************************************//
+#define RECORD_DIR "records"
+#define RECORD_ROOT "Record"
+#define RECORD_LEVEL_INFO "Level"
+#define RECORD_SUB_FIX "record"
+//***************************************************************************************//
+
 #endif

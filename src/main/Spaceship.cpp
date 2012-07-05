@@ -211,7 +211,7 @@ void Spaceship::onUpdate(double time_diff) {
 		}
 	}
 
-	dt::Node::onUpdate(time_diff);
+	Entity::onUpdate(time_diff);
 }
 
 void Spaceship::addFlame(const FlameInfo& flame) {

@@ -5,6 +5,8 @@
 #include "BattleState.h"
 #include "AnimationState.h"
 #include "ConfigurationManager.h"
+#include "SaveLoadState.h"
+
 #include <Core/Root.hpp>
 #include <Scene/StateManager.hpp>
 #include <Core/ResourceManager.hpp>
@@ -68,6 +70,8 @@ void MenuState::onInitialize() {
     mExitButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::onClick);
 
     __resetGui();
+
+    dt::GuiManager::get()->setMouseCursorVisible(true);
 }
 
 void MenuState::onClick(MyGUI::Widget* sender) {
@@ -76,14 +80,15 @@ void MenuState::onClick(MyGUI::Widget* sender) {
        
     } else if (sender->getName() == "Gui.settings_button") {
         dt::StateManager::get()->setNewState(new OptionState());
-    } else if (sender->getName() == "Gui.new_game_button") {
-        dt::StateManager::get()->setNewState(new AnimationState("videos/begin.mp4", 35));
+    } else if (sender->getName() == "Gui.new_game_button") {      
+        dt::StateManager::get()->setNewState(new AnimationState("videos/begin.mp4", 35, new BattleState("01")));
+        //dt::StateManager::get()->setNewState(new BattleState("01"));
     } else if (sender->getName() == "Gui.load_record_button") {
-        dt::StateManager::get()->setNewState(new BattleStateTest());
+        dt::StateManager::get()->setNewState(new SaveLoadState());
     } else if (sender->getName() == "Gui.credit_button") {
         dt::StateManager::get()->setNewState(new CreaditState());
     } else if (sender->getName() == "Gui.exit_button") {
-        exit(0);
+      exit(0);
     }
 }
 

@@ -11,7 +11,7 @@ const QString PlayerAIAgent::TRIGGER_AREA_COMPONENT = "Player_AI_TRIGGER_AREA_CO
 const double  PlayerAIAgent::THREAT_COOL_TIME = 2.0;
 const double  PlayerAIAgent::eps = 1e-4;
 const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 270;
-const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 90;
+const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 180;
 const double  PlayerAIAgent::PI = acos(-1.0);
 const double  PlayerAIAgent::ROTATE_FLOAT = 3.0; 
 const double  PlayerAIAgent::ENTER_SCOPE = 3;
@@ -24,6 +24,7 @@ PlayerAIAgent::PlayerAIAgent(QString name): Agent(name) {
     mOnMovePress = false; 
     mFollow = true; 
     mAttack = false; 
+    mSpeedUp = false; 
     
 }
 
@@ -100,34 +101,32 @@ void PlayerAIAgent::walk(double time_diff) {
             return;
     }
 
-    mExpectDegree = clacDegree(nxt_area_position, pre_position);
-   
+    mExpectDegree = clacDegree(nxt_area_position, pre_position);  
     
-    /*std::cout << pre_position.x << ' ' << pre_position.y << ' ' << pre_position.z << endl; 
-    std::cout << nxt_area_position.x << ' ' << nxt_area_position.y << ' ' << nxt_area_position.z << endl; 
-    std::cout << mExpectDegree << endl; 
-    std::cout << mPreDegree << endl; */
+
     double d_degree = mExpectDegree - mPreDegree;
 
    
 
     fixTurn(d_degree);
   
-  /*  std::cout << mExpectDegree << endl; 
-    std::cout << mPreDegree << endl; 
-    std::cout << d_degree << endl; */
+
 
     //当前帧如果已经在角度幅度内，则开始走动。
     if (fabs(d_degree) < ROTATE_FLOAT) { 
         if (!mOnMovePress) { 
-            //emit(sMove(Entity::STOP, true));
-           // emit(sSpeedUp(true));
+
+            if (!mSpeedUp) {
+                emit(sSpeedUp(true));
+                mSpeedUp = 1;
+            }
+            
             mBody->setCurSpeed(12.0);
             emit(sMove(Entity::FORWARD, true)); 
             mOnMovePress = 1; 
         }
       } else{        
-      //  emit(sMove(Entity::STOP, true));   
+  
           lookAround(d_degree, time_diff, MOVE_ROTATE_SPEED);      
     }
 }
@@ -142,9 +141,7 @@ void PlayerAIAgent::guard(double time_diff) {
        double d_degree = mExpectDegree - mPreDegree;
        fixTurn(d_degree);      
        lookAround(d_degree, time_diff, GUARD_ROTATE_SPEED);   
-       /*std::cout << d_degree << endl; 
-       std::cout << mPreDegree << endl; 
-       std::cout << mExpectDegree << endl; */
+     
     }
     mHasEnemy = false; 
 }
@@ -164,7 +161,7 @@ void PlayerAIAgent::decision(double time_diff) {
                 
             std::pair<uint16_t, uint16_t> tmp = AIDivideAreaManager::get()->randomPosition(nxt_id);
        
-            dt::Logger().get().debug(this->getBody()->getName());
+           
             if (tmp.first != -1) {     
                     AIDivideAreaManager::get()->destroy(mNxtArea);
                     mNxtArea = tmp;
@@ -190,8 +187,9 @@ void PlayerAIAgent::onUpdate(double time_diff) {
         return; 
     }
      dt::Node::onUpdate(time_diff);
-     vector<Character*> vc = EntityManager::get()->searchEntityByRange(mBody, 20.0);
-     for (uint16_t i = 0; i < vc.size(); i ++) __onTrigger(vc[i]);
+     Character* c = EntityManager::get()->searchEntityByRange(mBody, 50.0);
+     
+     if (c != nullptr)    __onTrigger(c);
 
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
@@ -252,6 +250,9 @@ void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {
 }
 
 void PlayerAIAgent::__onTrigger(Character * c) {
+    if (c == nullptr) {
+        return;
+    }
     //敌人
     Monster* enemy = dynamic_cast<Monster*>(c);
     if (enemy != nullptr) {
