@@ -54,7 +54,8 @@ Weapon::Weapon( const QString &prop_name,
 				mAmmoBomb(ammo_part_parm),
 				mHasMuzzle(false),
 				mMuzzlePos(Ogre::Vector3(0, 0, 0)),
-				Prop(prop_name, node_name, WEAPON) { 
+				Prop(prop_name, node_name, WEAPON),
+                mParticlesTime(0.0) { 
 }
 
 Weapon::~Weapon(){
@@ -253,6 +254,7 @@ void Weapon::fire() {
 			}
 			if (node) {
 				node->enable();
+				mParticlesTime = 0.0;
 			}
 			this->mInteractor->check();
 			setCurAmmo(mCurAmmo - 1);
@@ -273,6 +275,7 @@ void Weapon::attack(bool is_pressed) {
 
 void Weapon::onUpdate(double time_diff) {
 	Node::onUpdate(time_diff);
+	mParticlesTime += time_diff;
 	auto node = this->getParent()->findChildNode(this->getName() + "_muzzle_node");
 	if (mIsPressed) {
 		if (mIsOneShot) {
@@ -284,7 +287,12 @@ void Weapon::onUpdate(double time_diff) {
 		}
 	} else {
 		if (node) {
-			node->disable();
+			if(mIsOneShot) {
+				if(mParticlesTime > 0.05)     //单发的枪给个最大0.05s的开枪粒子效果
+					node->disable();
+			} else {
+				node->disable();
+			}
 		}
 	}
 }
