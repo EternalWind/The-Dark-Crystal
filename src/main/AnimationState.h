@@ -31,6 +31,8 @@ public slots:
 	  */
 	void onKeyDown(dt::InputManager::InputCode code, const OIS::EventArg &event);
 
+    void onAnimationStopped();
+
 private:
 	Animation *mAnimationPtr;   //!< 待播放动画指针
 	double mTime;               //!< 动画播放时间

@@ -212,9 +212,9 @@ void BattleState::win() {
     emit sVictory();
 
     if (mNextStage != "") {
-        state_mgr->setNewState(new BattleState(mNextStage));
+        state_mgr->setNewState(new AnimationState("videos/win.avi", 4.0, new BattleState(mNextStage)));
     } else {
-        state_mgr->setNewState(new MenuState());
+        state_mgr->setNewState(new AnimationState("videos/win.avi", 4.0, new MenuState()));
     }
 }
 

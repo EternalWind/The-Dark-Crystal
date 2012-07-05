@@ -7,13 +7,14 @@
 
 #include <map>
 
+
 class RecordManager : public dt::Manager {
 
     Q_OBJECT
 
 public:
 
-    struct RecordInfo {
+	struct RecordInfo {
         QString mLevelID;
         QString mFileName;
     };
