@@ -251,18 +251,22 @@ void Weapon::fire() {
 				mFiringSound->playSound();
 			}
 			if (node) {
-				node->enable();
-				mParticlesTime = 0.0;
+				node->enable();	
 			}
+			mParticlesTime = 0.0;
 			this->mInteractor->check();
 			setCurAmmo(mCurAmmo - 1);
-			return ;
 		}
+        if (mParticlesTime >= mInterval / 2)
+            this->setRotation(Ogre::Quaternion(1, 0, 0, 0));
+        else
+            this->setRotation(Ogre::Quaternion(0.99, 0.04, 0, 0));
 	} else {
 		this->reload();
 		if (node) {
 			node->disable();
 		}
+        this->setRotation(Ogre::Quaternion(1, 0, 0, 0));
 	}
 	
 }
@@ -272,7 +276,8 @@ void Weapon::attack(bool is_pressed) {
 }
 
 void Weapon::onUpdate(double time_diff) {
-	Node::onUpdate(time_diff);
+	mIsUpdatingAfterChange = (time_diff == 0);
+	
 	mParticlesTime += time_diff;
 	auto node = this->getParent()->findChildNode(this->getName() + "_muzzle_node");
 	if (mIsPressed) {
@@ -292,7 +297,10 @@ void Weapon::onUpdate(double time_diff) {
 				node->disable();
 			}
 		}
-	}
+        this->setRotation(Ogre::Quaternion(1, 0, 0, 0));
+    }
+
+    dt::Node::onUpdate(time_diff);
 }
 
 void Weapon::reload() {
