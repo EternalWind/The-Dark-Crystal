@@ -195,6 +195,7 @@ void Alien::__onAttack(bool is_pressed) {
 }
 
 void Alien::__onChangeWeapon(Weapon::WeaponType type) {
+    __onAttack(false);
     changeCurWeapon(type);
 }
 

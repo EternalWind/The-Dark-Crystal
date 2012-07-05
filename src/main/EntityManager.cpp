@@ -185,7 +185,7 @@ void  EntityManager::__isMonsterDead(Character * monster) {
             mMonsterNum ++;
             Monster *new_monster = new Monster(
                 //"monster" + dt::Utils::toString(mMonsterNum),
-                "monster" + QUuid::createUuid(),
+                "monster" + QUuid::createUuid().toString(),
                 mMonsterInfo.mMeshHandle,
                 dt::PhysicsBodyComponent::BOX,
                 mMonsterInfo.mMass,
