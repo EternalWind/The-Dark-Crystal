@@ -84,7 +84,7 @@ void RecordManager::save(const BattleState* battle_state) {
     mRecords[mCounter] = info;
     ++mCounter;
 
-    if (!file.open(QIODevice::WriteOnly)) {
+    if (file.open(QIODevice::WriteOnly)) {
         QDomDocument doc;
         QDomElement root;
         QDomElement level;
