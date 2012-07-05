@@ -165,10 +165,12 @@ namespace OgreUtils
 
         void DestroyAll();
 
+        bool HasStopped() const;
+
     private:
         DirectShowControlList mDirectCtrlList;
         Ogre::Viewport *mVP;
-
+        bool mHasStopped;
     };
 }
 

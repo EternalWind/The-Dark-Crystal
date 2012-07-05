@@ -623,7 +623,7 @@ namespace OgreUtils
 
     DirectShowManager::DirectShowManager(Ogre::Viewport *vp):mVP(vp)
     {
-
+        mHasStopped = false;
     }
     DirectShowManager::~DirectShowManager()
     {
@@ -651,13 +651,19 @@ namespace OgreUtils
             {
                 con->mDirectshowTexture->updateMovieTexture();
                 
-                if(!con->mDirectshowTexture->isPlayingMovie())//循环放
-                    con->mDirectshowTexture->rewindMovie();
+                if(!con->mDirectshowTexture->isPlayingMovie()) {//循环放
+                    mHasStopped = true;
+                    //con->mDirectshowTexture->rewindMovie();
+                }
 
             }
         }
 
         return true;
+    }
+
+    bool DirectShowManager::HasStopped() const {
+        return mHasStopped;
     }
 
     void DirectShowManager::DestroyAll()

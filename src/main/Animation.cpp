@@ -5,7 +5,7 @@
 OgreUtils::DirectShowManager * Animation::mDShow = nullptr;
 
 Animation::Animation(const QString &animation_handle)
-				: mAnimationHandle(animation_handle), mDshowPtr(nullptr) {
+				: mAnimationHandle(animation_handle), mDshowPtr(nullptr), mHasSent(false) {
 }
 
 Animation::~Animation() {
@@ -37,7 +37,6 @@ void Animation::onDeinitialize() {
 	//mDshowPtr->Destroy();
 	
 	Ogre::Root::getSingleton().removeFrameListener(mDShow);
-	this->kill();
 	/*if (mDshowPtr != nullptr) {
 		delete mDshowPtr;
 		mDshowPtr = nullptr;
@@ -46,6 +45,15 @@ void Animation::onDeinitialize() {
     mDShow->DestroyAll();
     delete mDShow;
     mDShow = nullptr;
+}
+
+void Animation::onUpdate(double time_diff) {
+    if (mDShow->HasStopped() && !mHasSent) {
+        emit sAnimationStopped();
+        mHasSent = true;
+    }
+
+    dt::Node::onUpdate(time_diff);
 }
 
 void Animation::setAnimationHandle(QString animation_handle) {
