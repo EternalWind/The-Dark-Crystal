@@ -49,6 +49,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
     mg[0][3] = 1, 
         mg[0][4] = 55, 
         mg[0][5] = 34;
+    //YMÐÇÈË¸öÊý¡£
     monsterNum[0] = 100;
 
     mg[1][0] = 81, mg[1][1] = 48, mg[1][2] = 83; 
@@ -58,7 +59,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
       mg[2][0] = 83, mg[2][1] = 15, mg[2][2] = 65; 
     mg[2][3] = 152, mg[2][4] = 42, mg[2][5] = 80;
 
-    monsterNum[2] = 100; 
+    monsterNum[2] = 100;
    
 
   
@@ -174,7 +175,14 @@ double EntityManager::_dis(Ogre::Vector3 a, Ogre::Vector3 b) {
 void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
 
-    uint16_t k; 
+    for (vector<Character*>::iterator itr = mMonster.begin(); itr != mMonster.end(); itr ++)
+        if ((*itr) == monster) {
+            mMonster.erase(itr); 
+            break;
+        }
+
+
+    uint16_t k = 0;
     if (monsterNum[mCurStage] >= 2) k = 2; 
     else k = monsterNum[mCurStage]; 
     for (uint16_t i = 0; i < k; i ++) {

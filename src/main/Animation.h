@@ -42,10 +42,15 @@ public:
 	  */
 	void stop();
 	
+    void onUpdate(double time_diff);
+
+signals:
+    void sAnimationStopped();
 
 private:
 	static OgreUtils::DirectShowManager *mDShow;
 	QString mAnimationHandle;                  //!< 动画文件名
 	OgreUtils::DirectShowControl *mDshowPtr;   //!< 动画播放控制指针
+    bool mHasSent;                             //!< 是否已发送停止信号
 };
 #endif
