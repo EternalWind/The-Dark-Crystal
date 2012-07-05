@@ -1089,7 +1089,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 auto type = w_node.firstChildElement("type");
 
                 if (type.text() == "Throwable") {
-                    uint16_t weapon_type = 1;
+                    uint16_t weapon_type = 2;
 
                     auto power = w_node.firstChildElement("power");
                     uint16_t power_num = power.text().toUInt();
