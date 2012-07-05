@@ -161,6 +161,7 @@ private:
 	bool mHasMuzzle;                                //!< 枪口是否有火焰
 	Ogre::Vector3 mMuzzlePos;                       //!< 枪口位置
 	ParticleInfo mMuzzleParticle;                   //!< 枪口火焰
+	double mParticlesTime;                          //!< 枪口子弹粒子效果时间					
 };
 
 #endif
