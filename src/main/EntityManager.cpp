@@ -182,6 +182,7 @@ void  EntityManager::__isMonsterDead(Character * monster) {
             break;
         }
 
+    __loadMonster("yangmudong");
 
     uint16_t k = 0;
     if (monsterNum[mCurStage] >= 2) k = 2; 
