@@ -54,7 +54,6 @@ void BattleState::onInitialize() {
 
     EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-    this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
