@@ -20,7 +20,7 @@ void QAManager::deinitialize() {
 
 bool QAManager::loadQuestions(QString path) {
 
-    QFile config_file("QATestFile.xml");
+    QFile config_file(path);
     QDomDocument doc;
 
     // If the file doesn't exist...
@@ -33,14 +33,14 @@ bool QAManager::loadQuestions(QString path) {
         QDomElement root = doc.documentElement();
         for (QDomElement QA_node = root.firstChildElement("Question"); !QA_node.isNull(); QA_node = QA_node.nextSiblingElement()) {
 
-            std::shared_ptr<Question> question= std::shared_ptr<Question>(new Question());
+            Question question;
 
             auto id = QA_node.firstChildElement("id");
             uint16_t index = id.text().toUInt();
 
             auto content_node = QA_node.firstChildElement("content");
             QString question_content = content_node.text();
-            question->setQuestion(question_content);
+            question.setQuestion(question_content);
 
             std::vector<QString> option_vec;
             auto option1_node = QA_node.firstChildElement("option1");
@@ -56,13 +56,13 @@ bool QAManager::loadQuestions(QString path) {
             auto option4_node = QA_node.firstChildElement("option4");
             option_vec.push_back(option4_node.text());
 
-            question->setAnswers(option_vec);
+            question.setAnswers(option_vec);
 
             auto correctAnswerIndex_node = QA_node.firstChildElement("correctAnswerIndex");
             uint16_t correctAnswer_index = correctAnswerIndex_node.text().toUInt();
-            question->setCorrectAnswer(correctAnswer_index);
+            question.setCorrectAnswer(correctAnswer_index);
 
-            mQuestions.insert(std::pair<uint16_t, std::shared_ptr<Question> > (index, question));
+            mQuestions.push_back(question);
         } 
     } else {
         dt::Logger::get().error("Failed to read from the configuration file.");
@@ -76,14 +76,12 @@ QAManager* QAManager::getInstance() {
     return mInstance.get();
 }
 
-std::shared_ptr<Question> QAManager::getRandomQuestion() {
-
-    dt::Random::initialize();
+Question QAManager::getRandomQuestion() {
     int32_t num = mQuestions.size();
     int32_t index = 1;
 
     if (0 != num) {
-        index = dt::Random::get(1, num);
+        index = dt::Random::get(0, num - 1);
     }
     return mQuestions[index];
 

@@ -3,6 +3,7 @@
 
 #include "Weapon.h"
 #include "GuiImageButton.h"
+#include "QAManager.h"
 
 #include <Input/InputManager.hpp>
 #include <Scene/State.hpp>
@@ -69,6 +70,8 @@ public:
 	  * @param label 问答窗口
 	  */
 	void setQuestionLabel(dt::GuiEditBox* edit_box);
+
+    void setQA(Question question);
 
 signals:
     void sVictory();
@@ -186,6 +189,8 @@ private:
       */
     void __hideMenu();
 
+    void __hideQA();
+
 protected slots:
 
 	void __onTriggerText(uint16_t text_id);
@@ -200,7 +205,7 @@ protected slots:
 
 	void __onTriggerQA();
 
-	void __onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender);
+	void __onAnswerButtonClick(MyGUI::Widget* sender);
 
     void __changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number);
 
@@ -235,7 +240,9 @@ private:
     dt::GuiButton* mLoadButton;                 //!< 读取游戏按钮
     dt::GuiButton* mReturnMenuButton;           //!< 返回主菜单按钮
     dt::GuiButton* mExitButton;                 //!< 退出游戏按钮
+    dt::GuiButton* mQARescueButton;
     bool mHasPaused;                            //!< 是否已经暂停玩家控制
+    Question mQuestion;
 };
 
 #endif

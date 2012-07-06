@@ -54,7 +54,7 @@ void BattleState::onInitialize() {
 
     EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-    //this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
+    this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
@@ -81,6 +81,7 @@ void BattleState::onInitialize() {
     mLoadButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("load_button")).get();
     mReturnMenuButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("return_menu_button")).get();
     mExitButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("exit_button")).get();
+    mQARescueButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("qa")).get();
     mPickUpCrystalBar = root_win.addChildWidget<dt::GuiProgressBar>(new dt::GuiProgressBar("pick_up_crystal_bar")).get();
 
     mPickUpCrystalBar->setProgressRange(101);
@@ -119,30 +120,28 @@ void BattleState::onInitialize() {
         __onClipNumChanged(weapon->getCurClip());
     }
 
-
-    for (uint8_t i = 0 ; i < 4 ; ++i) {
-        mAnswerButtons[i]->setVisible(false);
-    }
-
-    mQuestionLabel->setVisible(false);
+    __hideQA();
 
     mResumeButton->setCaption(QString::fromLocal8Bit("返回游戏"));
     mSaveButton->setCaption(QString::fromLocal8Bit("保存游戏"));
     mLoadButton->setCaption(QString::fromLocal8Bit("读取游戏"));
     mReturnMenuButton->setCaption(QString::fromLocal8Bit("返回主菜单"));
     mExitButton->setCaption(QString::fromLocal8Bit("退出游戏"));
+    mQARescueButton->setCaption("QA-Rescue");
 
     mResumeButton->setVisible(false);
     mSaveButton->setVisible(false);
     mLoadButton->setVisible(false);
     mReturnMenuButton->setVisible(false);
     mExitButton->setVisible(false);
+    mQARescueButton->setVisible(false);
 
     mResumeButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
     mSaveButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
     mLoadButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
     mReturnMenuButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
     mExitButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
+    mQARescueButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
 
     mFrontSight->setImageTexture("FrontSight.png");
 
@@ -305,8 +304,28 @@ void BattleState::__onTriggerQA() {
 	getQuestionLabel()->show();
 }
 
-void BattleState::__onAnswerButtonClick(std::shared_ptr<MyGUI::Widget> sender) {
+void BattleState::__onAnswerButtonClick(MyGUI::Widget* sender) {
+    uint8_t answer;
 
+    if (sender->getName() == "Gui.answer1") {
+        answer = 1;
+    } else if (sender->getName() == "Gui.answer2") {
+        answer = 2;
+    } else if (sender->getName() == "Gui.answer3") {
+        answer = 3;
+    } else {
+        answer = 4;
+    }
+
+    if (mQuestion.evaluate(answer)) {
+        Alien* player = EntityManager::get()->getHuman();
+
+        if (player && player->getCurHealth() > 0) {
+            player->setCurHealth(player->getCurHealth() + 30);
+        }
+    }
+
+    __hideQA();
 }
 
 QString BattleState::getNextStage() const {
@@ -382,6 +401,7 @@ void BattleState::__resetGui() {
     mLoadButton->setSize(0.2f, 0.05f);
     mReturnMenuButton->setSize(0.2f, 0.05f);
     mExitButton->setSize(0.2f, 0.05f);
+    mQARescueButton->setSize(0.2f, 0.05f);
 
     mResumeButton->setPosition(coordination.right() / 2 - mResumeButton->getMyGUIWidget()->getSize().width / 2, 
         coordination.bottom() / 2 - 2.5 * mResumeButton->getMyGUIWidget()->getSize().height - 2 * gap_v_medium);
@@ -393,10 +413,32 @@ void BattleState::__resetGui() {
         coordination.bottom() / 2 + 0.5 * mResumeButton->getMyGUIWidget()->getSize().height + 1 * gap_v_medium);
     mExitButton->setPosition(coordination.right() / 2 - mExitButton->getMyGUIWidget()->getSize().width / 2, 
         coordination.bottom() / 2 + 1.5 * mResumeButton->getMyGUIWidget()->getSize().height + 2 * gap_v_medium);
+    mQARescueButton->setPosition(coordination.right() / 2 - mExitButton->getMyGUIWidget()->getSize().width / 2, 
+        coordination.bottom() / 2 + 2.5 * mResumeButton->getMyGUIWidget()->getSize().height + 3 * gap_v_medium);
 
     mPickUpCrystalBar->setSize(0.27f, 0.05f);
     mPickUpCrystalBar->setPosition(coordination.right() /2 - mPickUpCrystalBar->getMyGUIWidget()->getSize().width / 2,
         (int)(coordination.bottom() * 0.9f));
+}
+
+void BattleState::__hideQA() {
+    for (uint8_t i = 0 ; i < 4 ; ++i) {
+        mAnswerButtons[i]->setVisible(false);
+    }
+
+    mQuestionLabel->setVisible(false);
+}
+
+void BattleState::setQA(Question question) {
+    mQuestionLabel->setVisible(true);
+    mQuestionLabel->setCaption(question.getQuestion());
+
+    auto answers = question.getAnswers();
+
+    for (uint8_t i = 0 ; i < answers.size() ; ++i) {
+        mAnswerButtons[i]->setVisible(true);
+        mAnswerButtons[i]->setCaption(answers[i]);
+    }
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -478,6 +520,11 @@ void BattleState::__onClick(MyGUI::Widget* sender) {
         dt::StateManager::get()->setNewState(new MenuState());
     } else if (sender->getName() == "Gui.exit_button") {
         exit(0);
+    } else if (sender->getName() == "Gui.qa") {
+        mQuestion = QAManager::getInstance()->getRandomQuestion();
+
+        setQA(mQuestion);
+        __hideMenu();
     }
 }
 

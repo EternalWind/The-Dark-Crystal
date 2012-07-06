@@ -2,19 +2,27 @@
 
 #include "ConfigurationManager.h"
 #include "MenuState.h"
+#include "QAManager.h"
 #include "RecordManager.h"
 
 #include <Graphics/DisplayManager.hpp>
 #include <Core/ResourceManager.hpp>
 #include <Scene/StateManager.hpp>
+#include <Utils/Random.hpp>
 
 #include <SFML/Audio/Listener.hpp>
 
 InitialState::InitialState() {}
 
 void InitialState::onInitialize() {
-    RecordManager* mgr = RecordManager::get();
-    mgr->initialize();
+    RecordManager* record_mgr = RecordManager::get();
+    record_mgr->initialize();
+
+    QAManager* qa_mgr = QAManager::getInstance();
+    qa_mgr->initialize();
+    qa_mgr->loadQuestions("QA.xml");
+
+    dt::Random::initialize();
 
     dt::ResourceManager::get()->addResourceLocation("", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
