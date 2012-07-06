@@ -111,7 +111,6 @@ public:
 	  */
 	void stopFlame(const QString& name);
 
-
 protected slots:
 	void __onMove(MoveType type, bool is_pressed);
 

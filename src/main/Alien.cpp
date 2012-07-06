@@ -11,6 +11,7 @@
 #include "HumanAgent.h"
 #include "RaycastNotMeComponent.h"
 #include "BattleState.h"
+#include "ClosestNotMeNotDynamicObjectConvexResultCallback.h"
 
 #include <Logic/RaycastComponent.hpp>
 #include <Scene/Scene.hpp>
@@ -112,6 +113,8 @@ void Alien::addWeapon(Weapon* weapon) {
 }
 
 void Alien::removeWeapon(const Weapon::WeaponType type) {
+    __onAttack(false);
+
     Weapon* weapon = mWeapons[type];
 
     if (weapon != nullptr) {
@@ -289,7 +292,10 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
             default:
                 dt::Logger::get().debug("Unknown prop type.");
             }
-        } else {
+        } 
+        
+        // 太遗憾了，因为时间关系被无情的cut掉...
+        /* else {
 
             // 如果是载具
             Vehicle* vehicle;
@@ -307,14 +313,15 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
                     Agent* agent;
                     agent = dynamic_cast<Agent*>(this->findChildNode(Agent::AGENT, false).get());
                     agent->detach();
-                    agent->attachTo(vehicle);		
+                    agent->attachTo(vehicle);	
+                    vehicle->setAlienRider(this);
 
                     this->setParent(vehicle);
                     vehicle->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->setMass(vehicle->getMass());
                     vehicle->resetPhysicsBody();
                 }
             }
-        }
+        } */
     }
 }
 
@@ -329,6 +336,36 @@ void Alien::__onReload() {
     getCurWeapon()->reload();
 }
 
+bool Alien::__canMoveTo(const btTransform& position, btTransform& closest_position) {
+    auto physics_body = this->findComponent<dt::PhysicsBodyComponent>(PHYSICS_BODY_COMPONENT);
+    ClosestNotMeNotDynamicObjectConvexResultCallback callback(physics_body->getRigidBody());
+    
+    btTransform target = position;
+    btVector3 origin = target.getOrigin();
+    origin.setY(origin.y() + 0.01f);
+    target.setOrigin(origin);
+
+    this->getScene()->getPhysicsWorld()->getBulletWorld()->convexSweepTest(dynamic_cast<btConvexShape*>(physics_body->getRigidBody()->getCollisionShape()), 
+        physics_body->getRigidBody()->getWorldTransform(), target, callback);
+
+    btRigidBody* rigid_body = dynamic_cast<btRigidBody*>(callback.m_hitCollisionObject);
+
+    if (callback.hasHit() && rigid_body != nullptr) {
+        dt::PhysicsBodyComponent* other_physics_body = static_cast<dt::PhysicsBodyComponent*>(rigid_body->getUserPointer());
+
+        if (other_physics_body != nullptr) {
+            Alien* alien = dynamic_cast<Alien*>(other_physics_body->getNode());
+
+            if (alien != nullptr) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 void Alien::onKilled() {
     dt::Node* agent_node = this->findChildNode(Agent::AGENT).get();

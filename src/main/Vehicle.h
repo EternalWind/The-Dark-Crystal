@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include "Prop.h"
+#include "Alien.h"
 
 /**
   * 载具类, 游戏中出现的载具
@@ -61,6 +62,10 @@ public:
 
     virtual void onDeinitialize();
 
+    Alien* getAlienRider();
+
+    void setAlienRider(Alien *alien);
+
 protected slots:
 
 	void __onAttack(bool is_pressed);
@@ -91,6 +96,7 @@ protected:
 	float mWidth;                                //!< 载具宽度
 	float mLength;                               //!< 载具长度
 	bool mIsAttacking;                           //!< 载具是否正在攻击
+    Alien* mAlienRider;                          //!< 驾驶者 
 
 public:
 	static const QString ATTACK_SOUND_COMPONENT; //!< 载具攻击声音Component的名字
