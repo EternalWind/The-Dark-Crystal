@@ -110,8 +110,10 @@ void Character::onUpdate(double time_diff) {
 			if (!mVelocity.isZero()) {
                 if (mHasSpeededUp) {
                     mesh->setAnimation("run");
+                    this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
                 } else {
                     mesh->setAnimation("walk");
+                    this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
                 }
 
                 mesh->setLoopAnimation(true);
