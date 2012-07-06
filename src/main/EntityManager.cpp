@@ -97,6 +97,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
                 mMonsterInfo.mAttackRange,
                 mMonsterInfo.mAttackInterval);
 
+			
             MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(monsterNum[mCurStage]));  
 
 
@@ -207,14 +208,14 @@ void  EntityManager::__isMonsterDead(Character * monster) {
 
             MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(monsterNum[mCurStage]));  
 
-
+            new_monster->setMaxHealth(mMonsterInfo.mMaxHealth);
+            new_monster->setCurHealth(mMonsterInfo.mMaxHealth);
+            new_monster->setOrigSpeed(mMonsterInfo.mOrigSpeed);
+            new_monster->setCurSpeed(mMonsterInfo.mOrigSpeed);
+			
             addEntityInScene(new_monster, maa, monster_pos.x, 10, monster_pos.z, mMonsterInfo.mScale);
             addMonster(new_monster);
-            monster->setMaxHealth(mMonsterInfo.mMaxHealth);
-            monster->setCurHealth(mMonsterInfo.mMaxHealth);
-            monster->setOrigSpeed(mMonsterInfo.mOrigSpeed);
-            monster->setCurSpeed(mMonsterInfo.mOrigSpeed);
-        
+            
     }
     monster->disable();
 }
