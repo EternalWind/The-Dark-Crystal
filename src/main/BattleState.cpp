@@ -54,7 +54,6 @@ void BattleState::onInitialize() {
 
     EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
-    this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
 
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
@@ -118,6 +117,10 @@ void BattleState::onInitialize() {
     if (weapon != nullptr) {
         __onAmmoChanged(weapon->getCurAmmo());
         __onClipNumChanged(weapon->getCurClip());
+    }
+
+    for (uint8_t i = 0 ; i < mAnswerButtons.size() ; ++i) {
+        mAnswerButtons[i]->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onAnswerButtonClick);
     }
 
     __hideQA();
@@ -213,7 +216,7 @@ void BattleState::win() {
     if (mNextStage != "") {
         state_mgr->setNewState(new AnimationState("videos/win.avi", 4.0, new BattleState(mNextStage)));
     } else {
-        state_mgr->setNewState(new AnimationState("videos/win.avi", 4.0, new MenuState()));
+        state_mgr->setNewState(new AnimationState("videos/final.avi", 4.0, new MenuState()));
     }
 }
 
@@ -427,6 +430,8 @@ void BattleState::__hideQA() {
     }
 
     mQuestionLabel->setVisible(false);
+
+    dt::GuiManager::get()->setMouseCursorVisible(false);
 }
 
 void BattleState::setQA(Question question) {
@@ -439,6 +444,8 @@ void BattleState::setQA(Question question) {
         mAnswerButtons[i]->setVisible(true);
         mAnswerButtons[i]->setCaption(answers[i]);
     }
+
+    dt::GuiManager::get()->setMouseCursorVisible(true);
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -473,6 +480,7 @@ void BattleState::__showMenu() {
         mReturnMenuButton->setVisible(true);
         mExitButton->setVisible(true);
         mFrontSight->setVisible(false);
+        mQARescueButton->setVisible(true);
 
         dt::GuiManager::get()->setMouseCursorVisible(true);
 
@@ -490,6 +498,7 @@ void BattleState::__hideMenu() {
         mReturnMenuButton->setVisible(false);
         mExitButton->setVisible(false);
         mFrontSight->setVisible(true);
+        mQARescueButton->setVisible(false);
 
         dt::GuiManager::get()->setMouseCursorVisible(false);
 
@@ -523,8 +532,8 @@ void BattleState::__onClick(MyGUI::Widget* sender) {
     } else if (sender->getName() == "Gui.qa") {
         mQuestion = QAManager::getInstance()->getRandomQuestion();
 
-        setQA(mQuestion);
         __hideMenu();
+        setQA(mQuestion);
     }
 }
 
