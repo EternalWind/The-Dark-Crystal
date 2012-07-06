@@ -119,6 +119,10 @@ void BattleState::onInitialize() {
         __onClipNumChanged(weapon->getCurClip());
     }
 
+    for (uint8_t i = 0 ; i < mAnswerButtons.size() ; ++i) {
+        mAnswerButtons[i]->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onAnswerButtonClick);
+    }
+
     __hideQA();
 
     mResumeButton->setCaption(QString::fromLocal8Bit("∑µªÿ”Œœ∑"));
