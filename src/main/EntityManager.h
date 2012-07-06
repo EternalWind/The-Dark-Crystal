@@ -13,7 +13,7 @@
 #include <set>
 #include <string>
 #include <vector>
-
+#include "SpaceShip.h"
 
 using namespace std; 
 
@@ -57,10 +57,18 @@ public:
      void fixDegree(double & degree);
      double clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre); 
      double avoidCollic(Character* entity, double range);
+     void addShip(Spaceship * ship); 
+     void setHumanShip(Spaceship * ship);
+     Spaceship * getHumanShip(); 
      const static double PI; 
      const static double THREAT_RANGE;
      const static double THREAT_HALF_DEGREE;
 private:
+
+    Spaceship * mHumanShip; 
+    vector<Spaceship *> mAIShip;
+
+
     uint16_t mg[3][6];
     int32_t monsterNum[3];
   
