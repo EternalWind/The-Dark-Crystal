@@ -473,6 +473,7 @@ void BattleState::__showMenu() {
         mReturnMenuButton->setVisible(true);
         mExitButton->setVisible(true);
         mFrontSight->setVisible(false);
+        mQARescueButton->setVisible(true);
 
         dt::GuiManager::get()->setMouseCursorVisible(true);
 
@@ -490,6 +491,7 @@ void BattleState::__hideMenu() {
         mReturnMenuButton->setVisible(false);
         mExitButton->setVisible(false);
         mFrontSight->setVisible(true);
+        mQARescueButton->setVisible(false);
 
         dt::GuiManager::get()->setMouseCursorVisible(false);
 
