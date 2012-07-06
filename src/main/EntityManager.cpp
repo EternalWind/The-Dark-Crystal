@@ -63,6 +63,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
     mg[0][3] = 1, 
         mg[0][4] = 55, 
         mg[0][5] = 34;
+    //YM星人个数。
     monsterNum[0] = 100;
 
     mg[1][0] = 81, mg[1][1] = 48, mg[1][2] = 83; 
@@ -72,9 +73,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
       mg[2][0] = 83, mg[2][1] = 15, mg[2][2] = 65; 
     mg[2][3] = 152, mg[2][4] = 42, mg[2][5] = 80;
 
-    monsterNum[2] = 200; 
-   
-
+    monsterNum[2] = 100;
   
     __loadMonster("yangmu");
 
@@ -110,6 +109,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
                 mMonsterInfo.mAttackRange,
                 mMonsterInfo.mAttackInterval);
 
+			
             MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(monsterNum[mCurStage]));  
 
 
@@ -206,27 +206,25 @@ double EntityManager::_dis(Ogre::Vector3 a, Ogre::Vector3 b) {
 void  EntityManager::__isMonsterDead(Character * monster) {
     if (monster == nullptr) return; 
 
-    MonsterAIAgent * ma = dynamic_cast<MonsterAIAgent*>(monster->findChildNode("agent").get());
+    for (vector<Character*>::iterator itr = mMonster.begin(); itr != mMonster.end(); itr ++)
+        if ((*itr) == monster) {
+            mMonster.erase(itr); 
+            break;
+        }
 
-    uint16_t k; 
-    if (monsterNum[mCurStage] > 0) k = 2; 
-    else k = rand()% 1; 
+
+    uint16_t k = 0;
+    if (monsterNum[mCurStage] >= 2) k = 2; 
+    else k = monsterNum[mCurStage]; 
     for (uint16_t i = 0; i < k; i ++) {
         monsterNum[mCurStage] --;
-        std::cout << "MonsterNUM" <<  monsterNum[mCurStage] << endl; 
                 
             Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getPositionById(
                 AIDivideAreaManager::get()->randomPosition(mg[mCurStage][rand() % 6]));
-                /*
-            Monster * monster = new Monster("monster" + dt::Utils::toString(monsterNum[mCurStage]),
-                "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 
-                monsterValue[monsterNum[mCurStage] % 2][2],  //攻击力
-                40,  //攻击range   
-                monsterValue[monsterNum[mCurStage] % 2][3]);      //攻击间隔
-                */
             mMonsterNum ++;
-            Monster *monster = new Monster(
-                "monster" + dt::Utils::toString(mMonsterNum),
+            Monster *new_monster = new Monster(
+                //"monster" + dt::Utils::toString(mMonsterNum),
+                "monster" + QUuid::createUuid().toString(),
                 mMonsterInfo.mMeshHandle,
                 dt::PhysicsBodyComponent::BOX,
                 mMonsterInfo.mMass,
@@ -240,24 +238,20 @@ void  EntityManager::__isMonsterDead(Character * monster) {
 
             MonsterAIAgent * maa = new MonsterAIAgent("ma" + dt::Utils::toString(monsterNum[mCurStage]));  
 
-
-            addEntityInScene(monster, maa, monster_pos.x, 10, monster_pos.z, mMonsterInfo.mScale);
-            addMonster(monster);
-
-            /*
-            monster->setMaxHealth(monsterValue[monsterNum[mCurStage] % 2][0]); //血量
-            monster->setCurSpeed(monsterValue[monsterNum[mCurStage] % 2][1]); //行走速度
-            monster->setCurHealth(monster->getMaxHealth());  
-            */
-            monster->setMaxHealth(mMonsterInfo.mMaxHealth);
-            monster->setCurHealth(mMonsterInfo.mMaxHealth);
-            monster->setOrigSpeed(mMonsterInfo.mOrigSpeed);
-            monster->setCurSpeed(mMonsterInfo.mOrigSpeed);
-        
+            new_monster->setMaxHealth(mMonsterInfo.mMaxHealth);
+            new_monster->setCurHealth(mMonsterInfo.mMaxHealth);
+            new_monster->setOrigSpeed(mMonsterInfo.mOrigSpeed);
+            new_monster->setCurSpeed(mMonsterInfo.mOrigSpeed);
+			
+            addEntityInScene(new_monster, maa, monster_pos.x, 10, monster_pos.z, mMonsterInfo.mScale);
+            addMonster(new_monster);
+            
     }
+    monster->disable();
 }
 void EntityManager::__isAlienDead(Character * alien) {
     if (alien == nullptr) return; 
+
     for (vector<Character*>::iterator itr = mAlien.begin(); 
         itr != mAlien.end(); itr ++) {
             if ((*itr) == alien) {

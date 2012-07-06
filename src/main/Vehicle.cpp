@@ -68,6 +68,14 @@ void Vehicle::onDeinitialize() {
 	Entity::onDeinitialize();
 }
 
+Alien* Vehicle::getAlienRider() {
+    return mAlienRider;
+}
+
+void Vehicle::setAlienRider(Alien *alien) {
+    mAlienRider = alien;
+}
+
 // -------- slots --------- //
 
 void Vehicle::__onAttack(bool is_pressed) {

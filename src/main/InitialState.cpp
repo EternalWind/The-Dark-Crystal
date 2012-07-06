@@ -2,6 +2,7 @@
 
 #include "ConfigurationManager.h"
 #include "MenuState.h"
+#include "RecordManager.h"
 
 #include <Graphics/DisplayManager.hpp>
 #include <Core/ResourceManager.hpp>
@@ -12,6 +13,9 @@
 InitialState::InitialState() {}
 
 void InitialState::onInitialize() {
+    RecordManager* mgr = RecordManager::get();
+    mgr->initialize();
+
     dt::ResourceManager::get()->addResourceLocation("", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui", "FileSystem");
     dt::ResourceManager::get()->addResourceLocation("gui/digits", "FileSystem");

@@ -13,7 +13,7 @@ const double  PlayerAIAgent::eps = 1e-4;
 const double  PlayerAIAgent::MOVE_ROTATE_SPEED = 270;
 const double  PlayerAIAgent::GUARD_ROTATE_SPEED = 180;
 const double  PlayerAIAgent::PI = acos(-1.0);
-const double  PlayerAIAgent::ROTATE_FLOAT = 3.0; 
+const double  PlayerAIAgent::ROTATE_FLOAT = 6.0;
 const double  PlayerAIAgent::ENTER_SCOPE = 3;
 
 
@@ -116,10 +116,10 @@ void PlayerAIAgent::walk(double time_diff) {
     if (fabs(d_degree) < ROTATE_FLOAT) { 
         if (!mOnMovePress) { 
 
-            if (!mSpeedUp) {
+          /*  if (!mSpeedUp) {
                 emit(sSpeedUp(true));
                 mSpeedUp = 1;
-            }
+            }*/
             
             mBody->setCurSpeed(12.0);
             emit(sMove(Entity::FORWARD, true)); 
@@ -132,6 +132,8 @@ void PlayerAIAgent::walk(double time_diff) {
 }
 
 void PlayerAIAgent::guard(double time_diff) {
+
+    
     //瞧瞧前面有没有异类，有就统统消灭！
     this->findComponent<dt::InteractionComponent>(INTERACTOR_COMPONENT)->check();
     //dt::PhysicsBodyComponent* pbc = test();
@@ -178,22 +180,24 @@ void PlayerAIAgent::decision(double time_diff) {
 }
 void PlayerAIAgent::onUpdate(double time_diff) {
       
-    if (this->getParent() == nullptr) {
+  /*  if (this->getParent() == nullptr) {
         this->disable(); 
         this->kill();
         return;
-    }
+    }*/
+
     if (time_diff == 0.0)  {
         return; 
     }
      dt::Node::onUpdate(time_diff);
-     Character* c = EntityManager::get()->searchEntityByRange(mBody, 50.0);
+     Character* c = EntityManager::get()->searchEntityByRange(mBody, 40.0);
      
      if (c != nullptr)    __onTrigger(c);
 
     //警戒状态下，警戒状态是因为有敌人出现在警戒区域。
     //或者是有队友在警戒区域，为了防止两方相撞而设置不同的警戒时间。
     if (mThreat) {
+
           guard(time_diff); 
         mThreatTime -= time_diff; 
         if (mThreatTime <= eps) {
@@ -235,10 +239,10 @@ void PlayerAIAgent::__onFire(dt::PhysicsBodyComponent* pbc) {
         Monster* enemy = dynamic_cast<Monster*>(pbc->getNode());
         
         if (enemy != nullptr) {
-            if (!mAttack) {
+           
                 emit(sAttack(true));
                 mAttack = true; 
-            }
+            
             mHasEnemy = true;             
         } else {
             if (mAttack) {

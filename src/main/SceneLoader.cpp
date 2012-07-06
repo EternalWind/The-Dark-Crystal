@@ -125,7 +125,7 @@ Node::NodeSP SceneLoader::__loadElement(const QDomElement& og_element, Node::Nod
     }
     else if (name == SL_CRYSTAL)
     {
-        node = __loadAmmo(og_element, dt_node);
+        node = __loadCrystal(og_element, dt_node);
     }
     else if (name == SL_FIRSTAIDKIT)
     {
@@ -953,7 +953,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                     Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
                     Weapon *pWeapon = new Weapon(weapon_id, 
-                        node_name,
+                        node_name + "_primary",
                         Weapon::WeaponType(weapon_type),
                         power_num,
                         maximum_clip_num,
@@ -966,26 +966,28 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         reload_time_num,
                         "sounds/" + weapon_id + "_fire.wav",
                         "sounds/" + weapon_id + "_reload_begin.wav",
-                        "sounds/" + weapon_id + "_reload_done.wav",
+                        "sounds/" + weapon_id + "_reload_end.wav",
                         range_num,
                         FireBack_num,
                         Bomb_num);
                    
                     pAlien->addChildNode(pWeapon);
-					auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
-   					if (!has_muzzle.isNull()) {
-						ParticleInfo temp = load_ParticleInfo(has_muzzle);
-						auto mPosition = has_muzzle.firstChildElement("mPosition");
-						auto x = mPosition.firstChildElement("x");
-						float x_num = x.text().toFloat();
+					if (agent == "HumanAgent") {		//只给humanagent添加枪口粒子效果
+						auto has_muzzle = w_node.firstChildElement(SL_WEAPON_HASMUZZLE);
+   						if (!has_muzzle.isNull()) {
+							ParticleInfo temp = load_ParticleInfo(has_muzzle);
+							auto mPosition = has_muzzle.firstChildElement("mPosition");
+							auto x = mPosition.firstChildElement("x");
+							float x_num = x.text().toFloat();
 
-						auto y = mPosition.firstChildElement("y");
-						float y_num = y.text().toFloat();
+							auto y = mPosition.firstChildElement("y");
+							float y_num = y.text().toFloat();
 
-						auto z = mPosition.firstChildElement("z");
-						float z_num = z.text().toFloat();
+							auto z = mPosition.firstChildElement("z");
+							float z_num = z.text().toFloat();
 
-						pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+							pWeapon->loadMuzzleInfo(temp, Ogre::Vector3(x_num, y_num, z_num));
+						}
 					}
 
                     pAlien->addWeapon(pWeapon);
@@ -1039,7 +1041,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                     Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
                     Weapon *pWeapon = new Weapon(weapon_id, 
-                        node_name,
+                        node_name + "_secondary",
                         Weapon::WeaponType(weapon_type),
                         power_num,
                         maximum_clip_num,
@@ -1052,7 +1054,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         reload_time_num,
                         "sounds/" + weapon_id + "_fire.wav",
                         "sounds/" + weapon_id + "_reload_begin.wav",
-                        "sounds/" + weapon_id + "_reload_done.wav",
+                        "sounds/" + weapon_id + "_reload_end.wav",
                         range_num,
                         FireBack_num,
                         Bomb_num);
@@ -1089,7 +1091,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                 auto type = w_node.firstChildElement("type");
 
                 if (type.text() == "Throwable") {
-                    uint16_t weapon_type = 1;
+                    uint16_t weapon_type = 2;
 
                     auto power = w_node.firstChildElement("power");
                     uint16_t power_num = power.text().toUInt();
@@ -1126,7 +1128,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                     Bomb_num = load_ParticleInfo(w_node.firstChildElement("Bomb"));
 
                     Weapon *pWeapon = new Weapon(weapon_id, 
-                        node_name,
+                        node_name + "_throwable",
                         Weapon::WeaponType(weapon_type),
                         power_num,
                         maximum_clip_num,
@@ -1139,7 +1141,7 @@ Node::NodeSP SceneLoader::__loadAlien(const QDomElement& og_node, Node::NodeSP d
                         reload_time_num,
                         "sounds/" + weapon_id + "_fire.wav",
                         "sounds/" + weapon_id + "_reload_begin.wav",
-                        "sounds/" + weapon_id + "_reload_done.wav",
+                        "sounds/" + weapon_id + "_reload_end.wav",
                         range_num,
                         FireBack_num,
                         Bomb_num);
@@ -1520,7 +1522,7 @@ Node::NodeSP SceneLoader::__loadWeapon(const QDomElement& og_node, Node::NodeSP 
             reload_time_num,
             "sounds/" + weapon_id + "_fire.wav",
             "sounds/" + weapon_id + "_reload_begin.wav",
-            "sounds/" + weapon_id + "_reload_done.wav",
+            "sounds/" + weapon_id + "_reload_end.wav",
             range_num,
             FireBack_num,
             Bomb_num);
