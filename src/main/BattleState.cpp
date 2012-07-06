@@ -10,6 +10,7 @@
 #include "Monster.h"
 #include "MonsterAIAgent.h"
 #include "EntityManager.h"
+#include "ConfigurationManager.h"
 #include "RecordManager.h"
 #include "AnimationState.h"
 
@@ -42,7 +43,8 @@ BattleState::BattleState(const QString stage_name)
       mSceneParam1(0.0),
       mSceneParam2(0.0),
       mCrystalBarPosition(0),
-      mHasPaused(false) {}
+      mHasPaused(false),
+      mQAShowed(false) {}
 
 void BattleState::onInitialize() {
    
@@ -138,6 +140,10 @@ void BattleState::onInitialize() {
     mReturnMenuButton->setVisible(false);
     mExitButton->setVisible(false);
     mQARescueButton->setVisible(false);
+
+    auto qa = ConfigurationManager::getInstance()->getQASetting();
+
+    mQARescueButton->getMyGUIWidget()->setEnabled(qa.getIsQAEnable());
 
     mResumeButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
     mSaveButton->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onClick);
@@ -432,6 +438,8 @@ void BattleState::__hideQA() {
     mQuestionLabel->setVisible(false);
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
+
+    mQAShowed = false;
 }
 
 void BattleState::setQA(Question question) {
@@ -446,6 +454,8 @@ void BattleState::setQA(Question question) {
     }
 
     dt::GuiManager::get()->setMouseCursorVisible(true);
+
+    mQAShowed = true;
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -508,10 +518,14 @@ void BattleState::__hideMenu() {
 
 void BattleState::__onKeyPressed(dt::InputManager::InputCode code, const OIS::EventArg& event) {
     if (code == dt::InputManager::KC_ESCAPE) {
-        if (mHasPaused) {
-            __hideMenu();
+        if (!mQAShowed) {
+            if (mHasPaused) {
+                __hideMenu();
+            } else {
+                __showMenu();
+            }
         } else {
-            __showMenu();
+            __hideQA();
         }
     }
 }
