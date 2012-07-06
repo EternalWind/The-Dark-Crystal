@@ -120,9 +120,13 @@ void Alien::removeWeapon(const Weapon::WeaponType type) {
     if (weapon != nullptr) {
         mWeapons[type] = nullptr;
 
-        weapon->enable();
+        weapon->enable(); 
+
+        weapon->setPosition(0, 0, -5.0f);
+        Ogre::Vector3 pos = weapon->getPosition(dt::Node::SCENE);
         weapon->setParent((dt::Node*)(this->getScene()));
-        weapon->setPosition(this->getPosition().x + 0.0f, this->getPosition().y + 8.0f, this->getPosition().z -3.0f);
+        weapon->setPosition(pos, dt::Node::SCENE);
+
         weapon->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent("prop_mesh", PHYSICS_BODY_COMPONENT, 
             dt::PhysicsBodyComponent::BOX, 0)).get();
         weapon->setScale(Ogre::Vector3(1, 1, 1));
@@ -292,7 +296,10 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
             default:
                 dt::Logger::get().debug("Unknown prop type.");
             }
-        } else {
+        } 
+        
+        // 太遗憾了，因为时间关系被无情的cut掉...
+        /* else {
 
             // 如果是载具
             Vehicle* vehicle;
@@ -318,7 +325,7 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
                     vehicle->resetPhysicsBody();
                 }
             }
-        }
+        } */
     }
 }
 

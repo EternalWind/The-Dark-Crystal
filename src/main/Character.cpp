@@ -100,6 +100,8 @@ void Character::onUpdate(double time_diff) {
 
 			mesh->stopAnimation();
 
+            this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
+
 			if (!mIsMoving) {
 				mVelocity.setZero();
 				mMoveVector = Ogre::Vector3::ZERO;
@@ -108,8 +110,10 @@ void Character::onUpdate(double time_diff) {
 			if (!mVelocity.isZero()) {
                 if (mHasSpeededUp) {
                     mesh->setAnimation("run");
+                    this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->playSound();
                 } else {
                     mesh->setAnimation("walk");
+                    this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->playSound();
                 }
 
                 mesh->setLoopAnimation(true);
@@ -239,6 +243,8 @@ void Character::__onJump(bool is_pressed) {
         mVelocity.setY(mJumpSpeed);		
 		mTimeElapseAfterJumping = 0.0f;
 
+        this->findComponent<dt::SoundComponent>(WALK_SOUND_COMPONENT)->stopSound();
+        this->findComponent<dt::SoundComponent>(RUN_SOUND_COMPONENT)->stopSound();
         this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
 
         auto mesh = this->findComponent<dt::MeshComponent>(MESH_COMPONENT);
