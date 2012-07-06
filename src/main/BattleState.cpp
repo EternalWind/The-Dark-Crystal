@@ -426,6 +426,8 @@ void BattleState::__hideQA() {
     }
 
     mQuestionLabel->setVisible(false);
+
+    dt::GuiManager::get()->setMouseCursorVisible(false);
 }
 
 void BattleState::setQA(Question question) {
@@ -438,6 +440,8 @@ void BattleState::setQA(Question question) {
         mAnswerButtons[i]->setVisible(true);
         mAnswerButtons[i]->setCaption(answers[i]);
     }
+
+    dt::GuiManager::get()->setMouseCursorVisible(true);
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -524,8 +528,8 @@ void BattleState::__onClick(MyGUI::Widget* sender) {
     } else if (sender->getName() == "Gui.qa") {
         mQuestion = QAManager::getInstance()->getRandomQuestion();
 
-        setQA(mQuestion);
         __hideMenu();
+        setQA(mQuestion);
     }
 }
 
