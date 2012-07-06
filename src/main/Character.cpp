@@ -14,12 +14,12 @@ const QString Character::RUN_SOUND_COMPONENT = "run_sound";
 Character::Character(const QString node_name, const QString mesh_handle, const dt::PhysicsBodyComponent::CollisionShapeType collision_shape_type, 
     const btScalar mass, const QString walk_sound_handle, const QString jump_sound_handle, const QString run_sound_handle, const float jump_speed)
 	: Entity(node_name, mesh_handle, collision_shape_type, mass),
-	mWalkSoundHandle(walk_sound_handle),
-	mJumpSoundHandle(jump_sound_handle),
-	mRunSoundHandle(run_sound_handle),
-	mVelocity(0.0, 0.0, 0.0),
-	mJumpSpeed(jump_speed),
-	mTimeElapseAfterJumping(1e6) {
+	  mWalkSoundHandle(walk_sound_handle),
+	  mJumpSoundHandle(jump_sound_handle),
+	  mRunSoundHandle(run_sound_handle),
+	  mVelocity(0.0, 0.0, 0.0),
+	  mJumpSpeed(jump_speed),
+	  mTimeElapseAfterJumping(1e6) {
 		Entity::mIsJumping = false; 
 }
 
