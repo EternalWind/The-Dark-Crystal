@@ -292,7 +292,10 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
             default:
                 dt::Logger::get().debug("Unknown prop type.");
             }
-        } else {
+        } 
+        
+        // 太遗憾了，因为时间关系被无情的cut掉...
+        /* else {
 
             // 如果是载具
             Vehicle* vehicle;
@@ -318,7 +321,7 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
                     vehicle->resetPhysicsBody();
                 }
             }
-        }
+        } */
     }
 }
 
