@@ -29,6 +29,7 @@ struct MonsterInfo {
     float mScale;
 };
 
+
 class EntityManager : public dt::Manager {
 
     Q_OBJECT
@@ -44,10 +45,16 @@ public:
      /**
        *判断前方扇形区域是否有威胁。
        */
-     bool isForwardThreaten(Agent * agent);     
+     bool isForwardThreaten(Agent * agent);   
+     /**
+       *返回前方威胁物。
+       */
      vector<Character*> searchThreatEntity(Character * entity);
-     Character* searchEntityByRange(Character * entity, double range);
-     void afterLoad(dt::Scene * scene);
+     /**
+       *返回range范围内任意一个威胁物。
+       */
+     Character* searchEntityByRange(Character * entity, double range);     
+       
      void setHuman(Alien * human);
      void addPlayer(Alien * playerAI);
      void addMonster(Monster * monster);
@@ -84,9 +91,10 @@ private:
 	EntityManager(){}
     EntityManager & operator = (const EntityManager &){}
     EntityManager(const EntityManager &){}
-    double _dis(Ogre::Vector3 a, Ogre::Vector3 b);
-    
+
+    double _dis(Ogre::Vector3 a, Ogre::Vector3 b);    
     void __loadMonster(QString monster_name);
+    void __loadStage(QString stage); 
 
 public slots:
     void __isMonsterDead(Character * monster);
