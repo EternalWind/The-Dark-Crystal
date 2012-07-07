@@ -13,7 +13,7 @@
 #include <set>
 #include <string>
 #include <vector>
-
+#include "SpaceShip.h"
 
 using namespace std; 
 
@@ -28,6 +28,7 @@ struct MonsterInfo {
     float mAttackInterval;
     float mScale;
 };
+
 
 class EntityManager : public dt::Manager {
 
@@ -44,10 +45,16 @@ public:
      /**
        *判断前方扇形区域是否有威胁。
        */
-     bool isForwardThreaten(Agent * agent);     
+     bool isForwardThreaten(Agent * agent);   
+     /**
+       *返回前方威胁物。
+       */
      vector<Character*> searchThreatEntity(Character * entity);
-     Character* searchEntityByRange(Character * entity, double range);
-     void afterLoad(dt::Scene * scene);
+     /**
+       *返回range范围内任意一个威胁物。
+       */
+     Character* searchEntityByRange(Character * entity, double range);     
+       
      void setHuman(Alien * human);
      void addPlayer(Alien * playerAI);
      void addMonster(Monster * monster);
@@ -57,10 +64,18 @@ public:
      void fixDegree(double & degree);
      double clacDegree(Ogre::Vector3 nxt, Ogre::Vector3 pre); 
      double avoidCollic(Character* entity, double range);
+     void addShip(Spaceship * ship); 
+     void setHumanShip(Spaceship * ship);
+     Spaceship * getHumanShip(); 
      const static double PI; 
      const static double THREAT_RANGE;
      const static double THREAT_HALF_DEGREE;
 private:
+
+    Spaceship * mHumanShip; 
+    vector<Spaceship *> mAIShip;
+
+
     uint16_t mg[3][6];
     int32_t monsterNum[3];
   
@@ -76,9 +91,10 @@ private:
 	EntityManager(){}
     EntityManager & operator = (const EntityManager &){}
     EntityManager(const EntityManager &){}
-    double _dis(Ogre::Vector3 a, Ogre::Vector3 b);
-    
+
+    double _dis(Ogre::Vector3 a, Ogre::Vector3 b);    
     void __loadMonster(QString monster_name);
+    void __loadStage(QString stage); 
 
 public slots:
     void __isMonsterDead(Character * monster);
