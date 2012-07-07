@@ -56,17 +56,17 @@ void EntityManager::__loadStage(QString stage) {
 
     doc.setContent(&file);
 
-    QDomElement root = doc.documentElement();
-    QDomElement w_node = root.firstChildElement("Stage");
-
-    uint16_t scene_id = w_node.firstChildElement("scene").text().toUInt();
+  
+    QDomElement w_node = doc.documentElement();
+    uint16_t scene_id = w_node.firstChildElement("scene").text().toUInt() - 1;
+    monsterNum[scene_id] = w_node.firstChildElement("monsternum").text().toUInt();
     mg[scene_id][0] = w_node.firstChildElement("area1").text().toUInt(); 
     mg[scene_id][1] = w_node.firstChildElement("area2").text().toUInt(); 
     mg[scene_id][2] = w_node.firstChildElement("area3").text().toUInt(); 
     mg[scene_id][3] = w_node.firstChildElement("area4").text().toUInt(); 
     mg[scene_id][4] = w_node.firstChildElement("area5").text().toUInt(); 
     mg[scene_id][5] = w_node.firstChildElement("area6").text().toUInt(); 
-    monsterNum[scene_id] = w_node.firstChildElement("monsternum").text().toUInt();
+   
 
 }
 void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
@@ -88,7 +88,7 @@ void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
     mAlien.push_back(mHuman);
     mMonsterNum = 0;
     mCurScene = scene;
-
+    cout << mCurStage << endl; 
     //mg[0][0] = 54, 
     //    mg[0][1] = 23,
     //    mg[0][2] = 51; 

@@ -278,14 +278,14 @@ void Alien::__onEquiped(dt::PhysicsBodyComponent* object) {
 
             case Prop::CRYSTAL:
                 Crystal* crystal;
-
+                
                 crystal = dynamic_cast<Crystal*>(prop);
 
                 if (crystal->hasUnlocked()) {
                     emit sGetCrystal(this);
-                    std::cout << "Get Crystal Successfully!!!!!!" << std::endl;
+                    //std::cout << "Get Crystal Successfully!!!!!!" << std::endl;
                     crystal->kill();
-                } else {
+                } else {                
                     crystal->beginUnlock();
                 }
 

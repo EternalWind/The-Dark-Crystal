@@ -119,7 +119,7 @@ protected:
     bool __canMoveTo(const btTransform& position, btTransform& closest_position);
 
 signals:
-    void sIsDead(Character* monster);
+    void sIsDead(Character* monster); 
 
 protected:
 	uint16_t mAttackValue;                            //!< ½ÐÊÞ¹¥»÷Á¦
