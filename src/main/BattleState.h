@@ -242,6 +242,7 @@ private:
     dt::GuiButton* mExitButton;                 //!< 退出游戏按钮
     dt::GuiButton* mQARescueButton;
     bool mHasPaused;                            //!< 是否已经暂停玩家控制
+    bool mQAShowed;
     Question mQuestion;
 };
 
