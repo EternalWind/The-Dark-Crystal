@@ -58,6 +58,7 @@ void BattleState::onInitialize() {
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
     scene->addChildNode(script_node);
 
+    //scene->getPhysicsWorld()->setShowDebug(true);
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
 
     auto health_img1 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("health_one"));
@@ -357,7 +358,7 @@ void BattleState::__resetGui() {
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
     auto coordination = root_win.getMyGUIWidget()->getAbsoluteCoord();
 
-    mDialogLabel->setCaption("Jym Die Die Die!");
+    mDialogLabel->setCaption("");
 
     int gap_h_large = (float)coordination.width / 15.0f;
     int gap_v_large = (float)coordination.height / 15.0f;
