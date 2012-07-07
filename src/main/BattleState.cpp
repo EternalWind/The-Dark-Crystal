@@ -13,7 +13,6 @@
 #include "RecordManager.h"
 #include "AnimationState.h"
 
-
 #include <Graphics/CameraComponent.hpp>
 #include <Graphics/LightComponent.hpp>
 #include <Graphics/MeshComponent.hpp>
@@ -53,59 +52,11 @@ void BattleState::onInitialize() {
 
     AIDivideAreaManager::get()->beforeLoadScene(mSceneParam1, mSceneParam2);
 
-  //  EntityManager::get()->beforeLoadScene();
+    EntityManager::get()->beforeLoadScene();
     auto scene = addScene(SceneLoader::loadScene(mStage + ".scene"));
     this->getScene(scene->getName())->getPhysicsWorld()->setShowDebug(true);
     scene->addChildNode(script_node);
 
-    ///////////////////////// 
-       
- /*   auto ship = new Spaceship("spaceship",
-        "flyingObject.mesh",
-        dt::PhysicsBodyComponent::BOX,
-        20.0f,
-        100.0f,
-        100.0f,
-        1.0f,
-        "",
-        "",
-        "",
-        "",
-        256.0f,
-        256.0f / 8192,
-        16.0f,
-        16.0 / 1024,
-        32.0f,
-        8.0f,*/
-
-    Spaceship* human_ship = nullptr;
-    human_ship = dynamic_cast<Spaceship*>(scene->findChildNode("Spaceship#0").get());
-
-    auto agent = new HumanAgent("agent");
-
-    agent->attachTo(human_ship);
-    EntityManager::get()->setHumanShip(human_ship);
-    human_ship->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->setMass(human_ship->getMass());
-    human_ship->resetPhysicsBody();
-    
-
-    Spaceship* ai_ship = dynamic_cast<Spaceship*>(scene->findChildNode("Spaceship#1").get());
-
-
-    dt::Logger::get().debug(ai_ship->getName() ); 
-    dt::Logger::get().debug(human_ship->getName() ); 
-
-    dt::Logger::get().debug(human_ship->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->getName() );
-    dt::Logger::get().debug(ai_ship->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->getName() );
-    
-    auto ai_agent = new spaceShipAIAgent("rj");
-    ai_agent->setBody(ai_ship);
-    ai_agent->attachTo(ai_ship);
-    ai_ship->findComponent<dt::PhysicsBodyComponent>(Vehicle::PHYSICS_BODY_COMPONENT)->setMass(ai_ship->getMass());
-    ai_ship->resetPhysicsBody();
-
-
-    ///////////////////////
     dt::GuiRootWindow& root_win = dt::GuiManager::get()->getRootWindow();
 
     auto health_img1 = root_win.addChildWidget<dt::GuiImageBox>(new dt::GuiImageBox("health_one"));
@@ -154,20 +105,20 @@ void BattleState::onInitialize() {
     mQuestionLabel = question.get();
     mDialogLabel = dialog.get();
 
-	/*Alien *pAlien = EntityManager::get()->getHuman();
+	Alien *pAlien = EntityManager::get()->getHuman();
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
-	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));*/
+	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
-    //__onHealthChanged(pAlien->getCurHealth());
-    //__onAmmoChanged(0);
-    //__onClipNumChanged(0);
+    __onHealthChanged(pAlien->getCurHealth());
+    __onAmmoChanged(0);
+    __onClipNumChanged(0);
 
-    //Weapon* weapon = pAlien->getCurWeapon();
+    Weapon* weapon = pAlien->getCurWeapon();
 
-    //if (weapon != nullptr) {
-    //    __onAmmoChanged(weapon->getCurAmmo());
-    //    __onClipNumChanged(weapon->getCurClip());
-    //}
+    if (weapon != nullptr) {
+        __onAmmoChanged(weapon->getCurAmmo());
+        __onClipNumChanged(weapon->getCurClip());
+    }
 
     __hideQA();
 
@@ -209,7 +160,7 @@ void BattleState::onInitialize() {
 
     dt::GuiManager::get()->setMouseCursorVisible(false);
 
-   // EntityManager::get()->afterLoadScene(scene.get(), mStage);
+    EntityManager::get()->afterLoadScene(scene.get(), mStage);
 
     connect(dt::InputManager::get(), SIGNAL(sPressed(dt::InputManager::InputCode, const OIS::EventArg&)),
                                this, SLOT(__onKeyPressed(dt::InputManager::InputCode, const OIS::EventArg&)));
@@ -522,6 +473,7 @@ void BattleState::__showMenu() {
         mReturnMenuButton->setVisible(true);
         mExitButton->setVisible(true);
         mFrontSight->setVisible(false);
+        mQARescueButton->setVisible(true);
 
         dt::GuiManager::get()->setMouseCursorVisible(true);
 
@@ -539,6 +491,7 @@ void BattleState::__hideMenu() {
         mReturnMenuButton->setVisible(false);
         mExitButton->setVisible(false);
         mFrontSight->setVisible(true);
+        mQARescueButton->setVisible(false);
 
         dt::GuiManager::get()->setMouseCursorVisible(false);
 
