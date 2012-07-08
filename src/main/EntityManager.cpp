@@ -32,60 +32,92 @@ void EntityManager::setHuman(Alien * human) {
 void EntityManager::beforeLoadScene() {
     mAlien.clear(); 
     mMonster.clear(); 
+    mAIShip.clear(); 
+}
+
+void EntityManager::setHumanShip(Spaceship * ship) {
+    mHumanShip = ship; 
+}
+void EntityManager::addShip(Spaceship * ship) {
+    mAIShip.push_back(ship); 
+}
+
+Spaceship * EntityManager::getHumanShip() {
+    return mHumanShip;
+}
+
+
+void EntityManager::__loadStage(QString stage) {
+    QFile file(stage);
+    QDomDocument doc;
+    if (!file.open(QIODevice::ReadOnly)) {
+        dt::Logger::get().error("Couldn't open file " + stage);
+    }
+
+    doc.setContent(&file);
+
+  
+    QDomElement w_node = doc.documentElement();
+    uint16_t scene_id = w_node.firstChildElement("scene").text().toUInt() - 1;
+    monsterNum[scene_id] = w_node.firstChildElement("monsternum").text().toUInt();
+    mg[scene_id][0] = w_node.firstChildElement("area1").text().toUInt(); 
+    mg[scene_id][1] = w_node.firstChildElement("area2").text().toUInt(); 
+    mg[scene_id][2] = w_node.firstChildElement("area3").text().toUInt(); 
+    mg[scene_id][3] = w_node.firstChildElement("area4").text().toUInt(); 
+    mg[scene_id][4] = w_node.firstChildElement("area5").text().toUInt(); 
+    mg[scene_id][5] = w_node.firstChildElement("area6").text().toUInt(); 
+   
+
 }
 void EntityManager::afterLoadScene(dt::Scene * scene, QString stage) {
-    if (stage == "01") mCurStage = 0; 
-    if (stage == "02") mCurStage = 1;
-    if (stage == "03") mCurStage = 2;     
-    std::cout << mCurStage << endl; 
-   
+    if (stage == "01")  {
+        mCurStage = 0; 
+        __loadStage("01StageAIstrategy.xml");
+    } else 
+    if (stage == "02")  {
+        mCurStage = 1; 
+        __loadStage("02StageAIstrategy.xml");
+    }else
+    if (stage == "03")  {
+        mCurStage = 2; 
+        __loadStage("03StageAIstrategy.xml");
+    }else {
+        dt::Logger::get().error("not found this AIstrategy!"); 
+        return;
+    }
     mAlien.push_back(mHuman);
     mMonsterNum = 0;
     mCurScene = scene;
+    cout << mCurStage << endl; 
+    //mg[0][0] = 54, 
+    //    mg[0][1] = 23,
+    //    mg[0][2] = 51; 
+    //mg[0][3] = 1, 
+    //    mg[0][4] = 55, 
+    //    mg[0][5] = 34;
+    ////YM星人个数。
+    //monsterNum[0] = 100;
 
-    mg[0][0] = 54, 
-        mg[0][1] = 23,
-        mg[0][2] = 51; 
-    mg[0][3] = 1, 
-        mg[0][4] = 55, 
-        mg[0][5] = 34;
-    //YM星人个数。
-    monsterNum[0] = 100;
+    //mg[1][0] = 81, mg[1][1] = 48, mg[1][2] = 83; 
+    //mg[1][3] = 12, mg[1][4] = 57, mg[1][5] = 70;
 
-    mg[1][0] = 81, mg[1][1] = 48, mg[1][2] = 83; 
-    mg[1][3] = 12, mg[1][4] = 57, mg[1][5] = 70;
+    // monsterNum[1] = 100;
+    //  mg[2][0] = 83, mg[2][1] = 15, mg[2][2] = 65; 
+    //mg[2][3] = 152, mg[2][4] = 42, mg[2][5] = 80;
 
-     monsterNum[1] = 100;
-      mg[2][0] = 83, mg[2][1] = 15, mg[2][2] = 65; 
-    mg[2][3] = 152, mg[2][4] = 42, mg[2][5] = 80;
-
-    monsterNum[2] = 100;
-   
-
+    //monsterNum[2] = 100;
   
     __loadMonster("yangmu");
-
-    //for (uint16_t i = 0; i < 1; i ++) {
+    
     for (uint16_t i = 0;  i < mMonsterInfo.mInitNum; ++i) {
         monsterNum[mCurStage] --;
 
         if (monsterNum[mCurStage] > 0) {        
             Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getPositionById(
-                AIDivideAreaManager::get()->randomPosition(mg[mCurStage][rand() % 6]));
-                
-            /* std::cout << monster_pos.x << ' ' << monster_pos.z << endl; 
-            std::cout << mg[mCurStage][monsterNum[mCurStage] % 6] << endl; */
-
-            /*
-            Monster * monster = new Monster("monster" + dt::Utils::toString(monsterNum[mCurStage]),
-                "monster.mesh", dt::PhysicsBodyComponent::BOX, 1.0f, "", "", "","", 
-                monsterValue[monsterNum[mCurStage] % 2][2],  //攻击力
-                40,  //攻击range   
-                monsterValue[monsterNum[mCurStage] % 2][3]);      //攻击间隔
-                */
+                AIDivideAreaManager::get()->randomPosition(mg[mCurStage][rand() % 6]));           
             mMonsterNum ++;
             Monster *monster = new Monster(
-                "monster" + dt::Utils::toString(monsterNum[mCurStage]),
+                "monster" + QUuid::createUuid().toString(),
                 mMonsterInfo.mMeshHandle,
                 dt::PhysicsBodyComponent::BOX,
                 mMonsterInfo.mMass,
@@ -129,17 +161,26 @@ void EntityManager::addEntityInScene(Character * entity, Agent * agent, double x
 }
 Character* EntityManager::searchEntityByRange(Character * entity, double range) {
 
+   
     Ogre::Vector3 cur_pos = entity->getPosition();
     
     Alien * alien = dynamic_cast<Alien*>(entity);
     if (alien == nullptr) {       
         for (vector<Character*>::iterator itr = mAlien.begin(); 
             itr != mAlien.end(); itr ++)  {
-                 if ((*itr) == nullptr) continue; 
+                 try {
+                 if ((*itr) == nullptr) {
+                    mAlien.erase(itr); 
+                    return nullptr;
+                 }
                 Ogre::Vector3 alien_pos = (*itr)->getPosition();
                 if (_dis(alien_pos, cur_pos) < range) {                    
                     return (*itr);
                 }
+                 } catch (...) {
+                     mAlien.erase(itr);
+                     return nullptr;
+                 }
         }
         /*   for (vector<Character*>::iterator itr = mMonster.begin(); 
         itr != mMonster.end(); itr ++)  {
@@ -152,10 +193,18 @@ Character* EntityManager::searchEntityByRange(Character * entity, double range) 
     } else {
         for (vector<Character*>::iterator itr = mMonster.begin(); 
             itr != mMonster.end(); itr ++)  {
-                if ((*itr) == nullptr) continue; 
+                try {
+                if ((*itr) == nullptr) {
+                    mMonster.erase(itr); 
+                    return nullptr;
+                }
                 Ogre::Vector3 monster_pos = (*itr)->getPosition(); 
                 if (_dis(monster_pos, cur_pos) < range) {                    
                     return (*itr);
+                }
+                } catch (...) {
+                    mMonster.erase(itr); 
+                    return nullptr; 
                 }
         }
         /*  for (vector<Character*>::iterator itr = mAlien.begin(); 
@@ -167,6 +216,7 @@ Character* EntityManager::searchEntityByRange(Character * entity, double range) 
         }
         }*/
     }
+
     return nullptr;
 }
 double EntityManager::_dis(Ogre::Vector3 a, Ogre::Vector3 b) {
@@ -193,8 +243,7 @@ void  EntityManager::__isMonsterDead(Character * monster) {
             Ogre::Vector3 monster_pos = AIDivideAreaManager::get()->getPositionById(
                 AIDivideAreaManager::get()->randomPosition(mg[mCurStage][rand() % 6]));
             mMonsterNum ++;
-            Monster *new_monster = new Monster(
-                //"monster" + dt::Utils::toString(mMonsterNum),
+            Monster *new_monster = new Monster(                
                 "monster" + QUuid::createUuid().toString(),
                 mMonsterInfo.mMeshHandle,
                 dt::PhysicsBodyComponent::BOX,
@@ -282,7 +331,11 @@ bool EntityManager::isForwardThreaten(Agent * agent) {
     if (monsterAI != nullptr) {
         for (vector<Character*>::iterator itr = mAlien.begin(); 
             itr != mAlien.end(); itr ++) {    
-                  if ((*itr) == nullptr) continue; 
+                try {
+                  if ((*itr) == nullptr) {
+                      mAlien.erase(itr); 
+                      return false; 
+                  }
                 Ogre::Vector3  threat_pos = (*itr)->getPosition();
                 Ogre::Vector3  cur_pos = monsterAI->getParent()->getPosition();
                 if (_dis(threat_pos, cur_pos) > THREAT_RANGE) continue;
@@ -290,6 +343,10 @@ bool EntityManager::isForwardThreaten(Agent * agent) {
                 double d_degree = threat_degree - monsterAI->getPreDegree();
                 fixTurn(d_degree);
                 if (fabs(d_degree) < THREAT_HALF_DEGREE) return true; 
+                } catch(...) {
+                    mAlien.erase(itr); 
+                    return false; 
+                }
         }
     }
     return false; 
@@ -348,6 +405,8 @@ double EntityManager::avoidCollic(Character* entity, double range) {
     return res;
 }
 
+
+
 void EntityManager::__loadMonster(QString monster_name) {
     QFile file("AIMonsterAttribute.xml");
 
@@ -371,3 +430,4 @@ void EntityManager::__loadMonster(QString monster_name) {
     mMonsterInfo.mAttackInterval = w_node.firstChildElement("attack_interval").text().toFloat();
     mMonsterInfo.mScale = w_node.firstChildElement("scale").text().toFloat();
 }
+
