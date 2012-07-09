@@ -49,7 +49,7 @@ void InitialState::onInitialize() {
     auto display_settings = config_mgr->getScreenSetting();
     auto sound_settings = config_mgr->getSoundSetting();
 
-    dt::DisplayManager::get()->setWindowSize(640, 400);
+    dt::DisplayManager::get()->setWindowSize(1280, 800);
 
     if (display_settings.getFullScreen()) {
         dt::DisplayManager::get()->setFullscreen(true);

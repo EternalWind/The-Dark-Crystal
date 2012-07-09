@@ -41,6 +41,7 @@ void OptionState::onInitialize() {
 	bg_menu->setVolume((float)sound_setting.getMusic());
 	bg_menu->getSound().setLoop(true);
 	bg_menu->playSound();
+    mBackgroundMusic = bg_menu.get();
 
 	mButtonClickSound = camnode->addComponent<dt::SoundComponent>(new dt::SoundComponent("musics/bg_mouse_click.wav", "optionstate_button_sound")).get();
 	mButtonClickSound->setVolume((float)sound_setting.getSoundEffect());
@@ -224,7 +225,7 @@ void OptionState::onClick(MyGUI::Widget* sender) {
             dt::DisplayManager::get()->setFullscreen(mDisplaySettingCheckBox->getStateSelected());
 
             if (!mScreenSettings.getFullScreen()) {
-                dt::DisplayManager::get()->setWindowSize(640, 400);
+                dt::DisplayManager::get()->setWindowSize(1280, 800);
             }
         }
 
@@ -301,8 +302,13 @@ void OptionState::onKeyDown(dt::InputManager::InputCode code, const OIS::EventAr
 void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t position) {
     if (sender->getName() == "Gui.SoundVolumeScrollBar") {
         mSoundVolumeLabel->setCaption(QString::fromLocal8Bit("ÒôÐ§£º") + dt::Utils::toString(position));
+        mButtonClickSound->setVolume((float)position);
     } else if (sender->getName() == "Gui.MusicVolumeScrollBar") {
         mMusicVolumeLabel->setCaption(QString::fromLocal8Bit("±³¾°ÒôÀÖ£º") + dt::Utils::toString(position));
+        mBackgroundMusic->setVolume((float)position);
+    } else if (sender->getName() == "Gui.MasterVolumeScrollBar") {
+        mMasterVolumeLabel->setCaption(QString::fromLocal8Bit("Ö÷ÒôÁ¿£º") + dt::Utils::toString(position));
+        sf::Listener::setGlobalVolume((float)position);
     }
 }
 
