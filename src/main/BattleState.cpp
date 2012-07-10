@@ -25,6 +25,7 @@
 #include <Scene/StateManager.hpp>
 #include <Logic/ScriptComponent.hpp>
 #include <Logic/ScriptManager.hpp>
+#include <Core/Root.hpp>
 
 #include <OgreProcedural.h>
 
@@ -432,6 +433,8 @@ void BattleState::__resetGui() {
 }
 
 void BattleState::__hideQA() {
+    Root::getInstance().resume();
+
     for (uint8_t i = 0 ; i < 4 ; ++i) {
         mAnswerButtons[i]->setVisible(false);
     }
@@ -444,6 +447,8 @@ void BattleState::__hideQA() {
 }
 
 void BattleState::setQA(Question question) {
+    Root::getInstance().pause();
+
     mQuestionLabel->setVisible(true);
     mQuestionLabel->setCaption(question.getQuestion());
 
@@ -483,6 +488,8 @@ void BattleState::setSceneParam2(double param2) {
 
 void BattleState::__showMenu() {
     if (!mHasPaused) {
+        Root::getInstance().pause();
+
         mHasPaused = true;
 
         mResumeButton->setVisible(true);
@@ -501,6 +508,8 @@ void BattleState::__showMenu() {
 
 void BattleState::__hideMenu() {
     if (mHasPaused) {
+        Root::getInstance().resume();
+
         mHasPaused = false;
 
         mResumeButton->setVisible(false);
