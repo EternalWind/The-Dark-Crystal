@@ -73,9 +73,9 @@ void OptionState::onInitialize() {
     int size_v_small = (float)coordination.height / 30.0f;
 
     int position_h_func = (float)coordination.width * 0.1f;  //功能设置position
-    int position_v_func = (float)coordination.height *0.3f;
-    int position_h_key = (float)coordination.width * 0.1f;  //key position
-    int position_v_key = (float)coordination.height *0.6f;
+    int position_v_func = (float)coordination.height *0.6f;
+    int position_h_key = (float)coordination.width * 0.1f;  //
+    int position_v_key = (float)coordination.height *0.3f;
 
     //图片========================================================================
     auto logo = win.addChildWidget(new dt::GuiImageBox("option_settings_image_box"));
@@ -86,7 +86,7 @@ void OptionState::onInitialize() {
     //功能设置============================================================================
     mQASettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("QASettingCheckBox")).get();
     mQASettingCheckBox->setSize(size_h_large * 2, size_v_large);
-    mQASettingCheckBox->setPosition(position_h_func, position_v_func - gap_v_small);
+    mQASettingCheckBox->setPosition(position_h_key, position_v_key - gap_v_small);
     mQASettingCheckBox->setCaption(QString::fromLocal8Bit("开启问答系统"));
     mQASettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
     mQASettingCheckBox->setStateSelected(mQASettings.getIsQAEnable());
@@ -94,7 +94,7 @@ void OptionState::onInitialize() {
 
     mDisplaySettingCheckBox = win.addChildWidget(new dt::GuiCheckBox("DisplaySettingsCheckBox")).get();
     mDisplaySettingCheckBox->setSize(size_h_medium, size_v_medium);
-    mDisplaySettingCheckBox->setPosition(position_h_func, position_v_func + gap_v_small);
+    mDisplaySettingCheckBox->setPosition(position_h_key, position_v_key + gap_v_small);
     mDisplaySettingCheckBox->setCaption(QString::fromLocal8Bit("全屏"));
     mDisplaySettingCheckBox->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
     mDisplaySettingCheckBox->setStateSelected(mScreenSettings.getFullScreen());
@@ -153,8 +153,8 @@ void OptionState::onInitialize() {
     mMouseSensitivityLabel->setTextColour(MyGUI::Colour(0.0,0.9,0.9));
 
     mMessageLabel = win.addChildWidget(new dt::GuiLabel("MessageLabel")).get();
-    mMessageLabel->setSize(size_h_large * 2, size_v_small * 0.8);
-    mMessageLabel->setPosition(0.9f, 0.9f);
+    mMessageLabel->setSize(size_h_large * 3, size_v_small * 0.8);
+    mMessageLabel->setPosition(0.1f, 0.1f);
     mMessageLabel->setCaption(QString::fromLocal8Bit("你可以设置音视频和控制方式"));
 
     auto confirm_button = win.addChildWidget(new dt::GuiButton("confirm_button"));
@@ -198,9 +198,9 @@ void OptionState::addNewFuncButton(const QString name, const QString font_text, 
 
     auto coordination = win.getMyGUIWidget()->getAbsoluteCoord();
     int size_h = (float)coordination.width / 15.0f;
-    int size_v = (float)coordination.height / 35.0f;
+    int size_v = (float)coordination.height / 30.0f;
     int position_h = (float)coordination.width * 0.1f;  //key position
-    int position_v = (float)coordination.height * 0.6f;
+    int position_v = (float)coordination.height * 0.4f;
     int gap_h = (float)coordination.width / 9.0f;
     int gap_v = (float)coordination.height / 25.0f;
 
