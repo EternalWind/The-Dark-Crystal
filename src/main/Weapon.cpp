@@ -200,7 +200,7 @@ void Weapon::onInitialize() {
        
 	} else {
         OgreProcedural::SphereGenerator().setRadius(0.001f).setUTile(.5f).realizeMesh("Bullet3");
-        mInteractor = node->addComponent(new AdvanceCollisionComponent("Bullet3", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
+        mInteractor = node->addComponent(new AdvanceCollisionComponent(mPropName + ".mesh", mAmmoFireBack, mAmmoBomb, 1, "interactor")).get();
         //node->setRotation(Ogre::Quaternion(0.9f, 0.240f, 0, 0));
     } 
     auto muzzle_node = this->addChildNode(new Node(this->getName() + "_muzzle_node"));
