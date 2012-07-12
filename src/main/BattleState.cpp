@@ -26,6 +26,7 @@
 #include <Logic/ScriptComponent.hpp>
 #include <Logic/ScriptManager.hpp>
 #include <Core/Root.hpp>
+#include <Graphics/DisplayManager.hpp>
 
 #include <OgreProcedural.h>
 
@@ -45,7 +46,8 @@ BattleState::BattleState(const QString stage_name)
       mSceneParam2(0.0),
       mCrystalBarPosition(0),
       mHasPaused(false),
-      mQAShowed(false) {}
+      mQAShowed(false),
+      mHasFpsShown(false) {}
 
 void BattleState::onInitialize() {
    
@@ -86,6 +88,7 @@ void BattleState::onInitialize() {
     mExitButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("exit_button")).get();
     mQARescueButton = root_win.addChildWidget<dt::GuiButton>(new dt::GuiButton("qa")).get();
     mPickUpCrystalBar = root_win.addChildWidget<dt::GuiProgressBar>(new dt::GuiProgressBar("pick_up_crystal_bar")).get();
+    mFpsLabel = root_win.addChildWidget<dt::GuiLabel>(new dt::GuiLabel("fps")).get();
 
     mPickUpCrystalBar->setProgressRange(101);
     mPickUpCrystalBar->setProgressPosition(0);
@@ -204,6 +207,11 @@ void BattleState::updateStateFrame(double simulation_frame_time) {
 		}
 	} else {
         mPickUpCrystalBar->setVisible(false);
+    }
+
+    if (mHasFpsShown) {
+        dt::DisplayManager* display_mgr = dt::DisplayManager::get();
+        mFpsLabel->setCaption(QString("Fps: ") + dt::Utils::toString(display_mgr->getRenderWindow()->getLastFPS()));
     }
 }
 
@@ -430,6 +438,10 @@ void BattleState::__resetGui() {
     mPickUpCrystalBar->setSize(0.27f, 0.05f);
     mPickUpCrystalBar->setPosition(coordination.right() /2 - mPickUpCrystalBar->getMyGUIWidget()->getSize().width / 2,
         (int)(coordination.bottom() * 0.9f));
+
+    mFpsLabel->setPosition(gap_h_small, gap_h_medium);
+    mFpsLabel->setFontHeight(gap_h_medium);
+    mFpsLabel->setSize(300, 50);
 }
 
 void BattleState::__hideQA() {
@@ -537,6 +549,14 @@ void BattleState::__onKeyPressed(dt::InputManager::InputCode code, const OIS::Ev
         } else {
             __hideQA();
         }
+    } else if (code == dt::InputManager::KC_F10) {
+        if (mHasFpsShown) {
+            mFpsLabel->setVisible(false);
+        } else {
+            mFpsLabel->setVisible(true);
+        }
+
+        mHasFpsShown = !mHasFpsShown;
     }
 }
 
@@ -569,4 +589,8 @@ void BattleState::__onUnlockCrystalProgressChanged(uint16_t percent) {
 
 void BattleState::fail() {
     dt::StateManager::get()->setNewState(new AnimationState("videos/fail.avi", 4, new MenuState()));
+}
+
+void BattleState::setMonsterType(const QString monster_id) {
+    EntityManager::get()->loadMonster(monster_id);
 }

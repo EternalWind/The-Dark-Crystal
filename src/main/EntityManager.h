@@ -67,6 +67,9 @@ public:
      void addShip(Spaceship * ship); 
      void setHumanShip(Spaceship * ship);
      Spaceship * getHumanShip(); 
+
+     void loadMonster(QString monster_name);
+
      const static double PI; 
      const static double THREAT_RANGE;
      const static double THREAT_HALF_DEGREE;
@@ -93,7 +96,7 @@ private:
     EntityManager(const EntityManager &){}
 
     double _dis(Ogre::Vector3 a, Ogre::Vector3 b);    
-    void __loadMonster(QString monster_name);
+    
     void __loadStage(QString stage); 
 
 public slots:
