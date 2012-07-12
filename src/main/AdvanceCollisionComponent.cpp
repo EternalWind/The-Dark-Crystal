@@ -1,4 +1,5 @@
-
+#include "AdvanceCollisionComponent.h"
+#include "Entity.h"
 
 #include <Logic/CollisionComponent.hpp>
 #include <Graphics/MeshComponent.hpp>
@@ -8,7 +9,7 @@
 #include "AdvanceCollisionComponent.h"
 #include <Graphics/ParticleSystemComponent.hpp>
 
-#include "Entity.h"
+
 
 AdvanceCollisionComponent::AdvanceCollisionComponent(const QString bullet_handle, const ParticleInfo &fire_back, const ParticleInfo &bomb, bool is_throwable, const QString name)
     : dt::InteractionComponent(name),
@@ -32,8 +33,11 @@ void AdvanceCollisionComponent::onCheck(const Ogre::Vector3& start, const Ogre::
 
     bullet->addComponent<dt::MeshComponent>(new dt::MeshComponent(mBulletMeshHandle, "", name));
     bullet->setPosition(start, dt::Node::SCENE);
-    std::shared_ptr<dt::PhysicsBodyComponent> bullet_body = bullet->addComponent<dt::PhysicsBodyComponent>(new dt::PhysicsBodyComponent(name, "bullet_body"));
-    bullet_body->setMass(1.0);
+	std::shared_ptr<dt::PhysicsBodyComponent> bullet_body = bullet->addComponent<dt::PhysicsBodyComponent>(
+		new dt::PhysicsBodyComponent(name, "bullet_body",dt::PhysicsBodyComponent::SPHERE));
+	bullet_body->setMass(1.0);
+	bullet_body->setTorque(BtOgre::Convert::toBullet(getNode()->getParent()->getRotation(dt::Node::SCENE) * Ogre::Vector3(-2,0,0)));
+	
 
 	// create the particle system
     auto p_sys = bullet->addComponent(new dt::ParticleSystemComponent("p_sys" + dt::Utils::toString(id)));
