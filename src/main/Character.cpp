@@ -99,8 +99,7 @@ void Character::onUpdate(double time_diff) {
 			mIsJumping = false;
 
 			mesh->stopAnimation();
-
-            this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->playSound();
+            this->findComponent<dt::SoundComponent>(JUMP_SOUND_COMPONENT)->stopSound();
 
 			if (!mIsMoving) {
 				mVelocity.setZero();

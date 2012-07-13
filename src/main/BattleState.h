@@ -171,6 +171,12 @@ public slots:
       */
     void setSceneParam2(double param2);
 
+    /**
+      * 设置怪物种类
+      * @param monster_id 怪物种类id
+      */
+    void setMonsterType(const QString monster_id);
+
 private:
     /**
       * 重置Gui元素的位置、大小
@@ -215,34 +221,42 @@ protected slots:
 
     void __onUnlockCrystalProgressChanged(uint16_t percent); 
 
-protected:
+private:
 	std::vector<dt::GuiImageBox*> mHealthHUD;	//!< 生命值
 	std::vector<dt::GuiImageBox*> mAmmoHUD;		//!< 弹药量 
-    dt::GuiImageBox* mFrontSight;	            //!< 准星
-	std::vector<dt::GuiImageBox*> mClipNumHUD;	//!< 弹夹数
+    std::vector<dt::GuiImageBox*> mClipNumHUD;	//!< 弹夹数
 	std::vector<dt::GuiButton*> mAnswerButtons;	//!< 答案选项
+
+    dt::GuiImageBox* mFrontSight;	            //!< 准星
 	dt::GuiEditBox* mQuestionLabel;				//!< 问题显示窗口
 	dt::GuiLabel* mDialogLabel;					//!< 对话显示窗口
 	dt::GuiProgressBar* mPickUpCrystalBar;      //!< 捡起水晶进度条
-	uint16_t mTotalEnemyNum;					//!< 地图中怪兽数量
-	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量
-	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
-	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
-    QString mStage;                             //!< 当前关卡
-    QString mNextStage;                         //!< 下一关卡
-    double mSceneParam1;
-    double mSceneParam2;
+    dt::GuiLabel* mFpsLabel;                    //!< 显示Fps数的标签
 
-private:
-	uint16_t mCrystalBarPosition;               //!< 进度条position
     dt::GuiButton* mResumeButton;               //!< 返回游戏按钮
     dt::GuiButton* mSaveButton;                 //!< 保存游戏按钮
     dt::GuiButton* mLoadButton;                 //!< 读取游戏按钮
     dt::GuiButton* mReturnMenuButton;           //!< 返回主菜单按钮
     dt::GuiButton* mExitButton;                 //!< 退出游戏按钮
-    dt::GuiButton* mQARescueButton;
+    dt::GuiButton* mQARescueButton;             //!< 召唤QA系统拯救世界！！！
+
+	uint16_t mTotalEnemyNum;					//!< 地图中怪兽数量
+	uint16_t mRemainEnemyNum;					//!< 地图中剩余怪兽数量
+	uint16_t mTotalCrystalNum;					//!< 地图中水晶总数
+	uint16_t mObtainedCrystalNum;				//!< 玩家已获得水晶总数
+
+    QString mStage;                             //!< 当前关卡
+    QString mNextStage;                         //!< 下一关卡
+
+    double mSceneParam1;
+    double mSceneParam2;
+
+	uint16_t mCrystalBarPosition;               //!< 进度条position
+
     bool mHasPaused;                            //!< 是否已经暂停玩家控制
-    bool mQAShowed;
+    bool mQAShowed;                             //!< 是否已经显示QA
+    bool mHasFpsShown;                          //!< 是否已经显示Fps
+
     Question mQuestion;
 };
 
