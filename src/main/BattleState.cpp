@@ -514,7 +514,7 @@ void BattleState::__showMenu() {
 
         dt::GuiManager::get()->setMouseCursorVisible(true);
 
-        EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->disable();
+        //EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->disable();
     }
 }
 
@@ -534,7 +534,7 @@ void BattleState::__hideMenu() {
 
         dt::GuiManager::get()->setMouseCursorVisible(false);
 
-        EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->enable();
+        //EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->enable();
     }
 }
 
