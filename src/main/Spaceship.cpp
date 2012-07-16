@@ -349,6 +349,13 @@ void Spaceship::__onLookAround(Ogre::Quaternion body_rot, Ogre::Quaternion agent
 	yaw += Ogre::Radian(body_rot.getYaw());
 	pitch += Ogre::Radian(agent_rot.getPitch());	
 
+    if (pitch < Ogre::Degree(-89.9)) {
+        pitch = Ogre::Degree(-89.9);
+    }
+    if (pitch > Ogre::Degree(89.9)) {
+        pitch = Ogre::Degree(89.9);
+    }
+
 	orientMatrix.FromEulerAnglesYXZ(yaw, pitch, roll);
 
 	Ogre::Quaternion rotation;
