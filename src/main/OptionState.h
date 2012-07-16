@@ -85,6 +85,7 @@ private:
     QASetting mQASettings;                        //!< 记录当前的QA设定
 	dt::SoundComponent* mButtonClickSound;        //!< 按键音效
     dt::SoundComponent* mBackgroundMusic;         //!< 背景音乐
+	static std::string mkeyname[256];
 };
 
 #endif

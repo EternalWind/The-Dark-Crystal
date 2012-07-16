@@ -12,6 +12,23 @@
 
 #include <SFML/Audio/Listener.hpp>
 
+std::string OptionState::mkeyname[256] = {  "unagn", "esc  ", "1    ", "2    ", "3    ", "4    ", "5    ", "6    ", "7    ", "8    ", "9    ", "0    ", "-    ", "=    ", "bkspe", "tab  ", 
+											"Q    ", "W    ", "E    ", "R    ", "T    ", "Y    ", "U    ", "I    ", "O    ", "P    ", "(    ", ")    ", "Enter", "l-ctl", "A    ", "S    ", 
+											"D    ", "F    ", "G    ", "H    ", "J    ", "K    ", "L    ", ";    ", "'    ", "`    ", "l-sft", "\\    ", "Z    ", "X    ", "C    ", "V    ",
+											"B    ", "N    ", "M    ", ",    ", ".    ", "/    ", "r-sft", "*    ", "l-alt", "space", "cap  ", "F1   ", "F2   ", "F3   ", "F4   ", "F5   ",
+											"F6   ", "F7   ", "F8   ", "F9   ", "F10  ", "n-lck", "s-lck", "num7 ", "num8 ", "num9 ", "num -", "num4 ", "num 5", "num 6", "num +", "num1 ",
+											"num2 ", "num3 ", "num0 ", "num .", "     ", "     ", "O_102", "F11  ", "F12  ", "     ", "     ", "     ", "     ", "     ", "     ", "     ",
+											"     ", "     ", "     ", "     ", "F13  ", "F14  ", "F15  ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", 
+											"KANA ", "     ", "     ", "ANTC1", "     ", "     ", "     ", "     ", "     ", "CNVRT", "     ", "NCNRT", "     ", "YEN  ", "ANTC2", "     ",
+											"     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "num =", "     ", "     ", 
+											"PreTk", "@    ", ":    ", "_    ", "KANJI", "stop ", "AX   ", "UNLAB", "     ", "NXTTK", "     ", "     ", "n etr", "R-ctr", "     ", "     ",
+											"mute ", "Calcu", "Play ", "     ", "MStop", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "Vol -", "     ", 
+											"Vol +", "     ", "Web h", "num ,", "     ", "num /", "     ", "SysRq", "r-alt", "     ", "     ", "     ", "     ", "     ", "     ", "     ", 
+											"     ", "     ", "     ", "     ", "     ", "Pause", "     ", "Home ", "UpArr", "PgUp ", "     ", "L-Arr", "     ", "R-Arr", "     ", "End  ", 
+											"DnArr", "PgDn ", "Ins  ", "Del  ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "L-Win", "R-Win", "AppMe", "Power", "Sleep", 
+											"     ", "     ", "     ", "Wake ", "     ", "Web-S", "Web-F", "Web-R", "WebSp", "WebFd", "Web-B", "mycom", "Mail ", "M-Sel", "Mou-L", "Mou-R", 
+											"Mou-M", "Mou-3", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "     ", "Mou-4", "Mou-5", "Mou-6", "Mou-7", "Invad"};
+
 OptionState::OptionState():
 mActionButton(nullptr) {
 }
@@ -172,20 +189,20 @@ void OptionState::onInitialize() {
     cancel_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onClick);
 
     //控制按键设置======================================================================================
-    addNewFuncButton("forward_button", QString::fromLocal8Bit("前进"), 0, 0);
-    addNewFuncButton("backward_button", QString::fromLocal8Bit("后退"), 0, 1);
-    addNewFuncButton("leftward_button", QString::fromLocal8Bit("左转"), 0, 2);
-    addNewFuncButton("rightward_button", QString::fromLocal8Bit("右转"), 0, 3);
-    addNewFuncButton("jump_button", QString::fromLocal8Bit("跳起"), 0, 4);
-    addNewFuncButton("sprint_button", QString::fromLocal8Bit("跑步"), 0, 5);
-    addNewFuncButton("reload_button", QString::fromLocal8Bit("装弹"), 0, 6);
-    addNewFuncButton("arm1_button", QString::fromLocal8Bit("武器1"), 1, 0);
-    addNewFuncButton("arm2_button", QString::fromLocal8Bit("武器2"), 1, 1);
-    addNewFuncButton("arm3_button", QString::fromLocal8Bit("武器3"), 1, 2);
-    addNewFuncButton("attack_button", QString::fromLocal8Bit("攻击"), 1, 3);
-    addNewFuncButton("throw_button", QString::fromLocal8Bit("丢弃"), 1, 4);
-    addNewFuncButton("getoff_button", QString::fromLocal8Bit("下车"), 1, 5);
-    addNewFuncButton("activate_button", QString::fromLocal8Bit("拾取"), 1, 6);
+    addNewFuncButton("forward_button", QString::fromLocal8Bit(("前进 " + mkeyname[mControlSettings.getKey(ControlSetting::FORWARD)]).c_str()), 0, 0);
+    addNewFuncButton("backward_button", QString::fromLocal8Bit(("后退 " + mkeyname[mControlSettings.getKey(ControlSetting::BACKWARD)]).c_str()), 0, 1);
+    addNewFuncButton("leftward_button", QString::fromLocal8Bit(("左转 " + mkeyname[mControlSettings.getKey(ControlSetting::LEFTWARD)]).c_str()), 0, 2);
+    addNewFuncButton("rightward_button", QString::fromLocal8Bit(("右转 " + mkeyname[mControlSettings.getKey(ControlSetting::RIGHTWARD)]).c_str()), 0, 3);
+    addNewFuncButton("jump_button", QString::fromLocal8Bit(("跳起 " + mkeyname[mControlSettings.getKey(ControlSetting::JUMP)]).c_str()), 0, 4);
+    addNewFuncButton("sprint_button", QString::fromLocal8Bit(("跑步 " + mkeyname[mControlSettings.getKey(ControlSetting::SPRINT)]).c_str()), 0, 5);
+    addNewFuncButton("reload_button", QString::fromLocal8Bit(("装弹 " + mkeyname[mControlSettings.getKey(ControlSetting::RELOAD)]).c_str()), 0, 6);
+    addNewFuncButton("arm1_button", QString::fromLocal8Bit(("武器1 " + mkeyname[mControlSettings.getKey(ControlSetting::ARM1)]).c_str()), 1, 0);
+    addNewFuncButton("arm2_button", QString::fromLocal8Bit(("武器2 " + mkeyname[mControlSettings.getKey(ControlSetting::ARM2)]).c_str()), 1, 1);
+    addNewFuncButton("arm3_button", QString::fromLocal8Bit(("武器3 " + mkeyname[mControlSettings.getKey(ControlSetting::ARM3)]).c_str()), 1, 2);
+    addNewFuncButton("attack_button", QString::fromLocal8Bit(("攻击 " + mkeyname[mControlSettings.getKey(ControlSetting::ATTACK)]).c_str()), 1, 3);
+    addNewFuncButton("throw_button", QString::fromLocal8Bit(("丢弃 " + mkeyname[mControlSettings.getKey(ControlSetting::THROW)]).c_str()), 1, 4);
+    addNewFuncButton("getoff_button", QString::fromLocal8Bit(("下车 " + mkeyname[mControlSettings.getKey(ControlSetting::GET_OFF)]).c_str()), 1, 5);
+    addNewFuncButton("activate_button", QString::fromLocal8Bit(("拾取 " + mkeyname[mControlSettings.getKey(ControlSetting::ACTIVATE)]).c_str()), 1, 6);
 
 }
 
@@ -197,8 +214,8 @@ void OptionState::addNewFuncButton(const QString name, const QString font_text, 
     new_button->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &OptionState::onSettingsButtonClick);
 
     auto coordination = win.getMyGUIWidget()->getAbsoluteCoord();
-    int size_h = (float)coordination.width / 15.0f;
-    int size_v = (float)coordination.height / 30.0f;
+    int size_h = (float)coordination.width / 10.0f;
+    int size_v = (float)coordination.height / 27.0f;
     int position_h = (float)coordination.width * 0.1f;  //key position
     int position_v = (float)coordination.height * 0.4f;
     int gap_h = (float)coordination.width / 9.0f;
@@ -262,41 +279,55 @@ void OptionState::onSettingsButtonClick(MyGUI::Widget* sender) {
 void OptionState::onKeyDown(dt::InputManager::InputCode code, const OIS::EventArg& event) {
     if (mActionButton == nullptr)   return;
 
+	auto button = dynamic_cast<MyGUI::TextBox*>(mActionButton);
     if (mActionButton->getName() == "Gui.forward_button") {
         mActionToChange = ControlSetting::FORWARD;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("前进 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.backward_button") {
         mActionToChange = ControlSetting::BACKWARD;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("后退 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.leftward_button") {
         mActionToChange = ControlSetting::LEFTWARD;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("左转 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.rightward_button") {
         mActionToChange = ControlSetting::RIGHTWARD;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("右转 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.jump_button") {
         mActionToChange = ControlSetting::JUMP;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("跳起 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.sprint_button") {
         mActionToChange = ControlSetting::SPRINT;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("跑步 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.arm1_button") {
         mActionToChange = ControlSetting::ARM1;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("武器1 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.arm2_button") {
         mActionToChange = ControlSetting::ARM2;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("武器2 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.arm3_button") {
         mActionToChange = ControlSetting::ARM3;
-    } else if (mActionButton->getName() == "Gui.attack_button") {
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("武器3 " + mkeyname[code]).c_str())));
+   } else if (mActionButton->getName() == "Gui.attack_button") {
         mActionToChange = ControlSetting::ATTACK;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("攻击 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.reload_button") {
         mActionToChange = ControlSetting::RELOAD;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("装弹 " + mkeyname[code]).c_str())));
     }else if (mActionButton->getName() == "Gui.throw_button") {
         mActionToChange = ControlSetting::THROW;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("丢弃 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.getoff_button") {
         mActionToChange = ControlSetting::GET_OFF;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("下车 " + mkeyname[code]).c_str())));
     } else if (mActionButton->getName() == "Gui.activate_button") {
         mActionToChange = ControlSetting::ACTIVATE;
+		button->setCaption(dt::Utils::toWString(QString::fromLocal8Bit(("拾取 " + mkeyname[code]).c_str())));
     }
 
     mControlSettings.setKey(mActionToChange, code);
     dynamic_cast<MyGUI::Button*>(mActionButton)->setStateSelected(false);
-    mActionButton = nullptr;
     mMessageLabel->setCaption(QString::fromLocal8Bit("设置成功：") + ConfigurationManager::getInstance()->getControlSetting().getKeyName(mActionToChange));
-
+	mActionButton = nullptr;
 }
 
 void OptionState::onScrollChangePosition(MyGUI::ScrollBar* sender, size_t position) {
