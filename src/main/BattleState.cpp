@@ -132,6 +132,7 @@ void BattleState::onInitialize() {
         mAnswerButtons[i]->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onAnswerButtonClick);
     }
 
+    mPlayerController->disable();
     __hideQA();
 
     mResumeButton->setCaption(QString::fromLocal8Bit("╥╣╩ьсно╥"));
