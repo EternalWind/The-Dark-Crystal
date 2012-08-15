@@ -1,6 +1,5 @@
 #include "BattleState.h"
 #include "Alien.h"
-#include "HumanAgent.h"
 #include "Car.h"
 #include "Entity.h"
 #include "MenuState.h"
@@ -47,7 +46,8 @@ BattleState::BattleState(const QString stage_name)
       mCrystalBarPosition(0),
       mHasPaused(false),
       mQAShowed(false),
-      mHasFpsShown(false) {}
+      mHasFpsShown(false),
+      mPlayerController(nullptr) {}
 
 void BattleState::onInitialize() {
    
@@ -112,6 +112,8 @@ void BattleState::onInitialize() {
     mDialogLabel = dialog.get();
 
 	Alien *pAlien = EntityManager::get()->getHuman();
+    mPlayerController = dynamic_cast<HumanAgent*>(pAlien->findChildNode(Agent::AGENT).get());
+
 	connect(pAlien, SIGNAL(sAmmoClipChange(uint16_t, uint16_t)), this, SLOT(__onAmmoClipChange(uint16_t, uint16_t)));
 	connect(pAlien, SIGNAL(sHealthChanged(uint16_t)), this, SLOT(__onHealthChanged(uint16_t)));
 
@@ -130,6 +132,7 @@ void BattleState::onInitialize() {
         mAnswerButtons[i]->getMyGUIWidget()->eventMouseButtonClick += MyGUI::newDelegate(this, &BattleState::__onAnswerButtonClick);
     }
 
+    mPlayerController->disable();
     __hideQA();
 
     mResumeButton->setCaption(QString::fromLocal8Bit("·µ»ØÓÎÏ·"));
@@ -456,6 +459,8 @@ void BattleState::__hideQA() {
     dt::GuiManager::get()->setMouseCursorVisible(false);
 
     mQAShowed = false;
+
+    mPlayerController->enable();
 }
 
 void BattleState::setQA(Question question) {
@@ -474,6 +479,8 @@ void BattleState::setQA(Question question) {
     dt::GuiManager::get()->setMouseCursorVisible(true);
 
     mQAShowed = true;
+
+    mPlayerController->disable();
 }
 
 void BattleState::__changeDigits(std::vector<dt::GuiImageBox*>& pics, uint16_t number) {
@@ -514,7 +521,7 @@ void BattleState::__showMenu() {
 
         dt::GuiManager::get()->setMouseCursorVisible(true);
 
-        EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->disable();
+        mPlayerController->disable();
     }
 }
 
@@ -534,7 +541,7 @@ void BattleState::__hideMenu() {
 
         dt::GuiManager::get()->setMouseCursorVisible(false);
 
-        EntityManager::get()->getHuman()->findChildNode(Agent::AGENT)->enable();
+        mPlayerController->enable();
     }
 }
 

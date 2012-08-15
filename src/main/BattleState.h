@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "GuiImageButton.h"
 #include "QAManager.h"
+#include "HumanAgent.h"
 
 #include <Input/InputManager.hpp>
 #include <Scene/State.hpp>
@@ -258,6 +259,8 @@ private:
     bool mHasFpsShown;                          //!< 是否已经显示Fps
 
     Question mQuestion;
+
+    HumanAgent* mPlayerController;
 };
 
 #endif
